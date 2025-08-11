@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <meta name="keywords" content="HTML,CSS,XML,JavaScript">
     <meta name="author" content="John Doe">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>{{ app()->getLocale() == 'ar' ? 'لوحة القيادة' : 'Dashboard' }}</title>
     <!-- FAVICON -->
     <link rel="icon" href="{{ asset('assets/images/icons/logo.svg') }}" type="image/x-icon" />
     <!-- BOOTSTRAP CSS -->
@@ -18,6 +18,11 @@
     <link rel="stylesheet" href="{{ asset('assets/css/animate.css') }}">
     <!-- CUSTOM CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+    @if(app()->getLocale() == 'ar')
+    <!-- RTL CSS for Arabic -->
+    <link rel="stylesheet" href="{{ asset('website/css/rtl-styles.css') }}" />
+    @endif
+    
     <!-- RESPONSIVE CSS -->
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}" />
 
@@ -34,15 +39,26 @@
                         <a class="navbar-brand" href="#">
                             <img src="{{ asset('assets/images/icons/logo.svg') }}" alt="logo"
                                 class="img-fluid"><span
-                                class="Head_title fw-bold ms-3 fs24 d-none d-lg-inline-block">Project
-                                Dashboard</span>
+                                class="Head_title fw-bold ms-3 fs24 d-none d-lg-inline-block">{{ app()->getLocale() == 'ar' ? __('website.project_dashboard') : 'Project Dashboard' }}</span>
                         </a>
                         <div class=" d-flex align-items-center justify-content-end gap-md-4 gap-3 w-100 flex-wrap ">
+                            <!-- Language Toggle -->
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-globe me-2"></i>
+                                    <span id="currentLang">{{ app()->getLocale() == 'ar' ? 'العربية' : 'English' }}</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="toggleLanguage('en')">🇺🇸 English</a></li>
+                                    <li><a class="dropdown-item" href="#" onclick="toggleLanguage('ar')">🇸🇦 العربية</a></li>
+                                </ul>
+                            </div>
+                            
                             <form class="d-none d-md-block serchBar position-relative">
-                                <input class="form-control " type="search" placeholder="Search projects..."
-                                    aria-label="Search">
+                                <input class="form-control" type="search" placeholder="{{ app()->getLocale() == 'ar' ? __('website.search_projects') : 'Search projects...' }}" 
+                                    aria-label="Search" data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
                             </form>
-                            <div class="position-relative MessageBOx text-center "><img
+                            <div class="position-relative MessageBOx text-center" style="cursor: pointer;"><img
                                     src="{{ asset('assets/images/icons/bell.svg') }}" alt="Bell"
                                     class="img-fluid notifaction-icon"><span
                                     class="fw-normal fs12 text-white orangebg">3</span>
@@ -134,10 +150,10 @@
                 <!-- Ongoing Projects Title & Filter -->
                 <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4 mt-3 mt-md-4 wow fadeInUp">
                     <h5 class="fw-bold mb-0">Ongoing Projects</h5>
-                    <select class="form-select w-auto">
-                        <option>All Status</option>
-                        <option>Active</option>
-                        <option>Completed</option>
+                    <select class="form-select w-auto" id="statusFilter">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
                     </select>
                 </div>
 
@@ -303,6 +319,41 @@
         </section>
     </div>
 
+    @include('website.modals.search-modal')
+
+    <script>
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const statusFilter = document.getElementById('statusFilter');
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function() {
+                const filterValue = this.value.toLowerCase();
+                const projectCards = document.querySelectorAll('.row.g-4 > div');
+                
+                projectCards.forEach(card => {
+                    const statusBadge = card.querySelector('.badge');
+                    if (statusBadge) {
+                        const cardStatus = statusBadge.textContent.toLowerCase();
+                        if (filterValue === 'all' || cardStatus.includes(filterValue)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Notification bell click
+        const notificationBell = document.querySelector('.MessageBOx');
+        if (notificationBell) {
+            notificationBell.addEventListener('click', function() {
+                alert('Notification panel would open here showing recent updates.');
+            });
+        }
+    });
+    </script>
+
     <!-- =======================Main content End============================== -->
 
 
@@ -312,6 +363,32 @@
     <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/js/wow.js') }}"></script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
+    
+    <!-- Language Toggle Script -->
+    <script>
+      function toggleLanguage(lang) {
+        document.body.style.opacity = '0.7';
+        
+        fetch('/change-language', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          },
+          body: JSON.stringify({ language: lang })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.reload();
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          window.location.reload();
+        });
+      }
+    </script>
 </body>
 
 </html>

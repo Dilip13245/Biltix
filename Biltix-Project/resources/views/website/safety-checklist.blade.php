@@ -8,7 +8,7 @@
     <h2>Safety Checklist</h2>
     <p>Ensure safety compliance and protocols</p>
   </div>
-  <button class="btn orange_btn">
+  <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#addSafetyChecklistModal">
     <i class="fas fa-plus"></i>
     Add Checklist
   </button>
@@ -96,4 +96,64 @@
     </div>
   </div>
 </div>
+@include('website.modals.add-safety-checklist-modal')
+
+<script>
+// Add Safety Checklist Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+  const addSafetyChecklistForm = document.getElementById('addSafetyChecklistForm');
+  if (addSafetyChecklistForm) {
+    addSafetyChecklistForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = document.querySelector('#addSafetyChecklistModal .btn.orange_btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+      submitBtn.disabled = true;
+      
+      // Simulate checklist creation
+      setTimeout(() => {
+        alert('Safety checklist created successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('addSafetyChecklistModal')).hide();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        addSafetyChecklistForm.reset();
+        
+        // Reset safety items to default
+        document.getElementById('safetyItems').innerHTML = `
+          <div class="input-group mb-2">
+            <input type="text" class="form-control" name="items[]" placeholder="e.g., All workers wearing safety helmets">
+            <button class="btn btn-outline-danger" type="button" onclick="removeItem(this)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `;
+        
+        location.reload();
+      }, 2000);
+    });
+  }
+  
+  // Make checklist buttons functional
+  const viewButtons = document.querySelectorAll('.btn-primary');
+  viewButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const card = this.closest('.CustOm_Card');
+      const title = card.querySelector('h3').textContent;
+      const status = card.querySelector('.badge').textContent;
+      const date = card.querySelector('.text-muted').textContent;
+      
+      if (this.textContent.includes('View Full List')) {
+        alert(`${title}\n\nStatus: ${status}\nDate: ${date}\n\nFull checklist details would open here with:\n• Complete list of safety items\n• Check/uncheck functionality\n• Comments section\n• Photo attachments`);
+      } else if (this.textContent.includes('Start Check')) {
+        alert(`Starting ${title}\n\nInteractive checklist would open with:\n• Checkboxes for each item\n• Photo upload capability\n• Notes section\n• Submit functionality`);
+      } else if (this.textContent.includes('View Agenda')) {
+        alert(`${title} Agenda\n\nMeeting details would show:\n• Agenda items\n• Attendee list\n• Meeting materials\n• Action items`);
+      }
+    });
+  });
+});
+</script>
+
 @endsection

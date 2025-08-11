@@ -310,4 +310,60 @@
     </div>
   </div>
 </section>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Team filter functionality
+  const teamFilter = document.querySelector('select.form-select');
+  if (teamFilter) {
+    teamFilter.addEventListener('change', function() {
+      const selectedTeam = this.value;
+      alert(`Filtering logs for: ${selectedTeam}\n\nThis would filter the table data to show only entries for the selected team.`);
+    });
+  }
+  
+  // Date filter functionality
+  const dateInput = document.querySelector('input[type="date"]');
+  if (dateInput) {
+    dateInput.addEventListener('change', function() {
+      const selectedDate = this.value;
+      alert(`Filtering logs for date: ${selectedDate}\n\nThis would update all tables to show data for the selected date.`);
+    });
+  }
+  
+  // Tab switching functionality is handled by Bootstrap, but we can add custom logic
+  const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+  tabButtons.forEach(button => {
+    button.addEventListener('shown.bs.tab', function(e) {
+      const targetTab = e.target.getAttribute('data-bs-target');
+      console.log(`Switched to tab: ${targetTab}`);
+      
+      // Here you could load different data for each tab
+      if (targetTab === '#equipment') {
+        console.log('Loading equipment log data...');
+      } else if (targetTab === '#staff') {
+        console.log('Loading staff log data...');
+      } else if (targetTab === '#task') {
+        console.log('Loading task log data...');
+      }
+    });
+  });
+  
+  // Make table rows clickable for detailed view
+  const tableRows = document.querySelectorAll('tbody tr');
+  tableRows.forEach(row => {
+    row.style.cursor = 'pointer';
+    row.addEventListener('click', function() {
+      const equipmentId = this.cells[0].textContent.trim();
+      const type = this.cells[1].textContent;
+      const operator = this.cells[2].textContent;
+      const status = this.cells[3].textContent;
+      const hours = this.cells[4].textContent;
+      const location = this.cells[5].textContent;
+      
+      alert(`Equipment Details:\n\nID: ${equipmentId}\nType: ${type}\nOperator: ${operator}\nStatus: ${status}\nHours Used: ${hours}\nLocation: ${location}\n\nDetailed log view would open here with:\n• Complete usage history\n• Maintenance records\n• Performance metrics\n• Photo documentation`);
+    });
+  });
+});
+</script>
+
 @endsection

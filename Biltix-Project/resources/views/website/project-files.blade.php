@@ -288,4 +288,46 @@
     </div>
   </div>
 </section>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Filter button functionality
+  const filterBtn = document.querySelector('.filter-btn');
+  if (filterBtn) {
+    filterBtn.addEventListener('click', function() {
+      alert('File Filter Options:\n\n• By File Type (PDF, DOCX, DWG, etc.)\n• By Upload Date\n• By File Size\n• By Category (Plans, Reports, etc.)\n\nAdvanced filtering would be implemented here.');
+    });
+  }
+  
+  // Sort button functionality
+  const sortBtn = document.querySelector('.sort-btn');
+  if (sortBtn) {
+    sortBtn.addEventListener('click', function() {
+      alert('Sort Options:\n\n• Name (A-Z / Z-A)\n• Date (Newest / Oldest)\n• Size (Largest / Smallest)\n• Type (Alphabetical)\n\nSorting functionality would be implemented here.');
+    });
+  }
+  
+  // View file buttons
+  const viewButtons = document.querySelectorAll('.btn.orange_btn');
+  viewButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const row = this.closest('tr');
+      const fileName = row.querySelector('.fw-medium').textContent;
+      const fileType = row.cells[1].textContent;
+      const fileSize = row.cells[3].textContent;
+      
+      // Simulate file viewing
+      if (fileType === 'PDF') {
+        alert(`Opening PDF Viewer for: ${fileName}\n\nFile would open in:\n• Built-in PDF viewer\n• Download option available\n• Print and share options`);
+      } else if (fileType === 'DWG') {
+        alert(`Opening CAD Viewer for: ${fileName}\n\nFile would open in:\n• AutoCAD Web viewer\n• Zoom and pan capabilities\n• Layer management\n• Measurement tools`);
+      } else if (fileType === 'JPG') {
+        alert(`Opening Image Viewer for: ${fileName}\n\nFile would open in:\n• Full-screen image viewer\n• Zoom and pan\n• Download option`);
+      } else {
+        alert(`Opening ${fileType} file: ${fileName}\n\nFile Size: ${fileSize}\n\nFile would be downloaded or opened in appropriate application.`);
+      }
+    });
+  });
+});
+</script>
+
 @endsection

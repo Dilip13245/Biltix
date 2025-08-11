@@ -18,7 +18,7 @@
       <option>Active</option>
       <option>Completed</option>
     </select>
-    <button class="btn orange_btn py-2">
+    <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
       <i class="fas fa-plus"></i>
       Add New Task
     </button>
@@ -60,7 +60,7 @@
               <p class="mb-4 text-muted">Pour slab for level 2, ensure curing compound is ready.</p>
             </div>
             <div>
-              <button class="btn btn-primary w-100 py-2">View Details</button>
+              <button class="btn btn-primary w-100 py-2" onclick="openTaskDetails('Pour Concrete Slab', 'Pour slab for level 2, ensure curing compound is ready.', 'March 26, 2025', 'March 24, 2025', 'John Smith', 'medium', 'pending', 25)">View Details</button>
             </div>
           </div>
         </div>
@@ -98,7 +98,7 @@
               <p class="mb-4 text-muted">Inspect steel reinforcement placement before concrete pour.</p>
             </div>
             <div>
-              <button class="btn btn-primary w-100 py-2">View Details</button>
+              <button class="btn btn-primary w-100 py-2" onclick="openTaskDetails('Steel Reinforcement Inspection', 'Inspect steel reinforcement placement before concrete pour.', 'March 28, 2025', 'March 26, 2025', 'Sarah Johnson', 'high', 'ongoing', 60)">View Details</button>
             </div>
           </div>
         </div>
@@ -137,7 +137,7 @@
               <p class="mb-4 text-muted">Quality assessment of foundation work completed successfully.</p>
             </div>
             <div>
-              <button class="btn btn-primary w-100 py-2">View Details</button>
+              <button class="btn btn-primary w-100 py-2" onclick="openTaskDetails('Foundation Quality Check', 'Quality assessment of foundation work completed successfully.', 'March 22, 2025', 'March 20, 2025', 'Mike Wilson', 'medium', 'completed', 100)">View Details</button>
             </div>
           </div>
         </div>
@@ -176,7 +176,7 @@
               <p class="mb-4 text-muted">Review electrical installation compliance with building codes.</p>
             </div>
             <div>
-              <button class="btn btn-primary w-100 py-2">View Details</button>
+              <button class="btn btn-primary w-100 py-2" onclick="openTaskDetails('Electrical Installation Review', 'Review electrical installation compliance with building codes.', 'March 30, 2025', 'March 28, 2025', 'Lisa Brown', 'high', 'pending', 0)">View Details</button>
             </div>
           </div>
         </div>
@@ -215,7 +215,7 @@
               <p class="mb-4 text-muted">Comprehensive inspection of plumbing systems and fixtures.</p>
             </div>
             <div>
-              <button class="btn btn-primary w-100 py-2">View Details</button>
+              <button class="btn btn-primary w-100 py-2" onclick="openTaskDetails('Plumbing System Inspection', 'Comprehensive inspection of plumbing systems and fixtures.', 'April 2, 2025', 'March 30, 2025', 'John Smith', 'medium', 'ongoing', 40)">View Details</button>
             </div>
           </div>
         </div>
@@ -223,4 +223,89 @@
     </div>
   </div>
 </section>
+@include('website.modals.add-task-modal')
+@include('website.modals.task-details-modal')
+
+<script>
+function openTaskDetails(title, description, dueDate, startDate, assignedTo, priority, status, progress) {
+  document.getElementById('taskDetailTitle').textContent = title;
+  document.getElementById('taskDetailDescription').textContent = description;
+  document.getElementById('taskDetailDueDate').textContent = dueDate;
+  document.getElementById('taskDetailStartDate').textContent = startDate;
+  document.getElementById('taskDetailAssignedTo').textContent = assignedTo;
+  document.getElementById('taskDetailPriority').textContent = priority;
+  document.getElementById('taskDetailPriority').className = `badge badge-${priority}`;
+  document.getElementById('taskDetailStatus').textContent = status;
+  document.getElementById('taskDetailProgressBar').style.width = progress + '%';
+  document.getElementById('taskDetailProgressText').textContent = progress + '% Complete';
+  
+  const modal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
+  modal.show();
+}
+
+// Add Task Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+  const addTaskForm = document.getElementById('addTaskForm');
+  if (addTaskForm) {
+    addTaskForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = document.querySelector('#addTaskModal .btn.orange_btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+      submitBtn.disabled = true;
+      
+      // Simulate task creation
+      setTimeout(() => {
+        alert('Task added successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        addTaskForm.reset();
+        
+        // Refresh page or add new task to the grid
+        location.reload();
+      }, 1500);
+    });
+  }
+  
+  // Search functionality
+  const searchInput = document.querySelector('input[type="search"]');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const taskCards = document.querySelectorAll('.card_wraPper .col-md-6');
+      
+      taskCards.forEach(card => {
+        const taskTitle = card.querySelector('h5').textContent.toLowerCase();
+        if (taskTitle.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+  
+  // Filter functionality
+  const filterSelect = document.querySelector('select.form-select');
+  if (filterSelect) {
+    filterSelect.addEventListener('change', function() {
+      const filterValue = this.value.toLowerCase();
+      const taskCards = document.querySelectorAll('.card_wraPper .col-md-6');
+      
+      taskCards.forEach(card => {
+        const taskStatus = card.querySelector('.badge').textContent.toLowerCase();
+        if (filterValue === 'all status' || taskStatus.includes(filterValue)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+});
+</script>
+
 @endsection

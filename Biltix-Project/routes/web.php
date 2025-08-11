@@ -38,22 +38,17 @@ Route::group(['prefix' => 'website'], function () {
 });
 
 // Admin Routes
-Route::group(['prefix' => 'admin'], function () {
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
-    Route::post('/login', [AuthController::class, 'loginData'])->name('admin.login.submit');
-    Route::get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
-
-    Route::middleware(['auth:admin'])->group(function () {
-        Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('admin.dashboard');
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('login', [App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
+    Route::post('login', [App\Http\Controllers\Admin\AuthController::class, 'login'])->name('login.post');
+    Route::get('logout', [App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
+    
+    Route::middleware('admin.auth')->group(function () {
+        Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         
-        Route::group(['prefix' => 'projects', 'as' => 'admin.projects.'], function () {
-            Route::get('/', [ProjectController::class, 'index'])->name('index');
-            Route::get('/create', [ProjectController::class, 'create'])->name('create');
-            Route::post('/', [ProjectController::class, 'store'])->name('store');
-            Route::get('/{id}', [ProjectController::class, 'show'])->name('show');
-            Route::get('/{id}/edit', [ProjectController::class, 'edit'])->name('edit');
-            Route::put('/{id}', [ProjectController::class, 'update'])->name('update');
-            Route::delete('/{id}', [ProjectController::class, 'destroy'])->name('destroy');
-        });
+        // Profile Routes
+        Route::get('profile', [App\Http\Controllers\Admin\ProfileController::class, 'show'])->name('profile.show');
+        Route::get('profile/edit', [App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     });
 });

@@ -8,7 +8,7 @@
     <h2>Project Plans</h2>
     <p>View and markup architectural plans</p>
   </div>
-  <button class="btn orange_btn">
+  <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#uploadPlanModal">
     <i class="fas fa-arrow-up"></i>
     Upload Plan
   </button>
@@ -26,7 +26,9 @@
         <span class="revision">Rev. 3.2 • 2.4 MB</span>
         <div class="updated-row">
           <span class="updated">Updated 2 days ago</span>
-          <a href="#"> <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="edit"></a>
+          <a href="#" onclick="openPlanViewer('{{ asset('assets/images/place1.png') }}', 'Ground Floor Plan', 'Architectural', 'Rev. 3.2', '2.4 MB', '2 days ago')"> 
+            <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="view">
+          </a>
         </div>
       </div>
     </div>
@@ -43,7 +45,9 @@
         <span class="revision">Rev. 2.1 • 1.8 MB</span>
         <div class="updated-row">
           <span class="updated">Updated 1 week ago</span>
-          <a href="#"> <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="edit"></a>
+          <a href="#" onclick="openPlanViewer('{{ asset('assets/images/place2.png') }}', 'Second Floor Plan', 'Architectural', 'Rev. 2.1', '1.8 MB', '1 week ago')"> 
+            <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="view">
+          </a>
         </div>
       </div>
     </div>
@@ -60,7 +64,9 @@
         <span class="revision">Rev. 1.5 • 3.2 MB</span>
         <div class="updated-row">
           <span class="updated">Updated 3 days ago</span>
-          <a href="#"> <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="edit"></a>
+          <a href="#" onclick="openPlanViewer('{{ asset('assets/images/place3.png') }}', 'Front Elevation', 'Architectural', 'Rev. 1.5', '3.2 MB', '3 days ago')"> 
+            <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="view">
+          </a>
         </div>
       </div>
     </div>
@@ -77,7 +83,9 @@
         <span class="revision">Rev. 2.0 • 2.1 MB</span>
         <div class="updated-row">
           <span class="updated">Updated 5 days ago</span>
-          <a href="#"> <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="edit"></a>
+          <a href="#" onclick="openPlanViewer('{{ asset('assets/images/place4.png') }}', 'Building Section A-A', 'Structural', 'Rev. 2.0', '2.1 MB', '5 days ago')"> 
+            <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="view">
+          </a>
         </div>
       </div>
     </div>
@@ -94,7 +102,9 @@
         <span class="revision">Rev. 1.8 • 1.5 MB</span>
         <div class="updated-row">
           <span class="updated">Updated 1 week ago</span>
-          <a href="#"> <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="edit"></a>
+          <a href="#" onclick="openPlanViewer('{{ asset('assets/images/place5.png') }}', 'Basement Plan', 'Architectural', 'Rev. 1.8', '1.5 MB', '1 week ago')"> 
+            <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="view">
+          </a>
         </div>
       </div>
     </div>
@@ -111,10 +121,57 @@
         <span class="revision">Rev. 1.2 • 1.2 MB</span>
         <div class="updated-row">
           <span class="updated">Updated 2 weeks ago</span>
-          <a href="#"> <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="edit"></a>
+          <a href="#" onclick="openPlanViewer('{{ asset('assets/images/place6.png') }}', 'Roof Plan', 'Architectural', 'Rev. 1.2', '1.2 MB', '2 weeks ago')"> 
+            <img src="{{ asset('assets/images/icons/edit.svg') }}" alt="view">
+          </a>
         </div>
       </div>
     </div>
   </div>
 </div>
+@include('website.modals.upload-plan-modal')
+@include('website.modals.plan-viewer-modal')
+
+<script>
+function openPlanViewer(imageSrc, name, type, version, size, updated) {
+  document.getElementById('planImage').src = imageSrc;
+  document.getElementById('planInfoName').textContent = name;
+  document.getElementById('planInfoType').textContent = type;
+  document.getElementById('planInfoVersion').textContent = version;
+  document.getElementById('planInfoSize').textContent = size;
+  document.getElementById('planInfoUpdated').textContent = updated;
+  
+  const modal = new bootstrap.Modal(document.getElementById('planViewerModal'));
+  modal.show();
+}
+
+// Upload Plan Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+  const uploadForm = document.getElementById('uploadPlanForm');
+  if (uploadForm) {
+    uploadForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = document.querySelector('#uploadPlanModal .btn.orange_btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+      submitBtn.disabled = true;
+      
+      // Simulate upload (replace with actual AJAX call)
+      setTimeout(() => {
+        alert('Plan uploaded successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('uploadPlanModal')).hide();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        uploadForm.reset();
+        
+        // Refresh page or add new plan to the grid
+        location.reload();
+      }, 2000);
+    });
+  }
+});
+</script>
+
 @endsection

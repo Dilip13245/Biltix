@@ -105,7 +105,7 @@
             </div>
 
             <div class="text-center mt-3">
-              <a href="#" class="text-primary text-decoration-none fw-medium">View All Notifications</a>
+              <a href="#" onclick="showAllNotifications()" class="text-primary text-decoration-none fw-medium">View All Notifications</a>
             </div>
           </div>
         </div>
@@ -128,22 +128,23 @@
             </p>
           </div>
           <div class="card-body p-md-4">
-            <form>
+            <form id="supportForm">
+              @csrf
               <div class="mb-3">
                 <label for="fullName" class="form-label fw-medium">Full Name</label>
-                <input type="text" class="form-control Input_control" id="fullName"
+                <input type="text" class="form-control Input_control" id="fullName" name="full_name" required
                   placeholder="Enter your full name">
               </div>
 
               <div class="mb-3">
                 <label for="email" class="form-label fw-medium">Email Address</label>
-                <input type="email" class="form-control Input_control" id="email"
+                <input type="email" class="form-control Input_control" id="email" name="email" required
                   placeholder="Enter your email address">
               </div>
 
               <div class="mb-4">
                 <label for="message" class="form-label fw-medium">Message</label>
-                <textarea class="form-control Input_control" id="message" rows="4"
+                <textarea class="form-control Input_control" id="message" name="message" rows="4" required
                   placeholder="Describe your issue or question in detail..."></textarea>
               </div>
 
@@ -154,9 +155,9 @@
 
             <div class="quick-help-links">
               <h6 class="fw-bold mb-3">Quick Help</h6>
-              <a href="#"><i class="fas fa-question-circle"></i> Frequently Asked Questions</a>
-              <a href="#"><i class="fas fa-file-alt"></i> User Documentation</a>
-              <a href="#"><i class="fas fa-video"></i> Video Tutorials</a>
+              <a href="#" onclick="showFAQ()"><i class="fas fa-question-circle"></i> Frequently Asked Questions</a>
+              <a href="#" onclick="showDocumentation()"><i class="fas fa-file-alt"></i> User Documentation</a>
+              <a href="#" onclick="showTutorials()"><i class="fas fa-video"></i> Video Tutorials</a>
             </div>
           </div>
         </div>
@@ -164,4 +165,46 @@
     </div>
   </div>
 </section>
+<script>
+// Support Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+  const supportForm = document.getElementById('supportForm');
+  if (supportForm) {
+    supportForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = this.querySelector('.btn.orange_btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+      submitBtn.disabled = true;
+      
+      // Simulate form submission
+      setTimeout(() => {
+        alert('Support request submitted successfully! We will get back to you within 24 hours.');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        supportForm.reset();
+      }, 2000);
+    });
+  }
+});
+
+function showFAQ() {
+  alert('FAQ section would open here with common questions and answers.');
+}
+
+function showDocumentation() {
+  alert('User documentation would open here with detailed guides.');
+}
+
+function showTutorials() {
+  alert('Video tutorials section would open here.');
+}
+
+function showAllNotifications() {
+  alert('All notifications page would open here.');
+}
+</script>
+
 @endsection

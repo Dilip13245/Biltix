@@ -179,7 +179,7 @@
                                     </div>
                                 </div>
                                 <div class="ms-auto mt-3 mt-md-0">
-                                    <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2">
+                                    <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2" onclick="deleteProject()">
                                         <i class="fas fa-trash"></i> Delete Project
                                     </button>
                                 </div>
@@ -403,4 +403,39 @@
             </div>
   </div>
 </div>
+<script>
+function deleteProject() {
+  if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+    alert('Project deletion functionality would be implemented here.');
+  }
+}
+
+// Make edit buttons functional
+document.addEventListener('DOMContentLoaded', function() {
+  const editButtons = document.querySelectorAll('a[title="Edit"]');
+  editButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const field = this.previousElementSibling.textContent.trim();
+      const newValue = prompt(`Edit ${field.split(' ')[0]}:`, field);
+      if (newValue && newValue !== field) {
+        this.previousElementSibling.textContent = newValue;
+        alert('Field updated successfully!');
+      }
+    });
+  });
+  
+  // Make manpower links functional
+  const manpowerLinks = document.querySelectorAll('.table a');
+  manpowerLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const role = this.closest('tr').querySelector('td').textContent;
+      const count = this.textContent;
+      alert(`${role}: ${count}\n\nDetailed view would show:\n- Individual assignments\n- Work schedules\n- Performance metrics`);
+    });
+  });
+});
+</script>
+
 @endsection

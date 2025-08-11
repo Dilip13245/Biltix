@@ -9,7 +9,7 @@
       <h2>Photo Gallery</h2>
       <p>Construction progress documentation</p>
     </div>
-    <button class="btn btn-primary py-2 px-md-4">
+    <button class="btn btn-primary py-2 px-md-4" data-bs-toggle="modal" data-bs-target="#addPhotoModal">
       <i class="fas fa-plus"></i>
       Add New
     </button>
@@ -116,4 +116,90 @@
     </div>
   </div>
 </div>
+@include('website.modals.add-photo-modal')
+
+<script>
+// Add Photo Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+  const addPhotoForm = document.getElementById('addPhotoForm');
+  if (addPhotoForm) {
+    addPhotoForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = document.querySelector('#addPhotoModal .btn.orange_btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+      submitBtn.disabled = true;
+      
+      // Simulate photo upload
+      setTimeout(() => {
+        alert('Photos uploaded successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('addPhotoModal')).hide();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        addPhotoForm.reset();
+        document.getElementById('photoPreview').style.display = 'none';
+        
+        // Refresh page or add new photos to the gallery
+        location.reload();
+      }, 3000);
+    });
+  }
+  
+  // Filter functionality
+  const categoryFilter = document.querySelector('select.form-select');
+  if (categoryFilter) {
+    categoryFilter.addEventListener('change', function() {
+      const filterValue = this.value.toLowerCase();
+      const photoCards = document.querySelectorAll('.CustOm_Card');
+      
+      photoCards.forEach(card => {
+        const cardTitle = card.querySelector('h3').textContent.toLowerCase();
+        if (filterValue === 'all categories' || cardTitle.includes(filterValue)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+  
+  // Photo click to view full size
+  const photoImages = document.querySelectorAll('.plan-image img');
+  photoImages.forEach(img => {
+    img.addEventListener('click', function() {
+      openPhotoViewer(this.src, this.alt);
+    });
+  });
+});
+
+function openPhotoViewer(imageSrc, title) {
+  // Create a simple photo viewer
+  const modal = document.createElement('div');
+  modal.className = 'modal fade';
+  modal.innerHTML = `
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">${title}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img src="${imageSrc}" class="img-fluid" alt="${title}">
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  const bsModal = new bootstrap.Modal(modal);
+  bsModal.show();
+  
+  modal.addEventListener('hidden.bs.modal', function() {
+    document.body.removeChild(modal);
+  });
+}
+</script>
+
 @endsection

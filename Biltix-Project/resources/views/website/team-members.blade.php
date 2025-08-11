@@ -212,4 +212,52 @@
     </div>
   </div>
 </section>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Search functionality
+  const searchInput = document.querySelector('input[type="search"]');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const memberItems = document.querySelectorAll('.team-member-item');
+      
+      memberItems.forEach(item => {
+        const memberName = item.querySelector('h5').textContent.toLowerCase();
+        const memberRole = item.querySelector('.text-muted.small.fs14').textContent.toLowerCase();
+        const memberCompany = item.querySelector('.text-muted.small.fs12').textContent.toLowerCase();
+        
+        if (memberName.includes(searchTerm) || memberRole.includes(searchTerm) || memberCompany.includes(searchTerm)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  }
+  
+  // Filter button functionality
+  const filterBtn = document.querySelector('.filter-btn');
+  if (filterBtn) {
+    filterBtn.addEventListener('click', function() {
+      alert('Filter options:\n\n• By Role (Engineer, Manager, etc.)\n• By Company\n• By Status (Active, Away)\n• By Department\n\nAdvanced filtering would be implemented here.');
+    });
+  }
+  
+  // Team member detail view
+  const memberLinks = document.querySelectorAll('.team-member-item a');
+  memberLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const memberItem = this.closest('.team-member-item');
+      const name = memberItem.querySelector('h5').textContent;
+      const role = memberItem.querySelector('.text-muted.small.fs14').textContent;
+      const company = memberItem.querySelector('.text-muted.small.fs12').textContent;
+      const status = memberItem.querySelector('.badge').textContent;
+      
+      alert(`Team Member Details:\n\nName: ${name}\nRole: ${role}\nCompany: ${company}\nStatus: ${status}\n\nDetailed profile view would open here with:\n• Contact information\n• Project assignments\n• Performance metrics\n• Work schedule`);
+    });
+  });
+});
+</script>
+
 @endsection

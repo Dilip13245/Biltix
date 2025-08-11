@@ -38,7 +38,7 @@
       <div class="card h-100 B_shadow">
         <div class="card-body p-md-4">
           <h5 class="mb-3 mb-md-4 fw-semibold black_color">Create New Inspection</h5>
-          <button class="btn  orange_btn w-100 mb-3 mb-md-4 justify-content-center py-3">
+          <button class="btn  orange_btn w-100 mb-3 mb-md-4 justify-content-center py-3" data-bs-toggle="modal" data-bs-target="#createInspectionModal">
             <i class="fas fa-plus"></i>
             Create Inspection
           </button>
@@ -141,4 +141,61 @@
     </div>
   </div>
 </div>
+@include('website.modals.create-inspection-modal')
+
+<script>
+// Create Inspection Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+  const createInspectionForm = document.getElementById('createInspectionForm');
+  if (createInspectionForm) {
+    createInspectionForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = document.querySelector('#createInspectionModal .btn.orange_btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+      submitBtn.disabled = true;
+      
+      // Simulate inspection creation
+      setTimeout(() => {
+        alert('Inspection created successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('createInspectionModal')).hide();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        createInspectionForm.reset();
+        
+        // Refresh page or add new inspection to the list
+        location.reload();
+      }, 2000);
+    });
+  }
+  
+  // Filter functionality
+  const categoryFilter = document.querySelector('select.form-select');
+  if (categoryFilter) {
+    categoryFilter.addEventListener('change', function() {
+      const filterValue = this.value.toLowerCase();
+      const inspectionRows = document.querySelectorAll('tbody tr');
+      
+      inspectionRows.forEach(row => {
+        const categoryCell = row.querySelector('td:nth-child(1) .small');
+        if (categoryCell) {
+          const category = categoryCell.textContent.toLowerCase();
+          if (filterValue === 'all categories' || category.includes(filterValue)) {
+            row.style.display = 'table-row';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+    });
+  }
+});
+
+function viewInspection(title, type, date, status) {
+  alert(`Inspection Details:\n\nTitle: ${title}\nType: ${type}\nDate: ${date}\nStatus: ${status}\n\nDetailed inspection view would open here.`);
+}
+</script>
+
 @endsection

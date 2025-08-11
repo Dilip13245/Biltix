@@ -8,7 +8,7 @@
     <h2>Snag List</h2>
     <p>View and manage construction snags</p>
   </div>
-  <button class="btn orange_btn py-2">
+  <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal">
     <i class="fas fa-plus"></i>
     Add New Snag
   </button>
@@ -139,4 +139,81 @@
     </div>
   </div>
 </section>
+@include('website.modals.add-snag-modal')
+
+<script>
+// Add Snag Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+  const addSnagForm = document.getElementById('addSnagForm');
+  if (addSnagForm) {
+    addSnagForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = document.querySelector('#addSnagModal .btn.orange_btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+      submitBtn.disabled = true;
+      
+      // Simulate snag creation
+      setTimeout(() => {
+        alert('Snag added successfully!');
+        bootstrap.Modal.getInstance(document.getElementById('addSnagModal')).hide();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        addSnagForm.reset();
+        
+        location.reload();
+      }, 2000);
+    });
+  }
+  
+  // Filter functionality
+  const statusFilter = document.querySelector('select.form-select');
+  const categoryFilter = document.querySelectorAll('select.form-select')[1];
+  const searchInput = document.querySelector('input[type="search"]');
+  
+  function filterSnags() {
+    const statusValue = statusFilter.value.toLowerCase();
+    const categoryValue = categoryFilter ? categoryFilter.value.toLowerCase() : '';
+    const searchValue = searchInput.value.toLowerCase();
+    const snagItems = document.querySelectorAll('.items_listing');
+    
+    snagItems.forEach(item => {
+      const title = item.querySelector('h5').textContent.toLowerCase();
+      const description = item.querySelector('p').textContent.toLowerCase();
+      const statusBadge = item.querySelector('.badge:last-of-type').textContent.toLowerCase();
+      
+      const matchesStatus = statusValue === 'all status' || statusBadge.includes(statusValue);
+      const matchesSearch = !searchValue || title.includes(searchValue) || description.includes(searchValue);
+      
+      if (matchesStatus && matchesSearch) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+  
+  if (statusFilter) statusFilter.addEventListener('change', filterSnags);
+  if (categoryFilter) categoryFilter.addEventListener('change', filterSnags);
+  if (searchInput) searchInput.addEventListener('input', filterSnags);
+  
+  // Edit snag functionality
+  const editButtons = document.querySelectorAll('.fa-pen-to-square');
+  editButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      const snagItem = this.closest('.items_listing');
+      const title = snagItem.querySelector('h5').textContent;
+      const description = snagItem.querySelector('p').textContent;
+      const priority = snagItem.querySelector('.badge').textContent;
+      const status = snagItem.querySelector('.badge:last-of-type').textContent;
+      
+      alert(`Edit Snag: ${title}\n\nPriority: ${priority}\nStatus: ${status}\nDescription: ${description}\n\nEdit form would open here with:\n• Editable fields\n• Status update options\n• Photo management\n• Comment history`);
+    });
+  });
+});
+</script>
+
 @endsection
