@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\LocalizationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,13 @@ use App\Http\Controllers\Api\ProjectController;
 */
 
 Route::prefix('v1')->group(function () {
+    // Localization Routes (Public)
+    Route::get('locales', [LocalizationController::class, 'getLocales']);
+    Route::get('translations/{namespace?}', [LocalizationController::class, 'getTranslations']);
+    Route::get('translations-all', [LocalizationController::class, 'getAllTranslations']);
+    Route::get('routes', [LocalizationController::class, 'getLocalizedRoutes']);
+    Route::post('lang/switch/{locale}', [LocalizationController::class, 'switchLanguage']);
+    
     // Auth Routes
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);

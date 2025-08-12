@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Website\HomeController;
+use App\Http\Controllers\LocalizationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,17 @@ use App\Http\Controllers\Website\HomeController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// Language Routes
+Route::group(['prefix' => 'lang'], function () {
+    Route::get('/switch/{locale}', [LocalizationController::class, 'switchLanguage'])->name('lang.switch');
+    Route::get('/detect', [LocalizationController::class, 'detectLanguage'])->name('lang.detect');
+});
+
+// Home Route (with language detection)
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
 // Website Routes
 Route::group(['prefix' => 'website'], function () {
