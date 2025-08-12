@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Website\HomeController;
@@ -15,6 +16,16 @@ use App\Http\Controllers\Website\HomeController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// Language switch route (session-based)
+Route::get('/locale/{locale}', function (string $locale) {
+    $supported = ['en', 'ar'];
+    if (! in_array($locale, $supported, true)) {
+        $locale = config('app.locale', 'en');
+    }
+    Session::put('locale', $locale);
+    return redirect()->back();
+})->name('locale.switch');
 
 // Website Routes
 Route::group(['prefix' => 'website'], function () {

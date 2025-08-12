@@ -25,6 +25,11 @@
             <span class="status-dot"></span>
             Active
           </div>
+          <!-- Language Switcher -->
+          <div class="btn-group" role="group" aria-label="Language switcher">
+            <a href="{{ route('locale.switch', 'en') }}" class="btn btn-outline-secondary btn-sm {{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
+            <a href="{{ route('locale.switch', 'ar') }}" class="btn btn-outline-secondary btn-sm {{ app()->getLocale() === 'ar' ? 'active' : '' }}">AR</a>
+          </div>
           <!-- Mobile Menu Toggle Button -->
           <button class="mobile-menu-toggle d-lg-none" id="mobileMenuToggle">
             <i class="fas fa-bars"></i>

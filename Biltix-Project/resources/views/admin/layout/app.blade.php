@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Admin Panel') - Biltix</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    @if(app()->getLocale() === 'ar')
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    @else
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('admin/css/admin-styles.css') }}">
@@ -25,32 +29,32 @@
         </div>
         <div class="sidebar-menu">
             <div class="menu-section">
-                <div class="menu-title">Main Menu</div>
+                <div class="menu-title">{{ __('admin.main_menu') }}</div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" 
                            href="{{ route('admin.dashboard') }}">
                             <i class="fas fa-home"></i>
-                            <span>Dashboard</span>
+                            <span>{{ __('admin.dashboard') }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="fas fa-project-diagram"></i>
-                            <span>Projects</span>
+                            <span>{{ __('admin.projects') }}</span>
                             <span class="badge">12</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="fas fa-users"></i>
-                            <span>Team Members</span>
+                            <span>{{ __('admin.team_members') }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="fas fa-tasks"></i>
-                            <span>Tasks</span>
+                            <span>{{ __('admin.tasks') }}</span>
                             <span class="badge badge-warning">5</span>
                         </a>
                     </li>
@@ -58,18 +62,18 @@
             </div>
             
             <div class="menu-section">
-                <div class="menu-title">Analytics</div>
+                <div class="menu-title">{{ __('admin.analytics') }}</div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="fas fa-chart-line"></i>
-                            <span>Analytics</span>
+                            <span>{{ __('admin.analytics') }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="fas fa-file-alt"></i>
-                            <span>Reports</span>
+                            <span>{{ __('admin.reports') }}</span>
                         </a>
                     </li>
                 </ul>
@@ -82,13 +86,13 @@
                         <a class="nav-link {{ request()->routeIs('admin.profile.*') ? 'active' : '' }}" 
                            href="{{ route('admin.profile.show') }}">
                             <i class="fas fa-user-circle"></i>
-                            <span>Profile</span>
+                            <span>{{ __('admin.profile') }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             <i class="fas fa-cog"></i>
-                            <span>Settings</span>
+                            <span>{{ __('admin.settings') }}</span>
                         </a>
                     </li>
                 </ul>
@@ -97,7 +101,7 @@
             <div class="sidebar-footer">
                 <a class="nav-link logout-link" href="{{ route('admin.logout') }}">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
+                    <span>{{ __('admin.logout') }}</span>
                 </a>
             </div>
         </div>
@@ -114,6 +118,18 @@
                 <h1 class="page-title">@yield('page-title', 'Dashboard')</h1>
             </div>
             <div class="d-flex align-items-center gap-3">
+                <!-- Language Switcher -->
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle no-loading" type="button" data-bs-toggle="dropdown" style="border-radius: 25px; padding: 0.5rem 1rem;">
+                        <i class="fas fa-globe"></i>
+                        <span class="d-none d-md-inline">{{ __('admin.language') }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ route('locale.switch', 'en') }}"><i class="fas fa-flag-usa me-2"></i>English</a></li>
+                        <li><a class="dropdown-item" href="{{ route('locale.switch', 'ar') }}"><i class="fas fa-flag-saudi-arabia me-2"></i>Arabic</a></li>
+                    </ul>
+                </div>
+                
                 <!-- Notifications -->
                 <div class="dropdown">
                     <button class="btn btn-light no-loading" type="button" data-bs-toggle="dropdown" style="border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;">
@@ -121,7 +137,7 @@
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">3</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" style="width: 300px;">
-                        <li class="dropdown-header">Notifications</li>
+                                                 <li class="dropdown-header">{{ __('admin.notifications') }}</li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle text-info me-2"></i>New project created</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-exclamation-triangle text-warning me-2"></i>Task deadline approaching</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-check-circle text-success me-2"></i>Project completed</a></li>

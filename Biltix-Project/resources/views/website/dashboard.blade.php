@@ -39,7 +39,7 @@
                         <a class="navbar-brand" href="#">
                             <img src="{{ asset('assets/images/icons/logo.svg') }}" alt="logo"
                                 class="img-fluid"><span
-                                class="Head_title fw-bold ms-3 fs24 d-none d-lg-inline-block">{{ app()->getLocale() == 'ar' ? __('website.project_dashboard') : 'Project Dashboard' }}</span>
+                                class="Head_title fw-bold ms-3 fs24 d-none d-lg-inline-block">{{ __('website.project_dashboard') }}</span>
                         </a>
                         <div class=" d-flex align-items-center justify-content-end gap-md-4 gap-3 w-100 flex-wrap ">
                             <!-- Language Toggle -->
@@ -49,13 +49,13 @@
                                     <span id="currentLang">{{ app()->getLocale() == 'ar' ? 'العربية' : 'English' }}</span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#" onclick="toggleLanguage('en')">🇺🇸 English</a></li>
-                                    <li><a class="dropdown-item" href="#" onclick="toggleLanguage('ar')">🇸🇦 العربية</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('locale.switch', 'en') }}">🇺🇸 English</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('locale.switch', 'ar') }}">🇸🇦 العربية</a></li>
                                 </ul>
                             </div>
                             
                             <form class="d-none d-md-block serchBar position-relative">
-                                <input class="form-control" type="search" placeholder="{{ app()->getLocale() == 'ar' ? __('website.search_projects') : 'Search projects...' }}" 
+                                <input class="form-control" type="search" placeholder="{{ __('website.search_projects') }}" 
                                     aria-label="Search" data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
                             </form>
                             <div class="position-relative MessageBOx text-center" style="cursor: pointer;"><img

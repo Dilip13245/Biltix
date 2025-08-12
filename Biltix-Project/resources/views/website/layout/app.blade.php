@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 
 <head>
   <meta charset="UTF-8">
@@ -13,7 +13,11 @@
   <link rel="icon" href="{{ asset('assets/images/icons/logo.svg') }}" type="image/x-icon" />
 
   <!-- BOOTSTRAP CSS -->
-  <link rel="stylesheet" href="{{ asset('assets/bootstrap-5.3.1-dist/css/bootstrap.min.css') }}" />
+  @if(app()->getLocale() === 'ar')
+    <link rel="stylesheet" href="{{ asset('assets/bootstrap-5.3.1-dist/css/bootstrap.rtl.min.css') }}" />
+  @else
+    <link rel="stylesheet" href="{{ asset('assets/bootstrap-5.3.1-dist/css/bootstrap.min.css') }}" />
+  @endif
 
   <!-- FONT AWESOME -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
