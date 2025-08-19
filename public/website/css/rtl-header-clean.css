@@ -1,0 +1,53 @@
+/* RTL Header - Exact English Mirror */
+[dir="rtl"] .project-header {
+    text-align: right;
+}
+
+[dir="rtl"] .project-title {
+    text-align: right;
+}
+
+[dir="rtl"] .project-details {
+    text-align: right;
+    justify-content: flex-start;
+}
+
+[dir="rtl"] .detail-item {
+    text-align: right;
+}
+
+[dir="rtl"] .status-badge {
+    text-align: right;
+}
+
+/* Mobile RTL Header */
+@media (max-width: 991px) {
+    [dir="rtl"] .project-header {
+        text-align: right;
+    }
+    
+    [dir="rtl"] .Wsm_100 {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 576px) {
+    [dir="rtl"] .project-header {
+        padding: 0.5rem 1rem;
+        text-align: right;
+    }
+    
+    [dir="rtl"] .project-details {
+        gap: 0.5rem;
+        text-align: right;
+    }
+    
+    [dir="rtl"] .detail-item {
+        font-size: 0.75rem;
+        text-align: right;
+    }
+    
+    [dir="rtl"] .Wsm_100 {
+        justify-content: flex-start;
+    }
+}
