@@ -2,7 +2,7 @@
 <html lang="{{ app()->getLocale() }}" dir="{{ dir_class() }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', __('messages.admin_panel')) - Biltix</title>
     
     <!-- Bootstrap CSS (RTL/LTR) -->
@@ -18,22 +18,11 @@
         :root {
             --sidebar-width: 280px;
             --header-height: 70px;
-            --primary-color: #1976d2;
-            --border-radius: 12px;
-            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-        
-        * {
-            box-sizing: border-box;
         }
         
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
         }
         
         .sidebar {
@@ -45,13 +34,11 @@
             border-inline-end: 1px solid #e9ecef;
             z-index: 1000;
             overflow-y: auto;
-            transition: var(--transition);
         }
         
         .main-content {
             margin-inline-start: var(--sidebar-width);
             min-height: 100vh;
-            transition: var(--transition);
         }
         
         .top-navbar {
@@ -61,7 +48,6 @@
             position: sticky;
             top: 0;
             z-index: 999;
-            padding: 0 1.5rem;
         }
         
         .content-wrapper {
@@ -72,14 +58,13 @@
             color: #6c757d;
             padding: 0.75rem 1.5rem;
             border-radius: 0;
-            transition: var(--transition);
-            text-decoration: none;
+            transition: all 0.2s;
         }
         
         .nav-link:hover,
         .nav-link.active {
             background-color: #e3f2fd;
-            color: var(--primary-color);
+            color: #1976d2;
         }
         
         .nav-link i {
@@ -104,12 +89,12 @@
             padding: 1.5rem;
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: #1976d2;
             text-decoration: none;
         }
         
         .logo:hover {
-            color: var(--primary-color);
+            color: #1976d2;
         }
         
         .sidebar-footer {
@@ -120,30 +105,27 @@
         
         .stat-card {
             background: white;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             padding: 1.5rem;
             border: 1px solid #e9ecef;
-            transition: var(--transition);
-            height: 100%;
+            transition: transform 0.2s;
         }
         
         .stat-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--box-shadow);
         }
         
         .welcome-card {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #42a5f5 100%);
+            background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
             color: white;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             padding: 2rem;
             margin-bottom: 2rem;
         }
         
         .card {
             border: 1px solid #e9ecef;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
+            border-radius: 12px;
         }
         
         .card-header {
@@ -152,62 +134,20 @@
             padding: 1rem 1.5rem;
         }
         
-        .card-body {
-            padding: 1.5rem;
-        }
-        
         .btn {
             border-radius: 8px;
             font-weight: 500;
-            transition: var(--transition);
-        }
-        
-        .btn:hover {
-            transform: translateY(-1px);
         }
         
         .badge {
             font-weight: 500;
-            border-radius: 6px;
-        }
-        
-        .dropdown-menu {
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            box-shadow: var(--box-shadow);
-        }
-        
-        .table {
-            margin-bottom: 0;
-        }
-        
-        .table th {
-            border-top: none;
-            font-weight: 600;
-            color: #495057;
-            font-size: 0.875rem;
-            padding: 1rem 0.75rem;
-        }
-        
-        .table td {
-            padding: 1rem 0.75rem;
-            vertical-align: middle;
         }
         
         /* Mobile Responsive */
-        @media (max-width: 1199.98px) {
-            .content-wrapper {
-                padding: 1.5rem;
-            }
-            
-            .stat-card {
-                padding: 1.25rem;
-            }
-        }
-        
-        @media (max-width: 991.98px) {
+        @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
+                transition: transform 0.3s ease;
             }
             
             [dir="rtl"] .sidebar {
@@ -222,16 +162,6 @@
                 margin-inline-start: 0;
             }
             
-            .content-wrapper {
-                padding: 1.25rem;
-            }
-            
-            .top-navbar .h4 {
-                font-size: 1.25rem;
-            }
-        }
-        
-        @media (max-width: 767.98px) {
             .sidebar-overlay {
                 position: fixed;
                 top: 0;
@@ -249,143 +179,6 @@
             
             .content-wrapper {
                 padding: 1rem;
-            }
-            
-            .welcome-card {
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
-            }
-            
-            .welcome-card .h3 {
-                font-size: 1.5rem;
-            }
-            
-            .stat-card {
-                padding: 1rem;
-                margin-bottom: 1rem;
-            }
-            
-            .stat-card .h2 {
-                font-size: 1.75rem;
-            }
-            
-            .card-header {
-                padding: 1rem;
-            }
-            
-            .card-body {
-                padding: 1rem;
-            }
-            
-            .table-responsive {
-                font-size: 0.875rem;
-            }
-            
-            .btn {
-                font-size: 0.875rem;
-                padding: 0.5rem 1rem;
-            }
-            
-            .top-navbar {
-                padding: 0 1rem;
-            }
-            
-            .top-navbar .gap-3 {
-                gap: 0.75rem !important;
-            }
-            
-            .dropdown-menu {
-                font-size: 0.875rem;
-            }
-        }
-        
-        @media (max-width: 575.98px) {
-            .content-wrapper {
-                padding: 0.75rem;
-            }
-            
-            .welcome-card {
-                padding: 1.25rem;
-                text-align: center;
-            }
-            
-            .welcome-card .h3 {
-                font-size: 1.25rem;
-            }
-            
-            .stat-card {
-                text-align: center;
-            }
-            
-            .stat-card .d-flex {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .stat-card .text-primary,
-            .stat-card .text-success,
-            .stat-card .text-warning,
-            .stat-card .text-info {
-                margin-top: 0.5rem;
-                order: -1;
-            }
-            
-            .table-responsive {
-                font-size: 0.8rem;
-            }
-            
-            .table th,
-            .table td {
-                padding: 0.5rem 0.25rem;
-            }
-            
-            .btn-sm {
-                font-size: 0.75rem;
-                padding: 0.25rem 0.5rem;
-            }
-            
-            .top-navbar .h4 {
-                font-size: 1.1rem;
-            }
-            
-            .sidebar {
-                width: 100%;
-                max-width: 280px;
-            }
-            
-            .nav-link {
-                padding: 0.75rem 1rem;
-            }
-            
-            .menu-title {
-                padding: 0.75rem 1rem 0.25rem;
-            }
-        }
-        
-        @media (max-width: 374.98px) {
-            .content-wrapper {
-                padding: 0.5rem;
-            }
-            
-            .welcome-card {
-                padding: 1rem;
-            }
-            
-            .stat-card {
-                padding: 0.75rem;
-            }
-            
-            .card-header,
-            .card-body {
-                padding: 0.75rem;
-            }
-            
-            .top-navbar {
-                height: 60px;
-            }
-            
-            .top-navbar .h4 {
-                font-size: 1rem;
             }
         }
     </style>
@@ -478,18 +271,18 @@
     <!-- Main Content -->
     <div class="main-content">
         <!-- Top Navbar -->
-        <nav class="top-navbar d-flex align-items-center justify-content-between">
+        <nav class="top-navbar d-flex align-items-center justify-content-between px-4">
             <div class="d-flex align-items-center">
-                <button class="btn btn-light d-lg-none me-3" id="sidebarToggle">
+                <button class="btn btn-light d-md-none me-3" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
                 <h1 class="h4 mb-0">@yield('page-title', __('messages.dashboard'))</h1>
             </div>
             
-            <div class="d-flex align-items-center gap-2 gap-md-3">
+            <div class="d-flex align-items-center gap-3">
                 <!-- Language Switcher -->
                 <div class="dropdown">
-                    <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <i class="fas fa-globe me-2"></i>
                         <span class="d-none d-sm-inline">{{ is_rtl() ? 'العربية' : 'English' }}</span>
                     </button>
@@ -501,11 +294,11 @@
                 
                 <!-- Notifications -->
                 <div class="dropdown">
-                    <button class="btn btn-light btn-sm position-relative" type="button" data-bs-toggle="dropdown">
+                    <button class="btn btn-light position-relative" type="button" data-bs-toggle="dropdown">
                         <i class="fas fa-bell"></i>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end" style="min-width: 280px;">
+                    <ul class="dropdown-menu dropdown-menu-end">
                         <li class="dropdown-header">{{ __('messages.notifications') }}</li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-info-circle me-2"></i>{{ __('messages.new_project_created') }}</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-exclamation-triangle me-2"></i>{{ __('messages.task_deadline_approaching') }}</a></li>
@@ -515,7 +308,7 @@
                 
                 <!-- User Profile -->
                 <div class="dropdown">
-                    <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
                         <i class="fas fa-user-circle me-2"></i>
                         <span class="d-none d-md-inline">{{ session('admin_user.name', 'Admin') }}</span>
                     </button>
@@ -565,14 +358,7 @@
         
         // Handle window resize
         window.addEventListener('resize', function() {
-            if (window.innerWidth > 991) closeSidebar();
-        });
-        
-        // Auto-close sidebar on navigation (mobile)
-        document.addEventListener('click', function(e) {
-            if (e.target.matches('.sidebar a[href]') && window.innerWidth <= 991) {
-                setTimeout(closeSidebar, 100);
-            }
+            if (window.innerWidth > 768) closeSidebar();
         });
     </script>
 </body>
