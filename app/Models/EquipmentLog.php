@@ -5,21 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DailyLog extends Model
+class EquipmentLog extends Model
 {
     use HasFactory;
 
-    protected $table = 'daily_logs';
+    protected $table = 'equipment_logs';
 
     protected $fillable = [
-        'project_id', 'log_date', 'logged_by', 'weather_conditions', 'temperature',
-        'work_performed', 'issues_encountered', 'notes', 'images', 'is_active', 'is_deleted'
+        'daily_log_id', 'equipment_id', 'equipment_type', 'operator_name',
+        'status', 'hours_used', 'location', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
-        'log_date' => 'date',
-        'temperature' => 'decimal:1',
-        'images' => 'array',
+        'hours_used' => 'decimal:2',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];

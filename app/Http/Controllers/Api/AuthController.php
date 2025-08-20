@@ -2,160 +2,427 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\EncryptDecrypt;
+use App\Helpers\FileHelper;
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\UserDevice;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
+    public function signup(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|unique:users,email',
+                'phone' => 'required|unique:users,phone',
+                'name' => 'required|string|max:255',
+                'password' => 'required|min:6',
+                'role' => 'required|in:contractor,consultant,site_engineer,project_manager,stakeholder',
+                'company_name' => 'required|string|max:255',
+                'designation' => 'nullable|string|max:255',
+                'employee_count' => 'nullable|integer',
+                'device_type' => 'required|in:A,I',
+            ], [
+                'email.required' => trans('api.auth.email_required'),
+                'email.email' => trans('api.auth.email_invalid'),
+                'email.unique' => trans('api.auth.email_unique'),
+                'phone.required' => trans('api.auth.phone_number_required'),
+                'phone.unique' => trans('api.auth.phone_number_unique'),
+                'name.required' => trans('api.auth.name_required'),
+                'password.required' => trans('api.auth.password_required'),
+                'password.min' => trans('api.auth.password_min'),
+                'role.required' => trans('api.auth.role_required'),
+                'company_name.required' => trans('api.auth.company_name_required'),
+                'device_type.required' => trans('api.auth.device_type_required'),
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $userDetails = new User();
+            $userDetails->email = $request->email;
+            $userDetails->phone = $request->phone;
+            $userDetails->name = $request->name;
+            $userDetails->password = Hash::make($request->password);
+            $userDetails->role = $request->role;
+            $userDetails->company_name = $request->company_name;
+            $userDetails->designation = $request->designation ?? '';
+            $userDetails->employee_count = $request->employee_count ?? null;
+            $userDetails->member_number = $request->member_number ?? null;
+            $userDetails->member_name = $request->member_name ?? null;
+            $userDetails->is_active = true;
+
+            if ($userDetails->save()) {
+                $accessToken = Str::random(64);
+                $deviceData = [
+                    'user_id' => $userDetails->id,
+                    'token' => $accessToken,
+                    'device_type' => $request->device_type,
+                    'ip_address' => $request->ip_address ?? "",
+                    'uuid' => $request->uuid ?? "",
+                    'os_version' => $request->os_version ?? "",
+                    'device_model' => $request->device_model ?? "",
+                    'app_version' => $request->app_version ?? 'v1',
+                    'device_token' => $request->device_token ?? "",
+                ];
+
+                UserDevice::updateOrCreate(
+                    ['user_id' => $userDetails->id],
+                    $deviceData
+                );
+
+                $userDetails->token = $accessToken;
+                $userDetails->device_type = $request->device_type;
+
+                return $this->toJsonEnc($userDetails, trans('api.auth.signup_success'), Config::get('constant.SUCCESS'));
+            } else {
+                return $this->toJsonEnc([], trans('api.auth.signup_error'), Config::get('constant.ERROR'));
+            }
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required|string|min:6',
+                'device_type' => 'required|in:A,I',
+            ]);
 
-        if ($validator->fails()) {
-            return $this->validateResponse($validator->errors());
+            $validator->setCustomMessages([
+                'email.required' => trans('api.auth.email_required'),
+                'password.required' => trans('api.auth.password_required'),
+                'device_type.required' => trans('api.auth.device_type_required'),
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $user = User::where('email', $request->email)
+                ->where('is_active', 1)
+                ->first();
+
+            if (!$user) {
+                return $this->toJsonEnc([], trans('api.auth.user_not_available'), Config::get('constant.NOT_FOUND'));
+            }
+
+            if (!Hash::check($request->password, $user->password)) {
+                return $this->toJsonEnc([], trans('api.auth.invalid_password'), Config::get('constant.ERROR'));
+            }
+
+            $accessToken = Str::random(64);
+
+            $deviceData = [
+                'user_id' => $user->id,
+                'token' => $accessToken,
+                'device_type' => $request->device_type,
+                'ip_address' => $request->ip_address ?? "",
+                'uuid' => $request->uuid ?? "",
+                'os_version' => $request->os_version ?? "",
+                'device_model' => $request->device_model ?? "",
+                'app_version' => $request->app_version ?? 'v1',
+                'device_token' => $request->device_token ?? "",
+            ];
+
+            UserDevice::updateOrCreate(
+                ['user_id' => $user->id],
+                $deviceData
+            );
+
+            $user->token = $accessToken;
+            $user->device_type = $request->device_type;
+            $user->profile_image = $user->profile_image
+                ? asset('storage/uploads/profile/' . $user->profile_image)
+                : null;
+
+            return $this->toJsonEnc($user, trans('api.auth.login_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->toJson([], 'Invalid credentials', 401);
-        }
-
-        if (!$user->is_active) {
-            return $this->toJson([], 'Account is deactivated', 403);
-        }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        $userData = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'role' => $user->role,
-            'designation' => $user->designation,
-            'profile_image' => $user->profile_image ? asset('storage/users/' . $user->profile_image) : null,
-            'token' => $token,
-        ];
-
-        return $this->toJson($userData, 'Login successful', 200);
     }
 
-    public function register(Request $request)
+    public function sendOtp(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-            'phone' => 'required|string|max:20',
-            'role' => 'required|string|in:manager,engineer,worker,inspector',
-            'designation' => 'required|string|max:255',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'type' => 'required|in:forgot,signup',
+                'email' => 'required|email',
+            ], [
+                'type.required' => trans('api.auth.type_required'),
+                'type.in' => trans('api.auth.type_invalid'),
+                'email.required' => trans('api.auth.email_required'),
+                'email.email' => trans('api.auth.email_invalid'),
+            ]);
 
-        if ($validator->fails()) {
-            return $this->validateResponse($validator->errors());
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $email = $request->input('email');
+            $type = $request->input('type');
+            $otp = rand(1000, 9999);
+
+            $user = User::where('email', $email)->first();
+
+            // Type: forgot → user must exist and be active
+            if ($type === 'forgot') {
+                if (!$user || $user->is_active != 1) {
+                    return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
+                }
+            }
+
+            // Type: signup → user must NOT exist
+            if ($type === 'signup') {
+                if ($user) {
+                    if ($user->is_active == 1) {
+                        return $this->toJsonEnc([], trans('api.auth.user_already_exists'), Config::get('constant.ERROR'));
+                    }
+                    return $this->toJsonEnc([], trans('api.auth.user_inactive_contact_admin'), Config::get('constant.ERROR'));
+                }
+            }
+
+            try {
+                $data = ['otp' => $otp];
+
+                Mail::send('emails.otp', $data, function ($message) use ($email) {
+                    $message->to($email)
+                        ->subject('Your OTP Code - Biltix');
+                });
+
+                if ($user) {
+                    $user->otp = $otp;
+                    $user->save();
+                }
+            } catch (\Exception $e) {
+                Log::error('OTP email failed: ' . $e->getMessage());
+                return $this->toJsonEnc([], trans('api.auth.otp_email_failed'), Config::get('constant.ERROR'));
+            }
+
+            return $this->toJsonEnc(['otp' => $otp], trans('api.auth.otp_sent'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            Log::error('sendOtp exception: ' . $e->getMessage());
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'role' => $request->role,
-            'designation' => $request->designation,
-            'is_active' => true,
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        $userData = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'role' => $user->role,
-            'designation' => $user->designation,
-            'profile_image' => null,
-            'token' => $token,
-        ];
-
-        return $this->toJson($userData, 'Registration successful', 201);
     }
 
-    public function profile(Request $request)
+    public function verifyOtp(Request $request)
     {
-        $user = $request->user();
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'otp' => 'required|string',
+            ], [
+                'email.required' => trans('api.auth.email_required'),
+                'email.email' => trans('api.auth.email_invalid'),
+                'otp.required' => trans('api.auth.otp_required'),
+            ]);
 
-        $userData = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'role' => $user->role,
-            'designation' => $user->designation,
-            'profile_image' => $user->profile_image ? asset('storage/users/' . $user->profile_image) : null,
-        ];
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
 
-        return $this->toJson($userData, 'Profile retrieved successfully', 200);
+            $email = $request->input('email');
+            $otp = $request->input('otp');
+
+            $user = User::where('email', $email)->first();
+
+            if (!$user) {
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
+            }
+
+            if ($user->otp != $otp) {
+                return $this->toJsonEnc([], trans('api.auth.invalid_otp'), Config::get('constant.ERROR'));
+            }
+
+            $user->otp = null;
+            $user->save();
+
+            return $this->toJsonEnc([], trans('api.auth.otp_verified_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            Log::error('verifyOtp error: ' . $e->getMessage());
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'new_password' => 'required|min:6',
+                'confirm_password' => 'required|same:new_password',
+            ], [
+                'email.required' => trans('api.auth.email_required'),
+                'new_password.required' => trans('api.auth.new_password_required'),
+                'new_password.min' => trans('api.auth.new_password_min'),
+                'confirm_password.required' => trans('api.auth.confirm_password_required'),
+                'confirm_password.same' => trans('api.auth.confirm_password_mismatch'),
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $user = User::where('email', $request->email)
+                ->where('is_active', 1)
+                ->first();
+
+            if (!$user) {
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
+            }
+
+            if (Hash::check($request->new_password, $user->password)) {
+                return $this->toJsonEnc([], trans('api.auth.password_same_as_old'), Config::get('constant.ERROR'));
+            }
+
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return $this->toJsonEnc([], trans('api.auth.password_reset_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function getUserProfile(Request $request)
+    {
+        try {
+            $user_id = $request->input('user_id');
+            $user = User::where('id', $user_id)
+                ->where('is_active', 1)
+                ->first();
+
+            if (!$user) {
+                return $this->toJsonEnc([], trans('api.auth.user_not_found'), Config::get('constant.ERROR'));
+            }
+
+            $user->profile_image = $user->profile_image
+                ? asset('storage/uploads/profile/' . $user->profile_image)
+                : null;
+
+            return $this->toJsonEnc($user, trans('api.auth.user_profile_retrieved'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
     }
 
     public function updateProfile(Request $request)
     {
-        $user = $request->user();
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:users,id',
+                'name' => 'nullable|string|max:255',
+                'email' => [
+                    'nullable',
+                    'email',
+                    Rule::unique('users')->ignore($request->user_id),
+                ],
+                'phone' => [
+                    'nullable',
+                    Rule::unique('users', 'phone')->ignore($request->user_id),
+                ],
+                'company_name' => 'nullable|string|max:255',
+                'designation' => 'nullable|string|max:255',
+                'password' => 'nullable|min:6',
+                'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
-            'designation' => 'required|string|max:255',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->validateResponse($validator->errors());
-        }
-
-        $data = $request->only(['name', 'phone', 'designation']);
-
-        if ($request->hasFile('profile_image')) {
-            // Delete old image if exists
-            if ($user->profile_image) {
-                \App\Helpers\ImageHelper::delete('users', $user->profile_image);
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
             }
 
-            $imageName = \App\Helpers\ImageHelper::upload(
-                $request->file('profile_image'),
-                'users',
-                $request->name
-            );
-            $data['profile_image'] = $imageName;
+            $user = User::find($request->user_id);
+
+            if (!$user || !$user->is_active) {
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
+            }
+
+            // Update user details
+            if ($request->filled('name')) $user->name = $request->name;
+            if ($request->filled('email')) $user->email = $request->email;
+            if ($request->filled('phone')) $user->phone = $request->phone;
+            if ($request->filled('company_name')) $user->company_name = $request->company_name;
+            if ($request->filled('designation')) $user->designation = $request->designation;
+
+            if ($request->hasFile('profile_image')) {
+                $filename = FileHelper::uploadImage($request->file('profile_image'), 'uploads/profile');
+                $user->profile_image = $filename;
+            }
+
+            if (!empty($request->password)) {
+                $user->password = Hash::make($request->password);
+            }
+
+            $user->save();
+
+            // Prepare response data
+            $responseData = $user->toArray();
+            $responseData['profile_image'] = $user->profile_image
+                ? asset('storage/uploads/profile/' . $user->profile_image)
+                : null;
+
+            return $this->toJsonEnc($responseData, trans('api.auth.profile_updated_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
-
-        $user->update($data);
-
-        $userData = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'role' => $user->role,
-            'designation' => $user->designation,
-            'profile_image' => $user->profile_image ? asset('storage/users/' . $user->profile_image) : null,
-        ];
-
-        return $this->toJson($userData, 'Profile updated successfully', 200);
     }
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        try {
+            $user_id = $request->input('user_id');
+            $user = User::where('id', $user_id)->first();
 
-        return $this->toJson([], 'Logged out successfully', 200);
+            if (!$user) {
+                return $this->toJsonEnc([], trans('api.auth.invalid_user'), Config::get('constant.ERROR'));
+            }
+
+            UserDevice::where('user_id', $user->id)->update([
+                'device_token' => "",
+                'token' => "",
+            ]);
+
+            return $this->toJsonEnc([], trans('api.auth.logout_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        try {
+            $user_id = $request->input('user_id');
+            $user = User::where('id', $user_id)->first();
+
+            if (!$user) {
+                return $this->toJsonEnc([], trans('api.auth.invalid_user'), Config::get('constant.ERROR'));
+            }
+
+            $user->is_active = false;
+            $user->save();
+
+            UserDevice::where('user_id', $user->id)->update([
+                'device_token' => '',
+                'token' => '',
+            ]);
+
+            return $this->toJsonEnc([], trans('api.auth.account_deleted'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
     }
 }

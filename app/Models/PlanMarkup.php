@@ -5,21 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DailyLog extends Model
+class PlanMarkup extends Model
 {
     use HasFactory;
 
-    protected $table = 'daily_logs';
+    protected $table = 'plan_markups';
 
     protected $fillable = [
-        'project_id', 'log_date', 'logged_by', 'weather_conditions', 'temperature',
-        'work_performed', 'issues_encountered', 'notes', 'images', 'is_active', 'is_deleted'
+        'plan_id', 'user_id', 'markup_type', 'markup_data', 'title',
+        'description', 'status', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
-        'log_date' => 'date',
-        'temperature' => 'decimal:1',
-        'images' => 'array',
+        'markup_data' => 'array',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];

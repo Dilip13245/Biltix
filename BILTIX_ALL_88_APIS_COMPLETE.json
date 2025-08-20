@@ -1,0 +1,178 @@
+{
+	"info": {
+		"name": "🏗️ Biltix - All 88 APIs Complete Collection",
+		"description": "Single collection with all 88 Biltix APIs ready for React Native",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{"key": "base_url", "value": "http://localhost:8000/api/v1", "type": "string"},
+		{"key": "api_key", "value": "biltix_api_key_2024", "type": "string"},
+		{"key": "token", "value": "", "type": "string"}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"exec": [
+					"pm.request.headers.add({key: 'Content-Type', value: 'application/json'});",
+					"pm.request.headers.add({key: 'Accept', value: 'application/json'});",
+					"pm.request.headers.add({key: 'language', value: 'en'});"
+				]
+			}
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Authentication (8 APIs)",
+			"item": [
+				{"name": "1. Signup", "event": [{"listen": "test", "script": {"exec": ["if (pm.response.code === 200) { var jsonData = pm.response.json(); if (jsonData.data && jsonData.data.token) { pm.collectionVariables.set('token', jsonData.data.token); }}"]}}], "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"contractor@biltix.com\",\n    \"phone\": \"+1234567890\",\n    \"name\": \"John Smith\",\n    \"password\": \"password123\",\n    \"role\": \"contractor\",\n    \"company_name\": \"BuildCorp Construction\",\n    \"device_type\": \"A\"\n}"}, "url": "{{base_url}}/auth/signup"}},
+				{"name": "2. Login", "event": [{"listen": "test", "script": {"exec": ["if (pm.response.code === 200) { var jsonData = pm.response.json(); if (jsonData.data && jsonData.data.token) { pm.collectionVariables.set('token', jsonData.data.token); }}"]}}], "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"contractor@biltix.com\",\n    \"password\": \"password123\",\n    \"device_type\": \"A\"\n}"}, "url": "{{base_url}}/auth/login"}},
+				{"name": "3. Send OTP", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"type\": \"forgot\",\n    \"email\": \"contractor@biltix.com\"\n}"}, "url": "{{base_url}}/auth/send_otp"}},
+				{"name": "4. Verify OTP", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"contractor@biltix.com\",\n    \"otp\": \"1234\"\n}"}, "url": "{{base_url}}/auth/verify_otp"}},
+				{"name": "5. Reset Password", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"contractor@biltix.com\",\n    \"new_password\": \"newpassword123\",\n    \"confirm_password\": \"newpassword123\"\n}"}, "url": "{{base_url}}/auth/reset_password"}},
+				{"name": "6. Get User Profile", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/auth/get_user_profile"}},
+				{"name": "7. Update Profile", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"name\": \"John Smith Updated\",\n    \"company_name\": \"BuildCorp Construction Ltd\"\n}"}, "url": "{{base_url}}/auth/update_profile"}},
+				{"name": "8. Logout", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/auth/logout"}}
+			]
+		},
+		{
+			"name": "🏗️ Project Management (12 APIs)",
+			"item": [
+				{"name": "1. Create Project", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"name\": \"Downtown Office Complex\",\n    \"description\": \"Modern office building\",\n    \"type\": \"commercial\",\n    \"location\": \"Downtown\",\n    \"start_date\": \"2024-03-01\",\n    \"end_date\": \"2025-12-31\",\n    \"budget\": 15000000,\n    \"client_name\": \"ABC Corporation\"\n}"}, "url": "{{base_url}}/projects/create"}},
+				{"name": "2. List Projects", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"status\": \"active\",\n    \"limit\": 10\n}"}, "url": "{{base_url}}/projects/list"}},
+				{"name": "3. Project Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/projects/details"}},
+				{"name": "4. Update Project", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"name\": \"Updated Project Name\",\n    \"status\": \"active\"\n}"}, "url": "{{base_url}}/projects/update"}},
+				{"name": "5. Delete Project", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/projects/delete"}},
+				{"name": "6. Dashboard Stats", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/projects/dashboard_stats"}},
+				{"name": "7. Progress Report", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/projects/progress_report"}},
+				{"name": "8. Create Phase", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"name\": \"Foundation\",\n    \"start_date\": \"2024-03-01\",\n    \"end_date\": \"2024-05-31\"\n}"}, "url": "{{base_url}}/projects/create_phase"}},
+				{"name": "9. List Phases", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/projects/list_phases"}},
+				{"name": "10. Update Phase", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"phase_id\": 1,\n    \"status\": \"active\"\n}"}, "url": "{{base_url}}/projects/update_phase"}},
+				{"name": "11. Delete Phase", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"phase_id\": 1\n}"}, "url": "{{base_url}}/projects/delete_phase"}},
+				{"name": "12. Project Timeline", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/projects/timeline"}}
+			]
+		},
+		{
+			"name": "📋 Task Management (11 APIs)",
+			"item": [
+				{"name": "1. Create Task", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"title\": \"Install Foundation Rebar\",\n    \"priority\": \"high\",\n    \"assigned_to\": 2,\n    \"due_date\": \"2024-04-15\"\n}"}, "url": "{{base_url}}/tasks/create"}},
+				{"name": "2. List Tasks", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"status\": \"pending\"\n}"}, "url": "{{base_url}}/tasks/list"}},
+				{"name": "3. Task Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1\n}"}, "url": "{{base_url}}/tasks/details"}},
+				{"name": "4. Update Task", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1,\n    \"status\": \"in_progress\"\n}"}, "url": "{{base_url}}/tasks/update"}},
+				{"name": "5. Delete Task", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1\n}"}, "url": "{{base_url}}/tasks/delete"}},
+				{"name": "6. Change Status", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1,\n    \"status\": \"completed\"\n}"}, "url": "{{base_url}}/tasks/change_status"}},
+				{"name": "7. Add Comment", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1,\n    \"comment\": \"Task completed successfully\"\n}"}, "url": "{{base_url}}/tasks/add_comment"}},
+				{"name": "8. Get Comments", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1\n}"}, "url": "{{base_url}}/tasks/get_comments"}},
+				{"name": "9. Update Progress", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1,\n    \"progress_percentage\": 75\n}"}, "url": "{{base_url}}/tasks/update_progress"}},
+				{"name": "10. Bulk Assignment", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_ids\": [1, 2, 3],\n    \"assigned_to\": 5\n}"}, "url": "{{base_url}}/tasks/assign_bulk"}},
+				{"name": "11. Upload Attachment", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "formdata", "formdata": [{"key": "task_id", "value": "1", "type": "text"}, {"key": "attachment", "type": "file", "src": ""}]}, "url": "{{base_url}}/tasks/upload_attachment"}}
+			]
+		},
+		{
+			"name": "🔍 Inspection System (10 APIs)",
+			"item": [
+				{"name": "1. Create Inspection", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"template_id\": 1,\n    \"title\": \"Foundation Quality Inspection\",\n    \"scheduled_date\": \"2024-04-20\"\n}"}, "url": "{{base_url}}/inspections/create"}},
+				{"name": "2. List Inspections", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"status\": \"scheduled\"\n}"}, "url": "{{base_url}}/inspections/list"}},
+				{"name": "3. Inspection Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"inspection_id\": 1\n}"}, "url": "{{base_url}}/inspections/details"}},
+				{"name": "4. Get Templates", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"category\": \"quality\"\n}"}, "url": "{{base_url}}/inspections/templates"}},
+				{"name": "5. Start Inspection", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"inspection_id\": 1\n}"}, "url": "{{base_url}}/inspections/start_inspection"}},
+				{"name": "6. Save Checklist Item", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"inspection_id\": 1,\n    \"item_name\": \"Concrete Strength\",\n    \"result\": \"pass\"\n}"}, "url": "{{base_url}}/inspections/save_checklist_item"}},
+				{"name": "7. Complete Inspection", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"inspection_id\": 1,\n    \"overall_result\": \"pass\"\n}"}, "url": "{{base_url}}/inspections/complete"}},
+				{"name": "8. Approve Inspection", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"inspection_id\": 1\n}"}, "url": "{{base_url}}/inspections/approve"}},
+				{"name": "9. Get Results", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"inspection_id\": 1\n}"}, "url": "{{base_url}}/inspections/results"}},
+				{"name": "10. Generate Report", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"inspection_id\": 1\n}"}, "url": "{{base_url}}/inspections/generate_report"}}
+			]
+		},
+		{
+			"name": "🚨 Snag Management (8 APIs)",
+			"item": [
+				{"name": "1. Create Snag", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"category_id\": 1,\n    \"title\": \"Concrete Surface Crack\",\n    \"priority\": \"medium\"\n}"}, "url": "{{base_url}}/snags/create"}},
+				{"name": "2. List Snags", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"status\": \"open\"\n}"}, "url": "{{base_url}}/snags/list"}},
+				{"name": "3. Snag Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"snag_id\": 1\n}"}, "url": "{{base_url}}/snags/details"}},
+				{"name": "4. Update Snag", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"snag_id\": 1,\n    \"status\": \"assigned\"\n}"}, "url": "{{base_url}}/snags/update"}},
+				{"name": "5. Resolve Snag", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"snag_id\": 1,\n    \"resolution_notes\": \"Crack repaired\"\n}"}, "url": "{{base_url}}/snags/resolve"}},
+				{"name": "6. Assign Snag", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"snag_id\": 1,\n    \"assigned_to\": 4\n}"}, "url": "{{base_url}}/snags/assign"}},
+				{"name": "7. Add Comment", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"snag_id\": 1,\n    \"comment\": \"Started repair work\"\n}"}, "url": "{{base_url}}/snags/add_comment"}},
+				{"name": "8. Get Categories", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/snags/categories"}}
+			]
+		},
+		{
+			"name": "📏 Plans & Drawings (7 APIs)",
+			"item": [
+				{"name": "1. Upload Plan", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "formdata", "formdata": [{"key": "project_id", "value": "1", "type": "text"}, {"key": "title", "value": "Foundation Plan", "type": "text"}, {"key": "plan_type", "value": "structural", "type": "text"}, {"key": "file", "type": "file", "src": ""}]}, "url": "{{base_url}}/plans/upload"}},
+				{"name": "2. List Plans", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/plans/list"}},
+				{"name": "3. Plan Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"plan_id\": 1\n}"}, "url": "{{base_url}}/plans/details"}},
+				{"name": "4. Delete Plan", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"plan_id\": 1\n}"}, "url": "{{base_url}}/plans/delete"}},
+				{"name": "5. Add Markup", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"plan_id\": 1,\n    \"markup_type\": \"snag\",\n    \"title\": \"Foundation Issue\"\n}"}, "url": "{{base_url}}/plans/add_markup"}},
+				{"name": "6. Get Markups", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"plan_id\": 1\n}"}, "url": "{{base_url}}/plans/get_markups"}},
+				{"name": "7. Approve Plan", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"plan_id\": 1\n}"}, "url": "{{base_url}}/plans/approve"}}
+			]
+		},
+		{
+			"name": "📊 Daily Operations (7 APIs)",
+			"item": [
+				{"name": "1. Create Daily Log", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"log_date\": \"2024-04-15\",\n    \"weather_conditions\": \"Sunny\",\n    \"work_performed\": \"Foundation work completed\"\n}"}, "url": "{{base_url}}/daily_logs/create"}},
+				{"name": "2. List Daily Logs", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/daily_logs/list"}},
+				{"name": "3. Daily Log Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"daily_log_id\": 1\n}"}, "url": "{{base_url}}/daily_logs/details"}},
+				{"name": "4. Update Daily Log", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"daily_log_id\": 1,\n    \"work_performed\": \"Updated work description\"\n}"}, "url": "{{base_url}}/daily_logs/update"}},
+				{"name": "5. Daily Stats", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/daily_logs/stats"}},
+				{"name": "6. Equipment Logs", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"daily_log_id\": 1,\n    \"equipment_data\": [{\"equipment_id\": \"EXC001\", \"equipment_type\": \"Excavator\", \"hours_used\": 8.5}]\n}"}, "url": "{{base_url}}/daily_logs/equipment_logs"}},
+				{"name": "7. Staff Logs", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"daily_log_id\": 1,\n    \"staff_data\": [{\"staff_type\": \"Engineers\", \"count\": 3, \"hours_worked\": 8.0}]\n}"}, "url": "{{base_url}}/daily_logs/staff_logs"}}
+			]
+		},
+		{
+			"name": "👥 Team Management (6 APIs)",
+			"item": [
+				{"name": "1. List Members", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/team/list_members"}},
+				{"name": "2. Add Member", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"member_user_id\": 5,\n    \"role_in_project\": \"Site Engineer\"\n}"}, "url": "{{base_url}}/team/add_member"}},
+				{"name": "3. Remove Member", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"team_member_id\": 1\n}"}, "url": "{{base_url}}/team/remove_member"}},
+				{"name": "4. Assign Project", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"member_user_id\": 6,\n    \"role_in_project\": \"Quality Inspector\"\n}"}, "url": "{{base_url}}/team/assign_project"}},
+				{"name": "5. Member Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"member_user_id\": 5\n}"}, "url": "{{base_url}}/team/member_details"}},
+				{"name": "6. Update Role", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"team_member_id\": 1,\n    \"role_in_project\": \"Senior Site Engineer\"\n}"}, "url": "{{base_url}}/team/update_role"}}
+			]
+		},
+		{
+			"name": "📁 File Management (7 APIs)",
+			"item": [
+				{"name": "1. Upload Files", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "formdata", "formdata": [{"key": "project_id", "value": "1", "type": "text"}, {"key": "category_id", "value": "1", "type": "text"}, {"key": "name", "value": "Project Specifications", "type": "text"}, {"key": "file", "type": "file", "src": ""}]}, "url": "{{base_url}}/files/upload"}},
+				{"name": "2. List Files", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/files/list"}},
+				{"name": "3. Delete File", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"file_id\": 1\n}"}, "url": "{{base_url}}/files/delete"}},
+				{"name": "4. Download File", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"file_id\": 1\n}"}, "url": "{{base_url}}/files/download"}},
+				{"name": "5. Share File", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"file_id\": 1,\n    \"share_with\": [2, 3, 4]\n}"}, "url": "{{base_url}}/files/share"}},
+				{"name": "6. Search Files", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"search_term\": \"specification\"\n}"}, "url": "{{base_url}}/files/search"}},
+				{"name": "7. Get Categories", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/files/categories"}}
+			]
+		},
+		{
+			"name": "📸 Photo Gallery (5 APIs)",
+			"item": [
+				{"name": "1. Upload Photos", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "formdata", "formdata": [{"key": "project_id", "value": "1", "type": "text"}, {"key": "title", "value": "Foundation Progress", "type": "text"}, {"key": "photos", "type": "file", "src": ""}]}, "url": "{{base_url}}/photos/upload"}},
+				{"name": "2. List Photos", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/photos/list"}},
+				{"name": "3. Photo Gallery", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/photos/gallery"}},
+				{"name": "4. Add Tags", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"photo_id\": 1,\n    \"tags\": [\"foundation\", \"progress\"]\n}"}, "url": "{{base_url}}/photos/add_tags"}},
+				{"name": "5. Delete Photo", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"photo_id\": 1\n}"}, "url": "{{base_url}}/photos/delete"}}
+			]
+		},
+		{
+			"name": "🔔 Notifications (6 APIs)",
+			"item": [
+				{"name": "1. List Notifications", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"type\": \"task_assigned\"\n}"}, "url": "{{base_url}}/notifications/list"}},
+				{"name": "2. Mark Read", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"notification_id\": 1\n}"}, "url": "{{base_url}}/notifications/mark_read"}},
+				{"name": "3. Mark All Read", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/notifications/mark_all_read"}},
+				{"name": "4. Delete Notification", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"notification_id\": 1\n}"}, "url": "{{base_url}}/notifications/delete"}},
+				{"name": "5. Notification Settings", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/notifications/settings"}},
+				{"name": "6. Update Settings", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_assigned\": true,\n    \"inspection_due\": true\n}"}, "url": "{{base_url}}/notifications/update_settings"}}
+			]
+		},
+		{
+			"name": "🔧 General & Support (5 APIs)",
+			"item": [
+				{"name": "1. Project Types", "request": {"method": "GET", "header": [{"key": "api-key", "value": "{{api_key}}"}], "url": "{{base_url}}/general/project_types"}},
+				{"name": "2. User Roles", "request": {"method": "GET", "header": [{"key": "api-key", "value": "{{api_key}}"}], "url": "{{base_url}}/general/user_roles"}},
+				{"name": "3. Static Content", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"type\": \"terms\"\n}"}, "url": "{{base_url}}/general/static_content"}},
+				{"name": "4. Help Support", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"subject\": \"App Issue\",\n    \"message\": \"Having trouble with photo upload\"\n}"}, "url": "{{base_url}}/general/help_support"}},
+				{"name": "5. Change Language", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"language\": \"ar\"\n}"}, "url": "{{base_url}}/general/change_language"}}
+			]
+		}
+	]
+}

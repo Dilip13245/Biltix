@@ -5,21 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DailyLog extends Model
+class File extends Model
 {
     use HasFactory;
 
-    protected $table = 'daily_logs';
+    protected $table = 'files';
 
     protected $fillable = [
-        'project_id', 'log_date', 'logged_by', 'weather_conditions', 'temperature',
-        'work_performed', 'issues_encountered', 'notes', 'images', 'is_active', 'is_deleted'
+        'project_id', 'category_id', 'name', 'original_name', 'file_path',
+        'file_size', 'file_type', 'uploaded_by', 'is_public', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
-        'log_date' => 'date',
-        'temperature' => 'decimal:1',
-        'images' => 'array',
+        'is_public' => 'boolean',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];

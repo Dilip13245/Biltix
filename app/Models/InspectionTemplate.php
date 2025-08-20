@@ -5,21 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DailyLog extends Model
+class InspectionTemplate extends Model
 {
     use HasFactory;
 
-    protected $table = 'daily_logs';
+    protected $table = 'inspection_templates';
 
     protected $fillable = [
-        'project_id', 'log_date', 'logged_by', 'weather_conditions', 'temperature',
-        'work_performed', 'issues_encountered', 'notes', 'images', 'is_active', 'is_deleted'
+        'name', 'category', 'checklist_items', 'created_by', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
-        'log_date' => 'date',
-        'temperature' => 'decimal:1',
-        'images' => 'array',
+        'checklist_items' => 'array',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];

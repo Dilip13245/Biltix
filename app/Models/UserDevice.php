@@ -5,21 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DailyLog extends Model
+class UserDevice extends Model
 {
     use HasFactory;
 
-    protected $table = 'daily_logs';
+    protected $table = 'user_devices';
 
     protected $fillable = [
-        'project_id', 'log_date', 'logged_by', 'weather_conditions', 'temperature',
-        'work_performed', 'issues_encountered', 'notes', 'images', 'is_active', 'is_deleted'
+        'user_id', 'token', 'device_type', 'ip_address', 'uuid',
+        'os_version', 'device_model', 'app_version', 'device_token',
+        'is_active', 'is_deleted'
     ];
 
     protected $casts = [
-        'log_date' => 'date',
-        'temperature' => 'decimal:1',
-        'images' => 'array',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];
@@ -27,5 +25,10 @@ class DailyLog extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true)->where('is_deleted', false);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

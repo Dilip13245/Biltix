@@ -5,21 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DailyLog extends Model
+class Notification extends Model
 {
     use HasFactory;
 
-    protected $table = 'daily_logs';
+    protected $table = 'notifications';
 
     protected $fillable = [
-        'project_id', 'log_date', 'logged_by', 'weather_conditions', 'temperature',
-        'work_performed', 'issues_encountered', 'notes', 'images', 'is_active', 'is_deleted'
+        'user_id', 'type', 'title', 'message', 'data', 'is_read',
+        'read_at', 'priority', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
-        'log_date' => 'date',
-        'temperature' => 'decimal:1',
-        'images' => 'array',
+        'data' => 'array',
+        'is_read' => 'boolean',
+        'read_at' => 'datetime',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];
@@ -27,5 +27,10 @@ class DailyLog extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true)->where('is_deleted', false);
+    }
+
+    public function scopeUnread($query)
+    {
+        return $query->where('is_read', false);
     }
 }

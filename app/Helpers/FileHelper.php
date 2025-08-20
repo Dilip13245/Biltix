@@ -2,56 +2,72 @@
 
 namespace App\Helpers;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Http;
 
 class FileHelper
 {
     /**
-     * Upload an image and return its path or full URL.
-     *
-     * @param \Illuminate\Http\UploadedFile $file
-     * @param string $folder
-     * @param bool $withFullUrl
-     * @return string|null
+     * Upload image file
      */
-   public static function uploadImage($file, $folder = 'uploads')
+    public static function uploadImage(UploadedFile $file, string $directory = 'uploads'): string
     {
-        if (!$file || !$file->isValid()) {
-            return null;
-        }
-
-        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $originalName);
-
-        $timestamp = now()->format('Ymd_His');
-        $extension = $file->getClientOriginalExtension();
-        $filename = $safeName . '_' . $timestamp . '.' . $extension;
-
-        $file->storeAs($folder, $filename, 'public');
-
+        $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+        
+        // Store in storage/app/public/{directory}
+        $file->storeAs('public/' . $directory, $filename);
+        
         return $filename;
     }
-}
 
-// FCM notification helper (global function, not inside class)
-if (!function_exists('sendFcmNotification')) {
-    function sendFcmNotification($fcmToken, $title, $body, $data = [])
+    /**
+     * Upload any file
+     */
+    public static function uploadFile(UploadedFile $file, string $directory = 'uploads'): array
     {
-        $serverKey = config('services.fcm.server_key');
-        if (!$serverKey || !$fcmToken) return false;
-        $response = \Illuminate\Support\Facades\Http::withHeaders([
-            'Authorization' => 'key=' . $serverKey,
-            'Content-Type' => 'application/json',
-        ])->post('https://fcm.googleapis.com/fcm/send', [
-            'to' => $fcmToken,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-            ],
-            'data' => $data,
-        ]);
-        return $response->json();
+        $originalName = $file->getClientOriginalName();
+        $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+        $size = $file->getSize();
+        $mimeType = $file->getMimeType();
+        
+        // Store in storage/app/public/{directory}
+        $file->storeAs('public/' . $directory, $filename);
+        
+        return [
+            'filename' => $filename,
+            'original_name' => $originalName,
+            'size' => $size,
+            'mime_type' => $mimeType,
+            'path' => $directory . '/' . $filename
+        ];
+    }
+
+    /**
+     * Delete file
+     */
+    public static function deleteFile(string $filePath): bool
+    {
+        if (Storage::exists('public/' . $filePath)) {
+            return Storage::delete('public/' . $filePath);
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get file URL
+     */
+    public static function getFileUrl(string $filePath): string
+    {
+        return asset('storage/' . $filePath);
+    }
+
+    /**
+     * Check if file exists
+     */
+    public static function fileExists(string $filePath): bool
+    {
+        return Storage::exists('public/' . $filePath);
     }
 }

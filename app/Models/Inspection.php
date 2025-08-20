@@ -9,34 +9,27 @@ class Inspection extends Model
 {
     use HasFactory;
 
+    protected $table = 'inspections';
+
     protected $fillable = [
-        'project_id',
-        'inspector_id',
-        'title',
-        'description',
-        'inspection_date',
-        'status',
-        'checklist_items',
-        'notes',
-        'images',
-        'is_passed',
+        'inspection_number', 'project_id', 'phase_id', 'template_id', 'title', 'description', 'status',
+        'scheduled_date', 'started_at', 'completed_at', 'inspector_id', 'location',
+        'overall_result', 'score_percentage', 'notes', 'images', 'created_by',
+        'is_active', 'is_deleted'
     ];
 
     protected $casts = [
-        'inspection_date' => 'date',
-        'checklist_items' => 'array',
+        'scheduled_date' => 'date',
+        'started_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'score_percentage' => 'decimal:2',
         'images' => 'array',
-        'is_passed' => 'boolean',
+        'is_active' => 'boolean',
+        'is_deleted' => 'boolean',
     ];
 
-    // Relations
-    public function project()
+    public function scopeActive($query)
     {
-        return $this->belongsTo(Project::class);
-    }
-
-    public function inspector()
-    {
-        return $this->belongsTo(User::class, 'inspector_id');
+        return $query->where('is_active', true)->where('is_deleted', false);
     }
 }
