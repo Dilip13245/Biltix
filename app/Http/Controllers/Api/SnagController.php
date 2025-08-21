@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Snag;
 use App\Models\SnagCategory;
 use App\Models\SnagComment;
+use App\Helpers\NumberHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -23,6 +24,7 @@ class SnagController extends Controller
                 'description' => 'required|string',
                 'location' => 'required|string',
                 'priority' => 'required|in:low,medium,high,critical',
+                'severity' => 'required|in:minor,major,critical',
             ], [
                 'user_id.required' => trans('api.snags.user_id_required'),
                 'project_id.required' => trans('api.snags.project_id_required'),
@@ -38,12 +40,14 @@ class SnagController extends Controller
             }
 
             $snagDetails = new Snag();
+            $snagDetails->snag_number = NumberHelper::generateSnagNumber($request->project_id);
             $snagDetails->project_id = $request->project_id;
             $snagDetails->category_id = $request->category_id;
             $snagDetails->title = $request->title;
             $snagDetails->description = $request->description;
             $snagDetails->location = $request->location;
             $snagDetails->priority = $request->priority;
+            $snagDetails->severity = $request->severity;
             $snagDetails->reported_by = $request->user_id;
             $snagDetails->status = 'open';
             $snagDetails->images_before = $request->images_before ?? [];
@@ -130,6 +134,7 @@ class SnagController extends Controller
             if ($request->filled('description')) $snag->description = $request->description;
             if ($request->filled('status')) $snag->status = $request->status;
             if ($request->filled('priority')) $snag->priority = $request->priority;
+            if ($request->filled('severity')) $snag->severity = $request->severity;
             if ($request->filled('assigned_to')) $snag->assigned_to = $request->assigned_to;
 
             $snag->save();

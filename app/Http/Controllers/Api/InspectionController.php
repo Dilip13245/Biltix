@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Inspection;
-use App\Models\InspectionTemplate;
+use App\Models\InspectionChecklist;
+use App\Models\InspectionImage;
+use App\Helpers\FileHelper;
 use App\Models\InspectionResult;
+use App\Models\InspectionTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -18,19 +21,11 @@ class InspectionController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
-                'template_id' => 'required|integer',
-                'title' => 'required|string|max:255',
-                'scheduled_date' => 'required|date',
-                'inspector_id' => 'required|integer',
-                'location' => 'required|string',
-            ], [
-                'user_id.required' => trans('api.inspections.user_id_required'),
-                'project_id.required' => trans('api.inspections.project_id_required'),
-                'template_id.required' => trans('api.inspections.template_id_required'),
-                'title.required' => trans('api.inspections.title_required'),
-                'scheduled_date.required' => trans('api.inspections.scheduled_date_required'),
-                'inspector_id.required' => trans('api.inspections.inspector_id_required'),
-                'location.required' => trans('api.inspections.location_required'),
+                'category' => 'required|string|max:255',
+                'description' => 'required|string',
+                'checklist_items' => 'required|array|min:1',
+                'checklist_items.*' => 'required|string|max:255',
+                'images.*' => 'nullable|file|mimes:jpg,jpeg,png|max:10240',
             ]);
 
             if ($validator->fails()) {
@@ -39,18 +34,39 @@ class InspectionController extends Controller
 
             $inspectionDetails = new Inspection();
             $inspectionDetails->project_id = $request->project_id;
-            $inspectionDetails->phase_id = $request->phase_id;
-            $inspectionDetails->template_id = $request->template_id;
-            $inspectionDetails->title = $request->title;
-            $inspectionDetails->description = $request->description ?? '';
-            $inspectionDetails->scheduled_date = $request->scheduled_date;
-            $inspectionDetails->inspector_id = $request->inspector_id;
-            $inspectionDetails->location = $request->location;
+            $inspectionDetails->category = $request->category;
+            $inspectionDetails->description = $request->description;
             $inspectionDetails->created_by = $request->user_id;
-            $inspectionDetails->status = 'scheduled';
+            $inspectionDetails->status = 'open';
             $inspectionDetails->is_active = true;
 
             if ($inspectionDetails->save()) {
+                // Create checklist items
+                foreach ($request->checklist_items as $item) {
+                    InspectionChecklist::create([
+                        'inspection_id' => $inspectionDetails->id,
+                        'checklist_item' => $item,
+                        'is_checked' => false,
+                        'is_active' => true,
+                        'is_deleted' => false
+                    ]);
+                }
+
+                // Handle image uploads
+                if ($request->hasFile('images')) {
+                    foreach ($request->file('images') as $image) {
+                        $imageData = FileHelper::uploadFile($image, 'inspections/images');
+                        InspectionImage::create([
+                            'inspection_id' => $inspectionDetails->id,
+                            'image_path' => $imageData['path'],
+                            'original_name' => $imageData['original_name'],
+                            'file_size' => $imageData['size'],
+                            'uploaded_by' => $request->user_id
+                        ]);
+                    }
+                }
+
+                $inspectionDetails->load(['checklists', 'images']);
                 return $this->toJsonEnc($inspectionDetails, trans('api.inspections.created_success'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.inspections.creation_failed'), Config::get('constant.ERROR'));
@@ -66,9 +82,13 @@ class InspectionController extends Controller
             $user_id = $request->input('user_id');
             $project_id = $request->input('project_id');
             $status = $request->input('status');
-            $limit = $request->input('limit', 10);
+            $page = $request->input('page', 1);
+            $limit = 10;
+            $offset = ($page - 1) * $limit;
 
-            $query = Inspection::where('is_active', 1)->where('is_deleted', 0);
+            $query = Inspection::with(['checklists', 'images'])
+                ->where('is_active', 1)
+                ->where('is_deleted', 0);
 
             if ($project_id) {
                 $query->where('project_id', $project_id);
@@ -78,7 +98,7 @@ class InspectionController extends Controller
                 $query->where('status', $status);
             }
 
-            $inspections = $query->paginate($limit);
+            $inspections = $query->skip($offset)->take($limit)->get();
 
             return $this->toJsonEnc($inspections, trans('api.inspections.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -286,9 +306,23 @@ class InspectionController extends Controller
         }
     }
 
-    public function generateReport(Request $request)
+    public function submitInspection(Request $request)
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'inspection_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'checklist_updates' => 'required|array',
+                'checklist_updates.*.id' => 'required|integer',
+                'checklist_updates.*.is_checked' => 'required|boolean',
+                'comment' => 'nullable|string',
+                'images.*' => 'nullable|file|mimes:jpg,jpeg,png|max:10240',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
             $inspection_id = $request->input('inspection_id');
             $user_id = $request->input('user_id');
 
@@ -301,29 +335,73 @@ class InspectionController extends Controller
                 return $this->toJsonEnc([], trans('api.inspections.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            $results = InspectionResult::where('inspection_id', $inspection_id)
+            // Update checklist items
+            foreach ($request->checklist_updates as $update) {
+                InspectionChecklist::where('id', $update['id'])
+                    ->where('inspection_id', $inspection_id)
+                    ->update([
+                        'is_checked' => $update['is_checked'],
+                        'updated_by' => $user_id,
+                        'checked_at' => now()
+                    ]);
+            }
+
+            // Update inspection with comment and status
+            $inspection->comment = $request->comment;
+            $inspection->status = 'completed';
+            $inspection->inspected_by = $user_id;
+            $inspection->save();
+
+            // Handle additional image uploads
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imageData = FileHelper::uploadFile($image, 'inspections/images');
+                    InspectionImage::create([
+                        'inspection_id' => $inspection_id,
+                        'image_path' => $imageData['path'],
+                        'original_name' => $imageData['original_name'],
+                        'file_size' => $imageData['size'],
+                        'uploaded_by' => $user_id
+                    ]);
+                }
+            }
+
+            $inspection->load(['checklists', 'images']);
+            return $this->toJsonEnc($inspection, trans('api.inspections.submitted_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function mainScreen(Request $request)
+    {
+        try {
+            $project_id = $request->input('project_id');
+            $user_id = $request->input('user_id');
+
+            // Get open inspection (top section)
+            $openInspection = Inspection::with(['checklists', 'images'])
+                ->where('project_id', $project_id)
+                ->where('status', 'open')
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
+                ->first();
+
+            // Get previous inspections (bottom section)
+            $previousInspections = Inspection::where('project_id', $project_id)
+                ->where('status', 'completed')
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->orderBy('updated_at', 'desc')
+                ->limit(5)
                 ->get();
 
-            $totalItems = $results->count();
-            $passedItems = $results->where('result', 'pass')->count();
-            $failedItems = $results->where('result', 'fail')->count();
-            $scorePercentage = $totalItems > 0 ? ($passedItems / $totalItems) * 100 : 0;
-
-            $reportData = [
-                'inspection' => $inspection,
-                'results' => $results,
-                'summary' => [
-                    'total_items' => $totalItems,
-                    'passed_items' => $passedItems,
-                    'failed_items' => $failedItems,
-                    'score_percentage' => round($scorePercentage, 2),
-                    'overall_result' => $failedItems > 0 ? 'fail' : 'pass'
-                ]
+            $data = [
+                'open_inspection' => $openInspection,
+                'previous_inspections' => $previousInspections
             ];
 
-            return $this->toJsonEnc($reportData, trans('api.inspections.report_generated'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($data, 'Main screen data retrieved', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

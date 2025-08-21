@@ -8,7 +8,11 @@ use App\Models\User;
 use App\Models\Task;
 use App\Models\Inspection;
 use App\Helpers\NumberHelper;
+use App\Helpers\FileHelper;
 use App\Models\ProjectPhase;
+use App\Models\PhaseMilestone;
+use App\Models\File;
+use App\Models\FileCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -19,26 +23,25 @@ class ProjectController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'user_id' => 'required|integer',
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'type' => 'required|in:residential,commercial,industrial,renovation',
-                'location' => 'required|string|max:255',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after:start_date',
-                'budget' => 'nullable|numeric|min:0',
-                'client_name' => 'nullable|string|max:255',
-                'client_email' => 'nullable|email',
-                'client_phone' => 'nullable|string|max:20',
+                'project_title' => 'required|string|max:255',
+                'contractor_name' => 'required|string|max:255',
                 'project_manager_id' => 'nullable|integer',
+                'technical_engineer_id' => 'nullable|integer',
+                'type' => 'required|string|max:255',
+                'project_location' => 'required|string|max:255',
+                'project_start_date' => 'required|date',
+                'project_due_date' => 'required|date|after:project_start_date',
+                'priority' => 'nullable|in:low,medium,high,critical',
+                'construction_plans.*' => 'nullable|file|mimes:pdf,docx,jpg,jpeg,png|max:25600',
+                'gantt_chart.*' => 'nullable|file|mimes:pdf,docx,jpg,jpeg,png|max:25600',
             ], [
-                'user_id.required' => trans('api.projects.user_id_required'),
-                'name.required' => trans('api.projects.name_required'),
-                'type.required' => trans('api.projects.type_required'),
-                'location.required' => trans('api.projects.location_required'),
-                'start_date.required' => trans('api.projects.start_date_required'),
-                'end_date.required' => trans('api.projects.end_date_required'),
-                'end_date.after' => trans('api.projects.end_date_after_start'),
+                'project_title.required' => 'Project Title is required',
+                'contractor_name.required' => 'Contractor Name is required',
+                'type.required' => 'Project Type is required',
+                'project_location.required' => 'Project Location is required',
+                'project_start_date.required' => 'Project Start Date is required',
+                'project_due_date.required' => 'Project Due Date is required',
+                'project_due_date.after' => 'Project Due Date must be after Start Date',
             ]);
 
             if ($validator->fails()) {
@@ -47,22 +50,58 @@ class ProjectController extends Controller
 
             $projectDetails = new Project();
             $projectDetails->project_code = NumberHelper::generateProjectCode();
-            $projectDetails->name = $request->name;
-            $projectDetails->description = $request->description ?? '';
-            $projectDetails->type = $request->type;
-            $projectDetails->location = $request->location;
-            $projectDetails->start_date = $request->start_date;
-            $projectDetails->end_date = $request->end_date;
-            $projectDetails->budget = $request->budget ?? 0;
-            $projectDetails->client_name = $request->client_name ?? '';
-            $projectDetails->client_email = $request->client_email ?? '';
-            $projectDetails->client_phone = $request->client_phone ?? '';
+            $projectDetails->project_title = $request->project_title;
+            $projectDetails->contractor_name = $request->contractor_name;
             $projectDetails->project_manager_id = $request->project_manager_id ?? $request->user_id;
+            $projectDetails->technical_engineer_id = $request->technical_engineer_id;
+            $projectDetails->type = $request->type;
+            $projectDetails->project_location = $request->project_location;
+            $projectDetails->project_start_date = $request->project_start_date;
+            $projectDetails->project_due_date = $request->project_due_date;
+            $projectDetails->priority = $request->priority ?? 'medium';
             $projectDetails->created_by = $request->user_id;
             $projectDetails->status = 'planning';
             $projectDetails->is_active = true;
 
             if ($projectDetails->save()) {
+                // Get or create file categories
+                $constructionPlansCategory = FileCategory::firstOrCreate(['name' => 'Construction Plans']);
+                $ganttChartCategory = FileCategory::firstOrCreate(['name' => 'Gantt Charts']);
+
+                // Handle construction plans upload
+                if ($request->hasFile('construction_plans')) {
+                    foreach ($request->file('construction_plans') as $file) {
+                        $fileData = FileHelper::uploadFile($file, 'projects/documents');
+                        File::create([
+                            'project_id' => $projectDetails->id,
+                            'category_id' => $constructionPlansCategory->id,
+                            'name' => $fileData['filename'],
+                            'original_name' => $fileData['original_name'],
+                            'file_path' => $fileData['path'],
+                            'file_size' => $fileData['size'],
+                            'file_type' => $fileData['mime_type'],
+                            'uploaded_by' => $request->user_id
+                        ]);
+                    }
+                }
+
+                // Handle gantt chart upload
+                if ($request->hasFile('gantt_chart')) {
+                    foreach ($request->file('gantt_chart') as $file) {
+                        $fileData = FileHelper::uploadFile($file, 'projects/documents');
+                        File::create([
+                            'project_id' => $projectDetails->id,
+                            'category_id' => $ganttChartCategory->id,
+                            'name' => $fileData['filename'],
+                            'original_name' => $fileData['original_name'],
+                            'file_path' => $fileData['path'],
+                            'file_size' => $fileData['size'],
+                            'file_type' => $fileData['mime_type'],
+                            'uploaded_by' => $request->user_id
+                        ]);
+                    }
+                }
+
                 return $this->toJsonEnc($projectDetails, trans('api.projects.created_success'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.projects.creation_failed'), Config::get('constant.ERROR'));
@@ -75,43 +114,34 @@ class ProjectController extends Controller
     public function list(Request $request)
     {
         try {
-            $user_id = $request->input('user_id');
-            $status = $request->input('status');
             $search = $request->input('search');
-            $limit = $request->input('limit', 10);
+            $type = $request->input('type'); // ongoing or completed
+            $page = $request->input('page', 1);
+            $limit = 10;
+            $offset = ($page - 1) * $limit;
 
             $query = Project::where('is_active', 1)->where('is_deleted', 0);
 
-            // Role-based filtering
-            $user = User::where('id', $user_id)->where('is_active', 1)->first();
-            if ($user) {
-                switch ($user->role) {
-                    case 'contractor':
-                        $query->where('created_by', $user_id);
-                        break;
-                    case 'project_manager':
-                        $query->where('project_manager_id', $user_id);
-                        break;
-                    default:
-                        // For other roles, show projects they're assigned to
-                        break;
+            if ($type) {
+                if ($type === 'ongoing') {
+                    $query->whereIn('status', ['planning', 'active', 'in_progress']);
+                } elseif ($type === 'completed') {
+                    $query->where('status', 'completed');
                 }
             }
 
-            if ($status) {
-                $query->where('status', $status);
-            }
-
             if ($search) {
-                $query->where(function($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('location', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('project_title', 'like', "%{$search}%")
+                        ->orWhere('project_location', 'like', "%{$search}%")
+                        ->orWhere('contractor_name', 'like', "%{$search}%")
+                        ->orWhere('type', 'like', "%{$search}%");
                 });
             }
 
-            $projects = $query->paginate($limit);
+            $projects = $query->skip($offset)->take($limit)->get();
 
-            return $this->toJsonEnc($projects, trans('api.projects.list_retrieved'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($projects, 'Projects retrieved successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -153,10 +183,16 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            if ($request->filled('name')) $project->name = $request->name;
-            if ($request->filled('description')) $project->description = $request->description;
+            if ($request->filled('project_title')) $project->project_title = $request->project_title;
+            if ($request->filled('contractor_name')) $project->contractor_name = $request->contractor_name;
+            if ($request->filled('project_manager_id')) $project->project_manager_id = $request->project_manager_id;
+            if ($request->filled('technical_engineer_id')) $project->technical_engineer_id = $request->technical_engineer_id;
+            if ($request->filled('type')) $project->type = $request->type;
+            if ($request->filled('project_location')) $project->project_location = $request->project_location;
+            if ($request->filled('project_start_date')) $project->project_start_date = $request->project_start_date;
+            if ($request->filled('project_due_date')) $project->project_due_date = $request->project_due_date;
+            if ($request->filled('priority')) $project->priority = $request->priority;
             if ($request->filled('status')) $project->status = $request->status;
-            if ($request->filled('budget')) $project->budget = $request->budget;
 
             $project->save();
 
@@ -194,28 +230,28 @@ class ProjectController extends Controller
     {
         try {
             $user_id = $request->input('user_id');
-            
+
             $activeProjects = Project::where('status', 'active')
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->count();
-                
+
             $pendingTasks = Task::where('status', 'pending')
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->count();
-                
+
             $inspectionsDue = Inspection::where('status', 'scheduled')
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->count();
-                
+
             $completedThisMonth = Project::where('status', 'completed')
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->whereMonth('updated_at', now()->month)
                 ->count();
-            
+
             $stats = [
                 'active_projects' => $activeProjects,
                 'pending_tasks' => $pendingTasks,
@@ -266,9 +302,10 @@ class ProjectController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
-                'name' => 'required|string|max:255',
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after:start_date',
+                'title' => 'required|string|max:255',
+                'milestones' => 'required|array|min:1',
+                'milestones.*.milestone_name' => 'required|string|max:255',
+                'milestones.*.days' => 'required|integer|min:1',
             ]);
 
             if ($validator->fails()) {
@@ -277,17 +314,23 @@ class ProjectController extends Controller
 
             $phaseDetails = new ProjectPhase();
             $phaseDetails->project_id = $request->project_id;
-            $phaseDetails->name = $request->name;
-            $phaseDetails->description = $request->description ?? '';
-            $phaseDetails->phase_order = $request->phase_order ?? 1;
-            $phaseDetails->start_date = $request->start_date;
-            $phaseDetails->end_date = $request->end_date;
-            $phaseDetails->budget_allocated = $request->budget_allocated ?? 0;
+            $phaseDetails->title = $request->title;
             $phaseDetails->created_by = $request->user_id;
-            $phaseDetails->status = 'pending';
             $phaseDetails->is_active = true;
 
             if ($phaseDetails->save()) {
+                // Create milestones
+                foreach ($request->milestones as $milestone) {
+                    PhaseMilestone::create([
+                        'phase_id' => $phaseDetails->id,
+                        'milestone_name' => $milestone['milestone_name'],
+                        'days' => $milestone['days'],
+                        'is_active' => true,
+                        'is_deleted' => false
+                    ]);
+                }
+
+                $phaseDetails->load('milestones');
                 return $this->toJsonEnc($phaseDetails, trans('api.projects.phase_created'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.projects.phase_creation_failed'), Config::get('constant.ERROR'));
@@ -303,10 +346,11 @@ class ProjectController extends Controller
             $project_id = $request->input('project_id');
             $user_id = $request->input('user_id');
 
-            $phases = ProjectPhase::where('project_id', $project_id)
+            $phases = ProjectPhase::with('milestones')
+                ->where('project_id', $project_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
-                ->orderBy('phase_order')
+                ->orderBy('created_at')
                 ->get();
 
             return $this->toJsonEnc($phases, trans('api.projects.phases_retrieved'), Config::get('constant.SUCCESS'));
@@ -318,6 +362,19 @@ class ProjectController extends Controller
     public function updatePhase(Request $request)
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'phase_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'title' => 'required|string|max:255',
+                'milestones' => 'required|array|min:1',
+                'milestones.*.milestone_name' => 'required|string|max:255',
+                'milestones.*.days' => 'required|integer|min:1',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
             $phase_id = $request->input('phase_id');
             $user_id = $request->input('user_id');
 
@@ -330,13 +387,24 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.phase_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            if ($request->filled('name')) $phase->name = $request->name;
-            if ($request->filled('description')) $phase->description = $request->description;
-            if ($request->filled('status')) $phase->status = $request->status;
-            if ($request->filled('progress_percentage')) $phase->progress_percentage = $request->progress_percentage;
-
+            $phase->title = $request->title;
             $phase->save();
 
+            // Delete existing milestones
+            PhaseMilestone::where('phase_id', $phase_id)->update(['is_deleted' => true]);
+
+            // Create new milestones
+            foreach ($request->milestones as $milestone) {
+                PhaseMilestone::create([
+                    'phase_id' => $phase_id,
+                    'milestone_name' => $milestone['milestone_name'],
+                    'days' => $milestone['days'],
+                    'is_active' => true,
+                    'is_deleted' => false
+                ]);
+            }
+
+            $phase->load('milestones');
             return $this->toJsonEnc($phase, trans('api.projects.phase_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
@@ -382,10 +450,11 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            $phases = ProjectPhase::where('project_id', $project_id)
+            $phases = ProjectPhase::with('milestones')
+                ->where('project_id', $project_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
-                ->orderBy('phase_order')
+                ->orderBy('created_at')
                 ->get();
 
             $timelineData = [

@@ -12,13 +12,14 @@ class Task extends Model
 
     protected $fillable = [
         'task_number', 'project_id', 'phase_id', 'title', 'description', 'status', 'priority',
-        'assigned_to', 'created_by', 'start_date', 'due_date', 'completed_at',
+        'assigned_to', 'created_by', 'start_date', 'due_date', 'estimated_hours', 'completed_at',
         'progress_percentage', 'location', 'attachments', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'due_date' => 'date',
+        'estimated_hours' => 'decimal:2',
         'completed_at' => 'datetime',
         'progress_percentage' => 'integer',
         'attachments' => 'array',

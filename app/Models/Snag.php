@@ -13,7 +13,7 @@ class Snag extends Model
 
     protected $fillable = [
         'snag_number', 'project_id', 'category_id', 'title', 'description', 'location',
-        'priority', 'status', 'reported_by', 'assigned_to', 'due_date',
+        'priority', 'severity', 'status', 'reported_by', 'assigned_to', 'due_date',
         'resolved_at', 'resolved_by', 'resolution_notes', 'images_before',
         'images_after', 'cost_impact', 'is_active', 'is_deleted'
     ];

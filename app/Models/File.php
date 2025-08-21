@@ -13,10 +13,12 @@ class File extends Model
 
     protected $fillable = [
         'project_id', 'category_id', 'name', 'original_name', 'file_path',
-        'file_size', 'file_type', 'uploaded_by', 'is_public', 'is_active', 'is_deleted'
+        'file_size', 'file_type', 'description', 'uploaded_by', 'is_public', 
+        'shared_with', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
+        'shared_with' => 'array',
         'is_public' => 'boolean',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',

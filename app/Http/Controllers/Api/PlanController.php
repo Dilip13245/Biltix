@@ -19,6 +19,7 @@ class PlanController extends Controller
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
                 'title' => 'required|string|max:255',
+                'drawing_number' => 'required|string|max:50',
                 'plan_type' => 'required|in:architectural,structural,electrical,plumbing',
                 'file' => 'required|file|mimes:pdf,dwg,jpg,png|max:10240',
             ]);
@@ -32,6 +33,7 @@ class PlanController extends Controller
             $planDetails = new Plan();
             $planDetails->project_id = $request->project_id;
             $planDetails->title = $request->title;
+            $planDetails->drawing_number = $request->drawing_number;
             $planDetails->plan_type = $request->plan_type;
             $planDetails->file_name = $fileData['filename'];
             $planDetails->file_path = $fileData['path'];

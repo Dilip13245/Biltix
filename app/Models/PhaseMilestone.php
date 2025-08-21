@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FileCategory extends Model
+class PhaseMilestone extends Model
 {
     use HasFactory;
 
-    protected $table = 'file_categories';
+    protected $table = 'phase_milestones';
 
     protected $fillable = [
-        'name', 'description', 'icon', 'is_active', 'is_deleted'
+        'phase_id', 'milestone_name', 'days', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
@@ -20,8 +20,8 @@ class FileCategory extends Model
         'is_deleted' => 'boolean',
     ];
 
-    public function scopeActive($query)
+    public function phase()
     {
-        return $query->where('is_active', true)->where('is_deleted', false);
+        return $this->belongsTo(ProjectPhase::class, 'phase_id');
     }
 }

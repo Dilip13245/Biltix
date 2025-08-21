@@ -23,6 +23,7 @@ class TaskController extends Controller
                 'priority' => 'required|in:low,medium,high,critical',
                 'assigned_to' => 'required|integer',
                 'due_date' => 'required|date',
+                'estimated_hours' => 'nullable|numeric|min:0',
                 'location' => 'nullable|string',
             ], [
                 'user_id.required' => trans('api.tasks.user_id_required'),
@@ -47,6 +48,7 @@ class TaskController extends Controller
             $taskDetails->assigned_to = $request->assigned_to;
             $taskDetails->created_by = $request->user_id;
             $taskDetails->due_date = $request->due_date;
+            $taskDetails->estimated_hours = $request->estimated_hours;
             $taskDetails->location = $request->location ?? '';
             $taskDetails->attachments = $request->attachments ?? [];
             $taskDetails->status = 'pending';
@@ -133,6 +135,7 @@ class TaskController extends Controller
             if ($request->filled('description')) $task->description = $request->description;
             if ($request->filled('status')) $task->status = $request->status;
             if ($request->filled('priority')) $task->priority = $request->priority;
+            if ($request->filled('estimated_hours')) $task->estimated_hours = $request->estimated_hours;
             if ($request->filled('progress_percentage')) $task->progress_percentage = $request->progress_percentage;
 
             $task->save();

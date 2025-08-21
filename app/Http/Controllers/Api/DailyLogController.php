@@ -135,7 +135,16 @@ class DailyLogController extends Controller
                 ->first();
 
             if (!$dailyLog) {
-                return $this->toJsonEnc([], trans('api.daily_logs.not_found'), Config::get('constant.NOT_FOUND'));
+                // Return empty stats instead of 404
+                $stats = [
+                    'active_equipment' => 0,
+                    'staff_present' => 0,
+                    'weather_conditions' => '',
+                    'temperature' => null,
+                    'log_date' => $log_date,
+                    'has_log' => false
+                ];
+                return $this->toJsonEnc($stats, 'No daily log found for this date', Config::get('constant.SUCCESS'));
             }
 
             $equipmentCount = EquipmentLog::where('daily_log_id', $dailyLog->id)
@@ -153,6 +162,8 @@ class DailyLogController extends Controller
                 'staff_present' => $staffCount,
                 'weather_conditions' => $dailyLog->weather_conditions,
                 'temperature' => $dailyLog->temperature,
+                'log_date' => $log_date,
+                'has_log' => true
             ];
 
             return $this->toJsonEnc($stats, trans('api.daily_logs.stats_retrieved'), Config::get('constant.SUCCESS'));

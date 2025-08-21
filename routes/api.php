@@ -159,4 +159,13 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('add_tags', [PhotoController::class, 'addTags'])->middleware('permission:photos,upload');
         Route::post('gallery', [PhotoController::class, 'gallery'])->middleware('permission:photos,view');
     });
+
+    Route::prefix('notifications')->group(function () {
+        Route::post('list', [NotificationController::class, 'list']);
+        Route::post('mark_read', [NotificationController::class, 'markRead']);
+        Route::post('mark_all_read', [NotificationController::class, 'markAllRead']);
+        Route::post('delete', [NotificationController::class, 'delete']);
+        Route::post('get_count', [NotificationController::class, 'getCount']);
+        Route::post('settings', [NotificationController::class, 'settings']);
+    });
 });

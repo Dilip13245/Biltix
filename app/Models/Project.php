@@ -12,18 +12,14 @@ class Project extends Model
     protected $table = 'projects';
 
     protected $fillable = [
-        'project_code', 'name', 'description', 'type', 'status', 'location', 'address',
-        'start_date', 'end_date', 'budget', 'actual_cost', 'client_name',
-        'client_email', 'client_phone', 'client_address', 'project_manager_id',
-        'created_by', 'progress_percentage', 'images', 'is_active', 'is_deleted'
+        'project_code', 'project_title', 'contractor_name', 'project_manager_id', 'technical_engineer_id',
+        'type', 'project_location', 'project_start_date', 'project_due_date',
+        'priority', 'status', 'created_by', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'budget' => 'decimal:2',
-        'actual_cost' => 'decimal:2',
-        'images' => 'array',
+        'project_start_date' => 'date',
+        'project_due_date' => 'date',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];
@@ -37,6 +33,11 @@ class Project extends Model
     public function projectManager()
     {
         return $this->belongsTo(User::class, 'project_manager_id', 'id');
+    }
+
+    public function technicalEngineer()
+    {
+        return $this->belongsTo(User::class, 'technical_engineer_id', 'id');
     }
 
     public function creator()
@@ -57,5 +58,10 @@ class Project extends Model
     public function teamMembers()
     {
         return $this->hasMany(TeamMember::class, 'project_id', 'id');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(File::class, 'project_id', 'id');
     }
 }

@@ -11,19 +11,18 @@ class NumberHelper
 {
     public static function generateProjectCode()
     {
-        $year = date('Y');
-        $lastProject = Project::where('project_code', 'like', "PRJ-{$year}-%")
+        $lastProject = Project::where('project_code', 'like', "#PRJ-%")
             ->orderBy('id', 'desc')
             ->first();
         
         if ($lastProject) {
-            $lastNumber = (int) substr($lastProject->project_code, -4);
+            $lastNumber = (int) substr($lastProject->project_code, 5); // Remove '#PRJ-'
             $newNumber = $lastNumber + 1;
         } else {
-            $newNumber = 1;
+            $newNumber = 1123; // Start from 1123
         }
         
-        return "PRJ-{$year}-" . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        return "#PRJ-{$newNumber}";
     }
     
     public static function generateTaskNumber($projectId)

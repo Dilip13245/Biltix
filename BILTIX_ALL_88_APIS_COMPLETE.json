@@ -1,13 +1,17 @@
 {
 	"info": {
-		"name": "🏗️ Biltix - All 88 APIs Complete Collection",
-		"description": "Single collection with all 88 Biltix APIs ready for React Native",
+		"name": "🏗️ Biltix - All 93 APIs Complete Collection",
+		"description": "Complete collection with all 93 Biltix APIs including new fields",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
 		{"key": "base_url", "value": "http://localhost:8000/api/v1", "type": "string"},
 		{"key": "api_key", "value": "biltix_api_key_2024", "type": "string"},
-		{"key": "token", "value": "", "type": "string"}
+		{"key": "token", "value": "", "type": "string"},
+		{"key": "project_id", "value": "1", "type": "string"},
+		{"key": "task_id", "value": "1", "type": "string"},
+		{"key": "inspection_id", "value": "1", "type": "string"},
+		{"key": "snag_id", "value": "1", "type": "string"}
 	],
 	"event": [
 		{
@@ -23,7 +27,7 @@
 	],
 	"item": [
 		{
-			"name": "🔐 Authentication (8 APIs)",
+			"name": "🔐 Authentication (9 APIs)",
 			"item": [
 				{"name": "1. Signup", "event": [{"listen": "test", "script": {"exec": ["if (pm.response.code === 200) { var jsonData = pm.response.json(); if (jsonData.data && jsonData.data.token) { pm.collectionVariables.set('token', jsonData.data.token); }}"]}}], "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"contractor@biltix.com\",\n    \"phone\": \"+1234567890\",\n    \"name\": \"John Smith\",\n    \"password\": \"password123\",\n    \"role\": \"contractor\",\n    \"company_name\": \"BuildCorp Construction\",\n    \"device_type\": \"A\"\n}"}, "url": "{{base_url}}/auth/signup"}},
 				{"name": "2. Login", "event": [{"listen": "test", "script": {"exec": ["if (pm.response.code === 200) { var jsonData = pm.response.json(); if (jsonData.data && jsonData.data.token) { pm.collectionVariables.set('token', jsonData.data.token); }}"]}}], "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"contractor@biltix.com\",\n    \"password\": \"password123\",\n    \"device_type\": \"A\"\n}"}, "url": "{{base_url}}/auth/login"}},
@@ -32,13 +36,14 @@
 				{"name": "5. Reset Password", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}], "body": {"mode": "raw", "raw": "{\n    \"email\": \"contractor@biltix.com\",\n    \"new_password\": \"newpassword123\",\n    \"confirm_password\": \"newpassword123\"\n}"}, "url": "{{base_url}}/auth/reset_password"}},
 				{"name": "6. Get User Profile", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/auth/get_user_profile"}},
 				{"name": "7. Update Profile", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"name\": \"John Smith Updated\",\n    \"company_name\": \"BuildCorp Construction Ltd\"\n}"}, "url": "{{base_url}}/auth/update_profile"}},
-				{"name": "8. Logout", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/auth/logout"}}
+				{"name": "8. Logout", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/auth/logout"}},
+				{"name": "9. Delete Account", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"confirmation\": \"DELETE_ACCOUNT\"\n}"}, "url": "{{base_url}}/auth/delete_account"}}
 			]
 		},
 		{
 			"name": "🏗️ Project Management (12 APIs)",
 			"item": [
-				{"name": "1. Create Project", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"name\": \"Downtown Office Complex\",\n    \"description\": \"Modern office building\",\n    \"type\": \"commercial\",\n    \"location\": \"Downtown\",\n    \"start_date\": \"2024-03-01\",\n    \"end_date\": \"2025-12-31\",\n    \"budget\": 15000000,\n    \"client_name\": \"ABC Corporation\"\n}"}, "url": "{{base_url}}/projects/create"}},
+				{"name": "1. Create Project", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"name\": \"Downtown Office Complex\",\n    \"description\": \"Modern office building\",\n    \"type\": \"commercial\",\n    \"priority\": \"high\",\n    \"location\": \"Downtown\",\n    \"start_date\": \"2024-03-01\",\n    \"end_date\": \"2025-12-31\",\n    \"budget\": 15000000,\n    \"currency\": \"USD\",\n    \"client_name\": \"ABC Corporation\",\n    \"client_email\": \"client@abc.com\",\n    \"client_phone\": \"+1234567890\"\n}"}, "url": "{{base_url}}/projects/create"}},
 				{"name": "2. List Projects", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"status\": \"active\",\n    \"limit\": 10\n}"}, "url": "{{base_url}}/projects/list"}},
 				{"name": "3. Project Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/projects/details"}},
 				{"name": "4. Update Project", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"name\": \"Updated Project Name\",\n    \"status\": \"active\"\n}"}, "url": "{{base_url}}/projects/update"}},
@@ -55,7 +60,7 @@
 		{
 			"name": "📋 Task Management (11 APIs)",
 			"item": [
-				{"name": "1. Create Task", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"title\": \"Install Foundation Rebar\",\n    \"priority\": \"high\",\n    \"assigned_to\": 2,\n    \"due_date\": \"2024-04-15\"\n}"}, "url": "{{base_url}}/tasks/create"}},
+				{"name": "1. Create Task", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"title\": \"Install Foundation Rebar\",\n    \"description\": \"Install rebar for foundation\",\n    \"priority\": \"high\",\n    \"assigned_to\": 2,\n    \"due_date\": \"2024-04-15\",\n    \"estimated_hours\": 16.5\n}"}, "url": "{{base_url}}/tasks/create"}},
 				{"name": "2. List Tasks", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"status\": \"pending\"\n}"}, "url": "{{base_url}}/tasks/list"}},
 				{"name": "3. Task Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1\n}"}, "url": "{{base_url}}/tasks/details"}},
 				{"name": "4. Update Task", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_id\": 1,\n    \"status\": \"in_progress\"\n}"}, "url": "{{base_url}}/tasks/update"}},
@@ -71,7 +76,7 @@
 		{
 			"name": "🔍 Inspection System (10 APIs)",
 			"item": [
-				{"name": "1. Create Inspection", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"template_id\": 1,\n    \"title\": \"Foundation Quality Inspection\",\n    \"scheduled_date\": \"2024-04-20\"\n}"}, "url": "{{base_url}}/inspections/create"}},
+				{"name": "1. Create Inspection", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"template_id\": 1,\n    \"title\": \"Foundation Quality Inspection\",\n    \"inspection_type\": \"quality\",\n    \"scheduled_date\": \"2024-04-20\",\n    \"scheduled_time\": \"10:00:00\"\n}"}, "url": "{{base_url}}/inspections/create"}},
 				{"name": "2. List Inspections", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"status\": \"scheduled\"\n}"}, "url": "{{base_url}}/inspections/list"}},
 				{"name": "3. Inspection Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"inspection_id\": 1\n}"}, "url": "{{base_url}}/inspections/details"}},
 				{"name": "4. Get Templates", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"category\": \"quality\"\n}"}, "url": "{{base_url}}/inspections/templates"}},
@@ -86,7 +91,7 @@
 		{
 			"name": "🚨 Snag Management (8 APIs)",
 			"item": [
-				{"name": "1. Create Snag", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"category_id\": 1,\n    \"title\": \"Concrete Surface Crack\",\n    \"priority\": \"medium\"\n}"}, "url": "{{base_url}}/snags/create"}},
+				{"name": "1. Create Snag", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"category_id\": 1,\n    \"title\": \"Concrete Surface Crack\",\n    \"description\": \"Crack found in concrete surface\",\n    \"priority\": \"medium\",\n    \"severity\": \"moderate\",\n    \"location\": \"Foundation Area A\"\n}"}, "url": "{{base_url}}/snags/create"}},
 				{"name": "2. List Snags", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1,\n    \"status\": \"open\"\n}"}, "url": "{{base_url}}/snags/list"}},
 				{"name": "3. Snag Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"snag_id\": 1\n}"}, "url": "{{base_url}}/snags/details"}},
 				{"name": "4. Update Snag", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"snag_id\": 1,\n    \"status\": \"assigned\"\n}"}, "url": "{{base_url}}/snags/update"}},
@@ -99,7 +104,7 @@
 		{
 			"name": "📏 Plans & Drawings (7 APIs)",
 			"item": [
-				{"name": "1. Upload Plan", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "formdata", "formdata": [{"key": "project_id", "value": "1", "type": "text"}, {"key": "title", "value": "Foundation Plan", "type": "text"}, {"key": "plan_type", "value": "structural", "type": "text"}, {"key": "file", "type": "file", "src": ""}]}, "url": "{{base_url}}/plans/upload"}},
+				{"name": "1. Upload Plan", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "formdata", "formdata": [{"key": "project_id", "value": "1", "type": "text"}, {"key": "title", "value": "Foundation Plan", "type": "text"}, {"key": "plan_type", "value": "structural", "type": "text"}, {"key": "drawing_number", "value": "DWG-001", "type": "text"}, {"key": "file", "type": "file", "src": ""}]}, "url": "{{base_url}}/plans/upload"}},
 				{"name": "2. List Plans", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"project_id\": 1\n}"}, "url": "{{base_url}}/plans/list"}},
 				{"name": "3. Plan Details", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"plan_id\": 1\n}"}, "url": "{{base_url}}/plans/details"}},
 				{"name": "4. Delete Plan", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"plan_id\": 1\n}"}, "url": "{{base_url}}/plans/delete"}},
@@ -161,7 +166,7 @@
 				{"name": "3. Mark All Read", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/notifications/mark_all_read"}},
 				{"name": "4. Delete Notification", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"notification_id\": 1\n}"}, "url": "{{base_url}}/notifications/delete"}},
 				{"name": "5. Notification Settings", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/notifications/settings"}},
-				{"name": "6. Update Settings", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{\n    \"task_assigned\": true,\n    \"inspection_due\": true\n}"}, "url": "{{base_url}}/notifications/update_settings"}}
+				{"name": "6. Get Count", "request": {"method": "POST", "header": [{"key": "api-key", "value": "{{api_key}}"}, {"key": "token", "value": "{{token}}"}], "body": {"mode": "raw", "raw": "{}"}, "url": "{{base_url}}/notifications/get_count"}}
 			]
 		},
 		{

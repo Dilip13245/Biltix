@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use App\Models\User;
+use App\Models\UserMember;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -30,6 +31,9 @@ class AuthController extends Controller
                 'company_name' => 'required|string|max:255',
                 'designation' => 'nullable|string|max:255',
                 'employee_count' => 'nullable|integer',
+                'members' => 'nullable|array',
+                'members.*.member_name' => 'required_with:members|string|max:255',
+                'members.*.member_phone' => 'required_with:members|string|max:20',
                 'device_type' => 'required|in:A,I',
             ], [
                 'email.required' => trans('api.auth.email_required'),
@@ -58,33 +62,21 @@ class AuthController extends Controller
             $userDetails->company_name = $request->company_name;
             $userDetails->designation = $request->designation ?? '';
             $userDetails->employee_count = $request->employee_count ?? null;
-            $userDetails->member_number = $request->member_number ?? null;
-            $userDetails->member_name = $request->member_name ?? null;
-            $userDetails->is_active = true;
+            $userDetails->is_active = false;
 
             if ($userDetails->save()) {
-                $accessToken = Str::random(64);
-                $deviceData = [
-                    'user_id' => $userDetails->id,
-                    'token' => $accessToken,
-                    'device_type' => $request->device_type,
-                    'ip_address' => $request->ip_address ?? "",
-                    'uuid' => $request->uuid ?? "",
-                    'os_version' => $request->os_version ?? "",
-                    'device_model' => $request->device_model ?? "",
-                    'app_version' => $request->app_version ?? 'v1',
-                    'device_token' => $request->device_token ?? "",
-                ];
+                // Save multiple members if provided
+                if ($request->has('members') && is_array($request->members)) {
+                    foreach ($request->members as $member) {
+                        UserMember::create([
+                            'user_id' => $userDetails->id,
+                            'member_name' => $member['member_name'],
+                            'member_phone' => $member['member_phone']
+                        ]);
+                    }
+                }
 
-                UserDevice::updateOrCreate(
-                    ['user_id' => $userDetails->id],
-                    $deviceData
-                );
-
-                $userDetails->token = $accessToken;
-                $userDetails->device_type = $request->device_type;
-
-                return $this->toJsonEnc($userDetails, trans('api.auth.signup_success'), Config::get('constant.SUCCESS'));
+                return $this->toJsonEnc(['user_id' => $userDetails->id], 'User registered successfully. Please verify OTP to activate account.', Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.auth.signup_error'), Config::get('constant.ERROR'));
             }
@@ -114,6 +106,8 @@ class AuthController extends Controller
 
             $user = User::where('email', $request->email)
                 ->where('is_active', 1)
+                ->where('is_verified', 1)
+                ->where('is_deleted', 0)
                 ->first();
 
             if (!$user) {
@@ -143,11 +137,22 @@ class AuthController extends Controller
                 $deviceData
             );
 
+            // Update last login time
+            $user->last_login_at = now();
+            $user->save();
+
+            // Get user members
+            $members = UserMember::where('user_id', $user->id)
+                ->where('is_active', 1)
+                ->select('member_name', 'member_phone')
+                ->get();
+
             $user->token = $accessToken;
             $user->device_type = $request->device_type;
             $user->profile_image = $user->profile_image
-                ? asset('storage/uploads/profile/' . $user->profile_image)
+                ? asset('storage/profile/' . $user->profile_image)
                 : null;
+            $user->members = $members;
 
             return $this->toJsonEnc($user, trans('api.auth.login_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -174,7 +179,8 @@ class AuthController extends Controller
 
             $email = $request->input('email');
             $type = $request->input('type');
-            $otp = rand(1000, 9999);
+            // $otp = rand(100000, 999999);
+            $otp = '123456';
 
             $user = User::where('email', $email)->first();
 
@@ -191,20 +197,20 @@ class AuthController extends Controller
                     if ($user->is_active == 1) {
                         return $this->toJsonEnc([], trans('api.auth.user_already_exists'), Config::get('constant.ERROR'));
                     }
-                    return $this->toJsonEnc([], trans('api.auth.user_inactive_contact_admin'), Config::get('constant.ERROR'));
                 }
             }
 
             try {
                 $data = ['otp' => $otp];
 
-                Mail::send('emails.otp', $data, function ($message) use ($email) {
-                    $message->to($email)
-                        ->subject('Your OTP Code - Biltix');
-                });
+                // Mail::send('emails.otp', $data, function ($message) use ($email) {
+                //     $message->to($email)
+                //         ->subject('Your OTP Code - Biltix');
+                // });
 
                 if ($user) {
                     $user->otp = $otp;
+                    $user->otp_expires_at = now()->addMinutes(10);
                     $user->save();
                 }
             } catch (\Exception $e) {
@@ -225,10 +231,12 @@ class AuthController extends Controller
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
                 'otp' => 'required|string',
+                'type' => 'required|in:signup,forgot',
             ], [
                 'email.required' => trans('api.auth.email_required'),
                 'email.email' => trans('api.auth.email_invalid'),
                 'otp.required' => trans('api.auth.otp_required'),
+                'type.required' => trans('api.auth.type_required'),
             ]);
 
             if ($validator->fails()) {
@@ -237,6 +245,7 @@ class AuthController extends Controller
 
             $email = $request->input('email');
             $otp = $request->input('otp');
+            $type = $request->input('type');
 
             $user = User::where('email', $email)->first();
 
@@ -248,10 +257,23 @@ class AuthController extends Controller
                 return $this->toJsonEnc([], trans('api.auth.invalid_otp'), Config::get('constant.ERROR'));
             }
 
+            if ($user->otp_expires_at && now()->gt($user->otp_expires_at)) {
+                return $this->toJsonEnc([], 'OTP has expired', Config::get('constant.ERROR'));
+            }
+
             $user->otp = null;
+            $user->otp_expires_at = null;
+
+            // Only for signup: set verified and active
+            if ($type === 'signup') {
+                $user->is_verified = true;
+                $user->is_active = true;
+            }
+
             $user->save();
 
-            return $this->toJsonEnc([], trans('api.auth.otp_verified_success'), Config::get('constant.SUCCESS'));
+            $message = $type === 'signup' ? 'Account verified and activated successfully' : 'OTP verified successfully';
+            return $this->toJsonEnc(['user_id' => $user->id], $message, Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             Log::error('verifyOtp error: ' . $e->getMessage());
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
@@ -279,6 +301,8 @@ class AuthController extends Controller
 
             $user = User::where('email', $request->email)
                 ->where('is_active', 1)
+                ->where('is_verified', 1)
+                ->where('is_deleted', 0)
                 ->first();
 
             if (!$user) {
@@ -304,17 +328,40 @@ class AuthController extends Controller
             $user_id = $request->input('user_id');
             $user = User::where('id', $user_id)
                 ->where('is_active', 1)
+                ->where('is_verified', 1)
+                ->where('is_deleted', 0)
                 ->first();
 
             if (!$user) {
                 return $this->toJsonEnc([], trans('api.auth.user_not_found'), Config::get('constant.ERROR'));
             }
 
-            $user->profile_image = $user->profile_image
-                ? asset('storage/uploads/profile/' . $user->profile_image)
-                : null;
+            // Get user members
+            $members = UserMember::where('user_id', $user->id)
+                ->where('is_active', 1)
+                ->select('member_name', 'member_phone')
+                ->get();
 
-            return $this->toJsonEnc($user, trans('api.auth.user_profile_retrieved'), Config::get('constant.SUCCESS'));
+            // Prepare profile response data
+            $profileData = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'role' => $user->role,
+                'company_name' => $user->company_name,
+                'designation' => $user->designation,
+                'employee_count' => $user->employee_count,
+                'profile_image' => $user->profile_image ? asset('storage/profile/' . $user->profile_image) : null,
+                'is_verified' => $user->is_verified,
+                'last_login_at' => $user->last_login_at,
+                'created_at' => $user->created_at,
+                'members' => $members,
+                'total_members' => $members->count(),
+                'total_employees' => $user->employee_count ?? 0
+            ];
+
+            return $this->toJsonEnc($profileData, trans('api.auth.user_profile_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -347,7 +394,7 @@ class AuthController extends Controller
 
             $user = User::find($request->user_id);
 
-            if (!$user || !$user->is_active) {
+            if (!$user || !$user->is_active || !$user->is_verified || $user->is_deleted) {
                 return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
             }
 
@@ -359,7 +406,11 @@ class AuthController extends Controller
             if ($request->filled('designation')) $user->designation = $request->designation;
 
             if ($request->hasFile('profile_image')) {
-                $filename = FileHelper::uploadImage($request->file('profile_image'), 'uploads/profile');
+                // Delete old image if exists
+                if ($user->profile_image) {
+                    FileHelper::deleteFile('profile/' . $user->profile_image);
+                }
+                $filename = FileHelper::uploadImage($request->file('profile_image'), 'profile');
                 $user->profile_image = $filename;
             }
 
@@ -372,7 +423,7 @@ class AuthController extends Controller
             // Prepare response data
             $responseData = $user->toArray();
             $responseData['profile_image'] = $user->profile_image
-                ? asset('storage/uploads/profile/' . $user->profile_image)
+                ? asset('storage/profile/' . $user->profile_image)
                 : null;
 
             return $this->toJsonEnc($responseData, trans('api.auth.profile_updated_success'), Config::get('constant.SUCCESS'));
@@ -413,6 +464,8 @@ class AuthController extends Controller
             }
 
             $user->is_active = false;
+            $user->is_deleted = true;
+            $user->deleted_at = now();
             $user->save();
 
             UserDevice::where('user_id', $user->id)->update([
