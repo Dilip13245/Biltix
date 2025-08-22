@@ -3,76 +3,102 @@
 @section('title', 'Riverside Commercial Complex - Project Progress')
 
 @section('content')
+<div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
+  <div>
+    <h2>{{ __('messages.project_progress') }}</h2>
+    <p>{{ __('messages.track_project_phases') }}</p>
+  </div>
+  <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
+    <i class="fas fa-plus"></i>
+    {{ __("messages.create_phase") }}
+  </button>
+</div>
 <div class="px-md-4">
   <div class="container-fluid">
+            <!-- Commented out original stats cards
             <div class="row g-4">
-                <!-- {{ __("messages.project_completion") }} Card -->
+                Project Completion Card
+                Active Workers Card  
+                Days Remaining Card
+            </div>
+            -->
+            
+            <!-- Project Phases Cards -->
+            <div class="row g-4">
+                <!-- Foundation Phase -->
                 <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay="0s">
-                    <div class="card h-100 B_shadow">
-                        <div class="card-body p-md-4 d-flex flex-column justify-content-between">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="stat-icon bg1 ms-0">
-                                    <svg width="20" height="19" viewBox="0 0 20 19" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M2.5 2C2.5 1.30859 1.94141 0.75 1.25 0.75C0.558594 0.75 0 1.30859 0 2V15.125C0 16.8516 1.39844 18.25 3.125 18.25H18.75C19.4414 18.25 20 17.6914 20 17C20 16.3086 19.4414 15.75 18.75 15.75H3.125C2.78125 15.75 2.5 15.4688 2.5 15.125V2ZM18.3828 5.38281C18.8711 4.89453 18.8711 4.10156 18.3828 3.61328C17.8945 3.125 17.1016 3.125 16.6133 3.61328L12.5 7.73047L10.2578 5.48828C9.76953 5 8.97656 5 8.48828 5.48828L4.11328 9.86328C3.625 10.3516 3.625 11.1445 4.11328 11.6328C4.60156 12.1211 5.39453 12.1211 5.88281 11.6328L9.375 8.14453L11.6172 10.3867C12.1055 10.875 12.8984 10.875 13.3867 10.3867L18.3867 5.38672L18.3828 5.38281Z"
-                                            fill="#4477C4" />
-                                    </svg>
-                                </span>
-                                <div class="{{ margin_start(3) }}">
-                                    <span class="fs-3 fw-bold">67%</span>
-                                </div>
-                            </div>
-                            <div class="mb-2 text-muted fw-medium">{{ __("messages.project_completion") }}</div>
-                            <div>
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" role="progressbar"
-                                        style="width: 67%; background: linear-gradient(90deg, #4477C4 0%, #f59e42 100%);"
-                                        aria-valuenow="67" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- {{ __("messages.active_workers") }} Card -->
-                <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay=".4s">
-                    <div class="card h-100 B_shadow">
-                        <div class="card-body p-md-4 d-flex flex-column justify-content-between">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="stat-icon bg2 ms-0"><svg width="25" height="21" viewBox="0 0 25 21"
-                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M5.625 0.5C6.4538 0.5 7.24866 0.82924 7.83471 1.41529C8.42076 2.00134 8.75 2.7962 8.75 3.625C8.75 4.4538 8.42076 5.24866 7.83471 5.83471C7.24866 6.42076 6.4538 6.75 5.625 6.75C4.7962 6.75 4.00134 6.42076 3.41529 5.83471C2.82924 5.24866 2.5 4.4538 2.5 3.625C2.5 2.7962 2.82924 2.00134 3.41529 1.41529C4.00134 0.82924 4.7962 0.5 5.625 0.5ZM20 0.5C20.8288 0.5 21.6237 0.82924 22.2097 1.41529C22.7958 2.00134 23.125 2.7962 23.125 3.625C23.125 4.4538 22.7958 5.24866 22.2097 5.83471C21.6237 6.42076 20.8288 6.75 20 6.75C19.1712 6.75 18.3763 6.42076 17.7903 5.83471C17.2042 5.24866 16.875 4.4538 16.875 3.625C16.875 2.7962 17.2042 2.00134 17.7903 1.41529C18.3763 0.82924 19.1712 0.5 20 0.5ZM0 12.168C0 9.86719 1.86719 8 4.16797 8H5.83594C6.45703 8 7.04688 8.13672 7.57812 8.37891C7.52734 8.66016 7.50391 8.95312 7.50391 9.25C7.50391 10.7422 8.16016 12.082 9.19531 13C9.1875 13 9.17969 13 9.16797 13H0.832031C0.375 13 0 12.625 0 12.168ZM15.832 13C15.8242 13 15.8164 13 15.8047 13C16.8438 12.082 17.4961 10.7422 17.4961 9.25C17.4961 8.95312 17.4688 8.66406 17.4219 8.37891C17.9531 8.13281 18.543 8 19.1641 8H20.832C23.1328 8 25 9.86719 25 12.168C25 12.6289 24.625 13 24.168 13H15.832ZM8.75 9.25C8.75 8.25544 9.14509 7.30161 9.84835 6.59835C10.5516 5.89509 11.5054 5.5 12.5 5.5C13.4946 5.5 14.4484 5.89509 15.1517 6.59835C15.8549 7.30161 16.25 8.25544 16.25 9.25C16.25 10.2446 15.8549 11.1984 15.1517 11.9017C14.4484 12.6049 13.4946 13 12.5 13C11.5054 13 10.5516 12.6049 9.84835 11.9017C9.14509 11.1984 8.75 10.2446 8.75 9.25ZM5 19.457C5 16.582 7.33203 14.25 10.207 14.25H14.793C17.668 14.25 20 16.582 20 19.457C20 20.0312 19.5352 20.5 18.957 20.5H6.04297C5.46875 20.5 5 20.0352 5 19.457Z"
-                                            fill="#F58D2E" />
-                                    </svg>
-                                </span>
-                                <div class="{{ margin_start(3) }}">
-                                    <span class="fs-3 fw-bold">148</span>
-                                </div>
-                            </div>
-                            <div class="mb-1 text-muted fw-medium">{{ __("messages.active_workers") }}</div>
-                            <div class="text-muted small black_color fw-normal">+12 {{ __("messages.from_last_week") }}</div>
-                        </div>
-                    </div>
-                </div>
-                <!-- {{ __("messages.days_remaining") }} Card -->
-                <div class="col-12 col-md-4  wow fadeInUp" data-wow-delay=".8s">
-                    <div class="card h-100 B_shadow">
+                    <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Foundation Phase')">
                         <div class="card-body p-md-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <span class="stat-icon bg6 ms-0">
-                                    <svg width="18" height="21" viewBox="0 0 18 21" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M3.75 1.75V3H1.875C0.839844 3 0 3.83984 0 4.875V6.75H17.5V4.875C17.5 3.83984 16.6602 3 15.625 3H13.75V1.75C13.75 1.05859 13.1914 0.5 12.5 0.5C11.8086 0.5 11.25 1.05859 11.25 1.75V3H6.25V1.75C6.25 1.05859 5.69141 0.5 5 0.5C4.30859 0.5 3.75 1.05859 3.75 1.75ZM17.5 8H0V18.625C0 19.6602 0.839844 20.5 1.875 20.5H15.625C16.6602 20.5 17.5 19.6602 17.5 18.625V8Z"
-                                            fill="#2563EB" />
-                                    </svg>
-                                </span>
-                                <div class="{{ margin_start(3) }}">
-                                    <span class="fs-3 fw-bold">45</span>
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.foundation_phase") }}</h5>
+                                <span class="badge badge1">{{ __("messages.completed") }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <div class="progress" style="height:8px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">100% Complete</small>
+                                    <small class="text-muted">30 days</small>
                                 </div>
                             </div>
-                            <div class="mb-2 text-muted fw-medium">{{ __("messages.days_remaining") }}</div>
+                            <div class="small text-muted">
+                                <div>• {{ __("messages.site_preparation") }} - 10 {{ __("messages.days") }}</div>
+                                <div>• {{ __("messages.excavation_work") }} - 8 {{ __("messages.days") }}</div>
+                                <div>• {{ __("messages.foundation_pouring") }} - 12 {{ __("messages.days") }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Structure Phase -->
+                <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay=".4s">
+                    <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Structure Phase')">
+                        <div class="card-body p-md-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.structure_phase") }}</h5>
+                                <span class="badge badge4">{{ __("messages.in_progress") }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <div class="progress" style="height:8px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 65%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">65% Complete</small>
+                                    <small class="text-muted">45 days</small>
+                                </div>
+                            </div>
+                            <div class="small text-muted">
+                                <div>• {{ __("messages.column_construction") }} - 20 {{ __("messages.days") }}</div>
+                                <div>• {{ __("messages.beam_installation") }} - 15 {{ __("messages.days") }}</div>
+                                <div>• {{ __("messages.slab_work") }} - 10 {{ __("messages.days") }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Finishing Phase -->
+                <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay=".8s">
+                    <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Finishing Phase')">
+                        <div class="card-body p-md-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.finishing_phase") }}</h5>
+                                <span class="badge badge2">{{ __("messages.pending") }}</span>
+                            </div>
+                            <div class="mb-3">
+                                <div class="progress" style="height:8px;">
+                                    <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted">0% Complete</small>
+                                    <small class="text-muted">25 days</small>
+                                </div>
+                            </div>
+                            <div class="small text-muted">
+                                <div>• {{ __("messages.interior_work") }} - 12 {{ __("messages.days") }}</div>
+                                <div>• {{ __("messages.painting_tiling") }} - 8 {{ __("messages.days") }}</div>
+                                <div>• {{ __("messages.final_touches") }} - 5 {{ __("messages.days") }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -176,6 +202,7 @@
                                             </svg>
                                             {{ __('messages.may_25_2025') }}
                                         </button>
+
                                     </div>
                                 </div>
                                 <div class="ms-auto mt-3 mt-md-0">
@@ -436,6 +463,229 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+</script>
+
+<!-- Create Phase Modal -->
+<div class="modal fade" id="createPhaseModal" tabindex="-1" aria-labelledby="createPhaseModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createPhaseModalLabel">
+          <i class="fas fa-layer-group me-2"></i>{{ __("messages.create_phase") }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="createPhaseForm">
+          @csrf
+          <input type="hidden" name="project_id" value="1">
+          <input type="hidden" name="created_by" value="{{ auth()->id() ?? 1 }}">
+          
+          <div class="mb-3">
+            <label for="title" class="form-label fw-medium">{{ __("messages.phase_title") }}</label>
+            <input type="text" class="form-control Input_control" id="title" name="title" required
+              placeholder="e.g., Foundation Work, Structure Phase, Finishing">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-medium">{{ __("messages.milestones") }}</label>
+            <div id="milestonesContainer">
+              <div class="milestone-item mb-2">
+                <div class="row">
+                  <div class="col-8">
+                    <input type="text" class="form-control Input_control" name="milestones[0][milestone_name]" 
+                      placeholder="{{ __("messages.milestone_name") }}" required>
+                  </div>
+                  <div class="col-3">
+                    <input type="number" class="form-control Input_control" name="milestones[0][days]" 
+                      placeholder="{{ __("messages.days") }}" min="1" required>
+                  </div>
+                  <div class="col-1">
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addMilestone()">
+              <i class="fas fa-plus me-1"></i>{{ __("messages.add_milestone") }}
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="createPhaseForm" class="btn orange_btn">
+          <i class="fas fa-plus me-2"></i>{{ __("messages.create_phase") }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let milestoneIndex = 1;
+
+function addMilestone() {
+  const container = document.getElementById('milestonesContainer');
+  const newMilestone = document.createElement('div');
+  newMilestone.className = 'milestone-item mb-2';
+  newMilestone.innerHTML = `
+    <div class="row">
+      <div class="col-8">
+        <input type="text" class="form-control Input_control" name="milestones[${milestoneIndex}][milestone_name]" 
+          placeholder="Milestone name" required>
+      </div>
+      <div class="col-3">
+        <input type="number" class="form-control Input_control" name="milestones[${milestoneIndex}][days]" 
+          placeholder="Days" min="1" required>
+      </div>
+      <div class="col-1">
+        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  `;
+  container.appendChild(newMilestone);
+  milestoneIndex++;
+}
+
+function removeMilestone(button) {
+  const container = document.getElementById('milestonesContainer');
+  if (container.children.length > 1) {
+    button.closest('.milestone-item').remove();
+  }
+}
+
+// Create Phase Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+  const createPhaseForm = document.getElementById('createPhaseForm');
+  if (createPhaseForm) {
+    createPhaseForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const title = document.getElementById('title').value;
+      const milestones = document.querySelectorAll('.milestone-item');
+      
+      if (title.trim() && milestones.length > 0) {
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
+        if (modal) modal.hide();
+        
+        alert('Phase "' + title + '" with ' + milestones.length + ' milestone(s) created successfully!');
+        
+        // Reset form
+        createPhaseForm.reset();
+        milestoneIndex = 1;
+        
+        // Reset milestones container
+        const container = document.getElementById('milestonesContainer');
+        container.innerHTML = `
+          <div class="milestone-item mb-2">
+            <div class="row">
+              <div class="col-8">
+                <input type="text" class="form-control Input_control" name="milestones[0][milestone_name]" 
+                  placeholder="Milestone name" required>
+              </div>
+              <div class="col-3">
+                <input type="number" class="form-control Input_control" name="milestones[0][days]" 
+                  placeholder="Days" min="1" required>
+              </div>
+              <div class="col-1">
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Reload page to show new phase
+        location.reload();
+      }
+    });
+  }
+});
+</script>
+
+<!-- Phase Navigation Modal -->
+<div class="modal fade" id="phaseNavigationModal" tabindex="-1" aria-labelledby="phaseNavigationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="phaseNavigationModalLabel">
+          <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">Phase Management</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="card h-100 border-primary" style="cursor: pointer;" onclick="redirectToInspections()">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-clipboard-check fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">{{ __("messages.inspections") }}</h5>
+                <p class="card-text text-muted">{{ __("messages.manage_phase_inspections") }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card h-100 border-success" style="cursor: pointer;" onclick="redirectToTasks()">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-tasks fa-3x text-success mb-3"></i>
+                <h5 class="card-title">{{ __("messages.tasks") }}</h5>
+                <p class="card-text text-muted">{{ __("messages.manage_phase_tasks") }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card h-100 border-warning" style="cursor: pointer;" onclick="redirectToSnags()">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                <h5 class="card-title">{{ __("messages.snag_list") }}</h5>
+                <p class="card-text text-muted">{{ __("messages.manage_phase_issues") }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card h-100 border-info" style="cursor: pointer;" onclick="redirectToTimeline()">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                <h5 class="card-title">{{ __("messages.project_timeline") }}</h5>
+                <p class="card-text text-muted">{{ __("messages.view_project_timeline") }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openPhaseModal(phaseName) {
+  document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
+  const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
+  modal.show();
+}
+
+function redirectToInspections() {
+  window.location.href = '/website/project/1/inspections';
+}
+
+function redirectToTasks() {
+  window.location.href = '/website/project/1/tasks';
+}
+
+function redirectToSnags() {
+  window.location.href = '/website/project/1/snag-list';
+}
+
+function redirectToTimeline() {
+  window.location.href = '/website/project/1/project-progress';
+}
 </script>
 
 @endsection

@@ -568,5 +568,45 @@ return [
     'files' => 'الملفات',
     'undo' => 'تراجع',
     'clear_all' => 'مسح الكل',
+    
+    // Inspection creation
+    'category' => 'الفئة',
+    'select_category' => 'اختر الفئة',
+    'checklist_items' => 'عناصر قائمة التحقق',
+    'enter_checklist_item' => 'أدخل عنصر قائمة التحقق',
+    'add_item' => 'إضافة عنصر',
+    'images_optional' => 'الصور (اختياري)',
+    'max_10mb_per_image' => 'الحد الأقصى 10 ميجابايت لكل صورة. التنسيقات: JPG، JPEG، PNG',
+    
+    // Project progress
+    'track_project_phases' => 'تتبع مراحل المشروع والمعالم',
+    'create_phase' => 'إنشاء مرحلة',
+    'phase_title' => 'عنوان المرحلة',
+    'milestones' => 'المعالم',
+    'milestone_name' => 'اسم المعلم',
+    'days' => 'أيام',
+    'add_milestone' => 'إضافة معلم',
+    'foundation_phase' => 'مرحلة الأساس',
+    'structure_phase' => 'مرحلة الهيكل',
+    'finishing_phase' => 'مرحلة التشطيبات',
+    'site_preparation' => 'تحضير الموقع',
+    'excavation_work' => 'أعمال الحفر',
+    'foundation_pouring' => 'صب الأساس',
+    'column_construction' => 'بناء الأعمدة',
+    'beam_installation' => 'تركيب الكمرات',
+    'slab_work' => 'أعمال البلاطات',
+    'interior_work' => 'الأعمال الداخلية',
+    'painting_tiling' => 'الدهان والبلاط',
+    'final_touches' => 'اللمسات الأخيرة',
+    
+    // Phase management modal
+    'phase_management' => 'إدارة المرحلة',
+    'manage_phase_inspections' => 'إدارة تفتيشات المرحلة',
+    'manage_phase_tasks' => 'إدارة مهام المرحلة',
+    'manage_phase_issues' => 'إدارة مشاكل المرحلة',
+    'view_project_timeline' => 'عرض الجدول الزمني للمشروع',
+    
+    // Status badges
+    'critical' => 'حرج',
 
 ];

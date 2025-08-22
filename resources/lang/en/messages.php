@@ -572,5 +572,45 @@ return [
     'files' => 'Files',
     'undo' => 'Undo',
     'clear_all' => 'Clear All',
+    
+    // Inspection creation
+    'category' => 'Category',
+    'select_category' => 'Select Category',
+    'checklist_items' => 'Checklist Items',
+    'enter_checklist_item' => 'Enter checklist item',
+    'add_item' => 'Add Item',
+    'images_optional' => 'Images (Optional)',
+    'max_10mb_per_image' => 'Max 10MB per image. Formats: JPG, JPEG, PNG',
+    
+    // Project progress
+    'track_project_phases' => 'Track project phases and milestones',
+    'create_phase' => 'Create Phase',
+    'phase_title' => 'Phase Title',
+    'milestones' => 'Milestones',
+    'milestone_name' => 'Milestone name',
+    'days' => 'Days',
+    'add_milestone' => 'Add Milestone',
+    'foundation_phase' => 'Foundation Phase',
+    'structure_phase' => 'Structure Phase',
+    'finishing_phase' => 'Finishing Phase',
+    'site_preparation' => 'Site preparation',
+    'excavation_work' => 'Excavation work',
+    'foundation_pouring' => 'Foundation pouring',
+    'column_construction' => 'Column construction',
+    'beam_installation' => 'Beam installation',
+    'slab_work' => 'Slab work',
+    'interior_work' => 'Interior work',
+    'painting_tiling' => 'Painting & tiling',
+    'final_touches' => 'Final touches',
+    
+    // Phase management modal
+    'phase_management' => 'Phase Management',
+    'manage_phase_inspections' => 'Manage phase inspections',
+    'manage_phase_tasks' => 'Manage phase tasks',
+    'manage_phase_issues' => 'Manage phase issues',
+    'view_project_timeline' => 'View project timeline',
+    
+    // Status badges
+    'critical' => 'Critical',
 ];
 

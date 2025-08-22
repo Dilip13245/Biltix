@@ -110,99 +110,121 @@
                     </div>
                 </div>
             </div>
-            <div class="row  wow fadeInUp" data-wow-delay="0.9s">
-                <div class="col-12 mt-4">
-                    <div class="card B_shadow">
-                        <div class="card-body py-md-4 px-0">
-                            <div class="snag-list">
-                                <div class="items_listing mb-4 px-md-4 px-2 pt-2">
-                                    <h5 class="fw-semibold black_color">{{ __('messages.team_directory') }}</h5>
+            <!-- Team Members Cards -->
+            <div class="row mt-4 wow fadeInUp" data-wow-delay="0.9s">
+                <div class="col-12 mb-3">
+                    <h5 class="fw-semibold black_color">{{ __('messages.team_directory') }}</h5>
+                </div>
+                
+                <!-- John Smith Card -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 B_shadow team-member-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face"
+                                    alt="team-avatar" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="fw-semibold mb-1">John Smith</h5>
+                                    <p class="text-muted small mb-0">{{ __('messages.project_manager') }}</p>
                                 </div>
-                                <!-- ------team-member-item------------ -->
-                                <div
-                                    class="team-member-item items_listing d-flex  gap-3 mb-4 px-md-4 px-2 pt-2 justify-content-between align-items-center flex-column flex-sm-row">
-                                    <div class="d-flex align-items-center gap-3 align-self-start">
-                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&amp;h=48&amp;fit=crop&amp;crop=face"
-                                            alt="team-avatar" class="team-avatar">
-                                        <div>
-                                            <h5 class="fw-semibold fs14">John Smith</h5>
-                                            <p class="text-muted small  fs14">{{ __('messages.project_manager') }}</p>
-                                            <p class="text-muted small fs12">BuildCorp Construction</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3 align-self-end">
-                                        <span class="badge badge1">{{ __('messages.active') }}</span>
-                                        <span class="badge bg2 orange_color">Contractor</span>
-                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
-                                    </div>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-muted small mb-2">BuildCorp Construction</p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge badge1">{{ __('messages.active') }}</span>
+                                    <span class="badge bg2 orange_color">Contractor</span>
                                 </div>
-                                <div
-                                    class="team-member-item items_listing d-flex  gap-3 mb-4 px-md-4 px-2 pt-2 justify-content-between align-items-center flex-column flex-sm-row">
-                                    <div class="d-flex align-items-center gap-3 align-self-start">
-                                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=48&h=48&fit=crop&crop=face"
-                                            alt="team-avatar" class="team-avatar">
-                                        <div>
-                                            <h5 class="fw-semibold fs14">Sarah Johnson</h5>
-                                            <p class="text-muted small  fs14">Structural Engineer</p>
-                                            <p class="text-muted small fs12">TechConsult Engineering</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3 align-self-end">
-                                        <span class="badge badge1">{{ __('messages.active') }}</span>
-                                        <span class="badge bg-blue1">Contractor</span>
-                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
-                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sarah Johnson Card -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 B_shadow team-member-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face"
+                                    alt="team-avatar" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="fw-semibold mb-1">Sarah Johnson</h5>
+                                    <p class="text-muted small mb-0">Structural Engineer</p>
                                 </div>
-                                <div
-                                    class="team-member-item items_listing d-flex  gap-3 mb-4 px-md-4 px-2 pt-2 justify-content-between align-items-center flex-column flex-sm-row">
-                                    <div class="d-flex align-items-center gap-3 align-self-start">
-                                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=48&h=48&fit=crop&crop=face"
-                                            alt="team-avatar" class="team-avatar">
-                                        <div>
-                                            <h5 class="fw-semibold fs14">Mike Chen</h5>
-                                            <p class="text-muted small  fs14">{{ __('messages.site_supervisor') }}</p>
-                                            <p class="text-muted small fs12">BuildCorp Construction</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3 align-self-end">
-                                        <span class="badge badge1">{{ __('messages.active') }}</span>
-                                        <span class="badge bg2 orange_color">Contractor</span>
-                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
-                                    </div>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-muted small mb-2">TechConsult Engineering</p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge badge1">{{ __('messages.active') }}</span>
+                                    <span class="badge bg-blue1">Contractor</span>
                                 </div>
-                                <div
-                                    class="team-member-item items_listing d-flex  gap-3 mb-4 px-md-4 px-2 pt-2 justify-content-between align-items-center flex-column flex-sm-row">
-                                    <div class="d-flex align-items-center gap-3 align-self-start">
-                                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=48&h=48&fit=crop&crop=face  "
-                                            alt="team-avatar" class="team-avatar">
-                                        <div>
-                                            <h5 class="fw-semibold fs14">Lisa Wang</h5>
-                                            <p class="text-muted small  fs14">Architect</p>
-                                            <p class="text-muted small fs12">DesignStudio Architects</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3 align-self-end">
-                                        <span class="badge badge4">Away</span>
-                                        <span class="badge bg2 orange_color">Contractor</span>
-                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
-                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mike Chen Card -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 B_shadow team-member-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face"
+                                    alt="team-avatar" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="fw-semibold mb-1">Mike Chen</h5>
+                                    <p class="text-muted small mb-0">{{ __('messages.site_supervisor') }}</p>
                                 </div>
-                                <div
-                                    class="team-member-item items_listing d-flex  gap-3 mb-4 px-md-4 px-2 pt-2 justify-content-between align-items-center flex-column flex-sm-row">
-                                    <div class="d-flex align-items-center gap-3 align-self-start">
-                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&amp;h=48&amp;fit=crop&amp;crop=face"
-                                            alt="team-avatar" class="team-avatar">
-                                        <div>
-                                            <h5 class="fw-semibold fs14">David Brown</h5>
-                                            <p class="text-muted small  fs14">{{ __('messages.safety_officer') }}</p>
-                                            <p class="text-muted small fs12">SafetyFirst Corps</p>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-3 align-self-end">
-                                        <span class="badge badge1">{{ __('messages.active') }}</span>
-                                        <span class="badge bg2 orange_color">Contractor</span>
-                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
-                                    </div>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-muted small mb-2">BuildCorp Construction</p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge badge1">{{ __('messages.active') }}</span>
+                                    <span class="badge bg2 orange_color">Contractor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lisa Wang Card -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 B_shadow team-member-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face"
+                                    alt="team-avatar" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="fw-semibold mb-1">Lisa Wang</h5>
+                                    <p class="text-muted small mb-0">Architect</p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-muted small mb-2">DesignStudio Architects</p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge badge4">Away</span>
+                                    <span class="badge bg2 orange_color">Contractor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- David Brown Card -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 B_shadow team-member-card">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face"
+                                    alt="team-avatar" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h5 class="fw-semibold mb-1">David Brown</h5>
+                                    <p class="text-muted small mb-0">{{ __('messages.safety_officer') }}</p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-muted small mb-2">SafetyFirst Corps</p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge badge1">{{ __('messages.active') }}</span>
+                                    <span class="badge bg2 orange_color">Contractor</span>
                                 </div>
                             </div>
                         </div>
@@ -218,20 +240,20 @@
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
                     const searchTerm = this.value.toLowerCase();
-                    const memberItems = document.querySelectorAll('.team-member-item');
+                    const memberCards = document.querySelectorAll('.team-member-card');
 
-                    memberItems.forEach(item => {
-                        const memberName = item.querySelector('h5').textContent.toLowerCase();
-                        const memberRole = item.querySelector('.text-muted.small.fs14').textContent
+                    memberCards.forEach(card => {
+                        const memberName = card.querySelector('h5').textContent.toLowerCase();
+                        const memberRole = card.querySelector('.text-muted.small').textContent
                             .toLowerCase();
-                        const memberCompany = item.querySelector('.text-muted.small.fs12')
+                        const memberCompany = card.querySelector('.text-muted.small.mb-2')
                             .textContent.toLowerCase();
 
                         if (memberName.includes(searchTerm) || memberRole.includes(searchTerm) ||
                             memberCompany.includes(searchTerm)) {
-                            item.style.display = 'flex';
+                            card.closest('.col-lg-4').style.display = 'block';
                         } else {
-                            item.style.display = 'none';
+                            card.closest('.col-lg-4').style.display = 'none';
                         }
                     });
                 });
@@ -247,22 +269,7 @@
                 });
             }
 
-            // Team member detail view
-            const memberLinks = document.querySelectorAll('.team-member-item a');
-            memberLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const memberItem = this.closest('.team-member-item');
-                    const name = memberItem.querySelector('h5').textContent;
-                    const role = memberItem.querySelector('.text-muted.small.fs14').textContent;
-                    const company = memberItem.querySelector('.text-muted.small.fs12').textContent;
-                    const status = memberItem.querySelector('.badge').textContent;
 
-                    alert(
-                        `Team Member Details:\n\nName: ${name}\n{{ __('messages.role') }}: ${role}\nCompany: ${company}\nStatus: ${status}\n\nDetailed profile view would open here with:\n• {{ __('messages.contact') }} information\n• Project assignments\n• Performance metrics\n• Work schedule`
-                        );
-                });
-            });
         });
     </script>
 
