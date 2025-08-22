@@ -76,9 +76,24 @@ function loadImageToCanvas(file) {
     
     reader.onload = function(e) {
         img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
+            // Set fixed canvas size
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            // Calculate scaling to fit image in canvas
+            const scaleX = canvas.width / img.width;
+            const scaleY = canvas.height / img.height;
+            const scale = Math.min(scaleX, scaleY);
+            
+            // Calculate centered position
+            const scaledWidth = img.width * scale;
+            const scaledHeight = img.height * scale;
+            const x = (canvas.width - scaledWidth) / 2;
+            const y = (canvas.height - scaledHeight) / 2;
+            
+            // Clear canvas and draw scaled image
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
             saveCanvasState();
         };
         img.src = e.target.result;
@@ -94,8 +109,9 @@ function loadCurrentFile() {
     if (currentFileData.markupData) {
         const img = new Image();
         img.onload = function() {
-            canvas.width = img.width;
-            canvas.height = img.height;
+            canvas.width = 800;
+            canvas.height = 600;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0);
             saveCanvasState();
         };

@@ -11,71 +11,55 @@
       <div class="modal-body">
         <form id="createInspectionForm">
           @csrf
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="inspectionTitle" class="form-label fw-medium">Inspection Title</label>
-              <input type="text" class="form-control Input_control" id="inspectionTitle" name="title" required
-                placeholder="e.g., Foundation Check">
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="inspectionType" class="form-label fw-medium">Inspection Type</label>
-              <select class="form-select Input_control" id="inspectionType" name="type" required>
-                <option value="">Select Type</option>
-                <option value="structural">Structural</option>
-                <option value="electrical">Electrical</option>
-                <option value="plumbing">Plumbing</option>
-                <option value="safety">Safety</option>
-                <option value="quality">Quality</option>
-              </select>
-            </div>
-          </div>
+          <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+          <input type="hidden" name="project_id" value="{{ request()->get('project_id') ?? 1 }}">
           
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="inspectionDate" class="form-label fw-medium">Inspection Date</label>
-              <input type="date" class="form-control Input_control" id="inspectionDate" name="date" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="inspector" class="form-label fw-medium">Inspector</label>
-              <select class="form-select Input_control" id="inspector" name="inspector">
-                <option value="">Select Inspector</option>
-                <option value="john_smith">John Smith - Senior Inspector</option>
-                <option value="sarah_johnson">Sarah Johnson - Quality Inspector</option>
-                <option value="mike_wilson">Mike Wilson - Safety Inspector</option>
-              </select>
-            </div>
+          <div class="mb-3">
+            <label for="category" class="form-label fw-medium">Category</label>
+            <select class="form-select Input_control" id="category" name="category" required>
+              <option value="">Select Category</option>
+              <option value="structural">Structural</option>
+              <option value="electrical">Electrical</option>
+              <option value="plumbing">Plumbing</option>
+              <option value="safety">Safety</option>
+              <option value="quality">Quality</option>
+              <option value="mechanical">Mechanical</option>
+              <option value="finishing">Finishing</option>
+            </select>
           </div>
 
           <div class="mb-3">
-            <label for="inspectionDescription" class="form-label fw-medium">Description</label>
-            <textarea class="form-control Input_control" id="inspectionDescription" name="description" rows="3" required
+            <label for="description" class="form-label fw-medium">Description</label>
+            <textarea class="form-control Input_control" id="description" name="description" rows="3" required
               placeholder="Detailed description of what will be inspected..."></textarea>
           </div>
 
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="priority" class="form-label fw-medium">{{ __("messages.priority") }}</label>
-              <select class="form-select Input_control" id="priority" name="priority">
-                <option value="low">{{ __("messages.low") }}</option>
-                <option value="medium" selected>{{ __("messages.medium") }}</option>
-                <option value="high">{{ __("messages.high") }}</option>
-                <option value="critical">{{ __("messages.critical") }}</option>
-              </select>
+          <div class="mb-3">
+            <label for="checklist_items" class="form-label fw-medium">Checklist Items</label>
+            <div id="checklistContainer">
+              <div class="input-group mb-2">
+                <input type="text" class="form-control Input_control" name="checklist_items[]" 
+                  placeholder="Enter checklist item" required>
+                <button type="button" class="btn btn-outline-danger" onclick="removeChecklistItem(this)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="status" class="form-label fw-medium">Status</label>
-              <select class="form-select Input_control" id="status" name="status">
-                <option value="scheduled" selected>Scheduled</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addChecklistItem()">
+              <i class="fas fa-plus me-1"></i>Add Item
+            </button>
+          </div>
+
+          <div class="mb-3">
+            <label for="images" class="form-label fw-medium">Images (Optional)</label>
+            <input type="file" class="form-control Input_control" id="images" name="images[]" 
+              multiple accept="image/jpeg,image/jpg,image/png">
+            <small class="text-muted">Max 10MB per image. Formats: JPG, JPEG, PNG</small>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">>{{ __("messages.cancel") }}</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
         <button type="submit" form="createInspectionForm" class="btn orange_btn">
           <i class="fas fa-plus me-2"></i>Create Inspection
         </button>
@@ -83,3 +67,91 @@
     </div>
   </div>
 </div>
+
+<script>
+function addChecklistItem() {
+  const container = document.getElementById('checklistContainer');
+  const newItem = document.createElement('div');
+  newItem.className = 'input-group mb-2';
+  newItem.innerHTML = `
+    <input type="text" class="form-control Input_control" name="checklist_items[]" 
+      placeholder="Enter checklist item" required>
+    <button type="button" class="btn btn-outline-danger" onclick="removeChecklistItem(this)">
+      <i class="fas fa-trash"></i>
+    </button>
+  `;
+  container.appendChild(newItem);
+}
+
+function removeChecklistItem(button) {
+  const container = document.getElementById('checklistContainer');
+  if (container.children.length > 1) {
+    button.parentElement.remove();
+  }
+}
+
+// Form submission - copy exact task pattern
+document.addEventListener('DOMContentLoaded', function() {
+  const createInspectionForm = document.getElementById('createInspectionForm');
+  if (createInspectionForm) {
+    createInspectionForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const fileInput = document.getElementById('images');
+      
+      if (fileInput.files && fileInput.files.length > 0) {
+        // Store all files
+        window.selectedFiles = fileInput.files;
+        
+        // Open drawing modal with image markup config
+        openDrawingModal({
+          title: 'Markup Inspection Images',
+          saveButtonText: 'Submit Inspection',
+          mode: 'image',
+          onSave: function(imageData) {
+            // Close drawing modal
+            const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+            if (drawingModal) drawingModal.hide();
+            
+            // Close inspection modal
+            const inspectionModal = bootstrap.Modal.getInstance(document.getElementById('createInspectionModal'));
+            if (inspectionModal) inspectionModal.hide();
+            
+            alert('Inspection created successfully!');
+            location.reload();
+          }
+        });
+        
+        // Load images after modal is shown
+        document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
+          if (window.selectedFiles.length === 1) {
+            loadImageToCanvas(window.selectedFiles[0]);
+          } else {
+            loadMultipleFiles(window.selectedFiles);
+          }
+        }, { once: true });
+        
+      } else {
+        // Open drawing modal with blank canvas config
+        openDrawingModal({
+          title: 'Inspection Drawing',
+          saveButtonText: 'Submit Inspection',
+          mode: 'blank',
+          onSave: function(imageData) {
+            // Close drawing modal
+            const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+            if (drawingModal) drawingModal.hide();
+            
+            // Close inspection modal
+            const inspectionModal = bootstrap.Modal.getInstance(document.getElementById('createInspectionModal'));
+            if (inspectionModal) inspectionModal.hide();
+            
+            alert('Inspection created successfully!');
+            location.reload();
+          }
+        });
+      }
+    });
+  }
+});
+</script>

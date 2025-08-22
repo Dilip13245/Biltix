@@ -145,35 +145,11 @@
         </div>
     </div>
     @include('website.modals.create-inspection-modal')
+    @include('website.modals.drawing-modal')
 
     <script>
-        // Create Inspection Form Handler
+        // Removed duplicate form handler - it's in the modal file
         document.addEventListener('DOMContentLoaded', function() {
-            const createInspectionForm = document.getElementById('createInspectionForm');
-            if (createInspectionForm) {
-                createInspectionForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    // Show loading state
-                    const submitBtn = document.querySelector('#createInspectionModal .btn.orange_btn');
-                    const originalText = submitBtn.innerHTML;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
-                    submitBtn.disabled = true;
-
-                    // Simulate inspection creation
-                    setTimeout(() => {
-                        alert('Inspection created successfully!');
-                        bootstrap.Modal.getInstance(document.getElementById(
-                            'createInspectionModal')).hide();
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                        createInspectionForm.reset();
-
-                        // Refresh page or add new inspection to the list
-                        location.reload();
-                    }, 2000);
-                });
-            }
 
             // Filter functionality
             const categoryFilter = document.querySelector('select.form-select');
@@ -204,5 +180,6 @@
                 );
         }
     </script>
+    <script src="{{ asset('website/js/drawing.js') }}"></script>
 
 @endsection
