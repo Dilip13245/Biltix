@@ -133,7 +133,7 @@
                                     <div class="d-flex align-items-center gap-3 align-self-end">
                                         <span class="badge badge1">{{ __('messages.active') }}</span>
                                         <span class="badge bg2 orange_color">Contractor</span>
-                                        <a href="#"><i class="fas fa-chevron-right text-muted"></i></a>
+                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
                                     </div>
                                 </div>
                                 <div
@@ -150,7 +150,7 @@
                                     <div class="d-flex align-items-center gap-3 align-self-end">
                                         <span class="badge badge1">{{ __('messages.active') }}</span>
                                         <span class="badge bg-blue1">Contractor</span>
-                                        <a href="#"><i class="fas fa-chevron-right text-muted"></i></a>
+                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
                                     </div>
                                 </div>
                                 <div
@@ -167,7 +167,7 @@
                                     <div class="d-flex align-items-center gap-3 align-self-end">
                                         <span class="badge badge1">{{ __('messages.active') }}</span>
                                         <span class="badge bg2 orange_color">Contractor</span>
-                                        <a href="#"><i class="fas fa-chevron-right text-muted"></i></a>
+                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
                                     </div>
                                 </div>
                                 <div
@@ -184,7 +184,7 @@
                                     <div class="d-flex align-items-center gap-3 align-self-end">
                                         <span class="badge badge4">Away</span>
                                         <span class="badge bg2 orange_color">Contractor</span>
-                                        <a href="#"><i class="fas fa-chevron-right text-muted"></i></a>
+                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
                                     </div>
                                 </div>
                                 <div
@@ -201,7 +201,7 @@
                                     <div class="d-flex align-items-center gap-3 align-self-end">
                                         <span class="badge badge1">{{ __('messages.active') }}</span>
                                         <span class="badge bg2 orange_color">Contractor</span>
-                                        <a href="#"><i class="fas fa-chevron-right text-muted"></i></a>
+                                        {{-- <a href="#"><i class="fas fa-chevron-right text-muted"></i></a> --}}
                                     </div>
                                 </div>
                             </div>
@@ -242,7 +242,8 @@
             if (filterBtn) {
                 filterBtn.addEventListener('click', function() {
                     alert(
-                        'Filter options:\n\n• By {{ __('messages.role') }} (Engineer, Manager, etc.)\n• By Company\n• By Status (Active, Away)\n• By Department\n\nAdvanced filtering would be implemented here.');
+                        'Filter options:\n\n• By {{ __('messages.role') }} (Engineer, Manager, etc.)\n• By Company\n• By Status (Active, Away)\n• By Department\n\nAdvanced filtering would be implemented here.'
+                        );
                 });
             }
 
@@ -258,7 +259,8 @@
                     const status = memberItem.querySelector('.badge').textContent;
 
                     alert(
-                        `Team Member Details:\n\nName: ${name}\n{{ __('messages.role') }}: ${role}\nCompany: ${company}\nStatus: ${status}\n\nDetailed profile view would open here with:\n• {{ __('messages.contact') }} information\n• Project assignments\n• Performance metrics\n• Work schedule`);
+                        `Team Member Details:\n\nName: ${name}\n{{ __('messages.role') }}: ${role}\nCompany: ${company}\nStatus: ${status}\n\nDetailed profile view would open here with:\n• {{ __('messages.contact') }} information\n• Project assignments\n• Performance metrics\n• Work schedule`
+                        );
                 });
             });
         });

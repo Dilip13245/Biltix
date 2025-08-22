@@ -17,17 +17,17 @@ return [
     'search' => 'Search',
     'loading' => 'Loading...',
     'notifications' => 'Notifications',
-    
+
     // Admin Panel
     'admin_panel' => 'Admin Panel',
     'main_menu' => 'Main Menu',
     'projects' => 'Projects',
-    'team_members' => 'Team Members',
+    'team_members' => 'Peoples',
     'tasks' => 'Tasks',
     'analytics' => 'Analytics',
     'reports' => 'Reports',
     'account' => 'Account',
-    
+
     // Website
     'daily_logs' => 'Daily Logs',
     'inspections' => 'Inspections',
@@ -38,12 +38,12 @@ return [
     'project_progress' => 'Project Progress',
     'safety_checklist' => 'Safety Checklist',
     'snag_list' => 'Snag List',
-    
+
     // Messages
     'new_project_created' => 'New project created',
     'task_deadline_approaching' => 'Task deadline approaching',
     'project_completed' => 'Project completed',
-    
+
     // Dashboard
     'welcome_back' => 'Welcome back, :name!',
     'whats_happening' => 'Here\'s what\'s happening with your projects today.',
@@ -65,7 +65,7 @@ return [
     'active' => 'Active',
     'pending' => 'Pending',
     'completed' => 'Completed',
-    
+
     // Website specific
     'project_dashboard' => 'Project Dashboard',
     'search_projects' => 'Search projects...',
@@ -78,7 +78,7 @@ return [
     'progress' => 'Progress',
     'due' => 'Due',
     'more' => 'more',
-    
+
     // Project types and names
     'downtown_office_complex' => 'Downtown Office Complex',
     'residential_tower_a' => 'Residential Tower A',
@@ -90,14 +90,14 @@ return [
     'renovation_project' => 'Renovation Project',
     'industrial_building' => 'Industrial Building',
     'healthcare_facility' => 'Healthcare Facility',
-    
+
     // User info
     'john_smith' => 'John Smith',
     'consultant' => 'Consultant',
     'action' => 'Action',
     'another_action' => 'Another action',
     'something_else_here' => 'Something else here',
-    
+
     // Plans page
     'view_markup_plans' => 'View and markup architectural plans',
     'upload_plan' => 'Upload Plan',
@@ -112,7 +112,7 @@ return [
     'week_ago' => 'week ago',
     'weeks_ago' => 'weeks ago',
     'from_last_month' => 'from last month',
-    
+
     // Modals
     'search_projects' => 'Search Projects',
     'search_by_project' => 'Search by project name, type, or location...',
@@ -131,7 +131,7 @@ return [
     'close' => 'Close',
     'clear_filters' => 'Clear Filters',
     'complete' => 'Complete',
-    
+
     // Tasks
     'manage_track_tasks' => 'Manage and track task activities',
     'search_task_name' => 'Search Task Name',
@@ -144,7 +144,7 @@ return [
     'foundation_quality_check' => 'Foundation Quality Check',
     'electrical_installation_review' => 'Electrical Installation Review',
     'plumbing_system_inspection' => 'Plumbing System Inspection',
-    
+
     // Admin Panel
     'admin_panel' => 'Admin Panel',
     'main_menu' => 'Main Menu',
@@ -158,7 +158,7 @@ return [
     'new_project_created' => 'New project created',
     'task_deadline_approaching' => 'Task deadline approaching',
     'project_completed' => 'Project completed',
-    
+
     // Additional Dashboard
     'project_name' => 'Project Name',
     'due_date' => 'Due Date',
@@ -168,7 +168,7 @@ return [
     'create_task' => 'Create Task',
     'hours_ago' => 'hours ago',
     'new_team_member_added' => 'New team member added',
-    
+
     // Profile page
     'super_administrator' => 'Super Administrator',
     'joined' => 'Joined',
@@ -203,7 +203,7 @@ return [
     'generated_monthly_report' => 'Generated monthly report',
     'created_comprehensive_report' => 'Created comprehensive project status report',
     'week_ago' => 'week ago',
-    
+
     // Profile page
     'super_administrator' => 'Super Administrator',
     'joined' => 'Joined',
@@ -238,7 +238,7 @@ return [
     'generated_monthly_report' => 'Generated monthly report',
     'created_comprehensive_report' => 'Created comprehensive project status report',
     'week_ago' => 'week ago',
-    
+
     // Header specific
     'riverside_commercial_complex' => 'Riverside Commercial Complex',
     'start' => 'Start',
@@ -247,7 +247,7 @@ return [
     'dec_20_2024' => 'Dec 20, 2024',
     'english' => 'English',
     'arabic' => 'العربية',
-    
+
     // Missing translations
     'manage_track_inspections' => 'Manage and track inspection activities',
     'passed' => 'Passed',
@@ -308,7 +308,7 @@ return [
     'timeline' => 'Timeline',
     'may_25_2025' => 'May 25, 2025',
     'delete_project' => 'Delete Project',
-    
+
     // Missing translations
     'monitor_equipment_staff' => 'Monitor equipment and staff activities',
     'active_equipment' => 'Active Equipment',
@@ -367,7 +367,7 @@ return [
     'dec_13_2024' => 'Dec 13, 2024',
     'dec_14_2024' => 'Dec 14, 2024',
     'dec_15_2024' => 'Dec 15, 2024',
-    
+
     // Additional missing keys
     'account' => 'Account',
     'account_details' => 'Account Details',
@@ -523,9 +523,54 @@ return [
     'welcome_back' => 'Welcome Back',
     'whats_happening' => 'What\'s Happening',
     'xlsx' => 'XLSX',
-    
+
     // Additional missing keys
     'task_title' => 'Task Title',
     'start_date' => 'Start Date',
     'password' => 'Password',
+    'view_file' => 'View File',
+    'replace' => 'Replace',
+    
+    // New functionality translations
+    'upload_file' => 'Upload File',
+    'upload_photos' => 'Upload Photos',
+    'confirm_replace_plan' => 'Are you sure you want to replace this plan?',
+    'confirm_delete_plan' => 'Are you sure you want to delete this plan?',
+    'upload_photo' => 'Upload Photo',
+    'in_progress' => 'In Progress',
+    'open' => 'Open',
+    'minor' => 'Minor',
+    
+    // Modal translations
+    'type_of_issue' => 'Type of Issue (Ex. Electrical, Mechanical etc..)',
+    'select_issue_type' => 'Select Issue Type',
+    'hvac' => 'HVAC',
+    'other' => 'Other',
+    'safety' => 'Safety',
+    'add_description' => 'Add Description',
+    'optional' => 'Optional',
+    'provide_detailed_description' => 'Provide detailed description of the issue...',
+    'add_location' => 'Add Location',
+    'location_example' => 'e.g., Building A, Floor 2, Room 205',
+    'upload_images' => 'Upload Images',
+    'upload_photos_limit' => 'Upload photos showing the issue (Max: 5 photos, 5MB each)',
+    'next' => 'Next',
+    'task_name' => 'Task Name',
+    'enter_task_name' => 'Enter task name',
+    'task_description' => 'Task Description',
+    'brief_task_description' => 'Brief description of the task...',
+    'upload_task_images' => 'You can upload multiple images related to this task',
+    'drawing' => 'Drawing',
+    'drawing_tools' => 'Drawing Tools',
+    'tools' => 'Tools',
+    'pen' => 'Pen',
+    'circle' => 'Circle',
+    'arrow' => 'Arrow',
+    'text' => 'Text',
+    'color' => 'Color',
+    'brush_size' => 'Brush Size',
+    'files' => 'Files',
+    'undo' => 'Undo',
+    'clear_all' => 'Clear All',
 ];
+

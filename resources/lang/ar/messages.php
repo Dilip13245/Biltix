@@ -35,7 +35,7 @@ return [
     'passed' => 'نجح',
     'approved' => 'معتمد',
     'rejected' => 'مرفوض',
-    
+
     // Website Pages
     'inspections' => 'التفتيشات',
     'plans' => 'المخططات',
@@ -48,7 +48,7 @@ return [
     'safety_checklist' => 'قائمة السلامة',
     'snag_list' => 'قائمة المشاكل',
     'projects' => 'المشاريع',
-    
+
     // Project Progress
     'project_completion' => 'إنجاز المشروع',
     'active_workers' => 'العمال النشطين',
@@ -63,7 +63,7 @@ return [
     'roofing' => 'الأسقف',
     'interior' => 'الداخلي',
     'finishing' => 'التشطيبات',
-    
+
     // Files and Documents
     'total_files' => 'إجمالي الملفات',
     'drawings' => 'الرسوم',
@@ -74,7 +74,7 @@ return [
     'size' => 'الحجم',
     'filter' => 'تصفية',
     'sort' => 'ترتيب',
-    
+
     // Plans
     'upload_plan' => 'رفع مخطط',
     'ground_floor_plan' => 'مخطط الطابق الأرضي',
@@ -87,7 +87,7 @@ return [
     'days_ago' => 'أيام مضت',
     'week_ago' => 'أسبوع مضى',
     'weeks_ago' => 'أسابيع مضت',
-    
+
     // Inspections
     'manage_track_inspections' => 'إدارة وتتبع أنشطة التفتيش',
     'quick_stats' => 'إحصائيات سريعة',
@@ -97,7 +97,7 @@ return [
     'foundation_check' => 'فحص الأساس',
     'electrical_wiring' => 'الأسلاك الكهربائية',
     'plumbing_system' => 'نظام السباكة',
-    
+
     // Common fields
     'project_name' => 'اسم المشروع',
     'company_name' => 'اسم الشركة',
@@ -116,11 +116,11 @@ return [
     'cranes' => 'الرافعات',
     'units' => 'وحدة',
     'unit' => 'وحدة',
-    
+
     // Language
     'english' => 'English',
     'arabic' => 'العربية',
-    
+
     // Common actions
     'close' => 'إغلاق',
     'add_new' => 'إضافة جديد',
@@ -128,7 +128,7 @@ return [
     'download' => 'تحميل',
     'share' => 'مشاركة',
     'print' => 'طباعة',
-    
+
     // Tasks Page
     'manage_track_tasks' => 'إدارة وتتبع المهام',
     'search_task_name' => 'بحث باسم المهمة...',
@@ -153,7 +153,7 @@ return [
     'december' => 'ديسمبر',
     'january' => 'يناير',
     'february' => 'فبراير',
-    
+
     // Daily Logs
     'weather_conditions' => 'أحوال الطقس',
     'work_progress' => 'تقدم العمل',
@@ -161,7 +161,7 @@ return [
     'equipment_status' => 'حالة المعدات',
     'safety_incidents' => 'حوادث السلامة',
     'add_log_entry' => 'إضافة إدخال سجل',
-    
+
     // Team Members
     'team_overview' => 'نظرة عامة على الفريق',
     'total_members' => 'إجمالي الأعضاء',
@@ -175,7 +175,7 @@ return [
     'mechanical_engineer' => 'مهندس ميكانيكي',
     'phone' => 'الهاتف',
     'email' => 'البريد الإلكتروني',
-    
+
     // Safety Checklist
     'safety_inspection' => 'تفتيش السلامة',
     'ppe_compliance' => 'الامتثال لمعدات الحماية',
@@ -186,7 +186,7 @@ return [
     'pass' => 'نجح',
     'fail' => 'فشل',
     'na' => 'غير مطبق',
-    
+
     // Snag List
     'defect_description' => 'وصف العيب',
     'location' => 'الموقع',
@@ -197,7 +197,7 @@ return [
     'open' => 'مفتوح',
     'closed' => 'مغلق',
     'in_progress' => 'قيد التنفيذ',
-    
+
     // Gallery
     'construction_photos' => 'صور البناء',
     'progress_photos' => 'صور التقدم',
@@ -206,7 +206,7 @@ return [
     'equipment_photos' => 'صور المعدات',
     'upload_date' => 'تاريخ الرفع',
     'photo_description' => 'وصف الصورة',
-    
+
     // Notifications
     'recent_notifications' => 'الإشعارات الأخيرة',
     'unread' => 'غير مقروء',
@@ -216,7 +216,7 @@ return [
     'deadline_approaching' => 'يقترب الموعد النهائي',
     'safety_alert' => 'تنبيه سلامة',
     'material_delivered' => 'تم تسليم المواد',
-    
+
     // Daily Logs Additional
     'monitor_equipment_staff' => 'مراقبة المعدات والموظفين وأنشطة المهام',
     'all_teams' => 'جميع الفرق',
@@ -235,7 +235,7 @@ return [
     'maintenance' => 'صيانة',
     'idle' => 'متوقف',
     'zone_a' => 'المنطقة أ',
-    
+
     // Dashboard specific
     'project_dashboard' => 'لوحة تحكم المشروع',
     'search_projects' => 'البحث في المشاريع',
@@ -284,7 +284,7 @@ return [
     'consultants' => 'الاستشاريين',
     'team_directory' => 'دليل الفريق',
     'buildcorp_construction' => 'شركة بيلدكورب للإنشاء',
-    
+
     // Project Progress
     'from_last_week' => 'من الأسبوع الماضي',
     'view_plan' => 'عرض المخطط',
@@ -300,7 +300,7 @@ return [
     'may_25_2025' => '25 مايو 2025',
     'may_25_2025_full' => '25 مايو 2025',
     'may_8_2026' => '8 مايو 2026',
-    
+
     // Project Files
     'view_access_files' => 'عرض والوصول إلى ملفات المشروع',
     'pdfs' => 'ملفات PDF',
@@ -314,7 +314,7 @@ return [
     'dec_13_2024' => '13 ديسمبر 2024',
     'dec_12_2024' => '12 ديسمبر 2024',
     'dec_11_2024' => '11 ديسمبر 2024',
-    
+
     // Gallery
     'photo_gallery' => 'معرض الصور',
     'construction_progress_docs' => 'توثيق تقدم البناء',
@@ -322,7 +322,7 @@ return [
     'photos' => 'صور',
     'foundation_pour_phase1' => 'صب الأساس - المرحلة 1',
     'by_john_smith' => 'بواسطة جون سميث',
-    
+
     // Safety Checklist
     'ensure_safety_compliance' => 'ضمان الامتثال لبروتوكولات السلامة',
     'add_checklist' => 'إضافة قائمة تحقق',
@@ -333,14 +333,14 @@ return [
     'checked_by' => 'تم فحصه بواسطة',
     'mike_wilson' => 'مايك ويلسون',
     'view_full_list' => 'عرض القائمة الكاملة',
-    
+
     // Snag List
     'view_manage_snags' => 'عرض وإدارة مشاكل البناء',
     'add_new_snag' => 'إضافة مشكلة جديدة',
     'category' => 'الفئة',
     'search_snags' => 'البحث في المشاكل',
     'minor' => 'طفيف',
-    
+
     // Notifications
     'notifications_support' => 'الإشعارات والدعم',
     'stay_updated_help' => 'ابق على اطلاع بإشعارات المشروع واحصل على المساعدة',
@@ -350,7 +350,7 @@ return [
     'structural_drawings_review' => 'الرسوم الهيكلية تحتاج لمراجعتك وموافقتك',
     'help_support' => 'المساعدة والدعم',
     'weather' => 'الطقس',
-    
+
     // Additional missing translations
     'urgent' => 'عاجل',
     'add_task' => 'إضافة مهمة',
@@ -366,7 +366,7 @@ return [
     'review' => 'مراجعة',
     'plan_file' => 'ملف المخطط',
     'upload_plan_btn' => 'رفع المخطط',
-    
+
     // All remaining missing translations
     'account' => 'الحساب',
     'account_details' => 'تفاصيل الحساب',
@@ -520,8 +520,53 @@ return [
     'welcome_back' => 'مرحباً بعودتك',
     'whats_happening' => 'ما يحدث',
     'xlsx' => 'XLSX',
-    
+
     // Additional missing keys
     'task_title' => 'عنوان المهمة',
     'password' => 'كلمة المرور',
+    'view_file' => 'عرض الملف',
+    'replace'  => 'استبدال',
+    
+    // New functionality translations
+    'upload_file' => 'رفع ملف',
+    'upload_photos' => 'رفع صور',
+    'confirm_replace_plan' => 'هل أنت متأكد من استبدال هذا المخطط؟',
+    'confirm_delete_plan' => 'هل أنت متأكد من حذف هذا المخطط؟',
+    'upload_photo' => 'رفع صورة',
+    'in_progress' => 'قيد التنفيذ',
+    'open' => 'مفتوح',
+    'minor' => 'طفيف',
+    
+    // Modal translations
+    'type_of_issue' => 'نوع المشكلة (مثال: كهربائي، ميكانيكي إلخ..)',
+    'select_issue_type' => 'اختر نوع المشكلة',
+    'hvac' => 'تكييف وتهوية',
+    'other' => 'أخرى',
+    'safety' => 'السلامة',
+    'add_description' => 'إضافة وصف',
+    'optional' => 'اختياري',
+    'provide_detailed_description' => 'قدم وصفاً مفصلاً للمشكلة...',
+    'add_location' => 'إضافة موقع',
+    'location_example' => 'مثال: المبنى أ، الطابق 2، الغرفة 205',
+    'upload_images' => 'رفع صور',
+    'upload_photos_limit' => 'رفع صور توضح المشكلة (الحد الأقصى: 5 صور، 5 ميجابايت لكل صورة)',
+    'next' => 'التالي',
+    'task_name' => 'اسم المهمة',
+    'enter_task_name' => 'أدخل اسم المهمة',
+    'task_description' => 'وصف المهمة',
+    'brief_task_description' => 'وصف موجز للمهمة...',
+    'upload_task_images' => 'يمكنك رفع صور متعددة متعلقة بهذه المهمة',
+    'drawing' => 'رسم',
+    'drawing_tools' => 'أدوات الرسم',
+    'tools' => 'الأدوات',
+    'pen' => 'قلم',
+    'circle' => 'دائرة',
+    'arrow' => 'سهم',
+    'text' => 'نص',
+    'color' => 'اللون',
+    'brush_size' => 'حجم الفرشاة',
+    'files' => 'الملفات',
+    'undo' => 'تراجع',
+    'clear_all' => 'مسح الكل',
+
 ];

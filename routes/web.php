@@ -52,6 +52,7 @@ Route::group(['prefix' => 'website'], function () {
         Route::get('/snag-list', [HomeController::class, 'snagList'])->name('website.project.snag-list');
         Route::get('/safety-checklist', [HomeController::class, 'safetyChecklist'])->name('website.project.safety-checklist');
         Route::get('/notifications', [HomeController::class, 'notifications'])->name('website.project.notifications');
+        Route::get('/help-support', [HomeController::class, 'helpSupport'])->name('website.project.help-support');
     });
 });
 

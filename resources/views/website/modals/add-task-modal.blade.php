@@ -4,97 +4,45 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="addTaskModalLabel">
-          <i class="fas fa-plus {{ rtl_helper()->marginEnd(2) }}"></i>{{ __("messages.add_new") }} Task
+          <i class="fas fa-plus {{ rtl_helper()->marginEnd(2) }}"></i>{{ __("messages.add_new_task") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="addTaskForm">
           @csrf
-          <div class="row">
-            <div class="col-md-8 mb-3">
-              <label for="taskTitle" class="form-label fw-medium">{{ __('messages.task_title') }}</label>
-              <input type="text" class="form-control Input_control" id="taskTitle" name="title" required
-                placeholder="e.g., Pour Concrete Slab">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label for="priority" class="form-label fw-medium">{{ __("messages.priority") }}</label>
-              <select class="form-select Input_control" id="priority" name="priority" required>
-                <option value="low">{{ __("messages.low") }}</option>
-                <option value="medium" selected>{{ __("messages.medium") }}</option>
-                <option value="high">{{ __("messages.high") }}</option>
-                <option value="urgent">Urgent</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="startDate" class="form-label fw-medium">{{ __('messages.start_date') }}</label>
-              <input type="date" class="form-control Input_control" id="startDate" name="start_date" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="dueDate" class="form-label fw-medium">{{ __('messages.due_date') }}</label>
-              <input type="date" class="form-control Input_control" id="dueDate" name="due_date" required>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="assignedTo" class="form-label fw-medium">Assigned To</label>
-              <select class="form-select Input_control" id="assignedTo" name="assigned_to">
-                <option value="">Select Team Member</option>
-                <option value="1">John Smith - Project Manager</option>
-                <option value="2">Sarah Johnson - Engineer</option>
-                <option value="3">Mike Wilson - Supervisor</option>
-                <option value="4">Lisa Brown - Quality Inspector</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="taskStatus" class="form-label fw-medium">Status</label>
-              <select class="form-select Input_control" id="taskStatus" name="status">
-                <option value="pending" selected>Pending</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="on_hold">On Hold</option>
-              </select>
-            </div>
+          <div class="mb-3">
+            <label for="taskName" class="form-label fw-medium">{{ __("messages.task_name") }}</label>
+            <input type="text" class="form-control Input_control" id="taskName" name="task_name" required
+              placeholder="{{ __("messages.enter_task_name") }}">
           </div>
 
           <div class="mb-3">
-            <label for="taskDescription" class="form-label fw-medium">Description</label>
-            <textarea class="form-control Input_control" id="taskDescription" name="description" rows="4" required
-              placeholder="Detailed description of the task..."></textarea>
+            <label for="taskDescription" class="form-label fw-medium">{{ __("messages.task_description") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
+            <textarea class="form-control Input_control" id="taskDescription" name="description" rows="3"
+              placeholder="{{ __("messages.brief_task_description") }}"></textarea>
           </div>
 
           <div class="mb-3">
-            <label for="progress" class="form-label fw-medium">Progress (%)</label>
-            <input type="range" class="form-range" id="progress" name="progress" min="0" max="100" value="0">
-            <div class="d-flex justify-content-between">
-              <span>0%</span>
-              <span id="progressValue">0%</span>
-              <span>100%</span>
-            </div>
+            <label for="dueDate" class="form-label fw-medium">{{ __("messages.due_date") }}</label>
+            <input type="date" class="form-control Input_control" id="dueDate" name="due_date" required>
+          </div>
+
+          <div class="mb-4">
+            <label for="taskImages" class="form-label fw-medium">{{ __("messages.upload_images") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
+            <input type="file" class="form-control Input_control" id="taskImages" name="images[]" 
+              accept="image/*" multiple>
+            <div class="form-text">{{ __("messages.upload_task_images") }}</div>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
         <button type="submit" form="addTaskForm" class="btn orange_btn">
-          <i class="fas fa-plus {{ rtl_helper()->marginEnd(2) }}"></i>{{ __("messages.add_task") }}
+          {{ __("messages.next") }} <i class="fas fa-arrow-right ms-2"></i>
         </button>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const progressSlider = document.getElementById('progress');
-  const progressValue = document.getElementById('progressValue');
-  
-  progressSlider.addEventListener('input', function() {
-    progressValue.textContent = this.value + '%';
-  });
-});
-</script>

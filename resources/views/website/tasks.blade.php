@@ -224,6 +224,7 @@
   </div>
 </section>
 @include('website.modals.add-task-modal')
+@include('website.modals.drawing-modal')
 @include('website.modals.task-details-modal')
 
 <script>
@@ -243,6 +244,8 @@ function openTaskDetails(title, description, dueDate, startDate, assignedTo, pri
   modal.show();
 }
 
+
+
 // Add Task Form Handler
 document.addEventListener('DOMContentLoaded', function() {
   const addTaskForm = document.getElementById('addTaskForm');
@@ -250,23 +253,66 @@ document.addEventListener('DOMContentLoaded', function() {
     addTaskForm.addEventListener('submit', function(e) {
       e.preventDefault();
       
-      // Show loading state
-      const submitBtn = document.querySelector('#addTaskModal .btn.orange_btn');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
-      submitBtn.disabled = true;
+      console.log('Task form submitted');
       
-      // Simulate task creation
-      setTimeout(() => {
-        alert('Task added successfully!');
-        bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-        addTaskForm.reset();
+      const fileInput = document.getElementById('taskImages');
+      
+      if (fileInput.files && fileInput.files.length > 0) {
+        // Store all files
+        window.selectedTaskFiles = fileInput.files;
         
-        // Refresh page or add new task to the grid
-        location.reload();
-      }, 1500);
+        // Open drawing modal with image markup config
+        openDrawingModal({
+          title: 'Task Image Markup',
+          saveButtonText: 'Save Task',
+          mode: 'image',
+          onSave: function(imageData) {
+            console.log('Saving task with image markup:', imageData);
+            
+            // Close drawing modal
+            const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+            if (drawingModal) drawingModal.hide();
+            
+            // Close add task modal
+            const addTaskModal = bootstrap.Modal.getInstance(document.getElementById('addTaskModal'));
+            if (addTaskModal) addTaskModal.hide();
+            
+            alert('Task with image markup saved successfully!');
+            location.reload();
+          }
+        });
+        
+        // Load images after modal is shown
+        document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
+          if (window.selectedTaskFiles.length === 1) {
+            loadImageToCanvas(window.selectedTaskFiles[0]);
+          } else {
+            loadMultipleFiles(window.selectedTaskFiles);
+          }
+        }, { once: true });
+        
+      } else {
+        // Open drawing modal with blank canvas config
+        openDrawingModal({
+          title: 'Task Drawing',
+          saveButtonText: 'Save Task',
+          mode: 'blank',
+          onSave: function(imageData) {
+            console.log('Saving task drawing:', imageData);
+            
+            // Close drawing modal
+            const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+            if (drawingModal) drawingModal.hide();
+            
+            // Close add task modal
+            const addTaskModal = bootstrap.Modal.getInstance(document.getElementById('addTaskModal'));
+            if (addTaskModal) addTaskModal.hide();
+            
+            alert('Task with drawing saved successfully!');
+            location.reload();
+          }
+        });
+      }
     });
   }
   
@@ -307,5 +353,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+<script src="{{ asset('website/js/drawing.js') }}"></script>
 
 @endsection

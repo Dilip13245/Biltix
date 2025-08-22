@@ -145,4 +145,10 @@ class HomeController extends Controller
         $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];
         return view('website.notifications', compact('project'));
     }
+
+    public function helpSupport($project_id)
+    {
+        $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];
+        return view('website.help-support', compact('project'));
+    }
 }

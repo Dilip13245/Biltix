@@ -76,6 +76,12 @@
           <span>{{ __('messages.notifications') }}</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a href="{{ route('website.project.help-support', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.help-support') ? 'active' : '' }}">
+          <i class="fas fa-headset"></i>
+          <span>{{ __('messages.help_support') }}</span>
+        </a>
+      </li>
     @endif
   </ul>
 </nav>

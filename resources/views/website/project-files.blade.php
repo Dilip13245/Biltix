@@ -29,6 +29,12 @@
                 </svg>
                 <span class="text-black">{{ __('messages.sort') }}</span>
             </button>
+            <!-- Upload Button -->
+            <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileUpload(this)">
+            <button class="btn orange_btn" onclick="document.getElementById('fileUploadInput').click()">
+                <i class="fas fa-arrow-up me-2"></i>
+                {{ __('messages.upload_file') }}
+            </button>
         </div>
     </div>
     <section class="px-md-4">
@@ -302,6 +308,16 @@
         </div>
     </section>
     <script>
+        function handleFileUpload(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                alert(`File "${file.name}" selected for upload!\n\nFile Size: ${fileSize} MB\n\nFile would be uploaded to project files.`);
+                // Reset input for next upload
+                input.value = '';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Filter button functionality
             const filterBtn = document.querySelector('.filter-btn');

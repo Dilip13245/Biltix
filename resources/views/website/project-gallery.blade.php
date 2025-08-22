@@ -3,182 +3,169 @@
 @section('title', 'Riverside Commercial Complex - Project Gallery')
 
 @section('content')
-<div class="content-header border-0 shadow-none mb-4">
-  <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
-    <div>
-      <h2>{{ __("messages.photo_gallery") }}</h2>
-      <p>{{ __('messages.construction_progress_docs') }}</p>
+    <div class="content-header border-0 shadow-none mb-4">
+        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+            <div>
+                <h2>{{ __('messages.photo_gallery') }}</h2>
+                <p>{{ __('messages.construction_progress_docs') }}</p>
+            </div>
+            <input type="file" id="photoUploadInput" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(this)">
+            <button class="btn orange_btn py-2 px-md-4" onclick="document.getElementById('photoUploadInput').click()">
+                <i class="fas fa-arrow-up me-2"></i>
+                {{ __('messages.upload_photos') }}
+            </button>
+        </div>
+        <div class="gallery-filters d-flex align-items-center gap-3 flex-wrap  mt-3 mt-md-4">
+            <select class="form-select w-auto">
+                <option>{{ __('messages.all_categories') }}</option>
+                <option>{{ __('messages.foundation') }}</option>
+                <option>{{ __('messages.structure') }}</option>
+                <option>{{ __('messages.finishing') }}</option>
+            </select>
+            <div class="date-filter d-flex align-items-center border rounded-3 px-4 py-2 bg-light">
+                <i class="fa-solid fa-calendar-days me-2"></i>
+                <span>{{ __('messages.may_25_2025') }}</span>
+            </div>
+            <div class="total-photos ">
+                <span>{{ __('messages.total') }}: </span>
+                <a href="#" class="fw-bold text-primary text-decoration-none">247 {{ __('messages.photos') }}</a>
+            </div>
+        </div>
     </div>
-    <button class="btn btn-primary py-2 px-md-4" data-bs-toggle="modal" data-bs-target="#addPhotoModal">
-      <i class="fas fa-plus"></i>
-      {{ __("messages.add_new") }}
-    </button>
-  </div>
-  <div class="gallery-filters d-flex align-items-center gap-3 flex-wrap  mt-3 mt-md-4">
-    <select class="form-select w-auto">
-      <option>{{ __('messages.all_categories') }}</option>
-      <option>{{ __('messages.foundation') }}</option>
-      <option>{{ __('messages.structure') }}</option>
-      <option>{{ __('messages.finishing') }}</option>
-    </select>
-    <div class="date-filter d-flex align-items-center border rounded-3 px-4 py-2 bg-light">
-      <i class="fa-solid fa-calendar-days me-2"></i>
-      <span>{{ __('messages.may_25_2025') }}</span>
-    </div>
-    <div class="total-photos ">
-      <span>{{ __('messages.total') }}: </span>
-      <a href="#" class="fw-bold text-primary text-decoration-none">247 {{ __('messages.photos') }}</a>
-    </div>
-  </div>
-</div>
-<div class="CarDs-grid">
-  <!-- Plan Card 1 -->
-  <div class="CustOm_Card wow fadeInUp" data-wow-delay="0s">
-    <div class="plan-image">
-      <img src="{{ asset('website/images/Construction1.png') }}" alt="Construction1">
-    </div>
-    <div class="carD-details">
-      <h3>{{ __('messages.foundation_pour_phase1') }}</h3>
-      <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
-        <p class="revision fw-normal">{{ __('messages.jan_15_2024') }}</p>
-        <p class="revision fw-normal">{{ __('messages.by_john_smith') }}</p>
-      </div>
-    </div>
-  </div>
+    <div class="CarDs-grid">
+        <!-- Plan Card 1 -->
+        <div class="CustOm_Card wow fadeInUp" data-wow-delay="0s">
+            <div class="plan-image">
+                <img src="{{ asset('website/images/Construction1.png') }}" alt="Construction1">
+            </div>
+            <div class="carD-details">
+                {{-- <h3>{{ __('messages.foundation_pour_phase1') }}</h3> --}}
+                <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
+                    <p class="revision fw-normal">{{ __('messages.jan_15_2024') }}</p>
+                    <p class="revision fw-normal">{{ __('messages.by_john_smith') }}</p>
+                </div>
+            </div>
+        </div>
 
-  <!-- Plan Card 2 -->
-  <div class="CustOm_Card wow fadeInUp" data-wow-delay=".4s">
-    <div class="plan-image">
-      <img src="{{ asset('website/images/Construction2.png') }}" alt="Construction2">
-    </div>
-    <div class="carD-details">
-      <h3>>{{ __("messages.second_floor_plan") }}</h3>
-      <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
-        <p class="revision fw-normal">Jan 18, 2024</p>
-        <p class="revision fw-normal">by Mike Johnson</p>
-      </div>
-    </div>
-  </div>
+        <!-- Plan Card 2 -->
+        <div class="CustOm_Card wow fadeInUp" data-wow-delay=".4s">
+            <div class="plan-image">
+                <img src="{{ asset('website/images/Construction2.png') }}" alt="Construction2">
+            </div>
+            <div class="carD-details">
+                {{-- <h3>>{{ __("messages.second_floor_plan") }}</h3> --}}
+                <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
+                    <p class="revision fw-normal">Jan 18, 2024</p>
+                    <p class="revision fw-normal">by Mike Johnson</p>
+                </div>
+            </div>
+        </div>
 
-  <!-- Plan Card 3 -->
-  <div class="CustOm_Card wow fadeInUp" data-wow-delay=".8s">
-    <div class="plan-image">
-      <img src="{{ asset('website/images/Construction3.png') }}" alt="Construction3">
-    </div>
-    <div class="carD-details">
-      <h3>>{{ __("messages.front_elevation") }}</h3>
-      <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
-        <p class="revision fw-normal">Jan 20, 2024</p>
-        <p class="revision fw-normal">by Sarah Davis</p>
-      </div>
-    </div>
-  </div>
+        <!-- Plan Card 3 -->
+        <div class="CustOm_Card wow fadeInUp" data-wow-delay=".8s">
+            <div class="plan-image">
+                <img src="{{ asset('website/images/Construction3.png') }}" alt="Construction3">
+            </div>
+            <div class="carD-details">
+                {{-- <h3>>{{ __("messages.front_elevation") }}</h3> --}}
+                <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
+                    <p class="revision fw-normal">Jan 20, 2024</p>
+                    <p class="revision fw-normal">by Sarah Davis</p>
+                </div>
+            </div>
+        </div>
 
-  <!-- Plan Card 4 -->
-  <div class="CustOm_Card wow fadeInUp" data-wow-delay="1.2s">
-    <div class="plan-image">
-      <img src="{{ asset('website/images/Construction4.png') }}" alt="Construction4">
-    </div>
-    <div class="carD-details">
-      <h3>>{{ __("messages.building_section") }}</h3>
-      <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
-        <p class="revision fw-normal">Jan 22, 2024</p>
-        <p class="revision fw-normal">by Tom Wilson</p>
-      </div>
-    </div>
-  </div>
+        <!-- Plan Card 4 -->
+        <div class="CustOm_Card wow fadeInUp" data-wow-delay="1.2s">
+            <div class="plan-image">
+                <img src="{{ asset('website/images/Construction4.png') }}" alt="Construction4">
+            </div>
+            <div class="carD-details">
+                {{-- <h3>>{{ __("messages.building_section") }}</h3> --}}
+                <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
+                    <p class="revision fw-normal">Jan 22, 2024</p>
+                    <p class="revision fw-normal">by Tom Wilson</p>
+                </div>
+            </div>
+        </div>
 
-  <!-- Plan Card 5 -->
-  <div class="CustOm_Card wow fadeInUp" data-wow-delay="1.3s">
-    <div class="plan-image">
-      <img src="{{ asset('website/images/Construction5.png') }}" alt="Construction5">
-    </div>
-    <div class="carD-details">
-      <h3>>{{ __("messages.basement_plan") }}</h3>
-      <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
-        <p class="revision fw-normal">Jan 25, 2024</p>
-        <p class="revision fw-normal">by Alex Brown</p>
-      </div>
-    </div>
-  </div>
+        <!-- Plan Card 5 -->
+        <div class="CustOm_Card wow fadeInUp" data-wow-delay="1.3s">
+            <div class="plan-image">
+                <img src="{{ asset('website/images/Construction5.png') }}" alt="Construction5">
+            </div>
+            <div class="carD-details">
+                {{-- <h3>>{{ __("messages.basement_plan") }}</h3> --}}
+                <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
+                    <p class="revision fw-normal">Jan 25, 2024</p>
+                    <p class="revision fw-normal">by Alex Brown</p>
+                </div>
+            </div>
+        </div>
 
-  <!-- Plan Card 6 -->
-  <div class="CustOm_Card wow fadeInUp" data-wow-delay="1.6s">
-    <div class="plan-image">
-      <img src="{{ asset('website/images/Construction6.png') }}" alt="Construction6">
+        <!-- Plan Card 6 -->
+        <div class="CustOm_Card wow fadeInUp" data-wow-delay="1.6s">
+            <div class="plan-image">
+                <img src="{{ asset('website/images/Construction6.png') }}" alt="Construction6">
+            </div>
+            <div class="carD-details">
+                {{-- <h3>>{{ __("messages.roof_plan") }}</h3> --}}
+                <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
+                    <p class="revision fw-normal">Jan 28, 2024</p>
+                    <p class="revision fw-normal">by Lisa Garcia</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="carD-details">
-      <h3>>{{ __("messages.roof_plan") }}</h3>
-      <div class="d-flex align-items-center justify-content-between gap-2 gam-md-3 flex-wrap">
-        <p class="revision fw-normal">Jan 28, 2024</p>
-        <p class="revision fw-normal">by Lisa Garcia</p>
-      </div>
-    </div>
-  </div>
-</div>
-@include('website.modals.add-photo-modal')
 
-<script>
-// Add Photo Form Handler
-document.addEventListener('DOMContentLoaded', function() {
-  const addPhotoForm = document.getElementById('addPhotoForm');
-  if (addPhotoForm) {
-    addPhotoForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // Show loading state
-      const submitBtn = document.querySelector('#addPhotoModal .btn.orange_btn');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
-      submitBtn.disabled = true;
-      
-      // Simulate photo upload
-      setTimeout(() => {
-        alert('Photos uploaded successfully!');
-        bootstrap.Modal.getInstance(document.getElementById('addPhotoModal')).hide();
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-        addPhotoForm.reset();
-        document.getElementById('photoPreview').style.display = 'none';
-        
-        // Refresh page or add new photos to the gallery
-        location.reload();
-      }, 3000);
-    });
-  }
-  
-  // Filter functionality
-  const categoryFilter = document.querySelector('select.form-select');
-  if (categoryFilter) {
-    categoryFilter.addEventListener('change', function() {
-      const filterValue = this.value.toLowerCase();
-      const photoCards = document.querySelectorAll('.CustOm_Card');
-      
-      photoCards.forEach(card => {
-        const cardTitle = card.querySelector('h3').textContent.toLowerCase();
-        if (filterValue === 'all categories' || cardTitle.includes(filterValue)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
+
+    <script>
+        function handlePhotoUpload(input) {
+            if (input.files && input.files.length > 0) {
+                const files = Array.from(input.files);
+                const fileNames = files.map(file => file.name).join(', ');
+                const totalSize = (files.reduce((sum, file) => sum + file.size, 0) / (1024 * 1024)).toFixed(2);
+                
+                alert(`${files.length} photo(s) selected for upload!\n\nFiles: ${fileNames}\n\nTotal Size: ${totalSize} MB\n\nPhotos would be uploaded to gallery.`);
+                // Reset input for next upload
+                input.value = '';
+            }
         }
-      });
-    });
-  }
-  
-  // Photo click to view full size
-  const photoImages = document.querySelectorAll('.plan-image img');
-  photoImages.forEach(img => {
-    img.addEventListener('click', function() {
-      openPhotoViewer(this.src, this.alt);
-    });
-  });
-});
 
-function openPhotoViewer(imageSrc, title) {
-  // Create a simple photo viewer
-  const modal = document.createElement('div');
-  modal.className = 'modal fade';
-  modal.innerHTML = `
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Filter functionality
+            const categoryFilter = document.querySelector('select.form-select');
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', function() {
+                    const filterValue = this.value.toLowerCase();
+                    const photoCards = document.querySelectorAll('.CustOm_Card');
+
+                    photoCards.forEach(card => {
+                        const cardTitle = card.querySelector('h3').textContent.toLowerCase();
+                        if (filterValue === 'all categories' || cardTitle.includes(filterValue)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Photo click to view full size
+            const photoImages = document.querySelectorAll('.plan-image img');
+            photoImages.forEach(img => {
+                img.addEventListener('click', function() {
+                    openPhotoViewer(this.src, this.alt);
+                });
+            });
+        });
+
+        function openPhotoViewer(imageSrc, title) {
+            // Create a simple photo viewer
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
@@ -191,15 +178,15 @@ function openPhotoViewer(imageSrc, title) {
       </div>
     </div>
   `;
-  
-  document.body.appendChild(modal);
-  const bsModal = new bootstrap.Modal(modal);
-  bsModal.show();
-  
-  modal.addEventListener('hidden.bs.modal', function() {
-    document.body.removeChild(modal);
-  });
-}
-</script>
+
+            document.body.appendChild(modal);
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+
+            modal.addEventListener('hidden.bs.modal', function() {
+                document.body.removeChild(modal);
+            });
+        }
+    </script>
 
 @endsection
