@@ -9,38 +9,55 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-0">
-        <div class="d-flex h-100">
+        <div class="d-flex h-100 flex-column flex-md-row">
           <!-- Drawing Tools Sidebar -->
-          <div class="drawing-tools-sidebar bg-light p-3" style="width: 250px; border-right: 1px solid #dee2e6;">
-            <h6 class="fw-bold mb-3">{{ __("messages.drawing_tools") }}</h6>
+          <div class="drawing-tools-sidebar bg-light p-2 p-md-3 order-2 order-md-1" style="width: 100%; max-width: 250px; border-top: 1px solid #dee2e6; border-right: none;" class="d-md-block">
+            <h6 class="fw-bold mb-3 d-none d-md-block">{{ __("messages.drawing_tools") }}</h6>
             
             <!-- Tool Selection -->
-            <div class="mb-3">
-              <label class="form-label fw-medium">{{ __("messages.tools") }}</label>
-              <div class="btn-group-vertical w-100" role="group">
-                <button type="button" class="btn btn-outline-primary active" id="penTool" onclick="setTool('pen')">
-                  <i class="fas fa-pen me-2"></i>{{ __("messages.pen") }}
+            <div class="mb-2 mb-md-3">
+              <div class="btn-group w-100 d-md-none mb-2" role="group">
+                <button type="button" class="btn btn-outline-primary btn-sm active" id="penTool" onclick="setTool('pen')">
+                  <i class="fas fa-pen"></i>
                 </button>
-                <button type="button" class="btn btn-outline-primary" id="circleTool" onclick="setTool('circle')">
-                  <i class="fas fa-circle me-2"></i>{{ __("messages.circle") }}
+                <button type="button" class="btn btn-outline-primary btn-sm" id="circleTool" onclick="setTool('circle')">
+                  <i class="fas fa-circle"></i>
                 </button>
-                <button type="button" class="btn btn-outline-primary" id="arrowTool" onclick="setTool('arrow')">
-                  <i class="fas fa-arrow-right me-2"></i>{{ __("messages.arrow") }}
+                <button type="button" class="btn btn-outline-primary btn-sm" id="arrowTool" onclick="setTool('arrow')">
+                  <i class="fas fa-arrow-right"></i>
                 </button>
-                <button type="button" class="btn btn-outline-primary" id="textTool" onclick="setTool('text')">
-                  <i class="fas fa-font me-2"></i>{{ __("messages.text") }}
+                <button type="button" class="btn btn-outline-primary btn-sm" id="textTool" onclick="setTool('text')">
+                  <i class="fas fa-font"></i>
                 </button>
+                <input type="color" class="btn" id="colorPicker" value="#ff0000" style="width: 40px; padding: 2px;">
+              </div>
+              <div class="d-none d-md-block">
+                <label class="form-label fw-medium">{{ __("messages.tools") }}</label>
+                <div class="btn-group-vertical w-100" role="group">
+                  <button type="button" class="btn btn-outline-primary active" id="penToolDesktop" onclick="setTool('pen')">
+                    <i class="fas fa-pen me-2"></i>{{ __("messages.pen") }}
+                  </button>
+                  <button type="button" class="btn btn-outline-primary" id="circleToolDesktop" onclick="setTool('circle')">
+                    <i class="fas fa-circle me-2"></i>{{ __("messages.circle") }}
+                  </button>
+                  <button type="button" class="btn btn-outline-primary" id="arrowToolDesktop" onclick="setTool('arrow')">
+                    <i class="fas fa-arrow-right me-2"></i>{{ __("messages.arrow") }}
+                  </button>
+                  <button type="button" class="btn btn-outline-primary" id="textToolDesktop" onclick="setTool('text')">
+                    <i class="fas fa-font me-2"></i>{{ __("messages.text") }}
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Color Picker -->
-            <div class="mb-3">
-              <label for="colorPicker" class="form-label fw-medium">{{ __("messages.color") }}</label>
-              <input type="color" class="form-control form-control-color" id="colorPicker" value="#ff0000">
+            <!-- Color Picker Desktop -->
+            <div class="mb-3 d-none d-md-block">
+              <label for="colorPickerDesktop" class="form-label fw-medium">{{ __("messages.color") }}</label>
+              <input type="color" class="form-control form-control-color" id="colorPickerDesktop" value="#ff0000">
             </div>
 
             <!-- Brush Size -->
-            <div class="mb-3">
+            <div class="mb-3 d-none d-md-block">
               <label for="brushSize" class="form-label fw-medium">{{ __("messages.brush_size") }}</label>
               <input type="range" class="form-range" id="brushSize" min="1" max="10" value="3">
               <div class="d-flex justify-content-between">
@@ -65,19 +82,21 @@
             </div>
 
             <!-- Actions -->
-            <div class="mb-3">
-              <button type="button" class="btn btn-info w-100 mb-2" onclick="undoLastAction()">
-                <i class="fas fa-undo me-2"></i>{{ __("messages.undo") }}
-              </button>
-              <button type="button" class="btn btn-warning w-100 mb-2" onclick="clearCanvas()">
-                <i class="fas fa-eraser me-2"></i>{{ __("messages.clear_all") }}
-              </button>
+            <div class="mb-2 mb-md-3">
+              <div class="d-flex gap-2 d-md-block">
+                <button type="button" class="btn btn-info btn-sm flex-fill" onclick="undoLastAction()">
+                  <i class="fas fa-undo d-md-none"></i><i class="fas fa-undo me-2 d-none d-md-inline"></i><span class="d-none d-md-inline">{{ __("messages.undo") }}</span>
+                </button>
+                <button type="button" class="btn btn-warning btn-sm flex-fill mb-0 mb-md-2" onclick="clearCanvas()">
+                  <i class="fas fa-eraser d-md-none"></i><i class="fas fa-eraser me-2 d-none d-md-inline"></i><span class="d-none d-md-inline">{{ __("messages.clear_all") }}</span>
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- Drawing Canvas Area -->
-          <div class="flex-grow-1 d-flex align-items-center justify-content-center bg-white">
-            <canvas id="canvas" style="border: 1px solid #dee2e6; cursor: crosshair;"></canvas>
+          <div class="flex-grow-1 d-flex align-items-center justify-content-center bg-white order-1 order-md-2" style="min-height: 300px;">
+            <canvas id="canvas" style="border: 1px solid #dee2e6; cursor: crosshair; max-width: 100%; max-height: 100%;"></canvas>
           </div>
         </div>
       </div>

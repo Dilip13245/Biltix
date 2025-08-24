@@ -608,5 +608,38 @@ return [
     
     // Status badges
     'critical' => 'حرج',
+    
+    // Project creation
+    'create_new_project' => 'إنشاء مشروع جديد',
+    'contractor_name' => 'اسم المقاول',
+    'construction_plans' => 'مخططات البناء',
+    'gantt_chart' => 'مخطط جانت',
+    'max_25mb_per_file' => 'الحد الأقصى 25 ميجابايت لكل ملف. التنسيقات: PDF، DOCX، JPG، JPEG، PNG',
+    'quality' => 'الجودة',
+    'technical_engineer' => 'المهندس التقني',
+    'select_manager' => 'اختر مدير المشروع',
+    'select_engineer' => 'اختر المهندس التقني',
+    'basic_information' => 'المعلومات الأساسية',
+    'project_details' => 'تفاصيل المشروع',
+    'upload_files' => 'رفع الملفات',
+    'assign_project_manager' => 'تعيين مدير المشروع',
+    'assign_technical_engineer' => 'تعيين المهندس التقني',
+    'project_type_example' => 'نوع المشروع (مثال: فيلا، برج، مستشفى، إلخ..)',
+    'project_location' => 'موقع المشروع',
+    'project_start_date' => 'تاريخ بدء المشروع',
+    'project_due_date' => 'تاريخ استحقاق المشروع',
+    'upload_construction_plans' => 'رفع مخططات البناء/المستندات/الملفات',
+    'upload_gantt_chart' => 'رفع مخطط جانت',
+    'upload_your_files' => 'ارفع ملفاتك',
+    'supported_formats_construction' => 'مدعوم: PDF، DOCX، JPG، PNG — الحد الأقصى 25 ميجابايت',
+    'supported_formats_gantt' => 'مدعوم: PDF، DOCX، JPG، PNG — الحد الأقصى 25 ميجابايت',
+    'villa' => 'فيلا',
+    'hospital' => 'مستشفى',
+    'next' => 'التالي',
+    'previous' => 'السابق',
+    'drag_drop_or_click' => 'اسحب وأفلت الملفات هنا أو انقر للتصفح',
+    'markup_project_files' => 'تعليم ملفات المشروع',
+    'save' => 'حفظ',
+    'project_created_with_markup' => 'تم إنشاء المشروع بنجاح مع التعليم!',
 
 ];

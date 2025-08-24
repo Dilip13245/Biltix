@@ -163,8 +163,10 @@ function setTool(tool) {
 function startDrawing(e) {
     isDrawing = true;
     const rect = canvas.getBoundingClientRect();
-    startX = e.clientX - rect.left;
-    startY = e.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    startX = (e.clientX - rect.left) * scaleX;
+    startY = (e.clientY - rect.top) * scaleY;
     
     if (currentTool === 'pen') {
         ctx.beginPath();
@@ -176,8 +178,10 @@ function draw(e) {
     if (!isDrawing) return;
     
     const rect = canvas.getBoundingClientRect();
-    const currentX = e.clientX - rect.left;
-    const currentY = e.clientY - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const currentX = (e.clientX - rect.left) * scaleX;
+    const currentY = (e.clientY - rect.top) * scaleY;
     
     ctx.strokeStyle = document.getElementById('colorPicker').value;
     ctx.lineWidth = document.getElementById('brushSize').value;
