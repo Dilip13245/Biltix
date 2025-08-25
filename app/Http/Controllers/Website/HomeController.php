@@ -151,4 +151,25 @@ class HomeController extends Controller
         $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];
         return view('website.help-support', compact('project'));
     }
+    
+    // Phase-specific cloned pages
+    public function phaseInspections()
+    {
+        return view('website.phase-inspections');
+    }
+    
+    public function phaseTasks()
+    {
+        return view('website.phase-tasks');
+    }
+    
+    public function phaseSnags()
+    {
+        return view('website.phase-snags');
+    }
+    
+    public function phaseTimeline()
+    {
+        return view('website.phase-timeline');
+    }
 }

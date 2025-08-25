@@ -39,6 +39,12 @@ Route::group(['prefix' => 'website'], function () {
     // Projects listing page
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('website.dashboard');
     
+    // Phase-specific pages (cloned from original pages)
+    Route::get('/phase-inspections', [HomeController::class, 'phaseInspections'])->name('website.phase.inspections');
+    Route::get('/phase-tasks', [HomeController::class, 'phaseTasks'])->name('website.phase.tasks');
+    Route::get('/phase-snags', [HomeController::class, 'phaseSnags'])->name('website.phase.snags');
+    Route::get('/phase-timeline', [HomeController::class, 'phaseTimeline'])->name('website.phase.timeline');
+    
     // Project-specific routes
     Route::group(['prefix' => 'project/{project_id}'], function () {
         Route::get('/plans', [HomeController::class, 'plans'])->name('website.project.plans');

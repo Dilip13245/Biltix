@@ -1,8 +1,31 @@
-@extends('website.layout.app')
-
-@section('title', 'Riverside Commercial Complex - Project Progress')
-
-@section('content')
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}" dir="{{ dir_class() }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase Timeline</title>
+    <link rel="icon" href="{{ asset('website/images/icons/logo.svg') }}" type="image/x-icon" />
+    <link rel="stylesheet" href="{{ bootstrap_css() }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('website/css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
+</head>
+<body>
+    <div class="content_wraper F_poppins">
+        <header class="project-header">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-12 d-flex align-items-center justify-content-between gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn btn-outline-primary" onclick="history.back()">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <h4 class="mb-0">{{ __('messages.project_timeline') }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
   <div>
     <h2>{{ __('messages.project_progress') }}</h2>
@@ -688,4 +711,8 @@ function redirectToTimeline() {
 }
 </script>
 
-@endsection
+    </div>
+    <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
+</body>
+</html>
