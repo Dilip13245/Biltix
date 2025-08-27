@@ -22,11 +22,7 @@ class InspectionChecklist extends Model
         'is_deleted' => 'boolean',
     ];
 
-    protected $casts = [
-        'is_checked' => 'boolean',
-        'is_active' => 'boolean',
-        'is_deleted' => 'boolean',
-    ];
+
 
     public function inspection()
     {
