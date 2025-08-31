@@ -6,36 +6,56 @@ use Illuminate\Support\Facades\Config;
 
 class EncryptDecrypt
 {
-    public static function bodyEncrypt($data)
+    /**
+     *This method is used encrypt string.
+     *
+     * @param  string  $string
+     * @return string encrypt string
+     */
+    public static function bodyEncrypt($string)
     {
-        if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
-            $secret = Config::get('constant.SECRET');
-            $iv = Config::get('constant.IV');
-            
-            return openssl_encrypt($data, 'AES-256-CBC', $secret, 0, $iv);
-        }
-        
-        return $data;
+        $encryptionMethod = 'AES-256-CBC';
+        $secret = hash('sha256', config('constant.SECRET')); //must be 32 char length
+        $iv = config('constant.IV');
+
+        $encryptValue = openssl_encrypt($string, $encryptionMethod, $secret, 0, $iv);
+
+        return $encryptValue;
     }
 
-    public static function bodyDecrypt($data)
+    /**
+     *This method is used decrypt string.
+     *
+     * @param  string  $string
+     * @return string decrypt string
+     */
+    public static function bodyDecrypt($string)
     {
-        if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
-            $secret = Config::get('constant.SECRET');
-            $iv = Config::get('constant.IV');
-            
-            return openssl_decrypt($data, 'AES-256-CBC', $secret, 0, $iv);
-        }
-        
-        return $data;
+        $encryptionMethod = 'AES-256-CBC';
+        $secret = hash('sha256', config('constant.SECRET')); //must be 32 char length
+        $iv = config('constant.IV');
+
+        $decryptValue = openssl_decrypt($string, $encryptionMethod, $secret, 0, $iv);
+
+        return $decryptValue;
     }
 
-    public static function requestDecrypt($data, $type = '')
+    /**
+     * Decrypt functionality
+     * This function should now return the raw decrypted JSON string.
+     * The actual JSON decoding into an associative array will happen in the middleware.
+     */
+    public static function requestDecrypt($encryptedContent, $type = '') // Renamed $request to $encryptedContent for clarity
     {
-        if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
-            return self::bodyDecrypt($data);
+        if (! empty($type) && ($type == 'api-key' || $type == 'token')) {
+            // For API keys or tokens, it's just a string, no JSON expected
+            return self::bodyDecrypt($encryptedContent);
         }
-        
-        return $data;
+
+        // For the main request body, decrypt it and return the raw JSON string
+        // The middleware will then call json_decode($jsonString, true)
+        $decryptedJsonString = self::bodyDecrypt($encryptedContent);
+
+        return $decryptedJsonString;
     }
 }

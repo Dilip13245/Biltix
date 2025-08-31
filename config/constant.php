@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'API_KEY' => env('APP_API_KEY'),
+    'API_KEY' => env('API_KEY'),
     'SECRET' => env('APP_SECRET'), /* Get it from  https://randomkeygen.com/ , 32 bit */
     'IV' => env('APP_IV'), /* 16 digits from above SECRET string*/
     'API_BASE_URL' => env('API_BASE_URL'),

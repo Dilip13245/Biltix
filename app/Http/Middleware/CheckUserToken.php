@@ -89,9 +89,6 @@ class CheckUserToken
                 }
             }
         } catch (\Exception $e) {
-            // Handle the exception
-            // You can log the error, return a custom response, or take any other action based on your application's requirements.
-            // For example:
             if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
                 return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
                     'code' => 401,

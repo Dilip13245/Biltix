@@ -19,36 +19,36 @@ class VerifyApiKey
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->hasHeader('api-key')) {
-
-            if (EncryptDecrypt::requestDecrypt($request->header('api-key'), 'api-key') == config('constant.API_KEY')) {
-                return $next($request);
-            }
-            if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
-                return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
-                    'code' => 401,
-                    'message' => trans('auth.invalid_api_key'),
-                    'data' => new stdClass(),
-                ])), 400);
-            } else {
+            $encryptedApiKey = $request->header('api-key');
+            $decryptedApiKey = EncryptDecrypt::requestDecrypt($encryptedApiKey, 'api-key');
+            $expectedApiKey = config('constant.API_KEY');
+            
+            // Return debug info in response
+            if ($decryptedApiKey != $expectedApiKey) {
                 return response()->json([
                     'code' => 401,
-                    'message' => trans('auth.invalid_api_key'),
+                    'message' => 'API Key Debug Info',
+                    'debug' => [
+                        'encrypted_received' => $encryptedApiKey,
+                        'decrypted_result' => $decryptedApiKey,
+                        'expected_key' => $expectedApiKey,
+                        'match' => ($decryptedApiKey == $expectedApiKey),
+                        'decrypted_length' => strlen($decryptedApiKey),
+                        'expected_length' => strlen($expectedApiKey)
+                    ],
                     'data' => new stdClass(),
                 ], 400);
             }
+
+            if ($decryptedApiKey == $expectedApiKey) {
+                return $next($request);
+            }
         }
-        if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
-            return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
-                'code' => 401,
-                'message' => trans('auth.api_key_not_found'),
-                'data' => new stdClass(),
-            ])), 400);
-        } else {
-            return response()->json([
-                'code' => 401,
-                'message' => trans('auth.api_key_not_found'),
-                'data' => new stdClass(),
-            ], 400);
-        }
+        
+        return response()->json([
+            'code' => 401,
+            'message' => 'API key header not found',
+            'data' => new stdClass(),
+        ], 400);
     }
 }

@@ -71,5 +71,6 @@ class Kernel extends HttpKernel
         'decrypt' => \App\Http\Middleware\RequestDecryption::class,
         'language' => \App\Http\Middleware\Localization::class,
         'permission' => \App\Http\Middleware\CheckPermission::class,
+        'basic.auth' => \App\Http\Middleware\BasicAuth::class,
     ];
 }

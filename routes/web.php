@@ -62,6 +62,10 @@ Route::group(['prefix' => 'website'], function () {
     });
 });
 
+// Encryption/Decryption Tool Routes
+Route::get('/enc-dec', 'App\Http\Controllers\Controller@encryptIndex')->name('encryptpage')->middleware('basic.auth');
+Route::post('/enc-dec', 'App\Http\Controllers\Controller@changeEncDecData')->name('web.enc-dec-data');
+
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\EncryptDecrypt;
 use App\Helpers\FileHelper;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller as BaseController;
 use Illuminate\Http\Request;
 use App\Models\UserDevice;
 use Illuminate\Support\Facades\Config;
@@ -17,8 +17,50 @@ use App\Models\User;
 use App\Models\UserMember;
 use Illuminate\Support\Facades\Mail;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
+    /**
+     * Send response to user
+     */
+    public function toJsonEnc($result = [], $message = '', $status = 200)
+    {
+        if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
+            return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
+                'code' => $status,
+                'message' => $message,
+                'data' => ! empty($result) ? $result : new \stdClass(),
+            ])), $status);
+        } else {
+            return response()->json([
+                'code' => $status,
+                'message' => $message,
+                'data' => !empty($result) ? $result : new \stdClass(),
+            ], $status);
+        }
+    }
+
+    public function validateResponse($errors, $result = [])
+    {
+        $err = '';
+        foreach ($errors->all() as $key => $val) {
+            $err = $val;
+            break;
+        }
+        if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
+            return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
+                'code' => Config::get('constant.ERROR'),
+                'message' => $err,
+                'data' => ! empty($result) ? $result : new \stdClass(),
+            ])));
+        } else {
+            return response()->json([
+                'code' => Config::get('constant.ERROR'),
+                'message' => $err,
+                'data' => ! empty($result) ? $result : new \stdClass(),
+            ]);
+        }
+    }
+
     public function signup(Request $request)
     {
         try {
