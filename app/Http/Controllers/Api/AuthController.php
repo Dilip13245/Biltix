@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\EncryptDecrypt;
 use App\Helpers\FileHelper;
-use App\Http\Controllers\Controller as BaseController;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\UserDevice;
 use Illuminate\Support\Facades\Config;
@@ -17,50 +17,8 @@ use App\Models\User;
 use App\Models\UserMember;
 use Illuminate\Support\Facades\Mail;
 
-class AuthController extends BaseController
+class AuthController extends Controller
 {
-    /**
-     * Send response to user
-     */
-    public function toJsonEnc($result = [], $message = '', $status = 200)
-    {
-        if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
-            return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
-                'code' => $status,
-                'message' => $message,
-                'data' => ! empty($result) ? $result : new \stdClass(),
-            ])), $status);
-        } else {
-            return response()->json([
-                'code' => $status,
-                'message' => $message,
-                'data' => !empty($result) ? $result : new \stdClass(),
-            ], $status);
-        }
-    }
-
-    public function validateResponse($errors, $result = [])
-    {
-        $err = '';
-        foreach ($errors->all() as $key => $val) {
-            $err = $val;
-            break;
-        }
-        if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
-            return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
-                'code' => Config::get('constant.ERROR'),
-                'message' => $err,
-                'data' => ! empty($result) ? $result : new \stdClass(),
-            ])));
-        } else {
-            return response()->json([
-                'code' => Config::get('constant.ERROR'),
-                'message' => $err,
-                'data' => ! empty($result) ? $result : new \stdClass(),
-            ]);
-        }
-    }
-
     public function signup(Request $request)
     {
         try {
@@ -118,7 +76,7 @@ class AuthController extends BaseController
                     }
                 }
 
-                return $this->toJsonEnc(['user_id' => $userDetails->id], 'User registered successfully. Please verify OTP to activate account.', Config::get('constant.SUCCESS'));
+                return $this->toJsonEnc(['user_id' => $userDetails->id], trans('api.auth.otp_sent'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.auth.signup_error'), Config::get('constant.ERROR'));
             }
@@ -300,7 +258,7 @@ class AuthController extends BaseController
             }
 
             if ($user->otp_expires_at && now()->gt($user->otp_expires_at)) {
-                return $this->toJsonEnc([], 'OTP has expired', Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.auth.otp_expired'), Config::get('constant.ERROR'));
             }
 
             $user->otp = null;
@@ -314,7 +272,7 @@ class AuthController extends BaseController
 
             $user->save();
 
-            $message = $type === 'signup' ? 'Account verified and activated successfully' : 'OTP verified successfully';
+            $message = $type === 'signup' ? trans('api.auth.account_verified') : trans('api.auth.otp_verified');
             return $this->toJsonEnc(['user_id' => $user->id], $message, Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             Log::error('verifyOtp error: ' . $e->getMessage());

@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Helpers\EncryptDecrypt;
+use Illuminate\Support\Facades\Config;
 
 class BasicAuth
 {
@@ -13,9 +15,19 @@ class BasicAuth
         $password = env('PASSWORD_FOR_ENC_DEC');
 
         if ($request->getUser() !== $username || $request->getPassword() !== $password) {
-            return response('Unauthorized', 401, [
-                'WWW-Authenticate' => 'Basic realm="Encryption Tool"'
-            ]);
+            if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
+                return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
+                    'code' => 401,
+                    'message' => 'Unauthorized access',
+                    'data' => new \stdClass(),
+                ])), 401);
+            } else {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Unauthorized access',
+                    'data' => new \stdClass(),
+                ], 401);
+            }
         }
 
         return $next($request);

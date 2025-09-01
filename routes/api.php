@@ -117,7 +117,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('upload', [PlanController::class, 'upload'])->middleware('permission:plans,upload');
         Route::post('list', [PlanController::class, 'list'])->middleware('permission:plans,view');
         Route::post('details', [PlanController::class, 'details'])->middleware('permission:plans,view');
-        Route::post('delete', [PlanController::class, 'delete'])->middleware('permission:plans,upload');
+        Route::post('delete', [PlanController::class, 'delete'])->middleware('permission:plans,delete');
         Route::post('add_markup', [PlanController::class, 'addMarkup'])->middleware('permission:plans,markup');
         Route::post('get_markups', [PlanController::class, 'getMarkups'])->middleware('permission:plans,view');
         Route::post('approve', [PlanController::class, 'approve'])->middleware('permission:plans,approve');
@@ -161,11 +161,11 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
     });
 
     Route::prefix('notifications')->group(function () {
-        Route::post('list', [NotificationController::class, 'list']);
-        Route::post('mark_read', [NotificationController::class, 'markRead']);
-        Route::post('mark_all_read', [NotificationController::class, 'markAllRead']);
-        Route::post('delete', [NotificationController::class, 'delete']);
-        Route::post('get_count', [NotificationController::class, 'getCount']);
-        Route::post('settings', [NotificationController::class, 'settings']);
+        Route::post('list', [NotificationController::class, 'list'])->middleware('permission:notifications,view');
+        Route::post('mark_read', [NotificationController::class, 'markRead'])->middleware('permission:notifications,update');
+        Route::post('mark_all_read', [NotificationController::class, 'markAllRead'])->middleware('permission:notifications,update');
+        Route::post('delete', [NotificationController::class, 'delete'])->middleware('permission:notifications,delete');
+        Route::post('get_count', [NotificationController::class, 'getCount'])->middleware('permission:notifications,view');
+        Route::post('settings', [NotificationController::class, 'settings'])->middleware('permission:notifications,view');
     });
 });

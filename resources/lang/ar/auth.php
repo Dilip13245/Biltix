@@ -8,4 +8,7 @@ return [
     'user_not_found' => 'المستخدم غير موجود',
     'unauthorized' => 'وصول غير مصرح به',
     'permission_denied' => 'تم رفض الإذن',
+    'otp_expired' => 'انتهت صلاحية رمز التحقق',
+    'account_verified' => 'تم التحقق من الحساب وتفعيله بنجاح',
+    'otp_verified' => 'تم التحقق من رمز التحقق بنجاح',
 ];

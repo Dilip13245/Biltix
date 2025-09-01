@@ -8,4 +8,7 @@ return [
     'user_not_found' => 'User not found',
     'unauthorized' => 'Unauthorized access',
     'permission_denied' => 'Permission denied',
+    'otp_expired' => 'OTP has expired',
+    'account_verified' => 'Account verified and activated successfully',
+    'otp_verified' => 'OTP verified successfully',
 ];

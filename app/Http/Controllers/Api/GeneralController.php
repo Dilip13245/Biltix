@@ -88,10 +88,10 @@ class GeneralController extends Controller
             // This would typically update user's language preference in database
             $data = [
                 'language' => $language,
-                'message' => 'Language changed successfully'
+                'message' => trans('api.general.language_changed')
             ];
 
-            return $this->toJsonEnc($data, 'Language changed successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($data, trans('api.general.language_changed'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

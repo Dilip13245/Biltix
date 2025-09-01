@@ -18,9 +18,25 @@ class RequestDecryption
     public function handle(Request $request, Closure $next): Response
     {
         $rawContent = $request->getContent();
-
-        // Only decrypt if content is not valid JSON (i.e., encrypted string)
-        if (! empty($rawContent) && ! $this->isJson($rawContent)) {
+        
+        if (config('constant.ENCRYPTION_ENABLED') == 1) {
+            // Encryption enabled - only accept raw encrypted string (not JSON)
+            if (empty($rawContent)) {
+                return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
+                    'code' => 400,
+                    'message' => 'Request body is required',
+                    'data' => new \stdClass(),
+                ])), 400);
+            }
+            
+            if ($this->isJson($rawContent)) {
+                return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
+                    'code' => 400,
+                    'message' => 'Request must be encrypted plain text, not JSON',
+                    'data' => new \stdClass(),
+                ])), 400);
+            }
+            
             $decryptedJson = EncryptDecrypt::requestDecrypt($rawContent);
             $decodedArray = json_decode($decryptedJson, true);
 
@@ -29,6 +45,20 @@ class RequestDecryption
                 $request->replace($decodedArray);
             } else {
                 Log::error('❌ Failed to decode decrypted request. Raw:', ['data' => $decryptedJson]);
+                return response()->json(EncryptDecrypt::bodyEncrypt(json_encode([
+                    'code' => 400,
+                    'message' => 'Invalid encrypted data',
+                    'data' => new \stdClass(),
+                ])), 400);
+            }
+        } else {
+            // Encryption disabled - only accept JSON data
+            if (!empty($rawContent) && !$this->isJson($rawContent)) {
+                return response()->json([
+                    'code' => 400,
+                    'message' => 'Request must be valid JSON',
+                    'data' => new \stdClass(),
+                ], 400);
             }
         }
 

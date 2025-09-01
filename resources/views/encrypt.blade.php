@@ -442,7 +442,7 @@
         </div>
 
         <div class="footer">
-            Boloo Security Tools &copy; <?php echo date('Y'); ?> | Secure Data Processing
+            Construction Security Tools &copy; <?php echo date('Y'); ?> | Secure Data Processing
         </div>
     </div>
 
