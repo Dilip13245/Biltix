@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\EncryptDecrypt;
 use App\Helpers\FileHelper;
+use App\Helpers\TwilioHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\UserDevice;
@@ -165,24 +166,23 @@ class AuthController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'type' => 'required|in:forgot,signup',
-                'email' => 'required|email',
+                'phone' => 'required|string',
             ], [
                 'type.required' => trans('api.auth.type_required'),
                 'type.in' => trans('api.auth.type_invalid'),
-                'email.required' => trans('api.auth.email_required'),
-                'email.email' => trans('api.auth.email_invalid'),
+                'phone.required' => trans('api.auth.phone_number_required'),
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $email = $request->input('email');
+            $phone = $request->input('phone');
             $type = $request->input('type');
             // $otp = rand(100000, 999999);
             $otp = '123456';
 
-            $user = User::where('email', $email)->first();
+            $user = User::where('phone', $phone)->first();
 
             // Type: forgot → user must exist and be active
             if ($type === 'forgot') {
@@ -201,12 +201,14 @@ class AuthController extends Controller
             }
 
             try {
-                $data = ['otp' => $otp];
-
-                // Mail::send('emails.otp', $data, function ($message) use ($email) {
-                //     $message->to($email)
-                //         ->subject('Your OTP Code - Biltix');
-                // });
+                // Real SMS sending (commented for development)
+                // $smsResult = TwilioHelper::sendOTP($phone, $otp);
+                // if (!$smsResult['success']) {
+                //     return $this->toJsonEnc([], 'Failed to send OTP: ' . $smsResult['error'], Config::get('constant.ERROR'));
+                // }
+                
+                // For development: Log OTP instead of sending SMS
+                Log::info('OTP for phone ' . $phone . ': ' . $otp);
 
                 if ($user) {
                     $user->otp = $otp;
@@ -214,8 +216,8 @@ class AuthController extends Controller
                     $user->save();
                 }
             } catch (\Exception $e) {
-                Log::error('OTP email failed: ' . $e->getMessage());
-                return $this->toJsonEnc([], trans('api.auth.otp_email_failed'), Config::get('constant.ERROR'));
+                Log::error('OTP process failed: ' . $e->getMessage());
+                return $this->toJsonEnc([], 'Failed to process OTP', Config::get('constant.ERROR'));
             }
 
             return $this->toJsonEnc(['otp' => $otp], trans('api.auth.otp_sent'), Config::get('constant.SUCCESS'));
@@ -229,12 +231,11 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
+                'phone' => 'required|string',
                 'otp' => 'required|string',
                 'type' => 'required|in:signup,forgot',
             ], [
-                'email.required' => trans('api.auth.email_required'),
-                'email.email' => trans('api.auth.email_invalid'),
+                'phone.required' => trans('api.auth.phone_number_required'),
                 'otp.required' => trans('api.auth.otp_required'),
                 'type.required' => trans('api.auth.type_required'),
             ]);
@@ -243,11 +244,11 @@ class AuthController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            $email = $request->input('email');
+            $phone = $request->input('phone');
             $otp = $request->input('otp');
             $type = $request->input('type');
 
-            $user = User::where('email', $email)->first();
+            $user = User::where('phone', $phone)->first();
 
             if (!$user) {
                 return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
@@ -284,11 +285,11 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
+                'phone' => 'required|string',
                 'new_password' => 'required|min:6',
                 'confirm_password' => 'required|same:new_password',
             ], [
-                'email.required' => trans('api.auth.email_required'),
+                'phone.required' => trans('api.auth.phone_number_required'),
                 'new_password.required' => trans('api.auth.new_password_required'),
                 'new_password.min' => trans('api.auth.new_password_min'),
                 'confirm_password.required' => trans('api.auth.confirm_password_required'),
@@ -299,7 +300,7 @@ class AuthController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            $user = User::where('email', $request->email)
+            $user = User::where('phone', $request->phone)
                 ->where('is_active', 1)
                 ->where('is_verified', 1)
                 ->where('is_deleted', 0)

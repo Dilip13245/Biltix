@@ -11,7 +11,8 @@
         "knplabs/knp-snappy": "^1.5",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
-        "laravel/tinker": "^2.8"
+        "laravel/tinker": "^2.8",
+        "twilio/sdk": "^8.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
