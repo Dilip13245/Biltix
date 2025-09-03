@@ -63,7 +63,8 @@ class AuthController extends Controller
             $userDetails->company_name = $request->company_name;
             $userDetails->designation = $request->designation ?? '';
             $userDetails->employee_count = $request->employee_count ?? null;
-            $userDetails->is_active = false;
+            $userDetails->is_active = true;
+            $userDetails->is_verified = true;
 
             if ($userDetails->save()) {
                 // Save multiple members if provided
@@ -77,7 +78,37 @@ class AuthController extends Controller
                     }
                 }
 
-                return $this->toJsonEnc(['user_id' => $userDetails->id], trans('api.auth.otp_sent'), Config::get('constant.SUCCESS'));
+                // Generate token and create device entry (auto-login)
+                $accessToken = Str::random(64);
+
+                $deviceData = [
+                    'user_id' => $userDetails->id,
+                    'token' => $accessToken,
+                    'device_type' => $request->device_type,
+                    'ip_address' => $request->ip_address ?? "",
+                    'uuid' => $request->uuid ?? "",
+                    'os_version' => $request->os_version ?? "",
+                    'device_model' => $request->device_model ?? "",
+                    'app_version' => $request->app_version ?? 'v1',
+                    'device_token' => $request->device_token ?? "",
+                ];
+
+                UserDevice::updateOrCreate(
+                    ['user_id' => $userDetails->id],
+                    $deviceData
+                );
+
+                // Get user members
+                $members = UserMember::where('user_id', $userDetails->id)
+                    ->where('is_active', 1)
+                    ->select('member_name', 'member_phone')
+                    ->get();
+
+                $userDetails->token = $accessToken;
+                $userDetails->device_type = $request->device_type;
+                $userDetails->members = $members;
+
+                return $this->toJsonEnc($userDetails, trans('api.auth.signup_success'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.auth.signup_error'), Config::get('constant.ERROR'));
             }
@@ -165,7 +196,7 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'type' => 'required|in:forgot,signup',
+                'type' => 'required|in:forgot',
                 'phone' => 'required|string',
             ], [
                 'type.required' => trans('api.auth.type_required'),
@@ -178,43 +209,20 @@ class AuthController extends Controller
             }
 
             $phone = $request->input('phone');
-            $type = $request->input('type');
-            // $otp = rand(100000, 999999);
             $otp = '123456';
 
             $user = User::where('phone', $phone)->first();
 
-            // Type: forgot → user must exist and be active
-            if ($type === 'forgot') {
-                if (!$user || $user->is_active != 1) {
-                    return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
-                }
-            }
-
-            // Type: signup → user must NOT exist
-            if ($type === 'signup') {
-                if ($user) {
-                    if ($user->is_active == 1) {
-                        return $this->toJsonEnc([], trans('api.auth.user_already_exists'), Config::get('constant.ERROR'));
-                    }
-                }
+            if (!$user || $user->is_active != 1) {
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
             }
 
             try {
-                // Real SMS sending (commented for development)
-                // $smsResult = TwilioHelper::sendOTP($phone, $otp);
-                // if (!$smsResult['success']) {
-                //     return $this->toJsonEnc([], 'Failed to send OTP: ' . $smsResult['error'], Config::get('constant.ERROR'));
-                // }
-                
-                // For development: Log OTP instead of sending SMS
                 Log::info('OTP for phone ' . $phone . ': ' . $otp);
 
-                if ($user) {
-                    $user->otp = $otp;
-                    $user->otp_expires_at = now()->addMinutes(10);
-                    $user->save();
-                }
+                $user->otp = $otp;
+                $user->otp_expires_at = now()->addMinutes(10);
+                $user->save();
             } catch (\Exception $e) {
                 Log::error('OTP process failed: ' . $e->getMessage());
                 return $this->toJsonEnc([], 'Failed to process OTP', Config::get('constant.ERROR'));
@@ -233,7 +241,7 @@ class AuthController extends Controller
             $validator = Validator::make($request->all(), [
                 'phone' => 'required|string',
                 'otp' => 'required|string',
-                'type' => 'required|in:signup,forgot',
+                'type' => 'required|in:forgot',
             ], [
                 'phone.required' => trans('api.auth.phone_number_required'),
                 'otp.required' => trans('api.auth.otp_required'),
@@ -265,11 +273,6 @@ class AuthController extends Controller
             $user->otp = null;
             $user->otp_expires_at = null;
 
-            // Only for signup: set verified and active
-            if ($type === 'signup') {
-                $user->is_verified = true;
-                $user->is_active = true;
-            }
 
             $user->save();
 
