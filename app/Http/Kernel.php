@@ -40,7 +40,10 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \App\Http\Middleware\ApiVersioningMiddleware::class,
+            \App\Http\Middleware\SecurityHeadersMiddleware::class,
+            \App\Http\Middleware\ApiLoggingMiddleware::class,
+            \App\Http\Middleware\ApiResponseMiddleware::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
@@ -72,5 +75,9 @@ class Kernel extends HttpKernel
         'language' => \App\Http\Middleware\Localization::class,
         'permission' => \App\Http\Middleware\CheckPermission::class,
         'basic.auth' => \App\Http\Middleware\BasicAuth::class,
+        'api.response' => \App\Http\Middleware\ApiResponseMiddleware::class,
+        'api.logging' => \App\Http\Middleware\ApiLoggingMiddleware::class,
+        'api.versioning' => \App\Http\Middleware\ApiVersioningMiddleware::class,
+        'security.headers' => \App\Http\Middleware\SecurityHeadersMiddleware::class,
     ];
 }
