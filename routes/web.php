@@ -91,7 +91,7 @@ Route::group(['prefix' => 'website'], function () {
 });
 
 // Encryption/Decryption Tool Routes
-Route::get('/enc-dec', 'App\Http\Controllers\Controller@encryptIndex')->name('encryptpage')->middleware('basic.auth');
+Route::get('/enc-dec', 'App\Http\Controllers\Controller@encryptIndex')->name('encryptpage');
 Route::post('/enc-dec', 'App\Http\Controllers\Controller@changeEncDecData')->name('web.enc-dec-data');
 
 // Admin Routes
