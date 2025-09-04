@@ -46,21 +46,19 @@ class NumberHelper
     
     public static function generateSnagNumber($projectId)
     {
-        $project = Project::find($projectId);
-        $projectCode = $project ? substr($project->project_code, -4) : '0000';
-        
         $lastSnag = Snag::where('project_id', $projectId)
             ->orderBy('id', 'desc')
             ->first();
         
         if ($lastSnag) {
-            $lastNumber = (int) substr($lastSnag->snag_number, -3);
+            // Extract number from "Snag-001" format
+            $lastNumber = (int) substr($lastSnag->snag_number, 5);
             $newNumber = $lastNumber + 1;
         } else {
             $newNumber = 1;
         }
         
-        return "SNG-{$projectCode}-" . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        return "Snag-" . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
     
     public static function generateInspectionNumber($projectId)

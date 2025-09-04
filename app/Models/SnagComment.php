@@ -24,4 +24,14 @@ class SnagComment extends Model
     {
         return $query->where('is_active', true)->where('is_deleted', false);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function snag()
+    {
+        return $this->belongsTo(Snag::class, 'snag_id');
+    }
 }
