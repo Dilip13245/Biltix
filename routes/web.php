@@ -18,8 +18,10 @@ use Illuminate\Http\Request;
 |
 */
 
-// Root route
-Route::get('/', [HomeController::class, 'dashboard'])->name('home');
+// Root route - redirect to login
+Route::get('/', function () {
+    return redirect('/login');
+})->name('home');
 
 // Language switching route
 Route::get('/lang/{locale}', function ($locale, Request $request) {
@@ -33,6 +35,32 @@ Route::get('/lang/{locale}', function ($locale, Request $request) {
 Route::get('/test-lang', function () {
     return view('test-lang');
 })->name('test.lang');
+
+Route::get('/login', function () {
+    return view('website.auth.login');
+})->name('login');
+
+Route::get('/register', function () {
+    return view('website.auth.register');
+})->name('register');
+
+Route::get('/forgot-password', function () {
+    return view('website.auth.forgot-password');
+})->name('forgot-password');
+
+// Dashboard (placeholder)
+Route::get('/dashboard', function () {
+    return view('website.dashboard');
+})->name('dashboard');
+
+Route::get('/profile', function () {
+    return view('website.profile');
+})->name('website.profile');
+
+Route::post('/logout', function () {
+    // Handle logout logic here
+    return redirect('/login');
+})->name('logout');
 
 // Website Routes
 Route::group(['prefix' => 'website'], function () {

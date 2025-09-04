@@ -162,13 +162,20 @@
                                     <img src="{{ asset('website/images/icons/arrow-up.svg') }}" alt="user img"
                                         class="arrow">
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li><a class="dropdown-item" href="#">{{ __('messages.action') }}</a></li>
-                                    <li><a class="dropdown-item" href="#">{{ __('messages.another_action') }}</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                            href="#">{{ __('messages.something_else_here') }}</a></li>
+                                <ul class="dropdown-menu {{ is_rtl() ? 'dropdown-menu-start' : 'dropdown-menu-end' }}" aria-labelledby="dropdownMenuButton">
+                                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('website.profile') }}">
+                                        <i class="fas fa-user"></i>
+                                        {{ __('auth.my_profile') }}
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                        {{ __('auth.logout') }}
+                                    </a></li>
                                 </ul>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
                             </div>
                         </div>
                     </div>
