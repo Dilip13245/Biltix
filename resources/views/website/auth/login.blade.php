@@ -235,7 +235,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">{{ __('auth.email_address') }}</label>
                                     <div class="position-relative">
-                                        <input type="email" id="email" name="email" class="form-control" placeholder="{{ __('auth.enter_email') }}" value="contractor@biltix.com" required {{ is_rtl() ? 'dir="rtl"' : '' }}>
+                                        <input type="email" id="email" name="email" class="form-control" placeholder="{{ __('auth.enter_email') }}" required {{ is_rtl() ? 'dir="rtl"' : '' }}>
                                         <i class="fas fa-envelope input-icon"></i>
                                     </div>
                                     <div class="error-message" id="emailError"></div>
@@ -245,7 +245,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">{{ __('auth.password') }}</label>
                                     <div class="position-relative">
-                                        <input type="password" id="password" name="password" class="form-control" placeholder="{{ __('auth.enter_password') }}" value="password123" required minlength="6" {{ is_rtl() ? 'dir="rtl"' : '' }}>
+                                        <input type="password" id="password" name="password" class="form-control" placeholder="{{ __('auth.enter_password') }}" required minlength="6" {{ is_rtl() ? 'dir="rtl"' : '' }}>
                                         <i class="fas fa-eye input-icon" style="cursor: pointer;" onclick="togglePassword(this)"></i>
                                     </div>
                                     <div class="error-message" id="passwordError"></div>

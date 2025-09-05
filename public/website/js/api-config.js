@@ -1,6 +1,6 @@
 // API Configuration
 window.API_CONFIG = {
-    BASE_URL: 'http://localhost:8000/api/v1',
+    BASE_URL: 'https://construction.stgserver.site/api/v1',
     API_KEY: 'biltix_api_key_2024',
     TIMEOUT: 30000,
     ENCRYPTION_ENABLED: false, // Set to true for encryption

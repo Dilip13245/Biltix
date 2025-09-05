@@ -18,7 +18,7 @@ class ApiService
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('constant.API_BASE_URL', 'http://localhost:8000/api'), '/');
+        $this->baseUrl = rtrim(config('constant.API_BASE_URL', 'http://construction.stgserver.site/api'), '/');
         $this->apiKey = config('constant.API_KEY');
         $this->encryptionEnabled = config('constant.ENCRYPTION_ENABLED', 0);
         $this->timeout = 30;
