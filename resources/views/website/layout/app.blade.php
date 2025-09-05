@@ -7,6 +7,7 @@
   <meta name="keywords" content="HTML,CSS,XML,JavaScript">
   <meta name="author" content="John Doe">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title', 'Biltix')</title>
 
   <!-- FAVICON -->
@@ -29,6 +30,10 @@
   
   <!-- RTL CSS -->
   <link rel="stylesheet" href="{{ asset('website/css/rtl-auto.css') }}" />
+  
+  <!-- TOASTR CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
   
 
 </head>
@@ -54,7 +59,18 @@
   <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
   <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
   <script src="{{ asset('website/js/wow.js') }}"></script>
-  <script src="{{ asset('website/js/custom.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="{{ asset('website/js/toastr-config.js') }}"></script>
+  
+  <!-- SIMPLE DRAWING LIBRARY -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+  
+  <script src="{{ asset('website/js/custom.js') }}"></script></script>
+  
+  @include('website.layout.auth-check')
+  @include('website.layout.user-info')
+  
+  @stack('scripts')
 
 </body>
 

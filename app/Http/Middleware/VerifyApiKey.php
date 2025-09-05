@@ -19,8 +19,14 @@ class VerifyApiKey
     public function handle(Request $request, Closure $next): Response
     {
         if ($request->hasHeader('api-key')) {
-
-            if (EncryptDecrypt::requestDecrypt($request->header('api-key'), 'api-key') == config('constant.API_KEY')) {
+            $apiKey = $request->header('api-key');
+            
+            // Check if encryption is enabled
+            if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
+                $apiKey = EncryptDecrypt::requestDecrypt($apiKey, 'api-key');
+            }
+            
+            if ($apiKey == config('constant.API_KEY')) {
                 return $next($request);
             }
             if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {

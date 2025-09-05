@@ -3,26 +3,26 @@
 @section('title', 'Riverside Commercial Complex - Project Progress')
 
 @section('content')
-<div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
-  <div>
-    <h2>{{ __('messages.project_progress') }}</h2>
-    <p>{{ __('messages.track_project_phases') }}</p>
-  </div>
-  <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
-    <i class="fas fa-plus"></i>
-    {{ __("messages.create_phase") }}
-  </button>
-</div>
-<div class="px-md-4">
-  <div class="container-fluid">
+    <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
+        <div>
+            <h2>{{ __('messages.project_progress') }}</h2>
+            <p>{{ __('messages.track_project_phases') }}</p>
+        </div>
+        <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
+            <i class="fas fa-plus"></i>
+            {{ __('messages.create_phase') }}
+        </button>
+    </div>
+    <div class="px-md-4">
+        <div class="container-fluid">
             <!-- Commented out original stats cards
-            <div class="row g-4">
-                Project Completion Card
-                Active Workers Card  
-                Days Remaining Card
-            </div>
-            -->
-            
+                        <div class="row g-4">
+                            Project Completion Card
+                            Active Workers Card
+                            Days Remaining Card
+                        </div>
+                        -->
+
             <!-- Project Phases Cards -->
             <div class="row g-4">
                 <!-- Foundation Phase -->
@@ -30,12 +30,13 @@
                     <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Foundation Phase')">
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.foundation_phase") }}</h5>
-                                <span class="badge badge1">{{ __("messages.completed") }}</span>
+                                <h5 class="fw-semibold black_color mb-0">{{ __('messages.foundation_phase') }}</h5>
+                                <span class="badge badge1">{{ __('messages.completed') }}</span>
                             </div>
                             <div class="mb-3">
                                 <div class="progress" style="height:8px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
+                                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">100% Complete</small>
@@ -43,25 +44,27 @@
                                 </div>
                             </div>
                             <div class="small text-muted">
-                                <div>• {{ __("messages.site_preparation") }} - 10 {{ __("messages.days") }}</div>
-                                <div>• {{ __("messages.excavation_work") }} - 8 {{ __("messages.days") }}</div>
-                                <div>• {{ __("messages.foundation_pouring") }} - 12 {{ __("messages.days") }}</div>
+                                <div>• {{ __('messages.site_preparation') }} - 10 {{ __('messages.days') }}</div>
+                                <div>• {{ __('messages.excavation_work') }} - 8 {{ __('messages.days') }}</div>
+                                <div>• {{ __('messages.foundation_pouring') }} - 12 {{ __('messages.days') }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Structure Phase -->
                 <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay=".4s">
                     <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Structure Phase')">
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.structure_phase") }}</h5>
-                                <span class="badge badge4">{{ __("messages.in_progress") }}</span>
+                                <h5 class="fw-semibold black_color mb-0">{{ __('messages.structure_phase') }}</h5>
+                                <span class="badge badge4">{{ __('messages.in_progress') }}</span>
                             </div>
                             <div class="mb-3">
                                 <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" role="progressbar" style="width: 65%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar" role="progressbar"
+                                        style="width: 65%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
+                                        aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">65% Complete</small>
@@ -69,25 +72,26 @@
                                 </div>
                             </div>
                             <div class="small text-muted">
-                                <div>• {{ __("messages.column_construction") }} - 20 {{ __("messages.days") }}</div>
-                                <div>• {{ __("messages.beam_installation") }} - 15 {{ __("messages.days") }}</div>
-                                <div>• {{ __("messages.slab_work") }} - 10 {{ __("messages.days") }}</div>
+                                <div>• {{ __('messages.column_construction') }} - 20 {{ __('messages.days') }}</div>
+                                <div>• {{ __('messages.beam_installation') }} - 15 {{ __('messages.days') }}</div>
+                                <div>• {{ __('messages.slab_work') }} - 10 {{ __('messages.days') }}</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Finishing Phase -->
                 <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay=".8s">
                     <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Finishing Phase')">
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.finishing_phase") }}</h5>
-                                <span class="badge badge2">{{ __("messages.pending") }}</span>
+                                <h5 class="fw-semibold black_color mb-0">{{ __('messages.finishing_phase') }}</h5>
+                                <span class="badge badge2">{{ __('messages.pending') }}</span>
                             </div>
                             <div class="mb-3">
                                 <div class="progress" style="height:8px;">
-                                    <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%"
+                                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-1">
                                     <small class="text-muted">0% Complete</small>
@@ -95,9 +99,9 @@
                                 </div>
                             </div>
                             <div class="small text-muted">
-                                <div>• {{ __("messages.interior_work") }} - 12 {{ __("messages.days") }}</div>
-                                <div>• {{ __("messages.painting_tiling") }} - 8 {{ __("messages.days") }}</div>
-                                <div>• {{ __("messages.final_touches") }} - 5 {{ __("messages.days") }}</div>
+                                <div>• {{ __('messages.interior_work') }} - 12 {{ __('messages.days') }}</div>
+                                <div>• {{ __('messages.painting_tiling') }} - 8 {{ __('messages.days') }}</div>
+                                <div>• {{ __('messages.final_touches') }} - 5 {{ __('messages.days') }}</div>
                             </div>
                         </div>
                     </div>
@@ -109,57 +113,75 @@
                         <div class="card-body p-md-4">
                             <div class="d-flex flex-wrap justify-content-between align-items-start">
                                 <div>
-                                    <h5 class="fw-semibold  mb-3 mb-md-4 black_color">{{ __("messages.project_timeline") }}</h5>
+                                    <h5 class="fw-semibold  mb-3 mb-md-4 black_color">{{ __('messages.project_timeline') }}
+                                    </h5>
                                     <div class="row gy-3 gx-5">
                                         <div class="col-12 col-md-6">
                                             <div class="mb-2 mb-md-3">
-                                                <span class="text-muted small black_color">{{ __("messages.project_name") }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-1">
+                                                <span
+                                                    class="text-muted small black_color">{{ __('messages.project_name') }}</span>
+                                                <div class="fw-medium d-flex align-items-center gap-2">
                                                     {{ __('messages.urban_sky_towers') }}
-                                                    <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                            src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                                    <a href="#" class="text-primary ms-2 d-flex align-items-center"
+                                                        title="Edit"><img
+                                                            src="{{ asset('website/images/icons/edit.svg') }}"
+                                                            alt="edit" style="width: 16px; height: 16px;"></a>
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
-                                                <span class="text-muted small black_color">{{ __("messages.company_name") }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-1p-md-4">
+                                                <span
+                                                    class="text-muted small black_color">{{ __('messages.company_name') }}</span>
+                                                <div class="fw-medium d-flex align-items-center gap-2">
                                                     {{ __('messages.summit_construction') }}
-                                                    <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                            src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                                    <a href="#" class="text-primary ms-2 d-flex align-items-center"
+                                                        title="Edit"><img
+                                                            src="{{ asset('website/images/icons/edit.svg') }}"
+                                                            alt="edit" style="width: 16px; height: 16px;"></a>
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
-                                                <span class="text-muted small black_color">{{ __("messages.start_date") }}</span>
+                                                <span
+                                                    class="text-muted small black_color">{{ __('messages.start_date') }}</span>
                                                 <div class="fw-medium">{{ __('messages.may_25_2025_full') }}</div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
-                                                <span class="text-muted small black_color">{{ __("messages.end_date") }}</span>
+                                                <span
+                                                    class="text-muted small black_color">{{ __('messages.end_date') }}</span>
                                                 <div class="fw-medium">{{ __('messages.may_8_2026') }}</div>
                                             </div>
                                         </div>
                                         <div class="col-12 col-md-6">
                                             <div class="mb-2 mb-md-3">
-                                                <span class="text-muted small black_color">{{ __("messages.project_type") }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-1p-md-4">
+                                                <span
+                                                    class="text-muted small black_color">{{ __('messages.project_type') }}</span>
+                                                <div class="fw-medium d-flex align-items-center gap-2">
                                                     {{ __('messages.tower') }}
-                                                    <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                            src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                                    <a href="#" class="text-primary ms-2 d-flex align-items-center"
+                                                        title="Edit"><img
+                                                            src="{{ asset('website/images/icons/edit.svg') }}"
+                                                            alt="edit" style="width: 16px; height: 16px;"></a>
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
-                                                <span class="text-muted small black_color">{{ __("messages.project_manager") }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-1p-md-4">
+                                                <span
+                                                    class="text-muted small black_color">{{ __('messages.project_manager') }}</span>
+                                                <div class="fw-medium d-flex align-items-center gap-2">
                                                     {{ __('messages.robert_parker') }}
-                                                    <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                            src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                                    <a href="#" class="text-primary ms-2 d-flex align-items-center"
+                                                        title="Edit"><img
+                                                            src="{{ asset('website/images/icons/edit.svg') }}"
+                                                            alt="edit" style="width: 16px; height: 16px;"></a>
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
-                                                <span class="text-muted small black_color">{{ __("messages.site_engineer") }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-1p-md-4">
+                                                <span
+                                                    class="text-muted small black_color">{{ __('messages.site_engineer') }}</span>
+                                                <div class="fw-medium d-flex align-items-center gap-2">
                                                     {{ __('messages.johar_parker') }}
-                                                    <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                            src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                                    <a href="#" class="text-primary ms-2 d-flex align-items-center"
+                                                        title="Edit"><img
+                                                            src="{{ asset('website/images/icons/edit.svg') }}"
+                                                            alt="edit" style="width: 16px; height: 16px;"></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -173,7 +195,7 @@
                                                     d="M12 13.8778L6 12.1621V0.121509L12 1.83713V13.8778ZM13 13.8403V1.76213L16.9719 0.171509C17.4656 -0.0253659 18 0.337134 18 0.868384V11.3309C18 11.6371 17.8125 11.9121 17.5281 12.0278L13 13.8371V13.8403ZM0.471875 1.97151L5 0.162134V12.2371L1.02813 13.8278C0.534375 14.0246 0 13.6621 0 13.1309V2.66838C0 2.36213 0.1875 2.08713 0.471875 1.97151Z"
                                                     fill="#4477C4" />
                                             </svg>
-                                            {{ __("messages.view_plan") }}
+                                            {{ __('messages.view_plan') }}
                                         </button>
                                         <button
                                             class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
@@ -190,7 +212,7 @@
                                                     </clipPath>
                                                 </defs>
                                             </svg>
-                                            {{ __("messages.timeline") }}
+                                            {{ __('messages.timeline') }}
                                         </button>
                                         <button
                                             class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
@@ -206,8 +228,9 @@
                                     </div>
                                 </div>
                                 <div class="ms-auto mt-3 mt-md-0">
-                                    <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2" onclick="deleteProject()">
-                                        <i class="fas fa-trash"></i> {{ __("messages.delete_project") }}
+                                    <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2"
+                                        onclick="deleteProject()">
+                                        <i class="fas fa-trash"></i> {{ __('messages.delete_project') }}
                                     </button>
                                 </div>
                             </div>
@@ -219,10 +242,10 @@
                 <div class="col-12">
                     <div class="card B_shadow">
                         <div class="card-body p-md-4">
-                            <h5 class="fw-semibold  mb-3 mb-md-4 black_color">{{ __("messages.project_overview") }}</h5>
+                            <h5 class="fw-semibold  mb-3 mb-md-4 black_color">{{ __('messages.project_overview') }}</h5>
                             <div class="mb-2 mb-md-3">
                                 <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.foundation") }}</h6>
+                                    <h6 class="text-muted fw-medium">{{ __('messages.foundation') }}</h6>
                                     <h6 class="text-muted fw-medium">100%</h6>
                                 </div>
                                 <div class="progress" style="height:8px;">
@@ -233,7 +256,7 @@
                             </div>
                             <div class="mb-2 mb-md-3">
                                 <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.structure") }}</h6>
+                                    <h6 class="text-muted fw-medium">{{ __('messages.structure') }}</h6>
                                     <h6 class="text-muted fw-medium">85%</h6>
                                 </div>
                                 <div class="progress" style="height:8px;">
@@ -244,7 +267,7 @@
                             </div>
                             <div class="mb-2 mb-md-3">
                                 <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.roofing") }}</h6>
+                                    <h6 class="text-muted fw-medium">{{ __('messages.roofing') }}</h6>
                                     <h6 class="text-muted fw-medium">60%</h6>
                                 </div>
                                 <div class="progress" style="height:8px;">
@@ -255,7 +278,7 @@
                             </div>
                             <div class="mb-2 mb-md-3">
                                 <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.interior") }}</h6>
+                                    <h6 class="text-muted fw-medium">{{ __('messages.interior') }}</h6>
                                     <h6 class="text-muted fw-medium">25%</h6>
                                 </div>
                                 <div class="progress" style="height:8px;">
@@ -266,7 +289,7 @@
                             </div>
                             <div class="mb-2 mb-md-3">
                                 <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.finishing") }}</h6>
+                                    <h6 class="text-muted fw-medium">{{ __('messages.finishing') }}</h6>
                                     <h6 class="text-muted fw-medium">5%</h6>
                                 </div>
                                 <div class="progress" style="height:8px;">
@@ -284,25 +307,29 @@
                     <div class="card h-100 B_shadow">
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="fw-semibold black_color mb-0 ">{{ __("messages.ongoing_activities") }}</h5>
-                                <a href="#" class="text-primary" title="Edit"><img
-                                        src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                <h5 class="fw-semibold black_color mb-0 ">{{ __('messages.ongoing_activities') }}</h5>
+                                {{-- <a href="#" class="text-primary" title="Edit"><img
+                                        src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a> --}}
                             </div>
                             <ul class="list-unstyled mb-0">
                                 <li class="d-flex align-items-center mb-2">
-                                    <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                    <span class="{{ margin_end(2) }}"
+                                        style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
                                     Concrete pouring on Basement Level 2
                                 </li>
                                 <li class="d-flex align-items-center mb-2">
-                                    <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                    <span class="{{ margin_end(2) }}"
+                                        style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
                                     Formwork preparation for Ground Floor columns
                                 </li>
                                 <li class="d-flex align-items-center mb-2">
-                                    <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                    <span class="{{ margin_end(2) }}"
+                                        style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
                                     Electrical conduit layout in progress on Level 1
                                 </li>
                                 <li class="d-flex align-items-center">
-                                    <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                    <span class="{{ margin_end(2) }}"
+                                        style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
                                     QA/QC inspection for rebar placement
                                 </li>
                             </ul>
@@ -311,52 +338,52 @@
                 </div>
                 <div class="col-12 col-lg-6">
                     <div class="card h-100 B_shadow">
-                        <div class="card-body p-md-4">
+                        <div class="card-body p-md-4 fs-5">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="fw-semibold black_color mb-0 ">{{ __("messages.manpower_equipment") }}</h5>
-                                <a href="#" class="text-primary" title="Edit"><img
-                                        src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                <h5 class="fw-semibold black_color mb-0 fs-5">{{ __('messages.manpower_equipment') }}</h5>
+                                {{-- <a href="#" class="text-primary" title="Edit"><img
+                                        src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a> --}}
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-borderless mb-0">
                                     <tbody>
                                         <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.engineers") }}</td>
+                                            <td class="text-muted fw-medium">{{ __('messages.engineers') }}</td>
                                             <td class="text-end"><a href="#"
                                                     class="text-primary fw-semibold text-decoration-none">3</a>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.foremen") }}</td>
+                                            <td class="text-muted fw-medium">{{ __('messages.foremen') }}</td>
                                             <td class="text-end"><a href="#"
                                                     class="text-primary fw-semibold text-decoration-none">2</a>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.laborers") }}</td>
+                                            <td class="text-muted fw-medium">{{ __('messages.laborers') }}</td>
                                             <td class="text-end"><a href="#"
                                                     class="text-primary fw-semibold text-decoration-none">25</a>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.excavators") }}</td>
+                                            <td class="text-muted fw-medium">{{ __('messages.excavators') }}</td>
                                             <td class="text-end"><a href="#"
                                                     class="text-primary fw-semibold text-decoration-none">2
-                                                    {{ __("messages.units") }}</a>
+                                                    {{ __('messages.units') }}</a>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.concrete_mixers") }}</td>
+                                            <td class="text-muted fw-medium">{{ __('messages.concrete_mixers') }}</td>
                                             <td class="text-end"><a href="#"
                                                     class="text-primary fw-semibold text-decoration-none">1
-                                                    {{ __("messages.unit") }}</a>
+                                                    {{ __('messages.unit') }}</a>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.cranes") }}</td>
+                                            <td class="text-muted fw-medium">{{ __('messages.cranes') }}</td>
                                             <td class="text-end"><a href="#"
                                                     class="text-primary fw-semibold text-decoration-none">1
-                                                    {{ __("messages.unit") }}</a>
+                                                    {{ __('messages.unit') }}</a>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -371,15 +398,16 @@
                     <div class="card B_shadow">
                         <div class="card-body p-md-4">
                             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                                <h5 class="fw-semibold black_color mb-0 ">{{ __("messages.safety_category") }}</h5>
+                                <h5 class="fw-semibold black_color mb-0 ">{{ __('messages.safety_category') }}</h5>
                                 <div class="d-flex align-items-center gap-2">
-                                    <a href="safety-checklist.htmll"
+                                    <a href="{{ route('website.safety-checklist') }}"
                                         class="btn btn-primary  d-flex align-items-center gap-2 btnsm">
-                                        <i class="fas fa-eye"></i> {{ __("messages.view_checklist") }}
+                                        <i class="fas fa-eye"></i> {{ __('messages.view_checklist') }}
                                     </a>
-                                    <a href="#" class="btn btn-primary d-flex align-items-center gap-2 btnsm">
-                                        <i class="fas fa-plus"></i> {{ __("messages.new_checklist") }}
-                                    </a>
+                                    <button class="btn btn-primary d-flex align-items-center gap-2 btnsm" 
+                                        data-bs-toggle="modal" data-bs-target="#addSafetyChecklistModal">
+                                        <i class="fas fa-plus"></i> {{ __('messages.add_checklist') }}
+                                    </button>
                                 </div>
                             </div>
                             <ul class="list-unstyled mb-0">
@@ -388,7 +416,7 @@
                                         <span class="me-3 text-success" style="font-size:1.3em;">
                                             <i class="fas fa-check-circle"></i>
                                         </span>
-                                        {{ __("messages.ppe_check") }} Completed
+                                        {{ __('messages.ppe_check') }} Completed
                                     </div>
                                 </li>
                                 <li class="mb-2">
@@ -428,110 +456,116 @@
                     </div>
                 </div>
             </div>
-  </div>
-</div>
-<script>
-function deleteProject() {
-  if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-    alert('Project deletion functionality would be implemented here.');
-  }
-}
-
-// Make edit buttons functional
-document.addEventListener('DOMContentLoaded', function() {
-  const editButtons = document.querySelectorAll('a[title="Edit"]');
-  editButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      const field = this.previousElementSibling.textContent.trim();
-      const newValue = prompt(`Edit ${field.split(' ')[0]}:`, field);
-      if (newValue && newValue !== field) {
-        this.previousElementSibling.textContent = newValue;
-        alert('Field updated successfully!');
-      }
-    });
-  });
-  
-  // Make manpower links functional
-  const manpowerLinks = document.querySelectorAll('.table a');
-  manpowerLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const role = this.closest('tr').querySelector('td').textContent;
-      const count = this.textContent;
-      alert(`${role}: ${count}\n\nDetailed view would show:\n- Individual assignments\n- Work schedules\n- Performance metrics`);
-    });
-  });
-});
-</script>
-
-<!-- Create Phase Modal -->
-<div class="modal fade" id="createPhaseModal" tabindex="-1" aria-labelledby="createPhaseModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createPhaseModalLabel">
-          <i class="fas fa-layer-group me-2"></i>{{ __("messages.create_phase") }}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="createPhaseForm">
-          @csrf
-          <input type="hidden" name="project_id" value="1">
-          <input type="hidden" name="created_by" value="{{ auth()->id() ?? 1 }}">
-          
-          <div class="mb-3">
-            <label for="title" class="form-label fw-medium">{{ __("messages.phase_title") }}</label>
-            <input type="text" class="form-control Input_control" id="title" name="title" required
-              placeholder="e.g., Foundation Work, Structure Phase, Finishing">
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label fw-medium">{{ __("messages.milestones") }}</label>
-            <div id="milestonesContainer">
-              <div class="milestone-item mb-2">
-                <div class="row">
-                  <div class="col-8">
-                    <input type="text" class="form-control Input_control" name="milestones[0][milestone_name]" 
-                      placeholder="{{ __("messages.milestone_name") }}" required>
-                  </div>
-                  <div class="col-3">
-                    <input type="number" class="form-control Input_control" name="milestones[0][days]" 
-                      placeholder="{{ __("messages.days") }}" min="1" required>
-                  </div>
-                  <div class="col-1">
-                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addMilestone()">
-              <i class="fas fa-plus me-1"></i>{{ __("messages.add_milestone") }}
-            </button>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" form="createPhaseForm" class="btn orange_btn">
-          <i class="fas fa-plus me-2"></i>{{ __("messages.create_phase") }}
-        </button>
-      </div>
+        </div>
     </div>
-  </div>
-</div>
+    <script>
+        function deleteProject() {
+            if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+                alert('Project deletion functionality would be implemented here.');
+            }
+        }
 
-<script>
-let milestoneIndex = 1;
+        // Make edit buttons functional
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('a[title="Edit"]');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const field = this.previousElementSibling.textContent.trim();
+                    const newValue = prompt(`Edit ${field.split(' ')[0]}:`, field);
+                    if (newValue && newValue !== field) {
+                        this.previousElementSibling.textContent = newValue;
+                        alert('Field updated successfully!');
+                    }
+                });
+            });
 
-function addMilestone() {
-  const container = document.getElementById('milestonesContainer');
-  const newMilestone = document.createElement('div');
-  newMilestone.className = 'milestone-item mb-2';
-  newMilestone.innerHTML = `
+            // Make manpower links functional
+            const manpowerLinks = document.querySelectorAll('.table a');
+            manpowerLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const role = this.closest('tr').querySelector('td').textContent;
+                    const count = this.textContent;
+                    alert(
+                        `${role}: ${count}\n\nDetailed view would show:\n- Individual assignments\n- Work schedules\n- Performance metrics`
+                    );
+                });
+            });
+        });
+    </script>
+
+    <!-- Create Phase Modal -->
+    <div class="modal fade" id="createPhaseModal" tabindex="-1" aria-labelledby="createPhaseModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPhaseModalLabel">
+                        <i class="fas fa-layer-group me-2"></i>{{ __('messages.create_phase') }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createPhaseForm">
+                        @csrf
+                        <input type="hidden" name="project_id" value="1">
+                        <input type="hidden" name="created_by" value="{{ auth()->id() ?? 1 }}">
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label fw-medium">{{ __('messages.phase_title') }}</label>
+                            <input type="text" class="form-control Input_control" id="title" name="title"
+                                required placeholder="e.g., Foundation Work, Structure Phase, Finishing">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">{{ __('messages.milestones') }}</label>
+                            <div id="milestonesContainer">
+                                <div class="milestone-item mb-2">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <input type="text" class="form-control Input_control"
+                                                name="milestones[0][milestone_name]"
+                                                placeholder="{{ __('messages.milestone_name') }}" required>
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="number" class="form-control Input_control"
+                                                name="milestones[0][days]" placeholder="{{ __('messages.days') }}"
+                                                min="1" required>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                                onclick="removeMilestone(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addMilestone()">
+                                <i class="fas fa-plus me-1"></i>{{ __('messages.add_milestone') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="createPhaseForm" class="btn orange_btn">
+                        <i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let milestoneIndex = 1;
+
+        function addMilestone() {
+            const container = document.getElementById('milestonesContainer');
+            const newMilestone = document.createElement('div');
+            newMilestone.className = 'milestone-item mb-2';
+            newMilestone.innerHTML = `
     <div class="row">
       <div class="col-8">
         <input type="text" class="form-control Input_control" name="milestones[${milestoneIndex}][milestone_name]" 
@@ -548,41 +582,43 @@ function addMilestone() {
       </div>
     </div>
   `;
-  container.appendChild(newMilestone);
-  milestoneIndex++;
-}
+            container.appendChild(newMilestone);
+            milestoneIndex++;
+        }
 
-function removeMilestone(button) {
-  const container = document.getElementById('milestonesContainer');
-  if (container.children.length > 1) {
-    button.closest('.milestone-item').remove();
-  }
-}
+        function removeMilestone(button) {
+            const container = document.getElementById('milestonesContainer');
+            if (container.children.length > 1) {
+                button.closest('.milestone-item').remove();
+            }
+        }
 
-// Create Phase Form Handler
-document.addEventListener('DOMContentLoaded', function() {
-  const createPhaseForm = document.getElementById('createPhaseForm');
-  if (createPhaseForm) {
-    createPhaseForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const title = document.getElementById('title').value;
-      const milestones = document.querySelectorAll('.milestone-item');
-      
-      if (title.trim() && milestones.length > 0) {
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
-        if (modal) modal.hide();
-        
-        alert('Phase "' + title + '" with ' + milestones.length + ' milestone(s) created successfully!');
-        
-        // Reset form
-        createPhaseForm.reset();
-        milestoneIndex = 1;
-        
-        // Reset milestones container
-        const container = document.getElementById('milestonesContainer');
-        container.innerHTML = `
+        // Create Phase Form Handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const createPhaseForm = document.getElementById('createPhaseForm');
+            if (createPhaseForm) {
+                createPhaseForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const title = document.getElementById('title').value;
+                    const milestones = document.querySelectorAll('.milestone-item');
+
+                    if (title.trim() && milestones.length > 0) {
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById(
+                            'createPhaseModal'));
+                        if (modal) modal.hide();
+
+                        alert('Phase "' + title + '" with ' + milestones.length +
+                            ' milestone(s) created successfully!');
+
+                        // Reset form
+                        createPhaseForm.reset();
+                        milestoneIndex = 1;
+
+                        // Reset milestones container
+                        const container = document.getElementById('milestonesContainer');
+                        container.innerHTML = `
           <div class="milestone-item mb-2">
             <div class="row">
               <div class="col-8">
@@ -601,91 +637,134 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           </div>
         `;
+
+                        // Reload page to show new phase
+                        location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- Phase Navigation Modal -->
+    <div class="modal fade" id="phaseNavigationModal" tabindex="-1" aria-labelledby="phaseNavigationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="phaseNavigationModalLabel">
+                        <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">Phase Management</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-primary" style="cursor: pointer;"
+                                onclick="redirectToInspections()">
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-clipboard-check fa-3x text-primary mb-3"></i>
+                                    <h5 class="card-title">{{ __('messages.inspections') }}</h5>
+                                    <p class="card-text text-muted">{{ __('messages.manage_phase_inspections') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-success" style="cursor: pointer;" onclick="redirectToTasks()">
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-tasks fa-3x text-success mb-3"></i>
+                                    <h5 class="card-title">{{ __('messages.tasks') }}</h5>
+                                    <p class="card-text text-muted">{{ __('messages.manage_phase_tasks') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-warning" style="cursor: pointer;" onclick="redirectToSnags()">
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                                    <h5 class="card-title">{{ __('messages.snag_list') }}</h5>
+                                    <p class="card-text text-muted">{{ __('messages.manage_phase_issues') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-info" style="cursor: pointer;" onclick="redirectToTimeline()">
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                                    <h5 class="card-title">{{ __('messages.project_timeline') }}</h5>
+                                    <p class="card-text text-muted">{{ __('messages.view_project_timeline') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPhaseModal(phaseName) {
+            document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
+            const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
+            modal.show();
+        }
+
+        function redirectToInspections() {
+            window.location.href = '/website/phase-inspections';
+        }
+
+        function redirectToTasks() {
+            window.location.href = '/website/phase-tasks';
+        }
+
+        function redirectToSnags() {
+            window.location.href = '/website/phase-snags';
+        }
+
+        function redirectToTimeline() {
+            window.location.href = '/website/phase-timeline';
+        }
+    </script>
+
+@include('website.modals.add-safety-checklist-modal')
+
+<script>
+// Add Safety Checklist Form Handler for Project Progress Page
+document.addEventListener('DOMContentLoaded', function() {
+  const addSafetyChecklistForm = document.getElementById('addSafetyChecklistForm');
+  if (addSafetyChecklistForm) {
+    addSafetyChecklistForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Show loading state
+      const submitBtn = document.querySelector('#addSafetyChecklistModal .btn.orange_btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.creating') }}...';
+      submitBtn.disabled = true;
+      
+      // Simulate checklist creation
+      setTimeout(() => {
+        alert('{{ __('messages.safety_checklist_created_successfully') }}');
+        bootstrap.Modal.getInstance(document.getElementById('addSafetyChecklistModal')).hide();
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        addSafetyChecklistForm.reset();
         
-        // Reload page to show new phase
+        // Reset safety items to default
+        document.getElementById('safetyItems').innerHTML = `
+          <div class="input-group mb-2">
+            <input type="text" class="form-control" name="items[]" placeholder="{{ __('messages.safety_item_placeholder') }}">
+            <button class="btn btn-outline-danger" type="button" onclick="removeItem(this)">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        `;
+        
         location.reload();
-      }
+      }, 2000);
     });
   }
 });
-</script>
-
-<!-- Phase Navigation Modal -->
-<div class="modal fade" id="phaseNavigationModal" tabindex="-1" aria-labelledby="phaseNavigationModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="phaseNavigationModalLabel">
-          <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">Phase Management</span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <div class="card h-100 border-primary" style="cursor: pointer;" onclick="redirectToInspections()">
-              <div class="card-body text-center p-4">
-                <i class="fas fa-clipboard-check fa-3x text-primary mb-3"></i>
-                <h5 class="card-title">{{ __("messages.inspections") }}</h5>
-                <p class="card-text text-muted">{{ __("messages.manage_phase_inspections") }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card h-100 border-success" style="cursor: pointer;" onclick="redirectToTasks()">
-              <div class="card-body text-center p-4">
-                <i class="fas fa-tasks fa-3x text-success mb-3"></i>
-                <h5 class="card-title">{{ __("messages.tasks") }}</h5>
-                <p class="card-text text-muted">{{ __("messages.manage_phase_tasks") }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card h-100 border-warning" style="cursor: pointer;" onclick="redirectToSnags()">
-              <div class="card-body text-center p-4">
-                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                <h5 class="card-title">{{ __("messages.snag_list") }}</h5>
-                <p class="card-text text-muted">{{ __("messages.manage_phase_issues") }}</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card h-100 border-info" style="cursor: pointer;" onclick="redirectToTimeline()">
-              <div class="card-body text-center p-4">
-                <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
-                <h5 class="card-title">{{ __("messages.project_timeline") }}</h5>
-                <p class="card-text text-muted">{{ __("messages.view_project_timeline") }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-function openPhaseModal(phaseName) {
-  document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
-  const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
-  modal.show();
-}
-
-function redirectToInspections() {
-  window.location.href = '/website/phase-inspections';
-}
-
-function redirectToTasks() {
-  window.location.href = '/website/phase-tasks';
-}
-
-function redirectToSnags() {
-  window.location.href = '/website/phase-snags';
-}
-
-function redirectToTimeline() {
-  window.location.href = '/website/phase-timeline';
-}
 </script>
 
 @endsection

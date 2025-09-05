@@ -1,21 +1,31 @@
 <?php
 
 return [
-    'required' => 'The :attribute field is required.',
-    'email' => 'The :attribute must be a valid email address.',
-    'min' => [
-        'string' => 'The :attribute must be at least :min characters.',
-    ],
-    'max' => [
-        'string' => 'The :attribute may not be greater than :max characters.',
-    ],
-    'confirmed' => 'The :attribute confirmation does not match.',
-    'unique' => 'The :attribute has already been taken.',
+    // Login validation
+    'email_required' => 'Email address is required',
+    'email_invalid' => 'Please enter a valid email address',
+    'password_required' => 'Password is required',
+    'password_min' => 'Password must be at least 6 characters',
     
-    'attributes' => [
-        'name' => 'name',
-        'email' => 'email address',
-        'password' => 'password',
-        'password_confirmation' => 'password confirmation',
-    ],
+    // Register validation
+    'full_name_required' => 'Full name is required',
+    'full_name_min' => 'Full name must be at least 2 characters',
+    'phone_required' => 'Phone number is required',
+    'phone_invalid' => 'Please enter a valid phone number',
+    'password_confirm_required' => 'Please confirm your password',
+    'password_mismatch' => 'Passwords do not match',
+    'company_name_required' => 'Company name is required',
+    'employee_count_required' => 'Employee count is required',
+    'employee_count_min' => 'Employee count must be at least 1',
+    'designation_required' => 'Please select your designation',
+    
+    // Forgot password validation
+    'mobile_required' => 'Mobile number is required',
+    'mobile_invalid' => 'Please enter a valid mobile number',
+    'otp_required' => 'OTP is required',
+    'otp_invalid' => 'Please enter a valid 6-digit OTP',
+    'new_password_required' => 'New password is required',
+    'new_password_min' => 'New password must be at least 6 characters',
+    'confirm_password_required' => 'Please confirm your new password',
+    'new_password_mismatch' => 'New passwords do not match',
 ];

@@ -22,7 +22,15 @@ class CheckUserToken
         try {
             if ($request->hasHeader('token')) {
 
-                $token = EncryptDecrypt::requestDecrypt($request->header('token'), 'token');
+                $rawToken = $request->header('token');
+                
+                // Check if encryption is enabled
+                if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {
+                    $token = EncryptDecrypt::requestDecrypt($rawToken, 'token');
+                } else {
+                    $token = $rawToken; // Use raw token when encryption is disabled
+                }
+                
                 if ($token != '') {
 
                     if ($token == env('GUESTTOKEN')) {

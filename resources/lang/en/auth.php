@@ -62,6 +62,7 @@ return [
     'enter_member_phone' => 'Enter member\'s phone number',
     'add_more_members' => 'Add more members',
     'registration_completed' => 'Registration completed!',
+    'confirm_password_mismatch' => 'Passwords do not match',
     
     // Profile Page
     'my_profile' => 'My Profile',
@@ -71,4 +72,18 @@ return [
     'no_of_team_members' => 'No. of Team Members',
     'email_id' => 'Email ID',
     'logout' => 'Logout',
+    'edit_profile' => 'Edit Profile',
+    'contact_information' => 'Contact Information',
+    'company_statistics' => 'Company Statistics',
+    'total_employees' => 'Total Employees',
+    'save_changes' => 'Save Changes',
+    'cancel' => 'Cancel',
+    'back_to_dashboard' => 'Back to Dashboard',
+    'delete_account' => 'Delete Account',
+    'confirm_delete_account' => 'Are you sure you want to delete your account? This action cannot be undone.',
+    
+    // Logout confirmation
+    'logout_confirmation' => 'Confirm Logout',
+    'logout_confirmation_message' => 'Are you sure you want to logout?',
+    'logged_out_successfully' => 'Logged out successfully',
 ];

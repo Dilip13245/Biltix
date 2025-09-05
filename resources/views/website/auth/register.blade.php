@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('auth.register') }} - Biltix</title>
     <link rel="icon" href="{{ asset('website/images/icons/logo.svg') }}" type="image/x-icon" />
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <style>
         body {
             background: #f5f5f5;
@@ -190,18 +193,25 @@
             background: white;
             color: #111827;
             transition: all 0.2s ease;
-            {{ is_rtl() ? 'text-align: right;' : '' }}
+            {{ is_rtl() ? 'text-align: right; direction: rtl;' : '' }}
         }
-        
+
         .input-icon {
             position: absolute;
-            {{ is_rtl() ? 'left: 16px;' : 'right: 16px;' }}
-            top: 50%;
+            {{ is_rtl() ? 'left: 16px;' : 'right: 16px;' }} top: 50%;
             transform: translateY(-50%);
             color: #9ca3af;
             z-index: 10;
             font-size: 16px;
-            pointer-events: none;
+        }
+        
+        .input-icon.clickable {
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        
+        .input-icon.clickable:hover {
+            color: #4A90E2;
         }
 
         .form-control:focus,
@@ -213,6 +223,21 @@
 
         .form-control::placeholder {
             color: #9ca3af;
+        }
+
+        .form-control.error {
+            border-color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
         }
 
         .row .col-md-6 {
@@ -348,14 +373,15 @@
             </ul>
         </div>
     </div>
-    
+
     <div class="container-fluid">
         <div class="row justify-content-center align-items-center min-vh-100">
             <div class="col-12 col-sm-11 col-md-10 col-lg-8 col-xl-6">
                 <div class="auth-card">
                     <!-- Logo -->
                     <div class="logo-container">
-                        <img src="{{ asset('website/images/icons/logo.svg') }}" alt="Logo" style="height: 60px; margin-bottom: 16px;">
+                        <img src="{{ asset('website/images/icons/logo.svg') }}" alt="Logo"
+                            style="height: 60px; margin-bottom: 16px;">
                         <div class="subtitle">{{ __('auth.join_platform') }}</div>
                     </div>
 
@@ -385,37 +411,48 @@
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.full_name') }}</label>
-                                        <input type="text" class="form-control" name="full_name"
-                                            placeholder="{{ __('auth.enter_full_name') }}">
+                                        <input type="text" class="form-control" name="full_name" id="full_name"
+                                            placeholder="{{ __('auth.enter_full_name') }}" required minlength="2">
                                     </div>
+                                    <div class="error-message" id="fullNameError"></div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.email_address') }}</label>
-                                        <input type="email" class="form-control" name="email"
-                                            placeholder="{{ __('auth.enter_email') }}">
+                                        <input type="email" class="form-control" name="email" id="email"
+                                            placeholder="{{ __('auth.enter_email') }}" required>
                                     </div>
+                                    <div class="error-message" id="emailError"></div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.phone_number') }}</label>
-                                        <input type="tel" class="form-control" name="phone"
-                                            placeholder="{{ __('auth.enter_phone') }}">
+                                        <input type="tel" class="form-control" name="phone" id="phone"
+                                            placeholder="{{ __('auth.enter_phone') }}" required>
                                     </div>
+                                    <div class="error-message" id="phoneError"></div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.password') }}</label>
-                                        <input type="password" class="form-control" name="password"
-                                            placeholder="{{ __('auth.create_password') }}">
+                                        <div class="position-relative">
+                                            <input type="password" class="form-control" name="password" id="password"
+                                                placeholder="{{ __('auth.create_password') }}" required minlength="6">
+                                            <i class="fas fa-eye input-icon clickable" onclick="togglePassword('password', this)"></i>
+                                        </div>
                                     </div>
+                                    <div class="error-message" id="passwordError"></div>
                                 </div>
                                 <div class="col-12">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.confirm_password') }}</label>
-                                        <input type="password" class="form-control" name="confirm_password"
-                                            placeholder="{{ __('auth.confirm_password_placeholder') }}">
+                                        <div class="position-relative">
+                                            <input type="password" class="form-control" name="confirm_password" id="confirm_password"
+                                                placeholder="{{ __('auth.confirm_password_placeholder') }}" required>
+                                            <i class="fas fa-eye input-icon clickable" onclick="togglePassword('confirm_password', this)"></i>
+                                        </div>
                                     </div>
+                                    <div class="error-message" id="confirmPasswordError"></div>
                                 </div>
                             </div>
                         </div>
@@ -426,31 +463,36 @@
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.company_name') }}</label>
-                                        <input type="text" class="form-control" name="company_name"
-                                            placeholder="{{ __('auth.enter_company_name') }}">
+                                        <input type="text" class="form-control" name="company_name" id="company_name"
+                                            placeholder="{{ __('auth.enter_company_name') }}" required>
                                     </div>
+                                    <div class="error-message" id="companyNameError"></div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.total_employees') }}</label>
-                                        <input type="number" class="form-control" name="employee_count"
-                                            placeholder="{{ __('auth.enter_employee_count') }}">
+                                        <input type="number" class="form-control" name="employee_count" id="employee_count"
+                                            placeholder="{{ __('auth.enter_employee_count') }}" required min="1">
                                     </div>
+                                    <div class="error-message" id="employeeCountError"></div>
                                 </div>
                                 <div class="col-12">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.designation') }}</label>
                                         <div class="position-relative">
-                                            <select class="form-select" name="designation" style="{{ is_rtl() ? 'padding-left: 48px; padding-right: 16px;' : 'padding-right: 48px; padding-left: 16px;' }}">
+                                            <select class="form-select" name="designation" id="designation" required
+                                                style="{{ is_rtl() ? 'padding-left: 48px; padding-right: 16px;' : 'padding-right: 48px; padding-left: 16px;' }}">
                                                 <option value="">{{ __('auth.select_designation') }}</option>
                                                 <option value="contractor">{{ __('auth.contractor') }}</option>
                                                 <option value="consultant">{{ __('auth.consultant') }}</option>
                                                 <option value="site_engineer">{{ __('auth.site_engineer') }}</option>
-                                                <option value="project_manager">{{ __('auth.project_manager') }}</option>
+                                                <option value="project_manager">{{ __('auth.project_manager') }}
+                                                </option>
                                                 <option value="stakeholder">{{ __('auth.stakeholder') }}</option>
                                             </select>
                                             <i class="fas fa-chevron-down input-icon"></i>
                                         </div>
+                                        <div class="error-message" id="designationError"></div>
                                     </div>
                                 </div>
                             </div>
@@ -495,7 +537,8 @@
                         <!-- Login Link Container -->
                         <div class="login-container">
                             <div class="login-text">
-                                {{ __('auth.already_have_account') }} <a href="/login">{{ __('auth.login_here') }}</a>
+                                {{ __('auth.already_have_account') }} <a
+                                    href="/login">{{ __('auth.login_here') }}</a>
                             </div>
                         </div>
                     </form>
@@ -506,11 +549,145 @@
 
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('website/js/toastr-config.js') }}"></script>
+    </script>
+    <script src="{{ asset('website/js/api-config.js') }}"></script>
+    <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+    <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+    <script src="{{ asset('website/js/api-helpers.js') }}"></script>
+    <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script>
         let currentStep = 1;
         let memberCount = 1;
+        
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function validateStep(step) {
+            let isValid = true;
+
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+            document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('error'));
+
+            if (step === 1) {
+                const fullName = document.getElementById('full_name');
+                const email = document.getElementById('email');
+                const phone = document.getElementById('phone');
+                const password = document.getElementById('password');
+                const confirmPassword = document.getElementById('confirm_password');
+
+                // Full name validation
+                if (!fullName.value.trim()) {
+                    showError(fullName, 'fullNameError', '{{ __('validation.full_name_required') }}');
+                    isValid = false;
+                } else if (fullName.value.trim().length < 2) {
+                    showError(fullName, 'fullNameError', '{{ __('validation.full_name_min') }}');
+                    isValid = false;
+                }
+
+                // Email validation
+                if (!email.value.trim()) {
+                    showError(email, 'emailError', '{{ __('validation.email_required') }}');
+                    isValid = false;
+                } else if (!isValidEmail(email.value)) {
+                    showError(email, 'emailError', '{{ __('validation.email_invalid') }}');
+                    isValid = false;
+                }
+
+                // Phone validation
+                if (!phone.value.trim()) {
+                    showError(phone, 'phoneError', '{{ __('validation.phone_required') }}');
+                    isValid = false;
+                } else if (!isValidPhone(phone.value)) {
+                    showError(phone, 'phoneError', '{{ __('validation.phone_invalid') }}');
+                    isValid = false;
+                }
+
+                // Password validation
+                if (!password.value.trim()) {
+                    showError(password, 'passwordError', '{{ __('validation.password_required') }}');
+                    isValid = false;
+                } else if (password.value.length < 6) {
+                    showError(password, 'passwordError', '{{ __('validation.password_min') }}');
+                    isValid = false;
+                }
+
+                // Confirm password validation
+                if (!confirmPassword.value.trim()) {
+                    showError(confirmPassword, 'confirmPasswordError', '{{ __('validation.password_confirm_required') }}');
+                    isValid = false;
+                } else if (password.value !== confirmPassword.value) {
+                    showError(confirmPassword, 'confirmPasswordError', '{{ __('validation.password_mismatch') }}');
+                    isValid = false;
+                }
+
+            } else if (step === 2) {
+                const companyName = document.getElementById('company_name');
+                const employeeCount = document.getElementById('employee_count');
+                const designation = document.getElementById('designation');
+
+                // Company name validation
+                if (!companyName.value.trim()) {
+                    showError(companyName, 'companyNameError', '{{ __('validation.company_name_required') }}');
+                    isValid = false;
+                }
+
+                // Employee count validation
+                if (!employeeCount.value.trim()) {
+                    showError(employeeCount, 'employeeCountError', '{{ __('validation.employee_count_required') }}');
+                    isValid = false;
+                } else if (parseInt(employeeCount.value) < 1) {
+                    showError(employeeCount, 'employeeCountError', '{{ __('validation.employee_count_min') }}');
+                    isValid = false;
+                }
+
+                // Designation validation
+                if (!designation.value) {
+                    showError(designation, 'designationError', '{{ __('validation.designation_required') }}');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function showError(fieldElement, errorElementId, message) {
+            fieldElement.classList.add('error');
+            const errorElement = document.getElementById(errorElementId);
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidPhone(phone) {
+            const phoneRegex = /^[+]?[0-9]{10,15}$/;
+            return phoneRegex.test(phone.replace(/\s+/g, ''));
+        }
 
         function nextStep() {
+            if (!validateStep(currentStep)) {
+                return;
+            }
+
             if (currentStep < 3) {
                 // Hide current step
                 document.getElementById(`form-step-${currentStep}`).classList.remove('active');
@@ -560,12 +737,77 @@
             memberCount++;
         }
 
-        function submitForm() {
-            alert('{{ __('auth.registration_completed') }}');
-            // Redirect to dashboard after successful registration
-            setTimeout(() => {
-                window.location.href = '/dashboard';
-            }, 1000);
+        async function submitForm() {
+            const form = document.getElementById('registrationForm');
+            const formData = new FormData(form);
+
+            // Prepare signup data
+            const data = {
+                name: formData.get('full_name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                password: formData.get('password'),
+                role: formData.get('designation') || 'contractor',
+                company_name: formData.get('company_name'),
+                designation: formData.get('designation'),
+                employee_count: formData.get('employee_count'),
+                device_type: 'W'
+            };
+
+            // Collect members
+            const members = [];
+            for (let i = 0; i < memberCount; i++) {
+                const memberName = formData.get(`members[${i}][name]`);
+                const memberPhone = formData.get(`members[${i}][phone]`);
+                if (memberName && memberPhone) {
+                    members.push({
+                        member_name: memberName,
+                        member_phone: memberPhone
+                    });
+                }
+            }
+            if (members.length > 0) {
+                data.members = members;
+            }
+
+            try {
+                const response = await api.signup(data);
+
+                if (response.code === 200) {
+                    // Store session data
+                    sessionStorage.setItem('user', JSON.stringify(response.data));
+                    sessionStorage.setItem('user_id', response.data.id);
+                    sessionStorage.setItem('token', response.data.token);
+
+                    // Set Laravel session
+                    const sessionData = {
+                        user_id: response.data.id,
+                        token: response.data.token,
+                        user: response.data
+                    };
+
+                    const sessionResponse = await fetch('/auth/set-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify(sessionData)
+                    });
+
+                    if (sessionResponse.ok) {
+                        toastr.success(response.message);
+                        window.location.href = '/dashboard';
+                    } else {
+                        toastr.error('Session setup failed');
+                    }
+                } else {
+                    toastr.error(response.message);
+                }
+            } catch (error) {
+                toastr.error(error.message || 'Connection error. Please try again.');
+            }
         }
     </script>
 </body>

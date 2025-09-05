@@ -396,7 +396,7 @@
                             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
                                 <h5 class="fw-semibold black_color mb-0 ">{{ __("messages.safety_category") }}</h5>
                                 <div class="d-flex align-items-center gap-2">
-                                    <a href="safety-checklist.htmll"
+                                    <a href="{{ route('website.safety-checklist') }}"
                                         class="btn btn-primary  d-flex align-items-center gap-2 btnsm">
                                         <i class="fas fa-eye"></i> {{ __("messages.view_checklist") }}
                                     </a>

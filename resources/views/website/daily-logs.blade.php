@@ -15,7 +15,13 @@
                 <option>{{ __('messages.team_b') }}</option>
                 <option>{{ __('messages.team_c') }}</option>
             </select>
-            <input type="date" class="border rounded-3 px-3 py-2 bg-light fw-normal fs14" value="2024-01-15">
+            @include('website.includes.date-picker', [
+              'id' => 'logDate',
+              'name' => 'log_date',
+              'class' => 'border rounded-3 px-3 py-2 bg-light fw-normal fs14',
+              'placeholder' => 'Select date',
+              'value' => date('Y-m-d')
+            ])
         </div>
     </div>
     <section class="px-md-4">

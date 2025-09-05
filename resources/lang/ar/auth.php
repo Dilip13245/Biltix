@@ -62,6 +62,7 @@ return [
     'enter_member_phone' => 'أدخل رقم هاتف العضو',
     'add_more_members' => 'إضافة أعضاء آخرين',
     'registration_completed' => 'تم التسجيل بنجاح!',
+    'confirm_password_mismatch' => 'كلمات المرور غير متطابقة',
     
     // Profile Page
     'my_profile' => 'ملفي الشخصي',
@@ -71,4 +72,18 @@ return [
     'no_of_team_members' => 'عدد أعضاء الفريق',
     'email_id' => 'البريد الإلكتروني',
     'logout' => 'تسجيل الخروج',
+    'edit_profile' => 'تعديل الملف الشخصي',
+    'contact_information' => 'معلومات الاتصال',
+    'company_statistics' => 'إحصائيات الشركة',
+    'total_employees' => 'إجمالي الموظفين',
+    'save_changes' => 'حفظ التغييرات',
+    'cancel' => 'إلغاء',
+    'back_to_dashboard' => 'العودة للوحة التحكم',
+    'delete_account' => 'حذف الحساب',
+    'confirm_delete_account' => 'هل أنت متأكد من حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.',
+    
+    // Logout confirmation
+    'logout_confirmation' => 'تأكيد تسجيل الخروج',
+    'logout_confirmation_message' => 'هل أنت متأكد من تسجيل الخروج؟',
+    'logged_out_successfully' => 'تم تسجيل الخروج بنجاح',
 ];

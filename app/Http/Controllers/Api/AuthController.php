@@ -35,7 +35,7 @@ class AuthController extends Controller
                 'members' => 'nullable|array',
                 'members.*.member_name' => 'required_with:members|string|max:255',
                 'members.*.member_phone' => 'required_with:members|string|max:20',
-                'device_type' => 'required|in:A,I',
+                'device_type' => 'required|in:A,I,W',
             ], [
                 'email.required' => trans('api.auth.email_required'),
                 'email.email' => trans('api.auth.email_invalid'),
@@ -123,7 +123,7 @@ class AuthController extends Controller
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
                 'password' => 'required|string|min:6',
-                'device_type' => 'required|in:A,I',
+                'device_type' => 'required|in:A,I,W',
             ]);
 
             $validator->setCustomMessages([

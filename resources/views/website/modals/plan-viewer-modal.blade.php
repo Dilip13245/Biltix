@@ -16,17 +16,17 @@
           <button class="btn btn-sm btn-outline-primary" onclick="resetZoom()">
             <i class="fas fa-expand-arrows-alt"></i>
           </button>
-          <button class="btn btn-sm orange_btn" onclick="downloadPlan()">
+          <button class="btn btn-sm orange_btn me-4" onclick="downloadPlan()">
             <i class="fas fa-download me-1"></i>{{ __("messages.download") }}
           </button>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body p-0">
         <div class="row h-100">
           <div class="col-md-9 p-0">
-            <div id="planViewerContainer" class="h-100 position-relative overflow-auto bg-light">
-              <img id="planImage" src="" alt="Plan" class="img-fluid" style="cursor: grab; transition: transform 0.3s;">
+            <div id="planViewerContainer" class="h-100 position-relative overflow-auto bg-light d-flex align-items-center justify-content-center">
+              <img id="planImage" src="" alt="Plan" class="img-fluid" style="cursor: grab; transition: transform 0.3s; max-height: 90%; max-width: 90%;">
             </div>
           </div>
           <div class="col-md-3 border-start">

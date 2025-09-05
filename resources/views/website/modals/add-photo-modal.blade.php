@@ -2,9 +2,9 @@
 <div class="modal fade" id="addPhotoModal" tabindex="-1" aria-labelledby="addPhotoModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
         <h5 class="modal-title" id="addPhotoModalLabel">
-          <i class="fas fa-camera me-2"></i>{{ __("messages.add_new") }} Photos
+          <i class="fas fa-camera {{ margin_end(2) }}"></i>{{ __("messages.add_new") }} Photos
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -33,7 +33,14 @@
             </div>
             <div class="col-md-6 mb-3">
               <label for="photoDate" class="form-label fw-medium">Date Taken</label>
-              <input type="date" class="form-control Input_control" id="photoDate" name="date_taken" required>
+              @include('website.includes.date-picker', [
+                'id' => 'photoDate',
+                'name' => 'date_taken',
+                'placeholder' => 'Select photo date',
+                'value' => date('Y-m-d'),
+                'maxDate' => date('Y-m-d'),
+                'required' => true
+              ])
             </div>
           </div>
 

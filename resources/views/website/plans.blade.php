@@ -8,8 +8,7 @@
             <h2>{{ __('messages.plans') }}</h2>
             <p>{{ __('messages.view_markup_plans') }}</p>
         </div>
-        <input type="file" id="planFileInput" accept=".pdf,.jpg,.jpeg,.png,.dwg" style="display: none;" onchange="handleFileUpload(this)">
-        <button class="btn orange_btn" onclick="document.getElementById('planFileInput').click()">
+        <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#uploadPlanModal">
             <i class="fas fa-arrow-up"></i>
             {{ __('messages.upload_plan') }}
         </button>
@@ -175,13 +174,6 @@
             if (confirm('Replace plan?')) {
                 document.getElementById('planFileInput').click();
             }
-        }
-
-        function deletePlan(planId) {
-            if (confirm('Delete plan?')) {
-                alert('Plan deleted successfully!');
-            }
-        }();
         }
 
         function replacePlan(planId) {

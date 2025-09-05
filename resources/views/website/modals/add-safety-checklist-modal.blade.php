@@ -2,9 +2,9 @@
 <div class="modal fade" id="addSafetyChecklistModal" tabindex="-1" aria-labelledby="addSafetyChecklistModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
         <h5 class="modal-title" id="addSafetyChecklistModalLabel">
-          <i class="fas fa-shield-alt me-2"></i>Add Safety Checklist
+          <i class="fas fa-shield-alt {{ margin_end(2) }}"></i>{{ __('messages.add_safety_checklist') }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -13,67 +13,73 @@
           @csrf
           <div class="row">
             <div class="col-md-8 mb-3">
-              <label for="checklistTitle" class="form-label fw-medium">Checklist Title</label>
+              <label for="checklistTitle" class="form-label fw-medium">{{ __('messages.checklist_title') }}</label>
               <input type="text" class="form-control Input_control" id="checklistTitle" name="title" required
-                placeholder="e.g., Daily Safety Inspection">
+                placeholder="{{ __('messages.checklist_title_placeholder') }}">
             </div>
             <div class="col-md-4 mb-3">
-              <label for="checklistType" class="form-label fw-medium">Type</label>
+              <label for="checklistType" class="form-label fw-medium">{{ __('messages.checklist_type') }}</label>
               <select class="form-select Input_control" id="checklistType" name="type" required>
-                <option value="">Select Type</option>
-                <option value="daily">Daily Inspection</option>
-                <option value="weekly">Weekly Review</option>
-                <option value="equipment">Equipment Check</option>
-                <option value="meeting">Safety Meeting</option>
-                <option value="incident">Incident Report</option>
+                <option value="">{{ __('messages.select_type') }}</option>
+                <option value="daily">{{ __('messages.daily_inspection') }}</option>
+                <option value="weekly">{{ __('messages.weekly_review') }}</option>
+                <option value="equipment">{{ __('messages.equipment_check') }}</option>
+                <option value="meeting">{{ __('messages.safety_meeting') }}</option>
+                <option value="incident">{{ __('messages.incident_report') }}</option>
               </select>
             </div>
           </div>
           
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="checklistDate" class="form-label fw-medium">Date</label>
-              <input type="date" class="form-control Input_control" id="checklistDate" name="date" required>
+              <label for="checklistDate" class="form-label fw-medium">{{ __('messages.date') }}</label>
+              @include('website.includes.date-picker', [
+                'id' => 'checklistDate',
+                'name' => 'date',
+                'placeholder' => __('messages.select_inspection_date'),
+                'value' => date('Y-m-d'),
+                'required' => true
+              ])
             </div>
             <div class="col-md-6 mb-3">
-              <label for="inspector" class="form-label fw-medium">Inspector/Responsible Person</label>
+              <label for="inspector" class="form-label fw-medium">{{ __('messages.inspector_responsible') }}</label>
               <input type="text" class="form-control Input_control" id="inspector" name="inspector" 
-                placeholder="Name of person responsible">
+                placeholder="{{ __('messages.inspector_placeholder') }}">
             </div>
           </div>
 
           <div class="mb-3">
-            <label class="form-label fw-medium">{{ __("messages.safety_items") }} to Check</label>
+            <label class="form-label fw-medium">{{ __('messages.safety_items_to_check') }}</label>
             <div id="safetyItems">
               <div class="input-group mb-2">
-                <input type="text" class="form-control" name="items[]" placeholder="e.g., All workers wearing safety helmets">
+                <input type="text" class="form-control" name="items[]" placeholder="{{ __('messages.safety_item_example') }}">
                 <button class="btn btn-outline-danger" type="button" onclick="removeItem(this)">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
             </div>
             <button type="button" class="btn btn-outline-primary btn-sm" onclick="addSafetyItem()">
-              <i class="fas fa-plus me-1"></i>Add Item
+              <i class="fas fa-plus {{ margin_end(1) }}"></i>{{ __('messages.add_item') }}
             </button>
           </div>
 
           <div class="mb-3">
-            <label for="location" class="form-label fw-medium">Location/Area</label>
+            <label for="location" class="form-label fw-medium">{{ __('messages.location_area') }}</label>
             <input type="text" class="form-control Input_control" id="location" name="location" 
-              placeholder="e.g., Building A, Ground Floor">
+              placeholder="{{ __('messages.location_placeholder') }}">
           </div>
 
           <div class="mb-3">
-            <label for="notes" class="form-label fw-medium">Additional Notes</label>
+            <label for="notes" class="form-label fw-medium">{{ __('messages.additional_notes') }}</label>
             <textarea class="form-control Input_control" id="notes" name="notes" rows="3"
-              placeholder="Any additional safety notes or observations..."></textarea>
+              placeholder="{{ __('messages.notes_placeholder') }}"></textarea>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">>{{ __("messages.cancel") }}</button>
         <button type="submit" form="addSafetyChecklistForm" class="btn orange_btn">
-          <i class="fas fa-plus me-2"></i>Create Checklist
+          <i class="fas fa-plus {{ margin_end(2) }}"></i>{{ __('messages.create_checklist') }}
         </button>
       </div>
     </div>
@@ -86,7 +92,7 @@ function addSafetyItem() {
   const newItem = document.createElement('div');
   newItem.className = 'input-group mb-2';
   newItem.innerHTML = `
-    <input type="text" class="form-control" name="items[]" placeholder="Enter safety item to check">
+    <input type="text" class="form-control" name="items[]" placeholder="{{ __('messages.enter_safety_item') }}">
     <button class="btn btn-outline-danger" type="button" onclick="removeItem(this)">
       <i class="fas fa-times"></i>
     </button>

@@ -7,6 +7,8 @@
     <link rel="icon" href="{{ asset('website/images/icons/logo.svg') }}" type="image/x-icon" />
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <style>
         body {
             background: #f5f5f5;
@@ -178,7 +180,7 @@
         .form-control {
             border: 1px solid #d1d5db;
             border-radius: 12px;
-            {{ is_rtl() ? 'padding: 15px 16px 15px 48px;' : 'padding: 15px 48px 15px 16px;' }}
+            {{ is_rtl() ? 'padding: 15px 16px 15px 48px; text-align: right; direction: rtl;' : 'padding: 15px 48px 15px 16px;' }}
             font-size: 16px;
             height: 50px;
             background: white;
@@ -220,6 +222,25 @@
         .otp-input:focus {
             border-color: #4A90E2;
             box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+        
+        .form-control.error {
+            border-color: #ef4444;
+        }
+        
+        .otp-input.error {
+            border-color: #ef4444;
+        }
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
         }
         .btn-primary {
             background: #4477C4;
@@ -330,9 +351,10 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.mobile_number') }}</label>
                                         <div class="position-relative">
-                                            <input type="tel" class="form-control" id="mobileNumber" placeholder="{{ __('auth.enter_mobile') }}">
+                                            <input type="tel" class="form-control" id="mobileNumber" placeholder="{{ __('auth.enter_mobile') }}" required>
                                             <i class="fas fa-phone input-icon"></i>
                                         </div>
+                                        <div class="error-message" id="mobileError"></div>
                                     </div>
                                 </div>
 
@@ -342,13 +364,14 @@
                                         <label class="form-label">{{ __('auth.enter_otp') }}</label>
                                         <p class="text-muted small">{{ __('auth.otp_sent_to') }} <span id="displayMobile"></span></p>
                                         <div class="otp-inputs">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 1)">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 2)">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 3)">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 4)">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 5)">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 6)">
+                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 1)" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 2)" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 3)" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 4)" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 5)" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 6)" pattern="[0-9]">
                                         </div>
+                                        <div class="error-message text-center" id="otpError"></div>
                                         <div class="resend-text">
                                             {{ __('auth.didnt_receive_code') }} <a href="#" class="resend-link" onclick="resendOTP()">{{ __('auth.resend_otp') }}</a>
                                         </div>
@@ -360,16 +383,18 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.new_password') }}</label>
                                         <div class="position-relative">
-                                            <input type="password" class="form-control" id="newPassword" placeholder="{{ __('auth.enter_new_password') }}">
+                                            <input type="password" class="form-control" id="newPassword" placeholder="{{ __('auth.enter_new_password') }}" required minlength="6">
                                             <i class="fas fa-eye input-icon" style="cursor: pointer;" onclick="togglePassword('newPassword', this)"></i>
                                         </div>
+                                        <div class="error-message" id="newPasswordError"></div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.confirm_password') }}</label>
                                         <div class="position-relative">
-                                            <input type="password" class="form-control" id="confirmPassword" placeholder="{{ __('auth.confirm_new_password') }}">
+                                            <input type="password" class="form-control" id="confirmPassword" placeholder="{{ __('auth.confirm_new_password') }}" required>
                                             <i class="fas fa-eye input-icon" style="cursor: pointer;" onclick="togglePassword('confirmPassword', this)"></i>
                                         </div>
+                                        <div class="error-message" id="confirmPasswordError"></div>
                                     </div>
                                 </div>
 
@@ -395,44 +420,168 @@
 
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('website/js/toastr-config.js') }}"></script></script>
+    <script src="{{ asset('website/js/api-config.js') }}"></script>
+    <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+    <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+    <script src="{{ asset('website/js/api-helpers.js') }}"></script>
+    <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script>
         let currentStep = 1;
         const totalSteps = 3;
+        let userPhone = '';
 
-        function nextStep() {
+        function validateStep(step) {
+            let isValid = true;
+            
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+            document.querySelectorAll('.form-control, .otp-input').forEach(el => el.classList.remove('error'));
+            
+            if (step === 1) {
+                const mobile = document.getElementById('mobileNumber');
+                
+                if (!mobile.value.trim()) {
+                    showError(mobile, 'mobileError', '{{ __('validation.mobile_required') }}');
+                    isValid = false;
+                } else if (!isValidPhone(mobile.value)) {
+                    showError(mobile, 'mobileError', '{{ __('validation.mobile_invalid') }}');
+                    isValid = false;
+                }
+                
+            } else if (step === 2) {
+                const otp = getOTPValue();
+                const otpInputs = document.querySelectorAll('.otp-input');
+                
+                if (!otp.trim()) {
+                    otpInputs.forEach(input => input.classList.add('error'));
+                    showErrorMessage('otpError', '{{ __('validation.otp_required') }}');
+                    isValid = false;
+                } else if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+                    otpInputs.forEach(input => input.classList.add('error'));
+                    showErrorMessage('otpError', '{{ __('validation.otp_invalid') }}');
+                    isValid = false;
+                }
+                
+            } else if (step === 3) {
+                const newPassword = document.getElementById('newPassword');
+                const confirmPassword = document.getElementById('confirmPassword');
+                
+                if (!newPassword.value.trim()) {
+                    showError(newPassword, 'newPasswordError', '{{ __('validation.new_password_required') }}');
+                    isValid = false;
+                } else if (newPassword.value.length < 6) {
+                    showError(newPassword, 'newPasswordError', '{{ __('validation.new_password_min') }}');
+                    isValid = false;
+                }
+                
+                if (!confirmPassword.value.trim()) {
+                    showError(confirmPassword, 'confirmPasswordError', '{{ __('validation.confirm_password_required') }}');
+                    isValid = false;
+                } else if (newPassword.value !== confirmPassword.value) {
+                    showError(confirmPassword, 'confirmPasswordError', '{{ __('validation.new_password_mismatch') }}');
+                    isValid = false;
+                }
+            }
+            
+            return isValid;
+        }
+        
+        function showError(fieldElement, errorElementId, message) {
+            fieldElement.classList.add('error');
+            const errorElement = document.getElementById(errorElementId);
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+        
+        function showErrorMessage(errorElementId, message) {
+            const errorElement = document.getElementById(errorElementId);
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+        
+        function isValidPhone(phone) {
+            const phoneRegex = /^[+]?[0-9]{10,15}$/;
+            return phoneRegex.test(phone.replace(/\s+/g, ''));
+        }
+        
+        async function nextStep() {
+            if (!validateStep(currentStep)) {
+                return;
+            }
+            
             if (currentStep === 1) {
                 const mobile = document.getElementById('mobileNumber').value;
-                if (!mobile) {
-                    alert('Please enter your mobile number');
+                
+                try {
+                    const response = await api.sendOtp({
+                        phone: mobile,
+                        type: 'forgot'
+                    });
+                    
+                    if (response.code === 200) {
+                        userPhone = mobile;
+                        document.getElementById('displayMobile').textContent = mobile;
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                        return;
+                    }
+                } catch (error) {
+                    toastr.error(error.message || 'Connection error. Please try again.');
                     return;
                 }
-                document.getElementById('displayMobile').textContent = mobile;
-                // Here you would send OTP to mobile
-                console.log('Sending OTP to:', mobile);
+                
             } else if (currentStep === 2) {
                 const otp = getOTPValue();
-                if (otp.length !== 6) {
-                    alert('Please enter complete OTP');
+                
+                try {
+                    const response = await api.verifyOtp({
+                        phone: userPhone,
+                        otp: otp,
+                        type: 'forgot'
+                    });
+                    
+                    if (response.code === 200) {
+                        toastr.success(response.message);
+                    } else {
+                        toastr.error(response.message);
+                        return;
+                    }
+                } catch (error) {
+                    toastr.error(error.message || 'Connection error. Please try again.');
                     return;
                 }
-                // Here you would verify OTP
-                console.log('Verifying OTP:', otp);
+                
             } else if (currentStep === 3) {
                 const newPass = document.getElementById('newPassword').value;
                 const confirmPass = document.getElementById('confirmPassword').value;
-                if (!newPass || !confirmPass) {
-                    alert('Please fill both password fields');
+                
+                try {
+                    const response = await api.resetPassword({
+                        phone: userPhone,
+                        new_password: newPass,
+                        confirm_password: confirmPass
+                    });
+                    
+                    if (response.code === 200) {
+                        toastr.success(response.message);
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 1000);
+                        return;
+                    } else {
+                        toastr.error(response.message);
+                        return;
+                    }
+                } catch (error) {
+                    toastr.error(error.message || 'Connection error. Please try again.');
                     return;
                 }
-                if (newPass !== confirmPass) {
-                    alert('Passwords do not match');
-                    return;
-                }
-                // Here you would update password
-                console.log('Updating password');
-                alert('Password updated successfully!');
-                window.location.href = '/login';
-                return;
             }
 
             if (currentStep < totalSteps) {
@@ -476,10 +625,26 @@
             return otp;
         }
 
-        function resendOTP() {
-            const mobile = document.getElementById('mobileNumber').value;
-            console.log('Resending OTP to:', mobile);
-            alert('OTP sent successfully!');
+        async function resendOTP() {
+            if (!userPhone) {
+                toastr.warning('{{ __('auth.enter_mobile') }}');
+                return;
+            }
+            
+            try {
+                const response = await api.sendOtp({
+                    phone: userPhone,
+                    type: 'forgot'
+                });
+                
+                if (response.code === 200) {
+                    toastr.success(response.message);
+                } else {
+                    toastr.error(response.message);
+                }
+            } catch (error) {
+                toastr.error(error.message || 'Connection error. Please try again.');
+            }
         }
 
         function togglePassword(inputId, icon) {

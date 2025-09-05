@@ -2,9 +2,9 @@
 <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
         <h5 class="modal-title" id="addTaskModalLabel">
-          <i class="fas fa-plus {{ rtl_helper()->marginEnd(2) }}"></i>{{ __("messages.add_new_task") }}
+          <i class="fas fa-plus {{ margin_end(2) }}"></i>{{ __("messages.add_new_task") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -25,7 +25,13 @@
 
           <div class="mb-3">
             <label for="dueDate" class="form-label fw-medium">{{ __("messages.due_date") }}</label>
-            <input type="date" class="form-control Input_control" id="dueDate" name="due_date" required>
+            @include('website.includes.date-picker', [
+              'id' => 'dueDate',
+              'name' => 'due_date',
+              'placeholder' => __('messages.select_due_date'),
+              'minDate' => date('Y-m-d'),
+              'required' => true
+            ])
           </div>
 
           <div class="mb-4">

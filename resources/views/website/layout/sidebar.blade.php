@@ -15,6 +15,16 @@
         <span>{{ __('messages.projects') }}</span>
       </a>
     </li>
+    
+    <!-- General Navigation Items -->
+    @if(!isset($project))
+      <li class="nav-item">
+        <a href="{{ route('website.safety-checklist') }}" class="nav-link {{ request()->routeIs('website.safety-checklist') ? 'active' : '' }}">
+          <i class="fas fa-shield-alt"></i>
+          <span>{{ __('messages.safety_checklist') }}</span>
+        </a>
+      </li>
+    @endif
     @if(isset($project))
       <li class="nav-item">
         <a href="{{ route('website.project.plans', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.plans') ? 'active' : '' }}">
@@ -74,6 +84,12 @@
         <a href="{{ route('website.project.notifications', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.notifications') ? 'active' : '' }}">
           <i class="fas fa-bell notifaction-icon"></i>
           <span>{{ __('messages.notifications') }}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('website.project.safety-checklist', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.safety-checklist') ? 'active' : '' }}">
+          <i class="fas fa-shield-alt"></i>
+          <span>{{ __('messages.safety_checklist') }}</span>
         </a>
       </li>
       <li class="nav-item">

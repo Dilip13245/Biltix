@@ -2,7 +2,7 @@
 <div class="modal fade" id="uploadPlanModal" tabindex="-1" aria-labelledby="uploadPlanModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
         <h5 class="modal-title" id="uploadPlanModalLabel">
           <i class="fas fa-upload {{ margin_end(2) }}"></i>{{ __('messages.upload_new_plan') }}
         </h5>
@@ -49,7 +49,7 @@
           <div class="mb-3">
             <label for="planFile" class="form-label fw-medium">{{ __('messages.plan_file') }}</label>
             <input type="file" class="form-control Input_control" id="planFile" name="plan_file" 
-              accept=".pdf,.dwg,.jpg,.jpeg,.png" required>
+              accept=".pdf,.dwg,.jpg,.jpeg,.png,.docx,.doc,.xls,.xlsx" required>
             <div class="form-text">Supported formats: PDF, DWG, JPG, PNG (Max: 10MB)</div>
           </div>
 

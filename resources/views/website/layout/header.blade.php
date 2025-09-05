@@ -26,6 +26,8 @@
             {{ __('messages.active') }}
           </div>
           
+
+          
           <!-- Language Switcher -->
           <div class="language-switcher">
             <select onchange="window.location.href='{{ route('lang.switch', '') }}/'+this.value" class="form-select form-select-sm" style="width: auto; min-width: 100px;">

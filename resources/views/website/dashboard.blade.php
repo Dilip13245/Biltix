@@ -7,6 +7,7 @@
     <meta name="keywords" content="HTML,CSS,XML,JavaScript">
     <meta name="author" content="John Doe">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('messages.dashboard') }}</title>
     <!-- FAVICON -->
     <link rel="icon" href="{{ asset('website/images/icons/logo.svg') }}" type="image/x-icon" />
@@ -21,6 +22,10 @@
 
     <!-- RESPONSIVE CSS -->
     <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
+    
+    <!-- TOASTR CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     
     <style>
     .step-indicator {
@@ -168,14 +173,11 @@
                                         {{ __('auth.my_profile') }}
                                     </a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <li><a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="#" onclick="logout()">
                                         <i class="fas fa-sign-out-alt"></i>
                                         {{ __('auth.logout') }}
                                     </a></li>
                                 </ul>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
                             </div>
                         </div>
                     </div>
@@ -530,13 +532,25 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="project_start_date" class="form-label fw-medium">{{ __('messages.project_start_date') }} *</label>
-                      <input type="date" class="form-control Input_control" id="project_start_date" name="project_start_date" required>
+                      @include('website.includes.date-picker', [
+                        'id' => 'project_start_date',
+                        'name' => 'project_start_date',
+                        'placeholder' => __('messages.select_start_date'),
+                        'minDate' => date('Y-m-d'),
+                        'required' => true
+                      ])
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label for="project_due_date" class="form-label fw-medium">{{ __('messages.project_due_date') }} *</label>
-                      <input type="date" class="form-control Input_control" id="project_due_date" name="project_due_date" required>
+                      @include('website.includes.date-picker', [
+                        'id' => 'project_due_date',
+                        'name' => 'project_due_date',
+                        'placeholder' => __('messages.select_due_date'),
+                        'minDate' => date('Y-m-d'),
+                        'required' => true
+                      ])
                     </div>
                   </div>
                 </div>
@@ -866,8 +880,66 @@
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('website/js/wow.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('website/js/toastr-config.js') }}"></script>
+    
+    <!-- SIMPLE DRAWING LIBRARY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+    
     <script src="{{ asset('website/js/custom.js') }}"></script>
+    <script src="{{ asset('website/js/api-config.js') }}"></script>
+    <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+    <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+    <script src="{{ asset('website/js/api-helpers.js') }}"></script>
+    <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>
+    <script src="{{ asset('website/js/confirmation-modal.js') }}"></script>
+    
+    <script>
+        // Logout function
+        async function logout() {
+            confirmationModal.show({
+                title: '{{ __('auth.logout_confirmation') }}',
+                message: '{{ __('auth.logout_confirmation_message') }}',
+                icon: 'fas fa-sign-out-alt text-warning',
+                confirmText: '{{ __('auth.logout') }}',
+                cancelText: '{{ __('messages.cancel') }}',
+                confirmClass: 'btn-danger',
+                onConfirm: async () => {
+                    try {
+                        // Call API logout
+                        await api.logout({});
+                        
+                        // Clear browser storage
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        
+                        // Clear Laravel session
+                        await fetch('/auth/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                            }
+                        });
+                        
+                        toastr.success('{{ __('auth.logged_out_successfully') }}');
+                        
+                        // Force redirect
+                        setTimeout(() => {
+                            window.location.replace('/login');
+                        }, 500);
+                        
+                    } catch (error) {
+                        console.error('Logout failed:', error);
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        window.location.replace('/login');
+                    }
+                }
+            });
+        }
+    </script>
 
 
 </body>

@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('Login') }} - Biltix</title>
     <link rel="icon" href="{{ asset('website/images/icons/logo.svg') }}" type="image/x-icon" />
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         body {
             background: #f5f5f5;
@@ -96,12 +98,29 @@
             background: white;
             color: #111827;
             transition: all 0.2s ease;
-            {{ is_rtl() ? 'text-align: right;' : '' }}
+            {{ is_rtl() ? 'text-align: right; direction: rtl;' : '' }}
         }
         .form-control:focus {
             border-color: #4A90E2;
             box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
             outline: none;
+        }
+        
+        .form-control.error {
+            border-color: #ef4444;
+        }
+        
+
+        
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
         }
         .form-control::placeholder {
             color: #9ca3af;
@@ -206,24 +225,30 @@
                                 <img src="{{ asset('website/images/icons/logo.svg') }}" alt="Logo" style="height: 80px;">
                             </div>
 
+                            <!-- Error/Success Messages -->
+                            <div id="errorMessage" class="alert alert-danger d-none mb-3"></div>
+                            <div id="successMessage" class="alert alert-success d-none mb-3"></div>
+
                             <!-- Login Form -->
-                            <form action="/dashboard" method="GET">
+                            <form id="loginForm" novalidate>
                                 <!-- Email Address -->
                                 <div class="mb-3">
                                     <label class="form-label">{{ __('auth.email_address') }}</label>
                                     <div class="position-relative">
-                                        <input type="email" class="form-control" placeholder="{{ __('auth.enter_email') }}">
+                                        <input type="email" id="email" name="email" class="form-control" placeholder="{{ __('auth.enter_email') }}" value="contractor@biltix.com" required {{ is_rtl() ? 'dir="rtl"' : '' }}>
                                         <i class="fas fa-envelope input-icon"></i>
                                     </div>
+                                    <div class="error-message" id="emailError"></div>
                                 </div>
 
                                 <!-- Password -->
                                 <div class="mb-3">
                                     <label class="form-label">{{ __('auth.password') }}</label>
                                     <div class="position-relative">
-                                        <input type="password" class="form-control" placeholder="{{ __('auth.enter_password') }}">
+                                        <input type="password" id="password" name="password" class="form-control" placeholder="{{ __('auth.enter_password') }}" value="password123" required minlength="6" {{ is_rtl() ? 'dir="rtl"' : '' }}>
                                         <i class="fas fa-eye input-icon" style="cursor: pointer;" onclick="togglePassword(this)"></i>
                                     </div>
+                                    <div class="error-message" id="passwordError"></div>
                                 </div>
 
                                 <!-- Remember Me & Forgot Password -->
@@ -236,7 +261,10 @@
                                 </div>
 
                                 <!-- Sign In Button -->
-                                <button type="submit" class="btn btn-signin">{{ __('auth.sign_in') }}</button>
+                                <button type="submit" class="btn btn-signin" id="loginBtn">
+                                    <span id="loginSpinner" class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                                    {{ __('auth.sign_in') }}
+                                </button>
 
                                 <!-- Register Link -->
                                 <div class="register-text">
@@ -257,6 +285,13 @@
 
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('website/js/toastr-config.js') }}"></script>
+    <script src="{{ asset('website/js/api-config.js') }}"></script>
+    <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+    <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+    <script src="{{ asset('website/js/api-helpers.js') }}"></script>
+    <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script>
         function togglePassword(icon) {
             const input = icon.previousElementSibling;
@@ -270,6 +305,138 @@
                 icon.classList.add('fa-eye');
             }
         }
+        
+        function showMessage(message, type = 'error') {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            if (type === 'success') {
+                successDiv.textContent = message;
+                successDiv.classList.remove('d-none');
+                errorDiv.classList.add('d-none');
+            } else {
+                errorDiv.textContent = message;
+                errorDiv.classList.remove('d-none');
+                successDiv.classList.add('d-none');
+            }
+        }
+        
+        function validateForm() {
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            
+            let isValid = true;
+            
+            // Reset errors
+            email.classList.remove('error');
+            password.classList.remove('error');
+            emailError.classList.remove('show');
+            passwordError.classList.remove('show');
+            
+            // Email validation
+            if (!email.value.trim()) {
+                email.classList.add('error');
+                emailError.textContent = '{{ __('validation.email_required') }}';
+                emailError.classList.add('show');
+                isValid = false;
+            } else if (!isValidEmail(email.value)) {
+                email.classList.add('error');
+                emailError.textContent = '{{ __('validation.email_invalid') }}';
+                emailError.classList.add('show');
+                isValid = false;
+            }
+            
+            // Password validation
+            if (!password.value.trim()) {
+                password.classList.add('error');
+                passwordError.textContent = '{{ __('validation.password_required') }}';
+                passwordError.classList.add('show');
+                isValid = false;
+            } else if (password.value.length < 6) {
+                password.classList.add('error');
+                passwordError.textContent = '{{ __('validation.password_min') }}';
+                passwordError.classList.add('show');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                return;
+            }
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const spinner = document.getElementById('loginSpinner');
+            
+            loginBtn.disabled = true;
+            spinner.classList.remove('d-none');
+            
+            const formData = new FormData(this);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password'),
+                device_type: 'W'
+            };
+            
+            try {
+                // Use your existing API system
+                const response = await api.login(data);
+                
+                if (response.code === 200) {
+                    // Store session data
+                    console.log('Login successful, storing session data:', response.data);
+                    sessionStorage.setItem('user', JSON.stringify(response.data));
+                    sessionStorage.setItem('user_id', response.data.id);
+                    sessionStorage.setItem('token', response.data.token);
+                    console.log('Session data stored - user_id:', response.data.id, 'token:', response.data.token);
+                    
+                    // Set Laravel session via direct endpoint call
+                    const sessionData = {
+                        user_id: response.data.id,
+                        token: response.data.token,
+                        user: response.data
+                    };
+                    
+                    const sessionResponse = await fetch('/auth/set-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                        },
+                        body: JSON.stringify(sessionData)
+                    });
+                    
+                    console.log('Session setup response:', sessionResponse.status);
+                    
+                    if (sessionResponse.ok) {
+                        // Verify session data is still there
+                        console.log('Final session check - user_id:', sessionStorage.getItem('user_id'), 'token:', sessionStorage.getItem('token'));
+                        toastr.success(response.message);
+                        window.location.href = '/dashboard';
+                    } else {
+                        toastr.error('Session setup failed');
+                    }
+                } else {
+                    toastr.error(response.message);
+                }
+            } catch (error) {
+                toastr.error(error.message || 'Connection error. Please try again.');
+            } finally {
+                loginBtn.disabled = false;
+                spinner.classList.add('d-none');
+            }
+        });
     </script>
 </body>
 </html>

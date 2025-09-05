@@ -2,9 +2,9 @@
 <div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
         <h5 class="modal-title" id="taskDetailsModalLabel">
-          <i class="fas fa-tasks {{ rtl_helper()->marginEnd(2) }}"></i>{{ __("messages.task_details") }}
+          <i class="fas fa-tasks {{ margin_end(2) }}"></i>{{ __("messages.task_details") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>

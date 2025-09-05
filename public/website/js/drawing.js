@@ -1,28 +1,29 @@
-// Common Drawing Functionality
-let canvas, ctx, isDrawing = false, currentTool = 'pen';
-let startX, startY;
+// Simple HTML5 Canvas Drawing System
+let canvas, ctx, isDrawing = false;
+let currentTool = 'pen';
+let currentColor = '#ff0000';
+let currentSize = 3;
+let backgroundImage = null;
+let drawingHistory = [];
+let historyStep = -1;
+
 let drawingConfig = {
     title: 'Drawing',
     saveButtonText: 'Save',
     onSave: null,
-    mode: 'blank' // 'blank' or 'image'
+    mode: 'blank'
 };
 
-// Multiple files and undo functionality
 let currentFiles = [];
 let currentFileIndex = 0;
-let undoStack = [];
-let maxUndoSteps = 20;
+let fileBackgrounds = []; // Store background for each file
 
 function initializeDrawing(config = {}) {
-    // Merge config
     drawingConfig = { ...drawingConfig, ...config };
     
-    // Update modal title and button text
     document.getElementById('drawingModalTitle').textContent = drawingConfig.title;
     document.getElementById('saveButtonText').textContent = drawingConfig.saveButtonText;
     
-    // Initialize canvas
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
     
@@ -30,37 +31,46 @@ function initializeDrawing(config = {}) {
     canvas.width = 800;
     canvas.height = 600;
     
-    // Set white background for blank mode
-    if (drawingConfig.mode === 'blank') {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        saveCanvasState();
-    }
+    // Make canvas responsive
+    canvas.style.maxWidth = '100%';
+    canvas.style.height = 'auto';
     
-    // Add event listeners
+    // Set initial background
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Save initial state
+    saveState();
+    
+    // Add event listeners for mouse
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', stopDrawing);
     canvas.addEventListener('mouseout', stopDrawing);
+    canvas.addEventListener('click', handleCanvasClick);
+    
+    // Add touch support for mobile
+    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchmove', handleTouch);
+    canvas.addEventListener('touchend', handleTouchEnd);
     
     // Set up save button
     const saveBtn = document.getElementById('saveDrawingBtn');
     saveBtn.onclick = function() {
         if (drawingConfig.onSave) {
-            const allImages = currentFiles.map((file, index) => {
-                if (index === currentFileIndex) {
-                    return canvas.toDataURL();
-                }
-                return file.markupData || null;
-            });
-            drawingConfig.onSave(allImages.length > 0 ? allImages : canvas.toDataURL());
+            const dataURL = canvas.toDataURL('image/png');
+            drawingConfig.onSave(dataURL);
         }
     };
 }
 
 function loadMultipleFiles(files) {
-    currentFiles = Array.from(files).map(file => ({ file, markupData: null }));
+    currentFiles = Array.from(files).map(file => ({ 
+        file, 
+        imageData: null
+    }));
     currentFileIndex = 0;
+    fileBackgrounds = new Array(currentFiles.length).fill(null);
     
     if (currentFiles.length > 1) {
         document.getElementById('fileNavigation').style.display = 'block';
@@ -71,30 +81,37 @@ function loadMultipleFiles(files) {
 }
 
 function loadImageToCanvas(file) {
-    const img = new Image();
-    const reader = new FileReader();
+    if (!canvas) return;
     
+    const reader = new FileReader();
     reader.onload = function(e) {
+        const img = new Image();
         img.onload = function() {
-            // Set fixed canvas size
-            canvas.width = 800;
-            canvas.height = 600;
+            // Clear canvas
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Calculate scaling to fit image in canvas
+            // Calculate scaling
             const scaleX = canvas.width / img.width;
             const scaleY = canvas.height / img.height;
             const scale = Math.min(scaleX, scaleY);
             
-            // Calculate centered position
             const scaledWidth = img.width * scale;
             const scaledHeight = img.height * scale;
             const x = (canvas.width - scaledWidth) / 2;
             const y = (canvas.height - scaledHeight) / 2;
             
-            // Clear canvas and draw scaled image
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw image
             ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
-            saveCanvasState();
+            
+            // Store background image for current file
+            backgroundImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            if (currentFiles.length > 0) {
+                fileBackgrounds[currentFileIndex] = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            }
+            
+            // Save state
+            saveState();
         };
         img.src = e.target.result;
     };
@@ -106,17 +123,21 @@ function loadCurrentFile() {
     
     const currentFileData = currentFiles[currentFileIndex];
     
-    if (currentFileData.markupData) {
+    if (currentFileData.imageData) {
+        // Load saved image data
         const img = new Image();
         img.onload = function() {
-            canvas.width = 800;
-            canvas.height = 600;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0);
-            saveCanvasState();
+            
+            // Restore background for this file
+            if (fileBackgrounds[currentFileIndex]) {
+                backgroundImage = fileBackgrounds[currentFileIndex];
+            }
         };
-        img.src = currentFileData.markupData;
+        img.src = currentFileData.imageData;
     } else {
+        // Load fresh file
         loadImageToCanvas(currentFileData.file);
     }
     
@@ -134,7 +155,7 @@ function updateFileNavigation() {
 
 function previousFile() {
     if (currentFileIndex > 0) {
-        saveCurrentFileMarkup();
+        saveCurrentFile();
         currentFileIndex--;
         loadCurrentFile();
     }
@@ -142,142 +163,239 @@ function previousFile() {
 
 function nextFile() {
     if (currentFileIndex < currentFiles.length - 1) {
-        saveCurrentFileMarkup();
+        saveCurrentFile();
         currentFileIndex++;
         loadCurrentFile();
     }
 }
 
-function saveCurrentFileMarkup() {
+function saveCurrentFile() {
     if (currentFiles.length > 0) {
-        currentFiles[currentFileIndex].markupData = canvas.toDataURL();
+        currentFiles[currentFileIndex].imageData = canvas.toDataURL();
     }
 }
 
 function setTool(tool) {
     currentTool = tool;
     document.querySelectorAll('.btn-outline-primary').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(tool + 'Tool').classList.add('active');
+    
+    const mobileBtn = document.getElementById(tool + 'Tool');
+    const desktopBtn = document.getElementById(tool + 'ToolDesktop');
+    
+    if (mobileBtn) mobileBtn.classList.add('active');
+    if (desktopBtn) desktopBtn.classList.add('active');
+    
+    // Update cursor
+    canvas.style.cursor = tool === 'pen' ? 'crosshair' : 'pointer';
 }
 
 function startDrawing(e) {
-    isDrawing = true;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    startX = (e.clientX - rect.left) * scaleX;
-    startY = (e.clientY - rect.top) * scaleY;
+    if (currentTool !== 'pen') return;
     
-    if (currentTool === 'pen') {
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-    }
+    isDrawing = true;
+    const coords = getCanvasCoordinates(e);
+    
+    ctx.beginPath();
+    ctx.moveTo(coords.x, coords.y);
 }
 
 function draw(e) {
-    if (!isDrawing) return;
+    if (!isDrawing || currentTool !== 'pen') return;
     
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const currentX = (e.clientX - rect.left) * scaleX;
-    const currentY = (e.clientY - rect.top) * scaleY;
+    const coords = getCanvasCoordinates(e);
     
-    ctx.strokeStyle = document.getElementById('colorPicker').value;
-    ctx.lineWidth = document.getElementById('brushSize').value;
+    ctx.lineWidth = currentSize;
     ctx.lineCap = 'round';
+    ctx.strokeStyle = currentColor;
     
-    if (currentTool === 'pen') {
-        ctx.lineTo(currentX, currentY);
-        ctx.stroke();
-    }
+    ctx.lineTo(coords.x, coords.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(coords.x, coords.y);
 }
 
 function stopDrawing() {
-    if (!isDrawing) return;
-    isDrawing = false;
-    
-    if (currentTool === 'circle') {
-        drawCircle();
-    } else if (currentTool === 'arrow') {
-        drawArrow();
-    } else if (currentTool === 'text') {
-        addText();
+    if (isDrawing) {
+        isDrawing = false;
+        saveState();
     }
-    
-    saveCanvasState();
 }
 
-function drawCircle() {
-    const radius = 30;
+function handleTouch(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                     e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+    
+    // Handle drawing end
+    stopDrawing();
+    
+    // Handle shape creation for non-pen tools
+    if (currentTool !== 'pen' && e.changedTouches && e.changedTouches[0]) {
+        const touch = e.changedTouches[0];
+        const coords = getCanvasCoordinates({
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
+        
+        switch(currentTool) {
+            case 'circle':
+                drawCircle(coords.x, coords.y);
+                break;
+            case 'arrow':
+                drawArrow(coords.x, coords.y);
+                break;
+            case 'text':
+                addText(coords.x, coords.y);
+                break;
+        }
+        
+        saveState();
+    }
+}
+
+function getCanvasCoordinates(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+    };
+}
+
+function handleCanvasClick(e) {
+    if (currentTool === 'pen') return;
+    
+    const coords = getCanvasCoordinates(e);
+    
+    switch(currentTool) {
+        case 'circle':
+            drawCircle(coords.x, coords.y);
+            break;
+        case 'arrow':
+            drawArrow(coords.x, coords.y);
+            break;
+        case 'text':
+            addText(coords.x, coords.y);
+            break;
+    }
+    
+    saveState();
+}
+
+function drawCircle(x, y) {
     ctx.beginPath();
-    ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = document.getElementById('colorPicker').value;
-    ctx.lineWidth = document.getElementById('brushSize').value;
+    ctx.arc(x, y, 30, 0, 2 * Math.PI);
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = currentSize;
     ctx.stroke();
 }
 
-function drawArrow() {
-    const endX = startX + 50;
-    const endY = startY;
+function drawArrow(x, y) {
+    const endX = x + 60;
+    const endY = y;
     
     ctx.beginPath();
-    ctx.moveTo(startX, startY);
+    ctx.moveTo(x, y);
     ctx.lineTo(endX, endY);
     ctx.lineTo(endX - 10, endY - 5);
     ctx.moveTo(endX, endY);
     ctx.lineTo(endX - 10, endY + 5);
-    ctx.strokeStyle = document.getElementById('colorPicker').value;
-    ctx.lineWidth = document.getElementById('brushSize').value;
+    ctx.strokeStyle = currentColor;
+    ctx.lineWidth = currentSize;
     ctx.stroke();
 }
 
-function addText() {
+function addText(x, y) {
     const text = prompt('Enter text:');
-    if (text) {
+    if (text && text.trim()) {
         ctx.font = '16px Arial';
-        ctx.fillStyle = document.getElementById('colorPicker').value;
-        ctx.fillText(text, startX, startY);
+        ctx.fillStyle = currentColor;
+        ctx.textBaseline = 'top';
+        
+        // Handle multi-line text
+        const lines = text.split('\n');
+        lines.forEach((line, index) => {
+            ctx.fillText(line, x, y + (index * 20));
+        });
     }
 }
 
-function saveCanvasState() {
-    undoStack.push(canvas.toDataURL());
-    if (undoStack.length > maxUndoSteps) {
-        undoStack.shift();
+function updateColor() {
+    const colorPicker = document.getElementById('colorPicker') || document.getElementById('colorPickerDesktop');
+    currentColor = colorPicker ? colorPicker.value : '#ff0000';
+}
+
+function updateSize() {
+    const brushSize = document.getElementById('brushSize');
+    currentSize = brushSize ? parseInt(brushSize.value) : 3;
+}
+
+function saveState() {
+    historyStep++;
+    if (historyStep < drawingHistory.length) {
+        drawingHistory.length = historyStep;
     }
+    drawingHistory.push(canvas.toDataURL());
 }
 
 function undoLastAction() {
-    if (undoStack.length > 1) {
-        undoStack.pop();
-        const previousState = undoStack[undoStack.length - 1];
-        
-        const img = new Image();
-        img.onload = function() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-        };
-        img.src = previousState;
+    console.log('Undo called');
+    
+    // Use same logic as clear - restore background and remove drawings
+    const currentBackground = fileBackgrounds[currentFileIndex] || backgroundImage;
+    
+    if (currentBackground) {
+        // Restore background image only
+        ctx.putImageData(currentBackground, 0, 0);
+        console.log('Background restored for undo on file', currentFileIndex);
+    } else {
+        // Clear to white background
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        console.log('Canvas cleared to white for undo');
     }
+    
+    saveState();
 }
 
 function clearCanvas() {
-    if (drawingConfig.mode === 'blank') {
+    console.log('Clear canvas called');
+    
+    // Use background for current file if available
+    const currentBackground = fileBackgrounds[currentFileIndex] || backgroundImage;
+    
+    if (currentBackground) {
+        // Restore background image only
+        ctx.putImageData(currentBackground, 0, 0);
+        console.log('Background restored for file', currentFileIndex);
+    } else {
+        // Clear to white background
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-    } else {
-        if (currentFiles.length > 0) {
-            loadImageToCanvas(currentFiles[currentFileIndex].file);
-        }
+        console.log('Canvas cleared to white');
     }
-    saveCanvasState();
+    
+    saveState();
 }
 
 function openDrawingModal(config) {
     currentFiles = [];
     currentFileIndex = 0;
-    undoStack = [];
+    backgroundImage = null;
+    fileBackgrounds = [];
+    drawingHistory = [];
+    historyStep = -1;
+    
     document.getElementById('fileNavigation').style.display = 'none';
     
     const modal = new bootstrap.Modal(document.getElementById('drawingModal'));
@@ -286,5 +404,32 @@ function openDrawingModal(config) {
     document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
         initializeDrawing(config);
         setTool('pen');
+        
+        // Add event listeners
+        const colorPickers = document.querySelectorAll('#colorPicker, #colorPickerDesktop');
+        const brushSize = document.getElementById('brushSize');
+        
+        colorPickers.forEach(picker => {
+            picker.addEventListener('change', updateColor);
+        });
+        
+        if (brushSize) {
+            brushSize.addEventListener('input', updateSize);
+        }
+        
+        // Initialize color and size
+        updateColor();
+        updateSize();
+        
     }, { once: true });
 }
+
+// Make functions globally accessible
+window.clearCanvas = clearCanvas;
+window.undoLastAction = undoLastAction;
+window.setTool = setTool;
+window.previousFile = previousFile;
+window.nextFile = nextFile;
+window.openDrawingModal = openDrawingModal;
+window.loadMultipleFiles = loadMultipleFiles;
+window.loadImageToCanvas = loadImageToCanvas;

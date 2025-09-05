@@ -72,5 +72,8 @@ class Kernel extends HttpKernel
         'language' => \App\Http\Middleware\Localization::class,
         'permission' => \App\Http\Middleware\CheckPermission::class,
         'basic.auth' => \App\Http\Middleware\BasicAuth::class,
+        'web.auth' => \App\Http\Middleware\WebAuth::class,
+        'web.guest' => \App\Http\Middleware\WebGuest::class,
+        'web.api.auth' => \App\Http\Middleware\WebApiAuth::class,
     ];
 }

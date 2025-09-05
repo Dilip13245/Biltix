@@ -75,13 +75,25 @@
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="project_start_date" class="form-label fw-medium">{{ __('messages.start_date') }}</label>
-                <input type="date" class="form-control Input_control" id="project_start_date" name="project_start_date" required>
+                @include('website.includes.date-picker', [
+                  'id' => 'project_start_date',
+                  'name' => 'project_start_date',
+                  'placeholder' => __('messages.select_start_date'),
+                  'minDate' => date('Y-m-d'),
+                  'required' => true
+                ])
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label for="project_due_date" class="form-label fw-medium">{{ __('messages.end_date') }}</label>
-                <input type="date" class="form-control Input_control" id="project_due_date" name="project_due_date" required>
+                @include('website.includes.date-picker', [
+                  'id' => 'project_due_date',
+                  'name' => 'project_due_date',
+                  'placeholder' => __('messages.select_end_date'),
+                  'minDate' => date('Y-m-d'),
+                  'required' => true
+                ])
               </div>
             </div>
           </div>

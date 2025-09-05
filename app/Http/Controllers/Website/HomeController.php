@@ -134,9 +134,10 @@ class HomeController extends Controller
         return view('website.snag-list', compact('project'));
     }
 
-    public function safetyChecklist($project_id)
+    public function safetyChecklist($project_id = null)
     {
-        $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];
+        // Always pass a project object so sidebar shows all navigation links
+        $project = $project_id ? (object) ['id' => $project_id, 'name' => 'Sample Project'] : (object) ['id' => 1, 'name' => 'Current Project'];
         return view('website.safety-checklist', compact('project'));
     }
 

@@ -2,9 +2,9 @@
 <div class="modal fade" id="createInspectionModal" tabindex="-1" aria-labelledby="createInspectionModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
         <h5 class="modal-title" id="createInspectionModalLabel">
-          <i class="fas fa-clipboard-check me-2"></i>{{ __("messages.create_new_inspection") }}
+          <i class="fas fa-clipboard-check {{ margin_end(2) }}"></i>{{ __("messages.create_new_inspection") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>

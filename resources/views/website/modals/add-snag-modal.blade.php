@@ -2,9 +2,9 @@
 <div class="modal fade" id="addSnagModal" tabindex="-1" aria-labelledby="addSnagModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
         <h5 class="modal-title" id="addSnagModalLabel">
-          <i class="fas fa-exclamation-triangle me-2"></i>{{ __("messages.add_new_snag") }}
+          <i class="fas fa-exclamation-triangle {{ margin_end(2) }}"></i>{{ __("messages.add_new_snag") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>

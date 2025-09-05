@@ -30,7 +30,8 @@
                 <span class="text-black">{{ __('messages.sort') }}</span>
             </button>
             <!-- Upload Button -->
-            <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileUpload(this)">
+            <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png"
+                style="display: none;" onchange="handleFileUpload(this)">
             <button class="btn orange_btn" onclick="document.getElementById('fileUploadInput').click()">
                 <i class="fas fa-arrow-up me-2"></i>
                 {{ __('messages.upload_file') }}
@@ -135,7 +136,6 @@
                                             <th>{{ __('messages.type') }}</th>
                                             <th>{{ __('messages.upload_date') }}</th>
                                             <th>{{ __('messages.size') }}</th>
-                                            <th>{{ __('messages.actions') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -168,9 +168,7 @@
                                             <td>{{ __('messages.pdf') }}</td>
                                             <td>{{ __('messages.dec_15_2024') }}</td>
                                             <td>2.4 MB</td>
-                                            <td><button
-                                                    class="btn orange_btn  btn-sm py-2 px-3">>{{ __('messages.view') }}</button>
-                                            </td>
+                                            <td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -201,9 +199,7 @@
                                             <td>{{ __('messages.docx') }}</td>
                                             <td>{{ __('messages.dec_14_2024') }}</td>
                                             <td>1.2 MB</td>
-                                            <td><button
-                                                    class="btn orange_btn  btn-sm py-2 px-3">>{{ __('messages.view') }}</button>
-                                            </td>
+                                            <td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -234,9 +230,7 @@
                                             <td>{{ __('messages.dwg') }}</td>
                                             <td>{{ __('messages.dec_13_2024') }}</td>
                                             <td>5.8 MB</td>
-                                            <td><button
-                                                    class="btn orange_btn  btn-sm py-2 px-3">>{{ __('messages.view') }}</button>
-                                            </td>
+                                            <td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -267,9 +261,7 @@
                                             <td>{{ __('messages.xlsx') }}</td>
                                             <td>{{ __('messages.dec_12_2024') }}</td>
                                             <td>890 KB</td>
-                                            <td><button
-                                                    class="btn orange_btn  btn-sm py-2 px-3">>{{ __('messages.view') }}</button>
-                                            </td>
+                                            <td>
                                         </tr>
                                         <tr>
                                             <td>
@@ -294,9 +286,7 @@
                                             <td>{{ __('messages.jpg') }}</td>
                                             <td>{{ __('messages.dec_11_2024') }}</td>
                                             <td>3.2 MB</td>
-                                            <td><button
-                                                    class="btn orange_btn  btn-sm py-2 px-3">>{{ __('messages.view') }}</button>
-                                            </td>
+                                            <td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -312,7 +302,9 @@
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 const fileSize = (file.size / (1024 * 1024)).toFixed(2);
-                alert(`File "${file.name}" selected for upload!\n\nFile Size: ${fileSize} MB\n\nFile would be uploaded to project files.`);
+                alert(
+                    `File "${file.name}" selected for upload!\n\nFile Size: ${fileSize} MB\n\nFile would be uploaded to project files.`
+                    );
                 // Reset input for next upload
                 input.value = '';
             }
@@ -324,7 +316,8 @@
             if (filterBtn) {
                 filterBtn.addEventListener('click', function() {
                     alert(
-                        'File Filter Options:\n\n• By File Type (PDF, DOCX, DWG, etc.)\n• By Upload Date\n• By File Size\n• By Category (Plans, Reports, etc.)\n\nAdvanced filtering would be implemented here.');
+                        'File Filter Options:\n\n• By File Type (PDF, DOCX, DWG, etc.)\n• By Upload Date\n• By File Size\n• By Category (Plans, Reports, etc.)\n\nAdvanced filtering would be implemented here.'
+                    );
                 });
             }
 
@@ -333,7 +326,8 @@
             if (sortBtn) {
                 sortBtn.addEventListener('click', function() {
                     alert(
-                        'Sort Options:\n\n• Name (A-Z / Z-A)\n• Date (Newest / Oldest)\n• Size (Largest / Smallest)\n• Type (Alphabetical)\n\nSorting functionality would be implemented here.');
+                        'Sort Options:\n\n• Name (A-Z / Z-A)\n• Date (Newest / Oldest)\n• Size (Largest / Smallest)\n• Type (Alphabetical)\n\nSorting functionality would be implemented here.'
+                    );
                 });
             }
 
@@ -349,16 +343,20 @@
                     // Simulate file viewing
                     if (fileType === 'PDF') {
                         alert(
-                            `Opening PDF Viewer for: ${fileName}\n\nFile would open in:\n• Built-in PDF viewer\n• {{ __('messages.download') }} option available\n• {{ __('messages.print') }} and share options`);
+                            `Opening PDF Viewer for: ${fileName}\n\nFile would open in:\n• Built-in PDF viewer\n• {{ __('messages.download') }} option available\n• {{ __('messages.print') }} and share options`
+                        );
                     } else if (fileType === 'DWG') {
                         alert(
-                            `Opening CAD Viewer for: ${fileName}\n\nFile would open in:\n• AutoCAD Web viewer\n• Zoom and pan capabilities\n• Layer management\n• Measurement tools`);
+                            `Opening CAD Viewer for: ${fileName}\n\nFile would open in:\n• AutoCAD Web viewer\n• Zoom and pan capabilities\n• Layer management\n• Measurement tools`
+                        );
                     } else if (fileType === 'JPG') {
                         alert(
-                            `Opening Image Viewer for: ${fileName}\n\nFile would open in:\n• Full-screen image viewer\n• Zoom and pan\n• {{ __('messages.download') }} option`);
+                            `Opening Image Viewer for: ${fileName}\n\nFile would open in:\n• Full-screen image viewer\n• Zoom and pan\n• {{ __('messages.download') }} option`
+                        );
                     } else {
                         alert(
-                            `Opening ${fileType} file: ${fileName}\n\nFile Size: ${fileSize}\n\nFile would be downloaded or opened in appropriate application.`);
+                            `Opening ${fileType} file: ${fileName}\n\nFile Size: ${fileSize}\n\nFile would be downloaded or opened in appropriate application.`
+                        );
                     }
                 });
             });
