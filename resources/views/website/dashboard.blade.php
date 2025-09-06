@@ -895,6 +895,8 @@
     <script src="{{ asset('website/js/drawing.js') }}"></script>
     <script src="{{ asset('website/js/confirmation-modal.js') }}"></script>
     
+    @include('website.layout.auth-check')
+    
     <script>
         // Logout function
         async function logout() {

@@ -39,6 +39,7 @@ Route::middleware('web.guest')->group(function () {
     
     // Auth API endpoints
     Route::post('/auth/set-session', [App\Http\Controllers\Website\AuthController::class, 'setSession'])->name('auth.set-session');
+    Route::get('/auth/check-session', [App\Http\Controllers\Website\AuthController::class, 'checkSession'])->name('auth.check-session');
     Route::post('/auth/register', [App\Http\Controllers\Website\AuthController::class, 'register'])->name('auth.register');
     Route::post('/auth/send-otp', [App\Http\Controllers\Website\AuthController::class, 'sendOtp'])->name('auth.send-otp');
     Route::post('/auth/verify-otp', [App\Http\Controllers\Website\AuthController::class, 'verifyOtp'])->name('auth.verify-otp');

@@ -14,7 +14,7 @@ class WebAuth
     {
         // Check if user is authenticated via session
         $userId = Session::get('user_id');
-        $token = Session::get('api_token');
+        $token = Session::get('token');
         
         \Log::info('WebAuth check', ['user_id' => $userId, 'token' => $token ? 'exists' : 'missing', 'path' => $request->getPathInfo()]);
         

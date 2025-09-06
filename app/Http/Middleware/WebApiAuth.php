@@ -14,7 +14,7 @@ class WebApiAuth
     {
         // For AJAX API calls from website - check both session and header
         $userId = Session::get('user_id') ?: $request->input('user_id');
-        $token = Session::get('api_token') ?: $request->header('token');
+        $token = Session::get('token') ?: $request->header('token');
         
         if (!$userId || !$token) {
             return response()->json([

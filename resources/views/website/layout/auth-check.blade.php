@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function checkAuthStatus() {
+async function checkAuthStatus() {
     const userId = sessionStorage.getItem('user_id');
     const token = sessionStorage.getItem('token');
     
@@ -23,7 +23,32 @@ function checkAuthStatus() {
         return;
     }
     
-
+    // Check server-side session validity
+    try {
+        const response = await fetch('/auth/check-session', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (!result.authenticated) {
+            // Session invalid or token changed from another device
+            sessionStorage.clear();
+            localStorage.clear();
+            toastr.warning('Session expired or logged in from another device');
+            setTimeout(() => {
+                window.location.replace('/login');
+            }, 2000);
+        }
+    } catch (error) {
+        console.error('Session check failed:', error);
+        // On network error, allow user to continue but show warning
+        toastr.warning('Unable to verify session. Please check your connection.');
+    }
 }
 
 // Auto logout function

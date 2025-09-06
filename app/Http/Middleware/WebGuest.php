@@ -15,7 +15,7 @@ class WebGuest
         $guestOnlyPaths = ['/login', '/register', '/forgot-password'];
         
         if (in_array($request->getPathInfo(), $guestOnlyPaths)) {
-            if (Session::has('user_id') && Session::has('api_token')) {
+            if (Session::has('user_id') && Session::has('token')) {
                 \Log::info('WebGuest middleware redirecting authenticated user from: ' . $request->getPathInfo());
                 return redirect()->route('dashboard');
             }
