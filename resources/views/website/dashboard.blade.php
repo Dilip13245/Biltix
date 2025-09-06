@@ -917,7 +917,7 @@
                         localStorage.clear();
                         
                         // Clear Laravel session
-                        await fetch('/auth/logout', {
+                        fetch('/auth/logout', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

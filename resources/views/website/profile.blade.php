@@ -69,11 +69,10 @@
                                         <i class="fas fa-user"></i> {{ __('auth.my_profile') }}
                                     </a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="#" onclick="event.preventDefault(); confirmLogout();">
+                                    <li><a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="#" onclick="event.preventDefault(); logout();">
                                         <i class="fas fa-sign-out-alt"></i> {{ __('auth.logout') }}
                                     </a></li>
                                 </ul>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
                             </div>
                         </div>
                     </div>
@@ -346,16 +345,45 @@
             }
         }
         
-        function confirmLogout() {
+        async function logout() {
             confirmationModal.show({
-                title: '{{ __('auth.logout') }}',
-                message: '{{ __('auth.logout_confirmation') }}',
+                title: '{{ __('auth.logout_confirmation') }}',
+                message: '{{ __('auth.logout_confirmation_message') }}',
                 icon: 'fas fa-sign-out-alt text-warning',
                 confirmText: '{{ __('auth.logout') }}',
                 cancelText: '{{ __('auth.cancel') }}',
-                confirmClass: 'btn-warning',
-                onConfirm: () => {
-                    document.getElementById('logout-form').submit();
+                confirmClass: 'btn-danger',
+                onConfirm: async () => {
+                    try {
+                        // Call API logout
+                        await api.logout({});
+                        
+                        // Clear browser storage
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        
+                        // Clear Laravel session
+                        fetch('/auth/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                            }
+                        });
+                        
+                        toastr.success('{{ __('auth.logged_out_successfully') }}');
+                        
+                        // Force redirect
+                        setTimeout(() => {
+                            window.location.replace('/login');
+                        }, 500);
+                        
+                    } catch (error) {
+                        console.error('Logout failed:', error);
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        window.location.replace('/login');
+                    }
                 }
             });
         }
