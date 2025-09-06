@@ -1,0 +1,18 @@
+					
+					
+Module	Consultant	Contractor	Project Manager	Site Engineer	Stakeholder
+Auth & Registration	• Full (self-register)	• Full (self-register)	• Login-only	• Login-only	• Login-only
+Dashboard & Navigation	• Full	• Full	• Full	• Assigned-only	• View-only
+Profile & Account	• Full (own details)	• Full	• Full	• Limited edit	• View-only
+Project Management	• Full	• Full	• Full	• No Access	• No Access
+Plans & Drawing Markup	• Full	• Full	• Full	• Limited (annotate only)	• View-only
+Documents & Media	• Full	• Full	• Full	• Limited (upload logs/snags only)	• View-only
+Progress Tracking	• Full	• Full	• Full	• View-only	• View-only
+Tasks Management	• Full	• Limited (update status)	• Full	• View-only (assigned tasks)	• View-only
+Snags / Issues	• Full	• Full	• Full	• Limited (submit snags)	• View-only
+Inspections & Safety	• Full	• Full	• Full	• Limited (submit)	• View-only
+Daily Logs / Ops	• Full	• Full	• Full	• Full (submit logs)	• View-only
+People & Role Mgmt	• Full	• Full	• Full	• View-only	• View-only
+Notifications & Support	• Full	• Full	• Full	• Full	• Full
+Access Control	• Full	• Full	• Full	• View-only	• View-only
+Timeline & Scheduling	• Full	• Full	• Full	• View-only	• View-only

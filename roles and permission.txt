@@ -1,0 +1,87 @@
+	
+1.  Consultant Role	
+Module	Consultant Role Description
+Module 1 – Splash & Sign-In	Splash Screen before login. Login Options: Phone/Email + Password. Remember Me → auto-fill next session. Forget Password Flow: Enter registered email, OTP validation, Reset password, Login with new credentials.
+Module 2 – Register Page	Step 1 – Basic Info (Full Name, Email, Password, Phone). Step 2 – Company & Role (Company Name, Designation, Employee Count). Step 3 – Member Details (Add Member, Skip option). Redirect to Dashboard.
+Module 3 – Home Dashboard	Notifications, Search Bar, 3-dot Menu (Profile, Sign Out). Create New Project, Project Filters (Completed, Ongoing). Project Sidebar (Profile, Plans, Progress, Photos, Files, People, Tasks, Snag List, Location, Daily Tasks, Inspection, Help & Support).
+Module 4 – Profile Section	Full Name, Designation, Company Name, Role-specific details, Edit Profile.
+Module 5 – Create New Project	Step 1 – Project Info. Step 2 – Project Specifications. Step 3 – Documentation Upload. Step 4 – Drawing Markup.
+Module 6 – Completed & Ongoing Projects	Completed → Name, Date, Location. Ongoing → Active list + progress. Sidebar features same as Dashboard.
+Module 7 – Snag Reports	Snag Card (Image, Title, Description, Location, Reported By, Date, Assigned To, Status). Comments. Actions (View Details, Mark Resolved). New Snag Report (Issue Type, Description, Location, Images).
+Module 8 – Daily Tasks	Role Selection (Engineers, Foreman, Labourers). Task Listing role-wise. Comment Section.
+Module 9 – Daily Logs	Equipment Log, Task Performed Log, Staff Log (role-based access).
+Module 10 – Safety Checklist	View checklist. Create new safety checklist.
+	
+2. Contractor Role	
+	
+Module	Contractor Role Description
+Module 1 – Splash & Sign-In	• Splash Screen before login • Login Options: Phone/Email + Password • Remember Me → auto-fill next session • Forget Password Flow: – Enter registered email – OTP validation – Reset password – Login with new credentials
+Module 2 – Register Page	• Step 1 – Basic Info (Full Name, Email, Password, Phone) • Step 2 – Company & Role (Company Name, Designation: Contractor default selected, Employee Count) • Step 3 – Member Details (Add Member, Skip option) • Redirect to Dashboard
+Module 3 – Home Dashboard	• Notifications • Search Bar • 3-dot Menu (Profile, Sign Out) • Create New Project (enabled) • Project Filters (Completed, Ongoing) • Project Sidebar: Profile, Plans, Progress, Photos, Files, People, Tasks, Snag List, Location, Daily Tasks, Inspection, Help & Support
+Module 4 – Profile Section	• Full Name • Designation • Company Name • Role-specific details • Edit Profile
+Module 5 – Create New Project	• Step 1 – Project Info (Title, Contractor Name auto-fill, Assign Project Manager, Assign Technical Manager) • Step 2 – Project Specifications (Type, Location via Google Maps, Start/End Dates) • Step 3 – Documentation Upload (Plans, Timeline) • Step 4 – Drawing Markup (Annotate, Edit, Markup)
+Module 6 – Completed & Ongoing Projects	• Completed → Name, Date, Location • Ongoing → Active list + progress • Sidebar same as Dashboard
+Module 7 – Snag Reports	• Snag Card (Image, Title, Description, Location, Reported By, Date, Assigned To, Status) • Comments (Add & Submit) • Actions: View Details, Mark Resolved • New Snag Report (Issue Type, Description, Location, Upload Images)
+Module 8 – Daily Tasks	• Role Selection (Engineers, Foreman, Labourers) • Task Listing role-wise • Comment Section
+Module 9 – Daily Logs	• Equipment Log (Create & View) • Task Performed Log (Create & View) • Staff Log (Create & View)
+Module 10 – Safety Checklist	• View checklist • Create new safety checklist
+	
+3. Project Manager Role	
+	
+Module	Project Manager Role Description
+Module 1 – Splash & Sign-In	• Splash Screen before login • Login Options: Phone/Email + Password • Session Management (auto-login if already logged in) • Forget Password Flow: – Enter registered email – OTP validation – Reset password – Login with new credentials
+Module 2 – Dashboard	• View all projects • Quick stats (overview: progress, tasks, snags) • Notifications (alerts & updates) • Profile access + Sign Out • Create New Project (enabled) • Edit/Delete existing projects • Project Filters (Ongoing/Completed) • Completed Projects → Name, Date, Location • Ongoing Projects → list + % completion • Project Sidebar: Profile, Plans, Progress, Photos, Files, People, Tasks, Snags, Inspections
+Module 3 – Create New Project (Wizard)	• Step 1 – Project Info (Title, Project Manager, Contractor Name auto-fill, Location, Duration) • Step 2 – Upload Files (Plans/Documents, PDF/DWG/Image validation, stored in folder) • Step 3 – Drawing Markup (annotate, edit before saving)
+Module 4 – Project Editing & Deletion	• Edit project metadata (title, location, roles) • Delete/archive with confirmation • CRUD logic applied
+Module 5 – Plans	• View uploaded plans • Add new plans • Delete/Replace old versions • Version control on re-upload • Drawing Markup enabled
+Module 6 – Progress Tracking	• Update manpower data • Edit project timeline & milestones • Update activities (completed, ongoing) • Safety progress (% compliance tracking) • Visual progress bar
+Module 7 – Inspections	• Create inspection entries • View past inspections • Upload inspection images • Fill safety/quality checklist • Annotate drawings with issues • Comments for communication
+Module 8 – Tasks	• Add new tasks • Edit task details (title, description) • Assign personnel • Set deadlines • Mark tasks as complete • View all tasks dashboard
+Module 9 – Snags	• View all snags • Add new snag report with images • Drawing markups for issue location • Assign to responsible person • Mark snags as resolved • Comments follow-up
+Module 10 – Photos	• Upload site images • Auto-tag by date/project • View gallery in grid layout • Filter by date/type
+Module 11 – Files	• Upload files (PDF, Images, Docs) • Download files • Delete/Replace existing files • Export files to PDF/ZIP
+Module 12 – People	• Add new personnel • Assign roles (Engineer, Supervisor, etc.) • View team list with contacts • Manage role permissions
+Module 13 – Daily Logs	• Equipment Log (Add/View usage) • Task Performed Log (Add/View) • Staff Attendance Log • Submit per day log entry
+Module 14 – Safety Checklist	• Create new safety checklist • Submit with status (Pass/Fail) • Optional image upload • View history of past checklists
+Module 15 – Profile Section	• Full Name • Designation & Company Name • Role-specific details • Edit Profile (update contact/designation) • Logout
+Module 16 – Side Module Access	• Snag List Library • Inspection Overview • All Tasks View • Help & Support
+	
+4. Site Engineer Role	
+	
+Module	Site Engineer Role Description
+Module 1 – Splash & Sign-In	• Splash Screen before login • Login Options (Phone/Email + Password) • Session Management (auto-login if already logged in) • Forget Password Flow: – Enter registered email – OTP validation – Reset password – Login with new credentials
+Module 2 – Dashboard	• View only assigned projects (Ongoing/Completed) • Notifications (alerts & updates) • Profile access + Sign Out • Project Filters (Ongoing/Completed) • Completed Projects → Name, Date, Location • Ongoing Projects → list + % completion (view-only) • Project Sidebar: Profile, Plans, Progress, Photos, Files, People, Tasks, Snags, Inspections
+Module 3 – Project Management (View Only)	• Read-only access to project details: name, team, type, location, start/end dates • No create/edit/delete rights
+Module 4 – Drawing & Markup	• View construction plans • Annotate/markup drawings • Save markups linked to project
+Module 5 – Document Upload	• Upload site images/documents only under allowed modules: Snags, Reports, Inspections • Restrict uploads to module-specific permissions
+Module 6 – Snag List Library	• Access predefined snag categories • Create new snag types during site use • Link snags with images/markup
+Module 7 – Reports Module	• Create reports with checklist-based inputs • Add photo attachments • Drawing markups • Submit reports to higher roles for approval
+Module 8 – Progress Tracking (View Only)	• Read-only view of timeline progress • Manpower allocation • Safety indicators • Equipment status
+Module 9 – Task Management (View Only)	• View assigned tasks: name, status, assignee, due date, description • No edit or mark-done access
+Module 10 – Manpower & Equipment Logs	• Add daily logs for labor, engineers, machines used • Submit with timestamps
+Module 11 – Photo Upload & View	• Upload photos with tagging (project/date) • View gallery of team-uploaded photos • Filter by project/date
+Module 12 – Inspections	• Assist in inspection activities • Add observations • Upload images • Annotate drawings • Submit limited final inspection report
+Module 13 – Safety Checklist	• Add and submit safety entries • Include dates, checklist items, and comments • Maintain compliance record
+Module 14 – Notifications	• Receive alerts: task updates, inspection reminders, project status changes • Background push notifications supported
+Module 15 – Profile Section (3-dot Menu)	• View Profile • Edit limited details (contact info) • Logout
+Module 16 – Access Control	• ❌ Cannot add/edit team members • ❌ Cannot assign/change roles • ✅ Allowed: Upload site data (reports, inspections, snags), View assigned projects, Submit daily logs • Role = Limited Create (reports/snags/logs) + Full View access • ❌ No project creation/editing or team management rights
+	
+5. Stakeholder Role	
+	
+Module	Stakeholder Role Description
+Module 1 – Splash & Sign-In	• Splash Screen before login • Login with Phone/Email + Password • Auto-login session • Forgot Password Flow: Email → OTP → Reset → Login
+Module 2 – Dashboard	• View only assigned projects (Ongoing/Completed) • Profile access + Sign Out • Project Filters (Ongoing/Completed) • Completed Projects → Name, Date, Location • Ongoing Projects → % completion (view only) • Sidebar: Profile, Plans, Progress, Photos, Files, People, Tasks, Snags, Inspections
+Module 3 – Project Overview (View Only)	• Read-only metadata: Name, Type, Team, Location, Dates • ❌ No edit/create/delete
+Module 4 – Plans & Markup (View Only)	• View uploaded plans • View existing markups (read-only) • PDF/Image viewer
+Module 5 – Uploaded Documents	• View & download project documents/files • ❌ No upload/markup
+Module 6 – Snag List (View Only)	• View categories & snag list (with images, status, comments) • Optional grouping by status • ❌ Cannot create/edit
+Module 7 – Reports (View Only)	• View submitted reports (checklist, photos, markups) • ❌ Cannot create/edit
+Module 8 – Progress Tracking (View Only)	• Read-only: Timeline, Manpower, Safety, Equipment • Displayed as charts/bars
+Module 9 – Task Management (View Only)	• View all tasks (Name, Status, Assignee, Due Date, Description) • Search & filter • ❌ No edit/mark done
+Module 10 – Manpower & Equipment Logs (View Only)	• Read-only daily logs (Labor, Engineers, Machines) • Filters by date/project • ❌ No add/edit
+Module 11 – Photo & File Gallery	• View all team photos/files • Filter by project/date • Gallery view • ❌ No upload
+Module 12 – Inspection (View Only)	• Read-only access to checklists, reports, images, markups • Static non-editable viewer
+Module 13 – Safety Checklist (View Only)	• View compliance records (items, comments, dates) • ❌ No create/edit
+Module 14 – Notifications	• Receive system alerts: Task updates, Inspections, Project progress • Push notifications enabled
+Module 15 – Profile Section	• View profile • ❌ Cannot edit • Logout
+Module 16 – Access Control	• ❌ Cannot add/edit/delete project data • ❌ Cannot upload images/reports/snags • ❌ Cannot assign/change roles • ✅ Allowed: View projects, Download/View files, Monitor progress/tasks/inspections/safety • Strict View-Only Role
