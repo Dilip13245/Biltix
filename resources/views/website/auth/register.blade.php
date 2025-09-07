@@ -485,10 +485,10 @@
                                                 <option value="">{{ __('auth.select_designation') }}</option>
                                                 <option value="contractor">{{ __('auth.contractor') }}</option>
                                                 <option value="consultant">{{ __('auth.consultant') }}</option>
-                                                <option value="site_engineer">{{ __('auth.site_engineer') }}</option>
+                                                {{-- <option value="site_engineer">{{ __('auth.site_engineer') }}</option>
                                                 <option value="project_manager">{{ __('auth.project_manager') }}
                                                 </option>
-                                                <option value="stakeholder">{{ __('auth.stakeholder') }}</option>
+                                                <option value="stakeholder">{{ __('auth.stakeholder') }}</option> --}}
                                             </select>
                                             <i class="fas fa-chevron-down input-icon"></i>
                                         </div>
