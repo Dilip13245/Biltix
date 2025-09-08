@@ -231,8 +231,7 @@ class ProjectController extends Controller
         try {
             $user_id = $request->input('user_id');
 
-            $activeProjects = Project::where('status', 'active')
-                ->where('is_active', 1)
+            $activeProjects = Project::where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->count();
 

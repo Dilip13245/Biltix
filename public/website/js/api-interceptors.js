@@ -31,6 +31,33 @@ class ApiInterceptors {
         return config;
     }
     
+    static beforeFormDataRequest(config, formData) {
+        // Add loading spinner
+        this.showLoading();
+        
+        // Add auth token if available
+        const token = window.UniversalAuth ? UniversalAuth.getToken() : 
+                     (sessionStorage.getItem('token') || localStorage.getItem('token'));
+        if (token) {
+            config.headers['token'] = ApiEncryption.isEncryptionEnabled() 
+                ? ApiEncryption.encrypt(token) 
+                : token;
+        }
+        
+        // Encrypt API key if encryption enabled
+        if (ApiEncryption.isEncryptionEnabled()) {
+            config.headers['api-key'] = ApiEncryption.encrypt(config.headers['api-key']);
+        }
+        
+        // Add user_id to FormData if available
+        const userId = window.UniversalAuth ? UniversalAuth.getUserId() : null;
+        if (userId) {
+            formData.append('user_id', userId);
+        }
+        
+        return config;
+    }
+    
     static afterResponse(response) {
         // Hide loading spinner
         this.hideLoading();

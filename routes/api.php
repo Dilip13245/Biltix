@@ -66,7 +66,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('details', [ProjectController::class, 'details'])->middleware('permission:projects,view');
         Route::post('update', [ProjectController::class, 'update'])->middleware('permission:projects,edit');
         Route::post('delete', [ProjectController::class, 'delete'])->middleware('permission:projects,delete');
-        Route::post('dashboard_stats', [ProjectController::class, 'dashboardStats'])->middleware('permission:projects,view');
+        Route::post('dashboard_stats', [ProjectController::class, 'dashboardStats']);
         Route::post('progress_report', [ProjectController::class, 'progressReport'])->middleware('permission:reports,view');
         Route::post('create_phase', [ProjectController::class, 'createPhase'])->middleware('permission:projects,create');
         Route::post('list_phases', [ProjectController::class, 'listPhases'])->middleware('permission:projects,view');
@@ -167,5 +167,11 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('delete', [NotificationController::class, 'delete'])->middleware('permission:notifications,delete');
         Route::post('get_count', [NotificationController::class, 'getCount'])->middleware('permission:notifications,view');
         Route::post('settings', [NotificationController::class, 'settings'])->middleware('permission:notifications,view');
+    });
+    
+    Route::prefix('users')->group(function () {
+        Route::get('project-managers', [\App\Http\Controllers\Api\UserController::class, 'getProjectManagers']);
+        Route::get('technical-engineers', [\App\Http\Controllers\Api\UserController::class, 'getTechnicalEngineers']);
+        Route::get('by-role', [\App\Http\Controllers\Api\UserController::class, 'getUsersByRole']);
     });
 });

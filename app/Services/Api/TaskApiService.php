@@ -26,7 +26,7 @@ class TaskApiService extends ApiService
         return $this->post('v1/tasks/update', $data);
     }
 
-    public function delete($data)
+    public function deleteTask($data)
     {
         return $this->post('v1/tasks/delete', $data);
     }

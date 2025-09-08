@@ -187,7 +187,7 @@
                                             {{ __('messages.active_projects_count') }}
                                         @endif
                                     </div>
-                                    <div class="stat-value">12</div>
+                                    <div class="stat-value">...</div>
                                 </div>
                                 <span class="ms-auto stat-icon bg1"><img
                                         src="{{ asset('website/images/icons/share.svg') }}" alt="share"></span>
@@ -200,7 +200,7 @@
                             <div class="card-body d-flex align-items-center">
                                 <div>
                                     <div class="small_tXt">{{ __('messages.pending_reviews') }}</div>
-                                    <div class="stat-value">8</div>
+                                    <div class="stat-value">...</div>
                                 </div>
                                 <span class="ms-auto stat-icon bg2"><img
                                         src="{{ asset('website/images/icons/clock.svg') }}" alt="clock"></span>
@@ -213,7 +213,7 @@
                             <div class="card-body d-flex align-items-center">
                                 <div>
                                     <div class="small_tXt">{{ __('messages.inspections_due') }}</div>
-                                    <div class="stat-value">5</div>
+                                    <div class="stat-value">...</div>
                                 </div>
                                 <span class="ms-auto stat-icon"><img
                                         src="{{ asset('website/images/icons/calendar.svg') }}" alt="calendar"></span>
@@ -226,7 +226,7 @@
                             <div class="card-body d-flex align-items-center">
                                 <div>
                                     <div class="small_tXt">{{ __('messages.completed_this_month') }}</div>
-                                    <div class="stat-value">3</div>
+                                    <div class="stat-value">...</div>
                                 </div>
                                 <span class="ms-auto stat-icon bg4"><img
                                         src="{{ asset('website/images/icons/suc.svg') }}" alt="suc"></span>
@@ -606,8 +606,33 @@
     @endcan
 
     <script>
+        // Load dashboard stats
+        async function loadDashboardStats() {
+            try {
+                const response = await api.getDashboardStats();
+                
+                if (response.code === 200 && response.data) {
+                    const stats = response.data;
+                    
+                    // Update stat values using more specific selectors
+                    const statCards = document.querySelectorAll('.stat-value');
+                    if (statCards.length >= 4) {
+                        statCards[0].textContent = stats.active_projects || 0;
+                        statCards[1].textContent = stats.pending_tasks || 0;
+                        statCards[2].textContent = stats.inspections_due || 0;
+                        statCards[3].textContent = stats.completed_this_month || 0;
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load dashboard stats:', error);
+                // Keep default values on error
+            }
+        }
+        
         // Filter functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Load stats on page load
+            loadDashboardStats();
             const statusFilter = document.getElementById('statusFilter');
             if (statusFilter) {
                 statusFilter.addEventListener('change', function() {
@@ -709,8 +734,10 @@
                 }
             }
             
-            // Reset form when modal opens
-            document.getElementById('createProjectModal').addEventListener('show.bs.modal', function() {
+            // Reset form when modal opens and load dropdown data
+            const createProjectModal = document.getElementById('createProjectModal');
+            if (createProjectModal) {
+                createProjectModal.addEventListener('show.bs.modal', function() {
                 currentStep = 1;
                 // Hide all steps except first
                 for (let i = 2; i <= totalSteps; i++) {
@@ -721,7 +748,12 @@
                 document.getElementById('step1').classList.remove('d-none');
                 document.getElementById('step1-indicator').classList.add('active');
                 updateButtons();
-            });
+                
+                // Load dropdown data
+                loadProjectManagers();
+                loadTechnicalEngineers();
+                });
+            }
             
             // Create Project Form Handler
             const createProjectForm = document.getElementById('createProjectForm');
@@ -739,30 +771,26 @@
                     });
                     
                     if (hasFiles) {
-                        // Store form data
+                        // Store form data for later use
                         window.projectFormData = new FormData(createProjectForm);
                         
                         // Close project modal
                         const projectModal = bootstrap.Modal.getInstance(document.getElementById('createProjectModal'));
                         if (projectModal) projectModal.hide();
                         
-                        // Open drawing modal for file markup
+                        // Open drawing modal for markup
                         setTimeout(() => {
                             openDrawingModal({
                                 title: @json(__('messages.markup_project_files')),
                                 saveButtonText: @json(__('messages.create')),
                                 mode: 'image',
-                                onSave: function(imageData) {
-                                    // Close drawing modal
-                                    const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
-                                    if (drawingModal) drawingModal.hide();
-                                    
-                                    showToast(@json(__('messages.project_created_with_markup')), 'success');
-                                    setTimeout(() => location.reload(), 1500);
+                                onSave: function(markedUpImageData) {
+                                    // Create project with marked up images
+                                    createProjectWithMarkup(markedUpImageData);
                                 }
                             });
                             
-                            // Collect all files from both inputs
+                            // Collect all files for drawing modal
                             let allFiles = [];
                             fileInputs.forEach(input => {
                                 if (input.files && input.files.length > 0) {
@@ -770,7 +798,6 @@
                                 }
                             });
                             
-                            // Store all files globally for drawing modal
                             window.selectedFiles = allFiles;
                             
                             if (allFiles.length > 0) {
@@ -785,12 +812,7 @@
                         }, 300);
                     } else {
                         // No files, create project directly
-                        const projectModal = bootstrap.Modal.getInstance(document.getElementById('createProjectModal'));
-                        if (projectModal) projectModal.hide();
-                        
-                        showToast('Project created successfully!', 'success');
-                        createProjectForm.reset();
-                        setTimeout(() => location.reload(), 1500);
+                        createProjectDirectly();
                     }
                 });
             }
@@ -828,6 +850,119 @@
                     case 'docx': case 'doc': return 'fas fa-file-word text-primary';
                     case 'jpg': case 'jpeg': case 'png': return 'fas fa-file-image text-success';
                     default: return 'fas fa-file text-secondary';
+                }
+            }
+            
+            // Load project managers for dropdown
+            async function loadProjectManagers() {
+                try {
+                    const response = await api.getProjectManagers();
+                    const select = document.getElementById('project_manager_id');
+                    
+                    // Clear existing options except first
+                    select.innerHTML = '<option value="">{{ __('messages.select_manager') }}</option>';
+                    
+                    if (response.code === 200 && response.data) {
+                        response.data.forEach(manager => {
+                            const option = document.createElement('option');
+                            option.value = manager.id;
+                            option.textContent = `${manager.name} - ${manager.company_name || ''}`;
+                            select.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Failed to load project managers:', error);
+                    showToast('Failed to load project managers', 'error');
+                }
+            }
+            
+            // Load technical engineers for dropdown
+            async function loadTechnicalEngineers() {
+                try {
+                    const response = await api.getTechnicalEngineers();
+                    const select = document.getElementById('technical_engineer_id');
+                    
+                    // Clear existing options except first
+                    select.innerHTML = '<option value="">{{ __('messages.select_engineer') }}</option>';
+                    
+                    if (response.code === 200 && response.data) {
+                        response.data.forEach(engineer => {
+                            const option = document.createElement('option');
+                            option.value = engineer.id;
+                            option.textContent = `${engineer.name} - ${engineer.company_name || ''}`;
+                            select.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Failed to load technical engineers:', error);
+                    showToast('Failed to load technical engineers', 'error');
+                }
+            }
+            
+            // Create project with marked up images
+            async function createProjectWithMarkup(markedUpImageData) {
+                try {
+                    // Get the stored form data
+                    const formData = window.projectFormData;
+                    
+                    // Remove original files from FormData
+                    formData.delete('construction_plans[]');
+                    formData.delete('gantt_chart[]');
+                    
+                    // Handle multiple marked up images
+                    if (Array.isArray(markedUpImageData)) {
+                        // Multiple files
+                        for (let i = 0; i < markedUpImageData.length; i++) {
+                            const response = await fetch(markedUpImageData[i]);
+                            const blob = await response.blob();
+                            formData.append('construction_plans[]', blob, `marked_up_plan_${i + 1}.png`);
+                        }
+                    } else if (markedUpImageData) {
+                        // Single file
+                        const response = await fetch(markedUpImageData);
+                        const blob = await response.blob();
+                        formData.append('construction_plans[]', blob, 'marked_up_plan.png');
+                    }
+                    
+                    // Call create project API
+                    const apiResponse = await api.createProject(formData);
+                    
+                    if (apiResponse.code === 200) {
+                        // Close drawing modal
+                        const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+                        if (drawingModal) drawingModal.hide();
+                        
+                        showToast(apiResponse.message || @json(__('messages.project_created_with_markup')), 'success');
+                        document.getElementById('createProjectForm').reset();
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast(apiResponse.message || 'Failed to create project', 'error');
+                    }
+                } catch (error) {
+                    console.error('Create project with markup error:', error);
+                    showToast('Failed to create project. Please try again.', 'error');
+                }
+            }
+            
+            // Create project without files
+            async function createProjectDirectly() {
+                try {
+                    const formData = new FormData(document.getElementById('createProjectForm'));
+                    const response = await api.createProject(formData);
+                    
+                    if (response.code === 200) {
+                        const projectModal = bootstrap.Modal.getInstance(document.getElementById('createProjectModal'));
+                        if (projectModal) projectModal.hide();
+                        
+                        showToast(response.message || 'Project created successfully!', 'success');
+                        document.getElementById('createProjectForm').reset();
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showToast(response.message || 'Failed to create project', 'error');
+                    }
+                } catch (error) {
+                    console.error('Create project error:', error);
+                    showToast('Failed to create project. Please try again.', 'error');
                 }
             }
         });

@@ -26,7 +26,7 @@ class ProjectApiService extends ApiService
         return $this->post('v1/projects/update', $data);
     }
 
-    public function delete($data)
+    public function deleteProject($data)
     {
         return $this->post('v1/projects/delete', $data);
     }

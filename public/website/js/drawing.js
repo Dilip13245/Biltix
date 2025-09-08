@@ -58,8 +58,18 @@ function initializeDrawing(config = {}) {
     const saveBtn = document.getElementById('saveDrawingBtn');
     saveBtn.onclick = function() {
         if (drawingConfig.onSave) {
-            const dataURL = canvas.toDataURL('image/png');
-            drawingConfig.onSave(dataURL);
+            if (currentFiles.length > 1) {
+                // Save current file first
+                saveCurrentFile();
+                
+                // Return all marked up images
+                const allImageData = currentFiles.map(fileData => fileData.imageData || canvas.toDataURL('image/png'));
+                drawingConfig.onSave(allImageData);
+            } else {
+                // Single file
+                const dataURL = canvas.toDataURL('image/png');
+                drawingConfig.onSave(dataURL);
+            }
         }
     };
 }

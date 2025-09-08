@@ -169,4 +169,11 @@ return [
         'settings_retrieved' => 'Settings retrieved successfully',
         'not_found' => 'Notification not found',
     ],
+    'users' => [
+        'project_managers_retrieved' => 'Project managers list retrieved successfully',
+        'technical_engineers_retrieved' => 'Technical engineers list retrieved successfully',
+        'users_by_role_retrieved' => 'Users list retrieved successfully',
+        'role_required' => 'Role is required',
+        'invalid_role' => 'Invalid role specified',
+    ],
 ];

@@ -169,4 +169,11 @@ return [
         'settings_retrieved' => 'تم استرداد الإعدادات بنجاح',
         'not_found' => 'الإشعار غير موجود',
     ],
+    'users' => [
+        'project_managers_retrieved' => 'تم استرداد قائمة مديري المشاريع بنجاح',
+        'technical_engineers_retrieved' => 'تم استرداد قائمة المهندسين الفنيين بنجاح',
+        'users_by_role_retrieved' => 'تم استرداد قائمة المستخدمين بنجاح',
+        'role_required' => 'الدور مطلوب',
+        'invalid_role' => 'دور غير صحيح',
+    ],
 ];

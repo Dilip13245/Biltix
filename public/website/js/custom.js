@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const sidebarClose = document.getElementById('sidebarClose');
     const mobileOverlay = document.getElementById('mobileOverlay');
     
+    // Only proceed if elements exist
+    if (!mobileMenuToggle || !sidebarNav || !sidebarClose || !mobileOverlay) {
+        return;
+    }
+    
     // Check if RTL
     const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
 
