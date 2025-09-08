@@ -19,19 +19,23 @@ class WebAuth
         $sessionToken = session('token');
         $rememberMe = session('remember_me', false);
         $sessionStartTime = session('session_start_time');
+        $lastActivity = session('last_activity');
         
-        // Session data loaded
+        // Update last activity for active sessions
+        if ($userId && $sessionToken) {
+            session(['last_activity' => time()]);
+        }
 
         // Check if session expired for non-remember-me logins
-        if (!$rememberMe && $sessionStartTime) {
+        if (!$rememberMe && $lastActivity) {
             // For non-remember-me: expire after 30 minutes of inactivity
-            if (time() - $sessionStartTime > 30 * 60) {
-                \Log::info('Session expired for non-remember-me user', ['session_age' => time() - $sessionStartTime]);
+            if (time() - $lastActivity > 30 * 60) {
+                \Log::info('Session expired due to inactivity', ['inactive_time' => time() - $lastActivity]);
                 session()->flush();
                 if ($request->expectsJson() || $request->ajax()) {
                     return response()->json(['authenticated' => false], 401);
                 }
-                return redirect()->route('login')->with('error', 'Session expired. Please login again');
+                return redirect()->route('login')->with('error', 'Session expired due to inactivity. Please login again');
             }
         }
 

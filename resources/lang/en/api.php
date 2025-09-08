@@ -37,6 +37,13 @@ return [
         'invalid_user' => 'Invalid user',
         'logout_success' => 'Logout successful',
         'account_deleted' => 'Account deleted successfully',
+        'user_not_found' => 'User not found with this email',
+        'account_not_verified' => 'Your account is not verified. Please verify your account first',
+        'account_inactive' => 'Your account is inactive. Please contact support',
+        'account_deleted_error' => 'Your account has been deleted. Please contact support if this is an error',
+        'user_not_found_phone' => 'User not found with this phone number',
+        'user_not_found_id' => 'User not found with this ID',
+        'otp_expired' => 'OTP has expired. Please request a new one',
     ],
     'general' => [
         'language_changed' => 'Language changed successfully',

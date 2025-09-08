@@ -27,7 +27,7 @@ class AuthController extends Controller
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'required|unique:users,phone',
                 'name' => 'required|string|max:255',
-                'password' => 'required|min:6',
+                'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
                 'role' => 'required|in:contractor,consultant,site_engineer,project_manager,stakeholder',
                 'company_name' => 'required|string|max:255',
                 'designation' => 'nullable|string|max:255',
@@ -79,7 +79,7 @@ class AuthController extends Controller
                 }
 
                 // Generate token and create device entry (auto-login)
-                $accessToken = Str::random(64);
+                $accessToken = bin2hex(random_bytes(32)); // Cryptographically secure
 
                 $deviceData = [
                     'user_id' => $userDetails->id,
@@ -136,21 +136,33 @@ class AuthController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            $user = User::where('email', $request->email)
-                ->where('is_active', 1)
-                ->where('is_verified', 1)
-                ->where('is_deleted', 0)
-                ->first();
+            // First, find user by email only
+            $user = User::where('email', $request->email)->first();
 
             if (!$user) {
-                return $this->toJsonEnc([], trans('api.auth.user_not_available'), Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.auth.user_not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is deleted
+            if ($user->is_deleted == 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_deleted_error'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is not verified
+            if ($user->is_verified != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_not_verified'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is inactive
+            if ($user->is_active != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_inactive'), Config::get('constant.ERROR'));
             }
 
             if (!Hash::check($request->password, $user->password)) {
                 return $this->toJsonEnc([], trans('api.auth.invalid_password'), Config::get('constant.ERROR'));
             }
 
-            $accessToken = Str::random(64);
+            $accessToken = bin2hex(random_bytes(32)); // Cryptographically secure
 
             $deviceData = [
                 'user_id' => $user->id,
@@ -211,10 +223,26 @@ class AuthController extends Controller
             $phone = $request->input('phone');
             $otp = '123456';
 
+            // Find user by phone only
             $user = User::where('phone', $phone)->first();
 
-            if (!$user || $user->is_active != 1) {
-                return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
+            if (!$user) {
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_phone'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is deleted
+            if ($user->is_deleted == 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_deleted_error'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is not verified
+            if ($user->is_verified != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_not_verified'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is inactive
+            if ($user->is_active != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_inactive'), Config::get('constant.ERROR'));
             }
 
             try {
@@ -256,10 +284,26 @@ class AuthController extends Controller
             $otp = $request->input('otp');
             $type = $request->input('type');
 
+            // Find user by phone only
             $user = User::where('phone', $phone)->first();
 
             if (!$user) {
-                return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_phone'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is deleted
+            if ($user->is_deleted == 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_deleted_error'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is not verified
+            if ($user->is_verified != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_not_verified'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is inactive
+            if ($user->is_active != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_inactive'), Config::get('constant.ERROR'));
             }
 
             if ($user->otp != $otp) {
@@ -303,14 +347,26 @@ class AuthController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            $user = User::where('phone', $request->phone)
-                ->where('is_active', 1)
-                ->where('is_verified', 1)
-                ->where('is_deleted', 0)
-                ->first();
+            // Find user by phone only
+            $user = User::where('phone', $request->phone)->first();
 
             if (!$user) {
-                return $this->toJsonEnc([], trans('api.auth.user_not_found_or_inactive'), Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_phone'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is deleted
+            if ($user->is_deleted == 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_deleted_error'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is not verified
+            if ($user->is_verified != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_not_verified'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is inactive
+            if ($user->is_active != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_inactive'), Config::get('constant.ERROR'));
             }
 
             if (Hash::check($request->new_password, $user->password)) {
@@ -330,14 +386,26 @@ class AuthController extends Controller
     {
         try {
             $user_id = $request->input('user_id');
-            $user = User::where('id', $user_id)
-                ->where('is_active', 1)
-                ->where('is_verified', 1)
-                ->where('is_deleted', 0)
-                ->first();
+            // Find user by ID only
+            $user = User::where('id', $user_id)->first();
 
             if (!$user) {
-                return $this->toJsonEnc([], trans('api.auth.user_not_found'), Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_id'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is deleted
+            if ($user->is_deleted == 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_deleted_error'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is not verified
+            if ($user->is_verified != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_not_verified'), Config::get('constant.ERROR'));
+            }
+
+            // Check if user is inactive
+            if ($user->is_active != 1) {
+                return $this->toJsonEnc([], trans('api.auth.account_inactive'), Config::get('constant.ERROR'));
             }
 
             // Get user members

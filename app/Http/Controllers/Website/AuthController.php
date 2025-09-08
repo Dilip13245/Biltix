@@ -30,11 +30,15 @@ class AuthController extends Controller
         
         // Set session expiry based on remember me
         if (!$rememberMe) {
-            // Session only: Set a timestamp and browser session ID
+            // Session only: Set timestamps and browser session ID
             session([
                 'session_start_time' => time(),
+                'last_activity' => time(),
                 'browser_session_id' => uniqid('browser_', true)
             ]);
+        } else {
+            // Remember me: Still track activity for security
+            session(['last_activity' => time()]);
         }
 
         return response()->json(['success' => true]);

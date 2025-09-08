@@ -37,11 +37,11 @@ Route::middleware('web.guest')->group(function () {
     Route::get('/register', [App\Http\Controllers\Website\AuthController::class, 'showRegister'])->name('register');
     Route::get('/forgot-password', [App\Http\Controllers\Website\AuthController::class, 'showForgotPassword'])->name('forgot-password');
     
-    // Auth API endpoints
-    Route::post('/auth/register', [App\Http\Controllers\Website\AuthController::class, 'register'])->name('auth.register');
-    Route::post('/auth/send-otp', [App\Http\Controllers\Website\AuthController::class, 'sendOtp'])->name('auth.send-otp');
-    Route::post('/auth/verify-otp', [App\Http\Controllers\Website\AuthController::class, 'verifyOtp'])->name('auth.verify-otp');
-    Route::post('/auth/reset-password', [App\Http\Controllers\Website\AuthController::class, 'resetPassword'])->name('auth.reset-password');
+    // Auth API endpoints - With Rate Limiting
+    Route::middleware('throttle:3,1')->post('/auth/register', [App\Http\Controllers\Website\AuthController::class, 'register'])->name('auth.register');
+    Route::middleware('throttle:5,1')->post('/auth/send-otp', [App\Http\Controllers\Website\AuthController::class, 'sendOtp'])->name('auth.send-otp');
+    Route::middleware('throttle:5,1')->post('/auth/verify-otp', [App\Http\Controllers\Website\AuthController::class, 'verifyOtp'])->name('auth.verify-otp');
+    Route::middleware('throttle:3,1')->post('/auth/reset-password', [App\Http\Controllers\Website\AuthController::class, 'resetPassword'])->name('auth.reset-password');
 });
 
 // Session management routes (accessible to all)
@@ -105,9 +105,9 @@ Route::middleware('web.auth')->prefix('website')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('api')->group(function () {
-    // Public API routes (Authentication)
-    Route::post('/login', [ApiController::class, 'login'])->name('api.login');
-    Route::post('/signup', [ApiController::class, 'signup'])->name('api.signup');
+    // Public API routes (Authentication) - With Rate Limiting
+    Route::middleware('throttle:5,1')->post('/login', [ApiController::class, 'login'])->name('api.login');
+    Route::middleware('throttle:3,1')->post('/signup', [ApiController::class, 'signup'])->name('api.signup');
     
     // Protected API routes
     Route::middleware('web.api.auth')->group(function () {
