@@ -30,12 +30,14 @@
                 <span class="text-black">{{ __('messages.sort') }}</span>
             </button>
             <!-- Upload Button -->
+            @can('files', 'upload')
             <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png"
                 style="display: none;" onchange="handleFileUpload(this)">
-            <button class="btn orange_btn" onclick="document.getElementById('fileUploadInput').click()">
+            <button class="btn orange_btn" onclick="document.getElementById('fileUploadInput').click()" data-permission="files:upload">
                 <i class="fas fa-arrow-up me-2"></i>
                 {{ __('messages.upload_file') }}
             </button>
+            @endcan
         </div>
     </div>
     <section class="px-md-4">

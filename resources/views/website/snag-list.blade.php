@@ -8,10 +8,12 @@
             <h2>{{ __('messages.snag_list') }}</h2>
             <p>{{ __('messages.view_manage_snags') }}</p>
         </div>
-        <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal">
+        @can('snags', 'create')
+        <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal" data-permission="snags:create">
             <i class="fas fa-plus"></i>
             {{ __('messages.add_new_snag') }}
         </button>
+        @endcan
     </div>
     <section class="px-md-4">
         <div class="container-fluid ">

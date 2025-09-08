@@ -17,6 +17,9 @@ class ApiClient {
             data: data
         };
         
+        console.log('Making API request to:', `${this.baseUrl}/${endpoint}`);
+        console.log('Request data:', data);
+        
         // Apply interceptors
         ApiInterceptors.beforeRequest(config);
         
@@ -27,9 +30,15 @@ class ApiClient {
                 body: JSON.stringify(config.data)
             });
             
+            console.log('Response status:', response.status);
+            
             const result = await response.json();
+            console.log('API Response:', result);
+            
+            // Don't throw error for HTTP status, let the API response handle it
             return ApiInterceptors.afterResponse(result) || result;
         } catch (error) {
+            console.error('API Request failed:', error);
             ApiInterceptors.hideLoading();
             throw error;
         }

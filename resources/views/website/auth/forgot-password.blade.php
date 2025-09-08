@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <style>
         body {
             background: #f5f5f5;
@@ -364,12 +363,12 @@
                                         <label class="form-label">{{ __('auth.enter_otp') }}</label>
                                         <p class="text-muted small">{{ __('auth.otp_sent_to') }} <span id="displayMobile"></span></p>
                                         <div class="otp-inputs">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 1)" pattern="[0-9]">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 2)" pattern="[0-9]">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 3)" pattern="[0-9]">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 4)" pattern="[0-9]">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 5)" pattern="[0-9]">
-                                            <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 6)" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" data-index="0" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" data-index="1" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" data-index="2" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" data-index="3" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" data-index="4" pattern="[0-9]">
+                                            <input type="text" class="otp-input" maxlength="1" data-index="5" pattern="[0-9]">
                                         </div>
                                         <div class="error-message text-center" id="otpError"></div>
                                         <div class="resend-text">
@@ -445,11 +444,15 @@
             if (step === 1) {
                 const mobile = document.getElementById('mobileNumber');
                 
-                if (!mobile.value.trim()) {
-                    showError(mobile, 'mobileError', '{{ __('validation.mobile_required') }}');
+                const phoneValue = mobile.value.trim();
+                if (!phoneValue) {
+                    showError(mobile, 'mobileError', '{{ __('auth.mobile_required') }}');
                     isValid = false;
-                } else if (!isValidPhone(mobile.value)) {
-                    showError(mobile, 'mobileError', '{{ __('validation.mobile_invalid') }}');
+                } else if (/\s/.test(phoneValue)) {
+                    showError(mobile, 'mobileError', '{{ __('auth.mobile_spaces') }}');
+                    isValid = false;
+                } else if (!isValidPhone(phoneValue)) {
+                    showError(mobile, 'mobileError', '{{ __('auth.mobile_invalid') }}');
                     isValid = false;
                 }
                 
@@ -459,11 +462,15 @@
                 
                 if (!otp.trim()) {
                     otpInputs.forEach(input => input.classList.add('error'));
-                    showErrorMessage('otpError', '{{ __('validation.otp_required') }}');
+                    showErrorMessage('otpError', '{{ __('auth.otp_required') }}');
                     isValid = false;
-                } else if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+                } else if (otp.length !== 6) {
                     otpInputs.forEach(input => input.classList.add('error'));
-                    showErrorMessage('otpError', '{{ __('validation.otp_invalid') }}');
+                    showErrorMessage('otpError', '{{ __('auth.otp_incomplete') }}');
+                    isValid = false;
+                } else if (!/^\d{6}$/.test(otp)) {
+                    otpInputs.forEach(input => input.classList.add('error'));
+                    showErrorMessage('otpError', '{{ __('auth.otp_invalid') }}');
                     isValid = false;
                 }
                 
@@ -472,18 +479,24 @@
                 const confirmPassword = document.getElementById('confirmPassword');
                 
                 if (!newPassword.value.trim()) {
-                    showError(newPassword, 'newPasswordError', '{{ __('validation.new_password_required') }}');
+                    showError(newPassword, 'newPasswordError', '{{ __('auth.new_password_required') }}');
                     isValid = false;
-                } else if (newPassword.value.length < 6) {
-                    showError(newPassword, 'newPasswordError', '{{ __('validation.new_password_min') }}');
+                } else if (newPassword.value.length < 8) {
+                    showError(newPassword, 'newPasswordError', '{{ __('auth.new_password_min') }}');
+                    isValid = false;
+                } else if (newPassword.value.length > 128) {
+                    showError(newPassword, 'newPasswordError', '{{ __('auth.new_password_max') }}');
+                    isValid = false;
+                } else if (!isStrongPassword(newPassword.value)) {
+                    showError(newPassword, 'newPasswordError', '{{ __('auth.new_password_strong') }}');
                     isValid = false;
                 }
                 
                 if (!confirmPassword.value.trim()) {
-                    showError(confirmPassword, 'confirmPasswordError', '{{ __('validation.confirm_password_required') }}');
+                    showError(confirmPassword, 'confirmPasswordError', '{{ __('auth.confirm_new_password_required') }}');
                     isValid = false;
                 } else if (newPassword.value !== confirmPassword.value) {
-                    showError(confirmPassword, 'confirmPasswordError', '{{ __('validation.new_password_mismatch') }}');
+                    showError(confirmPassword, 'confirmPasswordError', '{{ __('auth.new_passwords_mismatch') }}');
                     isValid = false;
                 }
             }
@@ -505,8 +518,14 @@
         }
         
         function isValidPhone(phone) {
-            const phoneRegex = /^[+]?[0-9]{10,15}$/;
-            return phoneRegex.test(phone.replace(/\s+/g, ''));
+            const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+            const phoneRegex = /^[\+]?[1-9]\d{9,14}$/;
+            return phoneRegex.test(cleanPhone) && !/[a-zA-Z]/.test(cleanPhone);
+        }
+        
+        function isStrongPassword(password) {
+            const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+            return strongRegex.test(password);
         }
         
         async function nextStep() {
@@ -611,12 +630,70 @@
             }
         }
 
-        function moveToNext(current, position) {
-            if (current.value.length === 1 && position < 6) {
-                const nextInput = current.parentNode.children[position];
-                nextInput.focus();
-            }
-        }
+        // Industry-level OTP input handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            
+            otpInputs.forEach((input, index) => {
+                // Handle input event
+                input.addEventListener('input', function(e) {
+                    const value = e.target.value;
+                    
+                    // Only allow numbers
+                    if (!/^[0-9]$/.test(value)) {
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    // Move to next input if current is filled
+                    if (value && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                });
+                
+                // Handle keydown for backspace
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Backspace') {
+                        if (!e.target.value && index > 0) {
+                            otpInputs[index - 1].focus();
+                            otpInputs[index - 1].value = '';
+                        }
+                    }
+                });
+                
+                // Handle paste event
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const pastedData = e.clipboardData.getData('text');
+                    const digits = pastedData.replace(/\D/g, '').slice(0, 6);
+                    
+                    if (digits.length > 0) {
+                        // Clear all inputs first
+                        otpInputs.forEach(inp => inp.value = '');
+                        
+                        // Fill inputs with pasted digits
+                        for (let i = 0; i < digits.length && i < otpInputs.length; i++) {
+                            otpInputs[i].value = digits[i];
+                        }
+                        
+                        // Focus on next empty input or last filled input
+                        const nextEmptyIndex = digits.length < otpInputs.length ? digits.length : otpInputs.length - 1;
+                        otpInputs[nextEmptyIndex].focus();
+                    }
+                });
+                
+                // Handle focus event
+                input.addEventListener('focus', function(e) {
+                    e.target.select();
+                });
+                
+                // Handle click event
+                input.addEventListener('click', function(e) {
+                    e.target.focus();
+                    e.target.select();
+                });
+            });
+        });
 
         function getOTPValue() {
             const otpInputs = document.querySelectorAll('.otp-input');

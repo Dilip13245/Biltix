@@ -8,10 +8,12 @@
             <h2>{{ __('messages.plans') }}</h2>
             <p>{{ __('messages.view_markup_plans') }}</p>
         </div>
-        <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#uploadPlanModal">
+        @can('plans', 'upload')
+        <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#uploadPlanModal" data-permission="plans:upload">
             <i class="fas fa-arrow-up"></i>
             {{ __('messages.upload_plan') }}
         </button>
+        @endcan
     </div>
 
     <div class="CarDs-grid">
@@ -27,12 +29,16 @@
                         onclick="openPlanViewer('{{ asset('website/images/place1.png') }}', 'Ground Floor Plan', 'Architectural', 'Rev. 3.2', '2.4 MB', '2 days ago')">
                         {{ __('messages.view_file') }} <i class="fas fa-eye ms-2"></i>
                     </button>
-                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(1)">
+                    @can('plans', 'upload')
+                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(1)" data-permission="plans:upload">
                         {{ __('messages.replace') }} <i class="fas fa-sync ms-2"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(1)">
+                    @endcan
+                    @can('plans', 'delete')
+                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(1)" data-permission="plans:delete">
                         {{ __('messages.delete') }} <i class="fas fa-trash ms-2"></i>
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -49,12 +55,16 @@
                         onclick="openPlanViewer('{{ asset('website/images/place2.png') }}', 'Second Floor Plan', 'Architectural', 'Rev. 2.1', '1.8 MB', '1 week ago')">
                         {{ __('messages.view_file') }} <i class="fas fa-eye ms-2"></i>
                     </button>
-                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(2)">
+                    @can('plans', 'upload')
+                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(2)" data-permission="plans:upload">
                         {{ __('messages.replace') }} <i class="fas fa-sync ms-2"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(2)">
+                    @endcan
+                    @can('plans', 'delete')
+                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(2)" data-permission="plans:delete">
                         {{ __('messages.delete') }} <i class="fas fa-trash ms-2"></i>
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -71,12 +81,16 @@
                         onclick="openPlanViewer('{{ asset('website/images/place3.png') }}', 'Front Elevation', 'Architectural', 'Rev. 1.5', '3.2 MB', '3 days ago')">
                         {{ __('messages.view_file') }} <i class="fas fa-eye ms-2"></i>
                     </button>
-                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(3)">
+                    @can('plans', 'upload')
+                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(3)" data-permission="plans:upload">
                         {{ __('messages.replace') }} <i class="fas fa-sync ms-2"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(3)">
+                    @endcan
+                    @can('plans', 'delete')
+                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(3)" data-permission="plans:delete">
                         {{ __('messages.delete') }} <i class="fas fa-trash ms-2"></i>
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -93,12 +107,16 @@
                         onclick="openPlanViewer('{{ asset('website/images/place4.png') }}', 'Building Section A-A', 'Structural', 'Rev. 2.0', '2.1 MB', '5 days ago')">
                         {{ __('messages.view_file') }} <i class="fas fa-eye ms-2"></i>
                     </button>
-                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(4)">
+                    @can('plans', 'upload')
+                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(4)" data-permission="plans:upload">
                         {{ __('messages.replace') }} <i class="fas fa-sync ms-2"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(4)">
+                    @endcan
+                    @can('plans', 'delete')
+                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(4)" data-permission="plans:delete">
                         {{ __('messages.delete') }} <i class="fas fa-trash ms-2"></i>
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -115,12 +133,16 @@
                         onclick="openPlanViewer('{{ asset('website/images/place5.png') }}', 'Basement Plan', 'Architectural', 'Rev. 1.8', '1.5 MB', '1 week ago')">
                         {{ __('messages.view_file') }} <i class="fas fa-eye ms-2"></i>
                     </button>
-                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(5)">
+                    @can('plans', 'upload')
+                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(5)" data-permission="plans:upload">
                         {{ __('messages.replace') }} <i class="fas fa-sync ms-2"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(5)">
+                    @endcan
+                    @can('plans', 'delete')
+                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(5)" data-permission="plans:delete">
                         {{ __('messages.delete') }} <i class="fas fa-trash ms-2"></i>
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -137,12 +159,16 @@
                         onclick="openPlanViewer('{{ asset('website/images/place6.png') }}', 'Roof Plan', 'Architectural', 'Rev. 1.2', '1.2 MB', '2 weeks ago')">
                         {{ __('messages.view_file') }} <i class="fas fa-eye ms-2"></i>
                     </button>
-                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(6)">
+                    @can('plans', 'upload')
+                    <button class="btn btn-primary btn-sm flex-fill rounded-pill" onclick="replacePlan(6)" data-permission="plans:upload">
                         {{ __('messages.replace') }} <i class="fas fa-sync ms-2"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(6)">
+                    @endcan
+                    @can('plans', 'delete')
+                    <button class="btn btn-danger btn-sm flex-fill rounded-pill" onclick="deletePlan(6)" data-permission="plans:delete">
                         {{ __('messages.delete') }} <i class="fas fa-trash ms-2"></i>
                     </button>
+                    @endcan
                 </div>
             </div>
         </div>

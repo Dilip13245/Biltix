@@ -9,9 +9,11 @@ class RoleHelper
     /**
      * Check if user has permission for specific action
      */
-    public static function hasPermission(int $userId, string $module, string $action): bool
+    public static function hasPermission($user, string $module, string $action): bool
     {
-        $user = User::find($userId);
+        if (is_int($user)) {
+            $user = User::find($user);
+        }
         
         if (!$user || !$user->is_active) {
             return false;
@@ -27,70 +29,42 @@ class RoleHelper
      */
     public static function getRolePermissions(string $role, string $module): array
     {
-        $rolePermissions = [
-            'contractor' => [
-                'projects' => ['create', 'edit', 'delete', 'view'],
-                'tasks' => ['create', 'update', 'complete', 'comment', 'assign', 'delete', 'view'],
-                'inspections' => ['create', 'conduct', 'complete', 'approve', 'view'],
-                'snags' => ['create', 'update', 'resolve', 'assign', 'review', 'approve', 'view'],
-                'plans' => ['upload', 'markup', 'approve', 'view'],
-                'team' => ['add', 'remove', 'coordinate', 'view'],
-                'daily_logs' => ['create', 'edit', 'view'],
-                'files' => ['upload', 'delete', 'view'],
-                'photos' => ['upload', 'delete', 'view'],
-                'reports' => ['generate', 'view']
-            ],
-            'site_engineer' => [
-                'projects' => ['view'],
-                'tasks' => ['update', 'complete', 'view'],
-                'inspections' => ['conduct', 'complete', 'view'],
-                'snags' => ['create', 'update', 'view'],
-                'plans' => ['view', 'markup'],
-                'team' => ['view'],
-                'daily_logs' => ['create', 'edit', 'view'],
-                'files' => ['upload', 'view'],
-                'photos' => ['upload', 'view'],
-                'reports' => ['view']
-            ],
-            'consultant' => [
-                'projects' => ['view', 'comment'],
-                'tasks' => ['view', 'comment'],
-                'inspections' => ['create', 'approve', 'view'],
-                'snags' => ['review', 'approve', 'view'],
-                'plans' => ['markup', 'approve', 'view'],
-                'team' => ['view'],
-                'daily_logs' => ['view'],
-                'files' => ['view'],
-                'photos' => ['view'],
-                'reports' => ['view']
-            ],
-            'project_manager' => [
-                'projects' => ['view', 'edit'],
-                'tasks' => ['assign', 'track', 'view'],
-                'inspections' => ['schedule', 'review', 'view'],
-                'snags' => ['assign', 'track', 'view'],
-                'plans' => ['view', 'approve'],
-                'team' => ['view', 'coordinate'],
-                'daily_logs' => ['view'],
-                'files' => ['view'],
-                'photos' => ['view'],
-                'reports' => ['generate', 'view']
-            ],
-            'stakeholder' => [
-                'projects' => ['view'],
-                'tasks' => ['view'],
-                'inspections' => ['view'],
-                'snags' => ['view'],
-                'plans' => ['view'],
-                'team' => ['view'],
-                'daily_logs' => ['view'],
-                'files' => ['view'],
-                'photos' => ['view'],
-                'reports' => ['view']
-            ]
-        ];
+        $permissions = config('permissions.roles.' . $role . '.' . $module, []);
+        return $permissions;
+    }
+
+    /**
+     * Check if role can register
+     */
+    public static function canRegister(string $role): bool
+    {
+        return in_array($role, config('permissions.can_register', []));
+    }
+
+    /**
+     * Check if role is login-only
+     */
+    public static function isLoginOnly(string $role): bool
+    {
+        return in_array($role, config('permissions.login_only', []));
+    }
+
+    /**
+     * Get dashboard access level for role
+     */
+    public static function getDashboardAccess(string $role): string
+    {
+        $access = config('permissions.dashboard_access');
         
-        return $rolePermissions[$role][$module] ?? [];
+        if (in_array($role, $access['full'])) {
+            return 'full';
+        } elseif (in_array($role, $access['assigned_only'])) {
+            return 'assigned_only';
+        } elseif (in_array($role, $access['view_only'])) {
+            return 'view_only';
+        }
+        
+        return 'none';
     }
 
     /**
@@ -100,9 +74,9 @@ class RoleHelper
     {
         $hierarchy = [
             'stakeholder' => 1,
-            'consultant' => 2,
-            'site_engineer' => 3,
-            'project_manager' => 4,
+            'site_engineer' => 2,
+            'project_manager' => 3,
+            'consultant' => 4,
             'contractor' => 5
         ];
 
@@ -112,21 +86,27 @@ class RoleHelper
     /**
      * Check if user can access another user's data
      */
-    public static function canAccessUser(int $requesterId, int $targetUserId): bool
+    public static function canAccessUser($requester, $targetUserId): bool
     {
-        if ($requesterId === $targetUserId) {
+        if (is_int($requester)) {
+            $requester = User::find($requester);
+        }
+        
+        if (!$requester) {
+            return false;
+        }
+        
+        if ($requester->id === $targetUserId) {
             return true; // Can always access own data
         }
 
-        $requester = User::find($requesterId);
         $target = User::find($targetUserId);
-
-        if (!$requester || !$target) {
+        if (!$target) {
             return false;
         }
 
-        // Contractors can access all users in their projects
-        if ($requester->role === 'contractor') {
+        // Contractors and Consultants can access all users in their projects
+        if (in_array($requester->role, ['contractor', 'consultant'])) {
             return true;
         }
 
@@ -136,5 +116,29 @@ class RoleHelper
         }
 
         return false;
+    }
+
+    /**
+     * Get all available roles
+     */
+    public static function getAllRoles(): array
+    {
+        return ['consultant', 'contractor', 'project_manager', 'site_engineer', 'stakeholder'];
+    }
+
+    /**
+     * Get role display name
+     */
+    public static function getRoleDisplayName(string $role): string
+    {
+        $names = [
+            'consultant' => 'Consultant',
+            'contractor' => 'Contractor', 
+            'project_manager' => 'Project Manager',
+            'site_engineer' => 'Site Engineer',
+            'stakeholder' => 'Stakeholder'
+        ];
+        
+        return $names[$role] ?? ucfirst(str_replace('_', ' ', $role));
     }
 }

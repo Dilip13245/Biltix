@@ -1,143 +1,16 @@
-/* Simple Toastr Styles */
-.toast-container {
+/* Default Toastr Positioning */
+#toast-container {
     position: fixed;
-    top: 20px;
-    z-index: 9999;
+    z-index: 999999;
 }
 
-[dir="ltr"] .toast-container {
-    right: 20px;
+/* RTL Support */
+[dir="rtl"] #toast-container.toast-top-left {
+    top: 12px;
+    left: 12px;
 }
 
-[dir="rtl"] .toast-container {
-    left: 20px;
-}
-
-.toast {
-    min-width: 300px;
-    padding: 15px 20px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: white;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    position: relative;
-    overflow: hidden;
-    animation: slideIn 0.3s ease-out;
-}
-
-.toast-success {
-    background-color: #10b981;
-}
-
-.toast-error {
-    background-color: #ef4444;
-}
-
-.toast-warning {
-    background-color: #f59e0b;
-}
-
-.toast-info {
-    background-color: #3b82f6;
-}
-
-.toast-close-button {
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    opacity: 0.7;
-    padding: 0;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.toast-close-button:hover {
-    opacity: 1;
-}
-
-.toast-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    background-color: rgba(255, 255, 255, 0.3);
-    animation: progress linear;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-[dir="rtl"] .toast {
-    animation: slideInRtl 0.3s ease-out;
-    direction: rtl;
-    text-align: right;
-}
-
-[dir="rtl"] .toast-close-button {
-    left: 15px;
-    right: auto;
-}
-
-@keyframes slideInRtl {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-@keyframes progress {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 0%;
-    }
-}
-
-/* Hide default toastr styles */
-#toast-container > div {
-    opacity: 1;
-    box-shadow: none;
-    background-image: none !important;
-    padding: 0;
-    margin: 0;
-    border-radius: 0;
-}
-
-#toast-container .toast-success:before,
-#toast-container .toast-error:before,
-#toast-container .toast-info:before,
-#toast-container .toast-warning:before {
-    display: none;
-}
-
-#toast-container .toast-close-button {
-    position: relative;
-    right: auto;
-    top: auto;
-    transform: none;
+[dir="ltr"] #toast-container.toast-top-right {
+    top: 12px;
+    right: 12px;
 }

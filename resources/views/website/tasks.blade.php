@@ -18,10 +18,12 @@
       <option>{{ __('messages.active') }}</option>
       <option>{{ __('messages.completed') }}</option>
     </select>
+    @can('tasks', 'create')
     <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
       <i class="fas fa-plus"></i>
       {{ __('messages.add_new_task') }}
     </button>
+    @endcan
   </div>
 </div>
 <section class="px-md-4">

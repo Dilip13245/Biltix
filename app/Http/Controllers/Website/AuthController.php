@@ -17,13 +17,25 @@ class AuthController extends Controller
             'user' => 'required'
         ]);
 
+        $rememberMe = $request->boolean('remember_me', false);
+        
         // Store in Laravel session
         session([
             'user_id' => $request->user_id,
             'token' => $request->token,
             'user' => $request->user,
-            'logged_in' => true
+            'logged_in' => true,
+            'remember_me' => $rememberMe
         ]);
+        
+        // Set session expiry based on remember me
+        if (!$rememberMe) {
+            // Session only: Set a timestamp and browser session ID
+            session([
+                'session_start_time' => time(),
+                'browser_session_id' => uniqid('browser_', true)
+            ]);
+        }
 
         return response()->json(['success' => true]);
     }

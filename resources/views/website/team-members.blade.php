@@ -24,6 +24,12 @@
                 </svg>
                 <span class="text-black">>{{ __('messages.filter') }}</span>
             </button>
+            @can('team', 'add')
+            <button class="btn orange_btn py-2" data-permission="team:add">
+                <i class="fas fa-plus"></i>
+                {{ __('messages.add_member') }}
+            </button>
+            @endcan
         </div>
     </div>
     <section class="px-md-4">

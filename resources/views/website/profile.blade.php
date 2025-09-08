@@ -10,24 +10,19 @@
     <link rel="stylesheet" href="{{ asset('website/css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <style>
-        #toast-container > .toast {
-            background-image: none !important;
-            opacity: 1;
-            box-shadow: 0 0 12px rgba(0,0,0,0.2);
-            width: 300px;
-            border-radius: 6px;
-            padding: 15px 15px 15px 50px;
-            margin: 0 0 6px;
+
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
         }
-        #toast-container > .toast-success {
-            background-color: #51A351;
-            color: #FFFFFF;
+        .error-message.show {
+            display: block;
         }
-        #toast-container > .toast-error {
-            background-color: #BD362F;
-            color: #FFFFFF;
+        .form-control.error {
+            border-color: #ef4444;
         }
     </style>
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -206,18 +201,22 @@
                                     <div class="col-12">
                                         <label class="form-label fw-medium">{{ __('auth.full_name') }}</label>
                                         <input type="text" class="form-control" id="editUserName" placeholder="{{ __('auth.enter_full_name') }}" style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+                                        <div class="error-message" id="editNameError"></div>
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label fw-medium">{{ __('auth.company_name') }}</label>
                                         <input type="text" class="form-control" id="editCompanyName" placeholder="{{ __('auth.enter_company_name') }}" style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+                                        <div class="error-message" id="editCompanyError"></div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label class="form-label fw-medium">{{ __('auth.mobile_number') }}</label>
                                         <input type="tel" class="form-control" id="editUserPhone" placeholder="{{ __('auth.enter_mobile') }}" style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+                                        <div class="error-message" id="editPhoneError"></div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label class="form-label fw-medium">{{ __('auth.email_address') }}</label>
                                         <input type="email" class="form-control" id="editUserEmail" placeholder="{{ __('auth.enter_email') }}" style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+                                        <div class="error-message" id="editEmailError"></div>
                                     </div>
                                 </div>
                             </div>
@@ -252,16 +251,19 @@
     <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script src="{{ asset('website/js/wow.js') }}"></script>
     <script src="{{ asset('website/js/custom.js') }}"></script>
-    
-    @include('website.layout.auth-check')
-    @include('website.layout.user-info')
+    <script src="{{ asset('website/js/universal-auth.js') }}"></script>
+    <script src="{{ asset('website/js/rtl-spacing-fix.js') }}"></script>
+    <script>
+        // Disable auth check on profile - Laravel middleware handles it
+        window.DISABLE_JS_AUTH_CHECK = true;
+    </script>
     
     <script>
         // Load user profile data
         document.addEventListener('DOMContentLoaded', async function() {
-            // Check if we have valid session data
-            const userId = sessionStorage.getItem('user_id');
-            const token = sessionStorage.getItem('token');
+            // Check if we have valid session data (both storages)
+            const userId = UniversalAuth.getUserId();
+            const token = UniversalAuth.getToken();
             
             if (!userId || !token) {
                 console.log('No session data, redirecting to login');
@@ -284,11 +286,11 @@
                     document.getElementById('employeeCount').textContent = userData.total_employees || '0';
                     document.getElementById('memberCount').textContent = userData.total_members || '0';
                 } else {
-                    toastr.error(response.message || 'Failed to load profile');
+                    toastr.error(response.message || '{{ __('auth.profile_load_failed') }}');
                 }
             } catch (error) {
                 console.error('Profile load error:', error);
-                toastr.error('Failed to load profile data');
+                toastr.error('{{ __('auth.profile_load_failed') }}');
             }
         });
         
@@ -312,14 +314,145 @@
             if (modal) modal.hide();
         }
         
+        // Validation functions
+        function clearEditErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+            document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+        }
+        
+        function showEditError(fieldId, errorId, message) {
+            const field = document.getElementById(fieldId);
+            const errorEl = document.getElementById(errorId);
+            if (field) field.classList.add('error');
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.add('show');
+            }
+        }
+        
+        function isValidName(name) {
+            return /^[a-zA-Z\s\-\'\.\.]+$/.test(name) && !/\d/.test(name) && !/[<>"'&\\]/.test(name);
+        }
+        
+        function isValidProfessionalEmail(email) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email) || email.length > 255) return false;
+            const domain = email.split('@')[1]?.toLowerCase();
+            const testDomains = ['example.com', 'example.org', 'test.com', 'localhost', 'domain.com'];
+            return !testDomains.includes(domain);
+        }
+        
+        function isDisposableEmail(email) {
+            const disposableDomains = [
+                'tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 
+                'temp-mail.org', 'throwaway.email', 'yopmail.com', 'maildrop.cc',
+                'sharklasers.com', 'example.com', 'example.org', 'test.com'
+            ];
+            const domain = email.split('@')[1]?.toLowerCase();
+            return disposableDomains.includes(domain);
+        }
+        
+        function isValidInternationalPhone(phone) {
+            const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+            const phoneRegex = /^[\+]?[1-9]\d{9,14}$/;
+            return phoneRegex.test(cleanPhone) && !/[a-zA-Z]/.test(cleanPhone);
+        }
+        
+        function isGenericCompanyName(companyName) {
+            const genericNames = [
+                'company', 'business', 'construction', 'contractor', 'consultant', 
+                'corp', 'inc', 'ltd', 'llc', 'firm', 'enterprise', 'group',
+                'organization', 'services', 'solutions', 'pvt', 'private'
+            ];
+            const nameLower = companyName.toLowerCase().trim();
+            return genericNames.some(generic => 
+                nameLower === generic || nameLower.includes(generic)
+            );
+        }
+        
+        function validateEditProfile() {
+            clearEditErrors();
+            let isValid = true;
+            
+            // Name validation
+            const name = document.getElementById('editUserName').value.trim();
+            if (!name) {
+                showEditError('editUserName', 'editNameError', '{{ __('auth.full_name_required') }}');
+                isValid = false;
+            } else if (name.length < 2) {
+                showEditError('editUserName', 'editNameError', '{{ __('auth.full_name_min') }}');
+                isValid = false;
+            } else if (name.length > 100) {
+                showEditError('editUserName', 'editNameError', '{{ __('auth.full_name_max') }}');
+                isValid = false;
+            } else if (!isValidName(name)) {
+                showEditError('editUserName', 'editNameError', '{{ __('auth.full_name_invalid') }}');
+                isValid = false;
+            }
+            
+            // Company name validation
+            const companyName = document.getElementById('editCompanyName').value.trim();
+            if (!companyName) {
+                showEditError('editCompanyName', 'editCompanyError', '{{ __('auth.company_name_required') }}');
+                isValid = false;
+            } else if (companyName.length < 2) {
+                showEditError('editCompanyName', 'editCompanyError', '{{ __('auth.company_name_min') }}');
+                isValid = false;
+            } else if (companyName.length > 200) {
+                showEditError('editCompanyName', 'editCompanyError', '{{ __('auth.company_name_max') }}');
+                isValid = false;
+            } else if (!/^[a-zA-Z0-9\s\-\&\.\_\,\(\)]+$/.test(companyName)) {
+                showEditError('editCompanyName', 'editCompanyError', '{{ __('auth.company_name_invalid') }}');
+                isValid = false;
+            } else if (isGenericCompanyName(companyName)) {
+                showEditError('editCompanyName', 'editCompanyError', '{{ __('auth.company_name_generic') }}');
+                isValid = false;
+            }
+            
+            // Phone validation
+            const phone = document.getElementById('editUserPhone').value.trim();
+            if (!phone) {
+                showEditError('editUserPhone', 'editPhoneError', '{{ __('auth.phone_required') }}');
+                isValid = false;
+            } else if (/\s/.test(phone)) {
+                showEditError('editUserPhone', 'editPhoneError', '{{ __('auth.phone_spaces') }}');
+                isValid = false;
+            } else if (!isValidInternationalPhone(phone)) {
+                showEditError('editUserPhone', 'editPhoneError', '{{ __('auth.phone_invalid') }}');
+                isValid = false;
+            }
+            
+            // Email validation
+            const email = document.getElementById('editUserEmail').value.trim();
+            if (!email) {
+                showEditError('editUserEmail', 'editEmailError', '{{ __('auth.email_required') }}');
+                isValid = false;
+            } else if (!isValidProfessionalEmail(email)) {
+                showEditError('editUserEmail', 'editEmailError', '{{ __('auth.email_invalid') }}');
+                isValid = false;
+            } else if (isDisposableEmail(email)) {
+                showEditError('editUserEmail', 'editEmailError', '{{ __('auth.email_disposable') }}');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
         async function saveProfile() {
+            if (!validateEditProfile()) {
+                return;
+            }
+            
             try {
                 const data = {
-                    user_id: sessionStorage.getItem('user_id'),
-                    name: document.getElementById('editUserName').value,
-                    company_name: document.getElementById('editCompanyName').value,
-                    phone: document.getElementById('editUserPhone').value,
-                    email: document.getElementById('editUserEmail').value
+                    user_id: UniversalAuth.getUserId(),
+                    name: document.getElementById('editUserName').value.trim(),
+                    company_name: document.getElementById('editCompanyName').value.trim(),
+                    phone: document.getElementById('editUserPhone').value.trim(),
+                    email: document.getElementById('editUserEmail').value.trim()
                 };
                 
                 const response = await api.updateProfile(data);
@@ -341,7 +474,7 @@
                 }
             } catch (error) {
                 console.error('Profile update error:', error);
-                toastr.error('Failed to update profile');
+                toastr.error('{{ __('auth.profile_update_failed') }}');
             }
         }
         
@@ -358,12 +491,8 @@
                         // Call API logout
                         await api.logout({});
                         
-                        // Clear browser storage
-                        sessionStorage.clear();
-                        localStorage.clear();
-                        
-                        // Clear Laravel session
-                        fetch('/auth/logout', {
+                        // Clear Laravel session first
+                        await fetch('/auth/logout', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -371,17 +500,24 @@
                             }
                         });
                         
+                        // Clear browser storage
+                        UniversalAuth.logout();
+                        
                         toastr.success('{{ __('auth.logged_out_successfully') }}');
                         
-                        // Force redirect
+                        // Force redirect and prevent back navigation
                         setTimeout(() => {
                             window.location.replace('/login');
+                            // Prevent back button
+                            history.pushState(null, null, '/login');
+                            window.addEventListener('popstate', function() {
+                                history.pushState(null, null, '/login');
+                            });
                         }, 500);
                         
                     } catch (error) {
                         console.error('Logout failed:', error);
-                        sessionStorage.clear();
-                        localStorage.clear();
+                        UniversalAuth.logout();
                         window.location.replace('/login');
                     }
                 }
@@ -398,20 +534,19 @@
                 confirmClass: 'btn-danger',
                 onConfirm: async () => {
                     try {
-                        const response = await api.deleteAccount({ user_id: sessionStorage.getItem('user_id') });
+                        const response = await api.deleteAccount({ user_id: UniversalAuth.getUserId() });
                         
                         if (response.code === 200) {
                             toastr.success(response.message);
                             setTimeout(() => {
-                                sessionStorage.clear();
-                                window.location.href = '/login';
+                                UniversalAuth.logout();
                             }, 2000);
                         } else {
                             toastr.error(response.message);
                         }
                     } catch (error) {
                         console.error('Delete account error:', error);
-                        toastr.error('Failed to delete account');
+                        toastr.error('{{ __('auth.account_delete_failed') }}');
                     }
                 }
             });

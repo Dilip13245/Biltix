@@ -292,6 +292,7 @@
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
     <script src="{{ asset('website/js/api-helpers.js') }}"></script>
     <script src="{{ asset('website/js/api-client.js') }}"></script>
+    <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script>
         function togglePassword(icon) {
             const input = icon.previousElementSibling;
@@ -392,20 +393,19 @@
             try {
                 // Use your existing API system
                 const response = await api.login(data);
+                console.log('API Login Response:', response);
                 
-                if (response.code === 200) {
-                    // Store session data
-                    console.log('Login successful, storing session data:', response.data);
-                    sessionStorage.setItem('user', JSON.stringify(response.data));
-                    sessionStorage.setItem('user_id', response.data.id);
-                    sessionStorage.setItem('token', response.data.token);
-                    console.log('Session data stored - user_id:', response.data.id, 'token:', response.data.token);
+                if (response && response.code === 200 && response.data) {
+                    // Store session data using UniversalAuth
+                    const rememberMe = document.getElementById('rememberMe').checked;
+                    UniversalAuth.login(response.data, rememberMe);
                     
                     // Set Laravel session via direct endpoint call
                     const sessionData = {
                         user_id: response.data.id,
                         token: response.data.token,
-                        user: response.data
+                        user: response.data,
+                        remember_me: rememberMe
                     };
                     
                     const sessionResponse = await fetch('/auth/set-session', {
@@ -417,20 +417,28 @@
                         body: JSON.stringify(sessionData)
                     });
                     
-                    console.log('Session setup response:', sessionResponse.status);
+                    console.log('Session setup response status:', sessionResponse.status);
                     
                     if (sessionResponse.ok) {
-                        // Verify session data is still there
-                        console.log('Final session check - user_id:', sessionStorage.getItem('user_id'), 'token:', sessionStorage.getItem('token'));
-                        toastr.success(response.message);
-                        window.location.href = '/dashboard';
+                        const sessionResult = await sessionResponse.json();
+                        console.log('Session setup result:', sessionResult);
+                        
+                        if (sessionResult.success) {
+                            toastr.success(response.message || 'Login successful');
+                            setTimeout(() => {
+                                window.location.href = '/dashboard';
+                            }, 1000);
+                        } else {
+                            toastr.error('Session setup failed');
+                        }
                     } else {
                         toastr.error('Session setup failed');
                     }
                 } else {
-                    toastr.error(response.message);
+                    toastr.error(response?.message || 'Login failed');
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 toastr.error(error.message || 'Connection error. Please try again.');
             } finally {
                 loginBtn.disabled = false;

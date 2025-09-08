@@ -86,4 +86,84 @@ return [
     'logout_confirmation' => 'Confirm Logout',
     'logout_confirmation_message' => 'Are you sure you want to logout?',
     'logged_out_successfully' => 'Logged out successfully',
+    
+    // Validation Messages
+    'full_name_required' => 'Full name is required',
+    'full_name_min' => 'Full name must be at least 2 characters',
+    'full_name_max' => 'Full name cannot exceed 100 characters',
+    'full_name_invalid' => 'Full name can only contain letters, spaces, hyphens, and apostrophes',
+    'full_name_special_chars' => 'Full name cannot contain special characters',
+    
+    'email_required' => 'Email address is required',
+    'email_invalid' => 'Please enter a valid professional email address',
+    'email_disposable' => 'Disposable email addresses are not allowed',
+    
+    'phone_required' => 'Phone number is required',
+    'phone_spaces' => 'Phone number cannot contain spaces',
+    'phone_invalid' => 'Please enter a valid phone number (10-15 digits)',
+    
+    'password_required' => 'Password is required',
+    'password_min' => 'Password must be at least 8 characters',
+    'password_strong' => 'Password must contain uppercase, lowercase, number, and special character',
+    
+    'confirm_password_required' => 'Please confirm your password',
+    'passwords_mismatch' => 'Passwords do not match',
+    
+    'company_name_required' => 'Company name is required',
+    'company_name_min' => 'Company name must be at least 2 characters',
+    'company_name_max' => 'Company name cannot exceed 200 characters',
+    'company_name_invalid' => 'Company name contains invalid characters',
+    'company_name_generic' => 'Please enter your actual company name',
+    'company_name_special_chars' => 'Company name cannot contain special characters',
+    'company_name_numbers' => 'Company name cannot be mostly numbers',
+    
+    'employee_count_required' => 'Employee count is required',
+    'employee_count_number' => 'Employee count must be a whole number',
+    'employee_count_min' => 'Employee count must be at least 1',
+    'employee_count_max' => 'Employee count cannot exceed 50,000',
+    
+    'designation_required' => 'Please select your designation',
+    'designation_invalid' => 'Invalid designation selected',
+    'designation_restricted' => 'Please contact admin for signup with this role or choose correct role',
+    
+    'member_name_required' => 'Team member name is required',
+    'member_name_min' => 'Team member name must be at least 2 characters',
+    'member_name_invalid' => 'Team member name contains invalid characters',
+    'member_phone_required' => 'Team member phone is required',
+    'member_phone_spaces' => 'Team member phone cannot contain spaces',
+    'member_phone_invalid' => 'Please enter a valid phone number for team member',
+    'member_phone_duplicate' => 'Duplicate phone numbers are not allowed',
+    
+    'mobile_required' => 'Mobile number is required',
+    'mobile_spaces' => 'Mobile number cannot contain spaces',
+    'mobile_invalid' => 'Please enter a valid mobile number (10-15 digits)',
+    
+    'otp_required' => 'OTP is required',
+    'otp_incomplete' => 'Please enter complete 6-digit OTP',
+    'otp_invalid' => 'Please enter a valid 6-digit OTP',
+    
+    'new_password_required' => 'New password is required',
+    'new_password_min' => 'New password must be at least 8 characters',
+    'new_password_max' => 'New password cannot exceed 128 characters',
+    'new_password_strong' => 'Password must contain uppercase, lowercase, number, and special character',
+    'confirm_new_password_required' => 'Please confirm your new password',
+    'new_passwords_mismatch' => 'New passwords do not match',
+    
+    // API Messages
+    'signup_success' => 'Registration successful! Welcome to Biltix.',
+    'login_success' => 'Login successful! Welcome back.',
+    'otp_sent' => 'OTP sent successfully to your mobile number',
+    'otp_verified' => 'OTP verified successfully',
+    'password_reset_success' => 'Password reset successfully',
+    'profile_updated' => 'Profile updated successfully',
+    'account_deleted' => 'Account deleted successfully',
+    
+    'connection_error' => 'Connection error. Please try again.',
+    'session_failed' => 'Session setup failed',
+    'profile_load_failed' => 'Failed to load profile data',
+    'profile_update_failed' => 'Failed to update profile',
+    'account_delete_failed' => 'Failed to delete account',
+    
+    'admin' => 'Admin',
+    'supervisor' => 'Supervisor'
 ];

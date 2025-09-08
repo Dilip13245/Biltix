@@ -469,7 +469,6 @@ class AuthController extends Controller
 
             $user->is_active = false;
             $user->is_deleted = true;
-            $user->deleted_at = now();
             $user->save();
 
             UserDevice::where('user_id', $user->id)->update([

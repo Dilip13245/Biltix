@@ -26,7 +26,16 @@ class VerifyApiKey
                 $apiKey = EncryptDecrypt::requestDecrypt($apiKey, 'api-key');
             }
             
-            if ($apiKey == config('constant.API_KEY')) {
+            $expectedApiKey = config('constant.API_KEY');
+            
+            // Debug logging
+            \Log::info('API Key Verification', [
+                'received' => $apiKey,
+                'expected' => $expectedApiKey,
+                'match' => $apiKey === $expectedApiKey
+            ]);
+            
+                if ($apiKey == $expectedApiKey) {
                 return $next($request);
             }
             if (Config::get('constant.ENCRYPTION_ENABLED') == 1) {

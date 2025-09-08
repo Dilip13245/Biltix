@@ -5,8 +5,9 @@ class ApiInterceptors {
         this.showLoading();
         
         // Add auth token if available
-        const token = sessionStorage.getItem('token');
-        console.log('Token from sessionStorage:', token ? 'exists' : 'missing');
+        const token = window.UniversalAuth ? UniversalAuth.getToken() : 
+                     (sessionStorage.getItem('token') || localStorage.getItem('token'));
+        console.log('Token from storage:', token ? 'exists' : 'missing');
         if (token) {
             config.headers['token'] = ApiEncryption.isEncryptionEnabled() 
                 ? ApiEncryption.encrypt(token) 
@@ -20,10 +21,10 @@ class ApiInterceptors {
         }
         
         // Add user_id to data if available
-        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
-        if (user.id && config.data) {
-            config.data.user_id = user.id;
-            console.log('User ID added to data:', user.id);
+        const userId = window.UniversalAuth ? UniversalAuth.getUserId() : null;
+        if (userId && config.data) {
+            config.data.user_id = userId;
+            console.log('User ID added to data:', userId);
         }
         
         console.log('Final request config:', config);
@@ -54,9 +55,15 @@ class ApiInterceptors {
     }
     
     static handleUnauthorized() {
-        console.log('API returned 401, redirecting to login');
-        sessionStorage.clear();
-        window.location.href = '/login';
+        console.log('API returned 401, clearing auth and redirecting to login');
+        // Use UniversalAuth if available, otherwise manual clear
+        if (window.UniversalAuth) {
+            UniversalAuth.logout();
+        } else {
+            sessionStorage.clear();
+            localStorage.clear();
+            window.location.href = '/login';
+        }
     }
     
     static showLoading() {

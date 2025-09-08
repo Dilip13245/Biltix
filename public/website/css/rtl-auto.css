@@ -17,6 +17,61 @@
   flex-direction: row-reverse !important;
 }
 
+/* Fix specific button classes with excessive gap */
+[dir="rtl"] .orange_btn,
+[dir="rtl"] .btn {
+  gap: 0.25rem !important; /* Reduce from 0.5rem to 0.25rem */
+}
+
+/* Remove extra spacing from buttons with gap property in RTL */
+[dir="rtl"] .orange_btn .fas,
+[dir="rtl"] .orange_btn .far,
+[dir="rtl"] .orange_btn .fab {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Add spacing for buttons without gap property */
+[dir="rtl"] .btn:not(.orange_btn) .fas,
+[dir="rtl"] .btn:not(.orange_btn) .far,
+[dir="rtl"] .btn:not(.orange_btn) .fab,
+[dir="rtl"] button:not(.orange_btn):not(.btn) .fas,
+[dir="rtl"] button:not(.orange_btn):not(.btn) .far,
+[dir="rtl"] button:not(.orange_btn):not(.btn) .fab {
+  padding-left: 0.25rem !important;
+  margin-right: 0 !important;
+}
+
+/* Bootstrap margin utilities RTL override */
+[dir="rtl"] .me-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+[dir="rtl"] .me-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+[dir="rtl"] .me-3 { margin-right: 0 !important; margin-left: 1rem !important; }
+[dir="rtl"] .me-4 { margin-right: 0 !important; margin-left: 1.5rem !important; }
+[dir="rtl"] .me-5 { margin-right: 0 !important; margin-left: 3rem !important; }
+
+[dir="rtl"] .ms-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+[dir="rtl"] .ms-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+[dir="rtl"] .ms-3 { margin-left: 0 !important; margin-right: 1rem !important; }
+[dir="rtl"] .ms-4 { margin-left: 0 !important; margin-right: 1.5rem !important; }
+[dir="rtl"] .ms-5 { margin-left: 0 !important; margin-right: 3rem !important; }
+
+/* Text alignment fixes */
+[dir="rtl"] .text-start { text-align: right !important; }
+[dir="rtl"] .text-end { text-align: left !important; }
+
+/* Flex direction fixes */
+[dir="rtl"] .d-flex {
+  direction: rtl;
+}
+
+/* Float fixes */
+[dir="rtl"] .float-start { float: right !important; }
+[dir="rtl"] .float-end { float: left !important; }
+
+/* Clean up - Remove conflicting CSS rules */
+/* Let JavaScript handle icon spacing for better control */
+
 /* Notification cards mobile responsive fixes */
 @media (max-width: 768px) {
   .notification-card .notification-icon {

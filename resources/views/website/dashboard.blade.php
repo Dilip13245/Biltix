@@ -79,35 +79,7 @@
         color: #6c757d;
     }
     
-    /* Toast Notifications */
-    .toast-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-    }
-    .custom-toast {
-        min-width: 300px;
-        border: none;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .toast-success {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
-    }
-    .toast-error {
-        background: linear-gradient(135deg, #dc3545, #e74c3c);
-        color: white;
-    }
-    .toast-warning {
-        background: linear-gradient(135deg, #ffc107, #fd7e14);
-        color: white;
-    }
-    .toast-info {
-        background: linear-gradient(135deg, #17a2b8, #007bff);
-        color: white;
-    }
+
     </style>
 
 
@@ -161,8 +133,20 @@
                                     <img src="{{ asset('website/images/icons/avtar.svg') }}" alt="user img"
                                         class="User_iMg">
                                     <span class=" text-end">
-                                        <h6 class="fs14 fw-medium black_color">{{ __('messages.john_smith') }}</h6>
-                                        <p class="Gray_color fs12 fw-normal">{{ __('messages.consultant') }}</p>
+                                        <h6 class="fs14 fw-medium black_color">
+                                            @if(isset($currentUser))
+                                                {{ $currentUser->name }}
+                                            @else
+                                                {{ __('messages.john_smith') }}
+                                            @endif
+                                        </h6>
+                                        <p class="Gray_color fs12 fw-normal">
+                                            @if(isset($currentUser))
+                                                {{ $currentUser->getRoleDisplayName() }}
+                                            @else
+                                                {{ __('messages.consultant') }}
+                                            @endif
+                                        </p>
                                     </span>
                                     <img src="{{ asset('website/images/icons/arrow-up.svg') }}" alt="user img"
                                         class="arrow">
@@ -196,7 +180,13 @@
                         <div class="card stat-card h-100">
                             <div class="card-body d-flex align-items-center">
                                 <div>
-                                    <div class="small_tXt">{{ __('messages.active_projects_count') }}</div>
+                                    <div class="small_tXt">
+                                        @if(isset($currentUser) && $currentUser->getDashboardAccess() === 'assigned_only')
+                                            {{ __('messages.assigned_projects') }}
+                                        @else
+                                            {{ __('messages.active_projects_count') }}
+                                        @endif
+                                    </div>
                                     <div class="stat-value">12</div>
                                 </div>
                                 <span class="ms-auto stat-icon bg1"><img
@@ -247,12 +237,20 @@
 
                 <!-- Ongoing Projects Title & Filter -->
                 <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4 mt-3 mt-md-4 wow fadeInUp flex-wrap gap-2">
-                    <h5 class="fw-bold mb-0">{{ __('messages.ongoing_projects') }}</h5>
+                    <h5 class="fw-bold mb-0">
+                        @if(isset($currentUser) && $currentUser->getDashboardAccess() === 'assigned_only')
+                            {{ __('messages.assigned_projects') }}
+                        @else
+                            {{ __('messages.ongoing_projects') }}
+                        @endif
+                    </h5>
                     <div class="d-flex align-items-center gap-2">
+                        @can('projects', 'create')
                         <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createProjectModal">
                             <i class="fas fa-plus"></i>
                             {{ __('messages.new_project') }}
                         </button>
+                        @endcan
                         <select class="form-select w-auto" id="statusFilter">
                             <option value="all">{{ __('messages.all_status') }}</option>
                             <option value="active">{{ __('messages.active') }}</option>
@@ -431,10 +429,10 @@
     @include('website.modals.search-modal')
     @include('website.modals.drawing-modal')
     
-    <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+
 
     <!-- Create Project Modal -->
+    @can('projects', 'create')
     <div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -605,6 +603,7 @@
         </div>
       </div>
     </div>
+    @endcan
 
     <script>
         // Filter functionality
@@ -833,42 +832,24 @@
             }
         });
         
-        // Toast notification function
+        // Toast notification function using toastr
         function showToast(message, type = 'success') {
-            const toastContainer = document.getElementById('toastContainer');
-            const toastId = 'toast-' + Date.now();
-            
-            const icons = {
-                success: 'fas fa-check-circle',
-                error: 'fas fa-times-circle',
-                warning: 'fas fa-exclamation-triangle',
-                info: 'fas fa-info-circle'
-            };
-            
-            const toastHtml = `
-                <div class="toast custom-toast toast-${type}" id="${toastId}" role="alert">
-                    <div class="toast-body d-flex align-items-center p-3">
-                        <i class="${icons[type]} me-2 fa-lg"></i>
-                        <div class="flex-grow-1">${message}</div>
-                        <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="toast"></button>
-                    </div>
-                </div>
-            `;
-            
-            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
-            
-            const toastElement = document.getElementById(toastId);
-            const toast = new bootstrap.Toast(toastElement, {
-                autohide: true,
-                delay: type === 'error' ? 5000 : 3000
-            });
-            
-            toast.show();
-            
-            // Remove toast element after it's hidden
-            toastElement.addEventListener('hidden.bs.toast', function() {
-                toastElement.remove();
-            });
+            switch(type) {
+                case 'success':
+                    toastr.success(message);
+                    break;
+                case 'error':
+                    toastr.error(message);
+                    break;
+                case 'warning':
+                    toastr.warning(message);
+                    break;
+                case 'info':
+                    toastr.info(message);
+                    break;
+                default:
+                    toastr.success(message);
+            }
         }
     </script>
 
@@ -895,7 +876,12 @@
     <script src="{{ asset('website/js/drawing.js') }}"></script>
     <script src="{{ asset('website/js/confirmation-modal.js') }}"></script>
     
-    @include('website.layout.auth-check')
+    <script src="{{ asset('website/js/universal-auth.js') }}"></script>
+    <script src="{{ asset('website/js/rtl-spacing-fix.js') }}"></script>
+    <script>
+        // Disable auth check on dashboard - Laravel middleware handles it
+        window.DISABLE_JS_AUTH_CHECK = true;
+    </script>
     
     <script>
         // Logout function
@@ -913,8 +899,7 @@
                         await api.logout({});
                         
                         // Clear browser storage
-                        sessionStorage.clear();
-                        localStorage.clear();
+                        UniversalAuth.logout();
                         
                         // Clear Laravel session
                         fetch('/auth/logout', {

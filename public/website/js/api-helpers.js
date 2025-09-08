@@ -96,12 +96,13 @@ class ApiHelpers {
     
     // Get user from session
     static getCurrentUser() {
-        return JSON.parse(sessionStorage.getItem('user') || '{}');
+        const userStr = sessionStorage.getItem('user') || localStorage.getItem('user') || '{}';
+        return JSON.parse(userStr);
     }
     
     // Check if user is logged in
     static isLoggedIn() {
-        return !!sessionStorage.getItem('token');
+        return !!(sessionStorage.getItem('token') || localStorage.getItem('token'));
     }
 }
 

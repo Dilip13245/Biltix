@@ -5,22 +5,22 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Session;
 
 class WebGuest
 {
+    /**
+     * Handle an incoming request.
+     */
     public function handle(Request $request, Closure $next): Response
     {
-        // Only redirect from login/register/forgot-password pages
-        $guestOnlyPaths = ['/login', '/register', '/forgot-password'];
-        
-        if (in_array($request->getPathInfo(), $guestOnlyPaths)) {
-            if (Session::has('user_id') && Session::has('token')) {
-                \Log::info('WebGuest middleware redirecting authenticated user from: ' . $request->getPathInfo());
-                return redirect()->route('dashboard');
-            }
+        $userId = session('user_id');
+        $sessionToken = session('token');
+
+        // If already logged in, redirect to dashboard
+        if ($userId && $sessionToken) {
+            return redirect()->route('dashboard');
         }
-        
+
         return $next($request);
     }
 }

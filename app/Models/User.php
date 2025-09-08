@@ -56,4 +56,38 @@ class User extends Authenticatable
     {
         return $this->hasMany(Task::class, 'assigned_to', 'id');
     }
+
+    // Permission methods
+    public function hasPermission($module, $action)
+    {
+        return \App\Helpers\RoleHelper::hasPermission($this, $module, $action);
+    }
+
+    public function lacksPermission($module, $action)
+    {
+        return !$this->hasPermission($module, $action);
+    }
+
+    public function hasRole($role)
+    {
+        if (is_array($role)) {
+            return in_array($this->role, $role);
+        }
+        return $this->role === $role;
+    }
+
+    public function getDashboardAccess()
+    {
+        return \App\Helpers\RoleHelper::getDashboardAccess($this->role);
+    }
+
+    public function canRegister()
+    {
+        return \App\Helpers\RoleHelper::canRegister($this->role);
+    }
+
+    public function getRoleDisplayName()
+    {
+        return \App\Helpers\RoleHelper::getRoleDisplayName($this->role);
+    }
 }

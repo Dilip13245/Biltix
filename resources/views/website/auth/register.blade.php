@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <style>
         body {
             background: #f5f5f5;
@@ -483,12 +482,11 @@
                                             <select class="form-select" name="designation" id="designation" required
                                                 style="{{ is_rtl() ? 'padding-left: 48px; padding-right: 16px;' : 'padding-right: 48px; padding-left: 16px;' }}">
                                                 <option value="">{{ __('auth.select_designation') }}</option>
-                                                <option value="contractor">{{ __('auth.contractor') }}</option>
                                                 <option value="consultant">{{ __('auth.consultant') }}</option>
-                                                {{-- <option value="site_engineer">{{ __('auth.site_engineer') }}</option>
-                                                <option value="project_manager">{{ __('auth.project_manager') }}
-                                                </option>
-                                                <option value="stakeholder">{{ __('auth.stakeholder') }}</option> --}}
+                                                <option value="contractor">{{ __('auth.contractor') }}</option>
+                                                <option value="site_engineer">{{ __('auth.site_engineer') }}</option>
+                                                <option value="project_manager">{{ __('auth.project_manager') }}</option>
+                                                <option value="stakeholder">{{ __('auth.stakeholder') }}</option>
                                             </select>
                                             <i class="fas fa-chevron-down input-icon"></i>
                                         </div>
@@ -505,17 +503,19 @@
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label">{{ __('auth.member_name') }}</label>
+                                                <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">(Optional)</span></label>
                                                 <input type="text" class="form-control" name="members[0][name]"
                                                     placeholder="{{ __('auth.enter_member_name') }}">
                                             </div>
+                                            <div class="error-message" id="memberNameError0"></div>
                                         </div>
                                         <div class="col-12 col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label">{{ __('auth.phone_number') }}</label>
+                                                <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">(Optional)</span></label>
                                                 <input type="tel" class="form-control" name="members[0][phone]"
                                                     placeholder="{{ __('auth.enter_member_phone') }}">
                                             </div>
+                                            <div class="error-message" id="memberPhoneError0"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -557,7 +557,10 @@
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
     <script src="{{ asset('website/js/api-helpers.js') }}"></script>
     <script src="{{ asset('website/js/api-client.js') }}"></script>
+    <script src="{{ asset('website/js/registration-validation.js') }}"></script>
     <script>
+        // Initialize validator
+        const validator = new RegistrationValidator();
         let currentStep = 1;
         let memberCount = 1;
         
@@ -575,14 +578,8 @@
         }
 
         function validateStep(step) {
+            clearErrors();
             let isValid = true;
-
-            // Clear previous errors
-            document.querySelectorAll('.error-message').forEach(el => {
-                el.classList.remove('show');
-                el.textContent = '';
-            });
-            document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('error'));
 
             if (step === 1) {
                 const fullName = document.getElementById('full_name');
@@ -592,47 +589,68 @@
                 const confirmPassword = document.getElementById('confirm_password');
 
                 // Full name validation
-                if (!fullName.value.trim()) {
-                    showError(fullName, 'fullNameError', '{{ __('validation.full_name_required') }}');
+                const name = fullName.value.trim();
+                if (!name) {
+                    showError('full_name', 'fullNameError', '{{ __('auth.full_name_required') }}');
                     isValid = false;
-                } else if (fullName.value.trim().length < 2) {
-                    showError(fullName, 'fullNameError', '{{ __('validation.full_name_min') }}');
+                } else if (name.length < 2) {
+                    showError('full_name', 'fullNameError', '{{ __('auth.full_name_min') }}');
+                    isValid = false;
+                } else if (name.length > 100) {
+                    showError('full_name', 'fullNameError', '{{ __('auth.full_name_max') }}');
+                    isValid = false;
+                } else if (!isValidName(name)) {
+                    showError('full_name', 'fullNameError', '{{ __('auth.full_name_invalid') }}');
+                    isValid = false;
+                } else if (hasSpecialChars(name)) {
+                    showError('full_name', 'fullNameError', '{{ __('auth.full_name_special_chars') }}');
                     isValid = false;
                 }
 
                 // Email validation
-                if (!email.value.trim()) {
-                    showError(email, 'emailError', '{{ __('validation.email_required') }}');
+                const emailValue = email.value.trim();
+                if (!emailValue) {
+                    showError('email', 'emailError', '{{ __('auth.email_required') }}');
                     isValid = false;
-                } else if (!isValidEmail(email.value)) {
-                    showError(email, 'emailError', '{{ __('validation.email_invalid') }}');
+                } else if (!isValidProfessionalEmail(emailValue)) {
+                    showError('email', 'emailError', '{{ __('auth.email_invalid') }}');
+                    isValid = false;
+                } else if (isDisposableEmail(emailValue)) {
+                    showError('email', 'emailError', '{{ __('auth.email_disposable') }}');
                     isValid = false;
                 }
 
                 // Phone validation
-                if (!phone.value.trim()) {
-                    showError(phone, 'phoneError', '{{ __('validation.phone_required') }}');
+                const phoneValue = phone.value.trim();
+                if (!phoneValue) {
+                    showError('phone', 'phoneError', '{{ __('auth.phone_required') }}');
                     isValid = false;
-                } else if (!isValidPhone(phone.value)) {
-                    showError(phone, 'phoneError', '{{ __('validation.phone_invalid') }}');
+                } else if (/\s/.test(phoneValue)) {
+                    showError('phone', 'phoneError', '{{ __('auth.phone_spaces') }}');
+                    isValid = false;
+                } else if (!isValidInternationalPhone(phoneValue)) {
+                    showError('phone', 'phoneError', '{{ __('auth.phone_invalid') }}');
                     isValid = false;
                 }
 
                 // Password validation
-                if (!password.value.trim()) {
-                    showError(password, 'passwordError', '{{ __('validation.password_required') }}');
+                if (!password.value) {
+                    showError('password', 'passwordError', '{{ __('auth.password_required') }}');
                     isValid = false;
-                } else if (password.value.length < 6) {
-                    showError(password, 'passwordError', '{{ __('validation.password_min') }}');
+                } else if (password.value.length < 8) {
+                    showError('password', 'passwordError', '{{ __('auth.password_min') }}');
+                    isValid = false;
+                } else if (!isStrongPassword(password.value)) {
+                    showError('password', 'passwordError', '{{ __('auth.password_strong') }}');
                     isValid = false;
                 }
 
                 // Confirm password validation
-                if (!confirmPassword.value.trim()) {
-                    showError(confirmPassword, 'confirmPasswordError', '{{ __('validation.password_confirm_required') }}');
+                if (!confirmPassword.value) {
+                    showError('confirm_password', 'confirmPasswordError', '{{ __('auth.confirm_password_required') }}');
                     isValid = false;
                 } else if (password.value !== confirmPassword.value) {
-                    showError(confirmPassword, 'confirmPasswordError', '{{ __('validation.password_mismatch') }}');
+                    showError('confirm_password', 'confirmPasswordError', '{{ __('auth.passwords_mismatch') }}');
                     isValid = false;
                 }
 
@@ -642,23 +660,108 @@
                 const designation = document.getElementById('designation');
 
                 // Company name validation
-                if (!companyName.value.trim()) {
-                    showError(companyName, 'companyNameError', '{{ __('validation.company_name_required') }}');
+                const companyValue = companyName.value.trim();
+                if (!companyValue) {
+                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_required') }}');
+                    isValid = false;
+                } else if (companyValue.length < 2) {
+                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_min') }}');
+                    isValid = false;
+                } else if (companyValue.length > 200) {
+                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_max') }}');
+                    isValid = false;
+                } else if (!/^[a-zA-Z0-9\s\-\&\.\_\,\(\)]+$/.test(companyValue)) {
+                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_invalid') }}');
+                    isValid = false;
+                } else if (isGenericCompanyName(companyValue)) {
+                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_generic') }}');
+                    isValid = false;
+                } else if (hasSpecialChars(companyValue)) {
+                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_special_chars') }}');
+                    isValid = false;
+                } else if (/[0-9]{10,}/.test(companyValue)) {
+                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_numbers') }}');
                     isValid = false;
                 }
 
                 // Employee count validation
-                if (!employeeCount.value.trim()) {
-                    showError(employeeCount, 'employeeCountError', '{{ __('validation.employee_count_required') }}');
+                const empCount = employeeCount.value.trim();
+                if (!empCount) {
+                    showError('employee_count', 'employeeCountError', '{{ __('auth.employee_count_required') }}');
                     isValid = false;
-                } else if (parseInt(employeeCount.value) < 1) {
-                    showError(employeeCount, 'employeeCountError', '{{ __('validation.employee_count_min') }}');
+                } else if (isNaN(empCount) || !Number.isInteger(Number(empCount))) {
+                    showError('employee_count', 'employeeCountError', '{{ __('auth.employee_count_number') }}');
+                    isValid = false;
+                } else if (parseInt(empCount) < 1) {
+                    showError('employee_count', 'employeeCountError', '{{ __('auth.employee_count_min') }}');
+                    isValid = false;
+                } else if (parseInt(empCount) > 50000) {
+                    showError('employee_count', 'employeeCountError', '{{ __('auth.employee_count_max') }}');
                     isValid = false;
                 }
 
                 // Designation validation
                 if (!designation.value) {
-                    showError(designation, 'designationError', '{{ __('validation.designation_required') }}');
+                    showError('designation', 'designationError', '{{ __('auth.designation_required') }}');
+                    isValid = false;
+                } else if (!['consultant', 'contractor', 'site_engineer', 'project_manager', 'stakeholder'].includes(designation.value)) {
+                    showError('designation', 'designationError', '{{ __('auth.designation_invalid') }}');
+                    isValid = false;
+                } else if (!['consultant', 'contractor'].includes(designation.value)) {
+                    showError('designation', 'designationError', '{{ __('auth.designation_restricted') }}');
+                    isValid = false;
+                }
+            } else if (step === 3) {
+                // Team members validation
+                const memberRows = document.querySelectorAll('.member-row');
+                let memberCount = 0;
+                let phoneNumbers = [document.getElementById('phone').value.trim()];
+                
+                memberRows.forEach((row, index) => {
+                    const nameInput = row.querySelector('input[name*="[name]"]');
+                    const phoneInput = row.querySelector('input[name*="[phone]"]');
+                    
+                    if (nameInput && phoneInput) {
+                        const memberName = nameInput.value.trim();
+                        const memberPhone = phoneInput.value.trim();
+                        
+                        // Only validate if user enters data in either field
+                        if (memberName || memberPhone) {
+                            memberCount++;
+                            
+                            // If one field filled, both are required
+                            if (!memberName) {
+                                showError(`memberNameError${index}`, `memberNameError${index}`, '{{ __('auth.member_name_required') }}');
+                                isValid = false;
+                            } else if (memberName.length < 2) {
+                                showError(`memberNameError${index}`, `memberNameError${index}`, '{{ __('auth.member_name_min') }}');
+                                isValid = false;
+                            } else if (!isValidName(memberName)) {
+                                showError(`memberNameError${index}`, `memberNameError${index}`, '{{ __('auth.member_name_invalid') }}');
+                                isValid = false;
+                            }
+                            
+                            if (!memberPhone) {
+                                showError(`memberPhoneError${index}`, `memberPhoneError${index}`, '{{ __('auth.member_phone_required') }}');
+                                isValid = false;
+                            } else if (/\s/.test(memberPhone)) {
+                                showError(`memberPhoneError${index}`, `memberPhoneError${index}`, '{{ __('auth.member_phone_spaces') }}');
+                                isValid = false;
+                            } else if (!isValidInternationalPhone(memberPhone)) {
+                                showError(`memberPhoneError${index}`, `memberPhoneError${index}`, '{{ __('auth.member_phone_invalid') }}');
+                                isValid = false;
+                            } else if (phoneNumbers.includes(memberPhone)) {
+                                showError(`memberPhoneError${index}`, `memberPhoneError${index}`, '{{ __('auth.member_phone_duplicate') }}');
+                                isValid = false;
+                            } else {
+                                phoneNumbers.push(memberPhone);
+                            }
+                        }
+                    }
+                });
+                
+                if (memberCount > 50) {
+                    showError(document.querySelector('.member-row'), 'membersError', 'Cannot add more than 50 team members');
                     isValid = false;
                 }
             }
@@ -666,21 +769,93 @@
             return isValid;
         }
 
-        function showError(fieldElement, errorElementId, message) {
-            fieldElement.classList.add('error');
+        function showError(fieldId, errorElementId, message) {
+            const fieldElement = document.getElementById(fieldId);
             const errorElement = document.getElementById(errorElementId);
-            errorElement.textContent = message;
-            errorElement.classList.add('show');
+            if (fieldElement) fieldElement.classList.add('error');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.classList.add('show');
+            }
+        }
+        
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.classList.remove('show');
+                el.textContent = '';
+            });
+            document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('error'));
         }
 
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
+        function isValidProfessionalEmail(email) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email) || email.length > 255) return false;
+            
+            // Block test/example domains
+            const domain = email.split('@')[1]?.toLowerCase();
+            const testDomains = ['example.com', 'example.org', 'test.com', 'localhost', 'domain.com'];
+            if (testDomains.includes(domain)) return false;
+            
+            return true;
+        }
+        
+        function isDisposableEmail(email) {
+            const disposableDomains = [
+                'tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 
+                'temp-mail.org', 'throwaway.email', 'yopmail.com', 'maildrop.cc',
+                'sharklasers.com', 'example.com', 'example.org', 'test.com'
+            ];
+            const domain = email.split('@')[1]?.toLowerCase();
+            return disposableDomains.includes(domain);
         }
 
-        function isValidPhone(phone) {
-            const phoneRegex = /^[+]?[0-9]{10,15}$/;
-            return phoneRegex.test(phone.replace(/\s+/g, ''));
+        function isValidInternationalPhone(phone) {
+            const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+            // Must be 10-15 digits, can start with +, no letters or special chars
+            const phoneRegex = /^[\+]?[1-9]\d{9,14}$/;
+            return phoneRegex.test(cleanPhone) && !/[a-zA-Z]/.test(cleanPhone);
+        }
+        
+        function isStrongPassword(password) {
+            const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+            return strongRegex.test(password);
+        }
+        
+        function isGenericCompanyName(companyName) {
+            const genericNames = [
+                'company', 'business', 'construction', 'contractor', 'consultant', 
+                'corp', 'inc', 'ltd', 'llc', 'firm', 'enterprise', 'group',
+                'organization', 'services', 'solutions', 'pvt', 'private'
+            ];
+            const nameLower = companyName.toLowerCase().trim();
+            return genericNames.some(generic => 
+                nameLower === generic || nameLower.includes(generic)
+            );
+        }
+        
+        // Additional validation helpers
+        function hasSpecialChars(text) {
+            return /[<>"'&\\]/.test(text);
+        }
+        
+        function isValidName(name) {
+            // Only letters, spaces, hyphens, apostrophes, and dots allowed
+            return /^[a-zA-Z\s\-\'\.\.]+$/.test(name) && !hasSpecialChars(name) && !/\d/.test(name);
+        }
+        
+        function showMemberError(inputElement, message) {
+            inputElement.classList.add('error');
+            
+            // Create or find error element
+            let errorEl = inputElement.parentNode.querySelector('.error-message');
+            if (!errorEl) {
+                errorEl = document.createElement('div');
+                errorEl.className = 'error-message';
+                inputElement.parentNode.appendChild(errorEl);
+            }
+            
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
         }
 
         function nextStep() {
@@ -721,15 +896,17 @@
                 <div class="row g-3">
                     <div class="col-12 col-md-6">
                         <div class="mb-3">
-                            <label class="form-label">{{ __('auth.member_name') }}</label>
+                            <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">(Optional)</span></label>
                             <input type="text" class="form-control" name="members[${memberCount}][name]" placeholder="{{ __('auth.enter_member_name') }}">
                         </div>
+                        <div class="error-message" id="memberNameError${memberCount}"></div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="mb-3">
-                            <label class="form-label">{{ __('auth.phone_number') }}</label>
+                            <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">(Optional)</span></label>
                             <input type="tel" class="form-control" name="members[${memberCount}][phone]" placeholder="{{ __('auth.enter_member_phone') }}">
                         </div>
+                        <div class="error-message" id="memberPhoneError${memberCount}"></div>
                     </div>
                 </div>
             `;
@@ -738,6 +915,11 @@
         }
 
         async function submitForm() {
+            // Validate Step 3 before submitting
+            if (!validateStep(3)) {
+                return;
+            }
+            
             const form = document.getElementById('registrationForm');
             const formData = new FormData(form);
 
@@ -754,18 +936,29 @@
                 device_type: 'W'
             };
 
-            // Collect members
+            // Collect and validate members before sending to API
             const members = [];
+            const phoneNumbers = new Set([data.phone]);
+            
             for (let i = 0; i < memberCount; i++) {
                 const memberName = formData.get(`members[${i}][name]`);
                 const memberPhone = formData.get(`members[${i}][phone]`);
-                if (memberName && memberPhone) {
+                
+                // Only include valid members (both name and phone filled and valid)
+                if (memberName && memberPhone && 
+                    memberName.trim().length >= 2 && 
+                    isValidInternationalPhone(memberPhone.trim()) &&
+                    !phoneNumbers.has(memberPhone.trim())) {
+                    
                     members.push({
-                        member_name: memberName,
-                        member_phone: memberPhone
+                        member_name: memberName.trim(),
+                        member_phone: memberPhone.trim()
                     });
+                    phoneNumbers.add(memberPhone.trim());
                 }
             }
+            
+            // Only add members if we have valid ones
             if (members.length > 0) {
                 data.members = members;
             }

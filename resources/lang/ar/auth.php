@@ -86,4 +86,84 @@ return [
     'logout_confirmation' => 'تأكيد تسجيل الخروج',
     'logout_confirmation_message' => 'هل أنت متأكد من تسجيل الخروج؟',
     'logged_out_successfully' => 'تم تسجيل الخروج بنجاح',
+    
+    // Validation Messages
+    'full_name_required' => 'الاسم الكامل مطلوب',
+    'full_name_min' => 'الاسم الكامل يجب أن يكون على الأقل حرفين',
+    'full_name_max' => 'الاسم الكامل لا يمكن أن يتجاوز 100 حرف',
+    'full_name_invalid' => 'الاسم الكامل يمكن أن يحتوي فقط على أحرف ومسافات وشرطات وفواصل عليا',
+    'full_name_special_chars' => 'الاسم الكامل لا يمكن أن يحتوي على رموز خاصة',
+    
+    'email_required' => 'عنوان البريد الإلكتروني مطلوب',
+    'email_invalid' => 'يرجى إدخال عنوان بريد إلكتروني مهني صالح',
+    'email_disposable' => 'عناوين البريد الإلكتروني المؤقتة غير مسموحة',
+    
+    'phone_required' => 'رقم الهاتف مطلوب',
+    'phone_spaces' => 'رقم الهاتف لا يمكن أن يحتوي على مسافات',
+    'phone_invalid' => 'يرجى إدخال رقم هاتف صالح (10-15 رقم)',
+    
+    'password_required' => 'كلمة المرور مطلوبة',
+    'password_min' => 'كلمة المرور يجب أن تكون على الأقل 8 أحرف',
+    'password_strong' => 'كلمة المرور يجب أن تحتوي على أحرف كبيرة وصغيرة ورقم ورمز خاص',
+    
+    'confirm_password_required' => 'يرجى تأكيد كلمة المرور',
+    'passwords_mismatch' => 'كلمات المرور غير متطابقة',
+    
+    'company_name_required' => 'اسم الشركة مطلوب',
+    'company_name_min' => 'اسم الشركة يجب أن يكون على الأقل حرفين',
+    'company_name_max' => 'اسم الشركة لا يمكن أن يتجاوز 200 حرف',
+    'company_name_invalid' => 'اسم الشركة يحتوي على أحرف غير صالحة',
+    'company_name_generic' => 'يرجى إدخال اسم شركتك الفعلي',
+    'company_name_special_chars' => 'اسم الشركة لا يمكن أن يحتوي على رموز خاصة',
+    'company_name_numbers' => 'اسم الشركة لا يمكن أن يكون معظمه أرقام',
+    
+    'employee_count_required' => 'عدد الموظفين مطلوب',
+    'employee_count_number' => 'عدد الموظفين يجب أن يكون رقم صحيح',
+    'employee_count_min' => 'عدد الموظفين يجب أن يكون على الأقل 1',
+    'employee_count_max' => 'عدد الموظفين لا يمكن أن يتجاوز 50,000',
+    
+    'designation_required' => 'يرجى اختيار منصبك',
+    'designation_invalid' => 'منصب غير صالح تم اختياره',
+    'designation_restricted' => 'يرجى الاتصال بالمدير للتسجيل بهذا الدور أو اختيار الدور الصحيح',
+    
+    'member_name_required' => 'اسم عضو الفريق مطلوب',
+    'member_name_min' => 'اسم عضو الفريق يجب أن يكون على الأقل حرفين',
+    'member_name_invalid' => 'اسم عضو الفريق يحتوي على أحرف غير صالحة',
+    'member_phone_required' => 'رقم هاتف عضو الفريق مطلوب',
+    'member_phone_spaces' => 'رقم هاتف عضو الفريق لا يمكن أن يحتوي على مسافات',
+    'member_phone_invalid' => 'يرجى إدخال رقم هاتف صالح لعضو الفريق',
+    'member_phone_duplicate' => 'أرقام الهواتف المكررة غير مسموحة',
+    
+    'mobile_required' => 'رقم الجوال مطلوب',
+    'mobile_spaces' => 'رقم الجوال لا يمكن أن يحتوي على مسافات',
+    'mobile_invalid' => 'يرجى إدخال رقم جوال صالح (10-15 رقم)',
+    
+    'otp_required' => 'رمز التحقق مطلوب',
+    'otp_incomplete' => 'يرجى إدخال رمز التحقق المكون من 6 أرقام كاملاً',
+    'otp_invalid' => 'يرجى إدخال رمز تحقق صالح مكون من 6 أرقام',
+    
+    'new_password_required' => 'كلمة المرور الجديدة مطلوبة',
+    'new_password_min' => 'كلمة المرور الجديدة يجب أن تكون على الأقل 8 أحرف',
+    'new_password_max' => 'كلمة المرور الجديدة لا يمكن أن تتجاوز 128 حرف',
+    'new_password_strong' => 'كلمة المرور يجب أن تحتوي على أحرف كبيرة وصغيرة ورقم ورمز خاص',
+    'confirm_new_password_required' => 'يرجى تأكيد كلمة المرور الجديدة',
+    'new_passwords_mismatch' => 'كلمات المرور الجديدة غير متطابقة',
+    
+    // API Messages
+    'signup_success' => 'تم التسجيل بنجاح! مرحباً بك في بيلتكس.',
+    'login_success' => 'تم تسجيل الدخول بنجاح! مرحباً بعودتك.',
+    'otp_sent' => 'تم إرسال رمز التحقق بنجاح إلى رقم جوالك',
+    'otp_verified' => 'تم التحقق من الرمز بنجاح',
+    'password_reset_success' => 'تم إعادة تعيين كلمة المرور بنجاح',
+    'profile_updated' => 'تم تحديث الملف الشخصي بنجاح',
+    'account_deleted' => 'تم حذف الحساب بنجاح',
+    
+    'connection_error' => 'خطأ في الاتصال. يرجى المحاولة مرة أخرى.',
+    'session_failed' => 'فشل في إعداد الجلسة',
+    'profile_load_failed' => 'فشل في تحميل بيانات الملف الشخصي',
+    'profile_update_failed' => 'فشل في تحديث الملف الشخصي',
+    'account_delete_failed' => 'فشل في حذف الحساب',
+    
+    'admin' => 'مدير',
+    'supervisor' => 'مشرف'
 ];

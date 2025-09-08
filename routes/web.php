@@ -38,13 +38,15 @@ Route::middleware('web.guest')->group(function () {
     Route::get('/forgot-password', [App\Http\Controllers\Website\AuthController::class, 'showForgotPassword'])->name('forgot-password');
     
     // Auth API endpoints
-    Route::post('/auth/set-session', [App\Http\Controllers\Website\AuthController::class, 'setSession'])->name('auth.set-session');
-    Route::get('/auth/check-session', [App\Http\Controllers\Website\AuthController::class, 'checkSession'])->name('auth.check-session');
     Route::post('/auth/register', [App\Http\Controllers\Website\AuthController::class, 'register'])->name('auth.register');
     Route::post('/auth/send-otp', [App\Http\Controllers\Website\AuthController::class, 'sendOtp'])->name('auth.send-otp');
     Route::post('/auth/verify-otp', [App\Http\Controllers\Website\AuthController::class, 'verifyOtp'])->name('auth.verify-otp');
     Route::post('/auth/reset-password', [App\Http\Controllers\Website\AuthController::class, 'resetPassword'])->name('auth.reset-password');
 });
+
+// Session management routes (accessible to all)
+Route::post('/auth/set-session', [App\Http\Controllers\Website\AuthController::class, 'setSession'])->name('auth.set-session');
+Route::get('/auth/check-session', [App\Http\Controllers\Website\AuthController::class, 'checkSession'])->name('auth.check-session');
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +59,7 @@ Route::middleware('web.auth')->group(function () {
         return view('website.profile');
     })->name('website.profile');
     
+
     // Logout route
     Route::post('/auth/logout', [App\Http\Controllers\Website\AuthController::class, 'logout'])->name('logout');
     Route::post('/api/auth/verify-session', [App\Http\Controllers\Website\AuthController::class, 'verifySession'])->name('auth.verify-session');
@@ -64,33 +67,33 @@ Route::middleware('web.auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Website Project Routes (Protected)
+| Website Project Routes (Protected with Permissions)
 |--------------------------------------------------------------------------
 */
 Route::middleware('web.auth')->prefix('website')->group(function () {
-    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('website.dashboard');
+    // Dashboard route removed - using main dashboard route instead
     
-    // Phase-specific pages
-    Route::get('/phase-inspections', [HomeController::class, 'phaseInspections'])->name('website.phase.inspections');
-    Route::get('/phase-tasks', [HomeController::class, 'phaseTasks'])->name('website.phase.tasks');
-    Route::get('/phase-snags', [HomeController::class, 'phaseSnags'])->name('website.phase.snags');
-    Route::get('/phase-timeline', [HomeController::class, 'phaseTimeline'])->name('website.phase.timeline');
+    // Phase-specific pages (require view permissions)
+    Route::middleware('web.permission:inspections,view')->get('/phase-inspections', [HomeController::class, 'phaseInspections'])->name('website.phase.inspections');
+    Route::middleware('web.permission:tasks,view')->get('/phase-tasks', [HomeController::class, 'phaseTasks'])->name('website.phase.tasks');
+    Route::middleware('web.permission:snags,view')->get('/phase-snags', [HomeController::class, 'phaseSnags'])->name('website.phase.snags');
+    Route::middleware('web.permission:timeline,view')->get('/phase-timeline', [HomeController::class, 'phaseTimeline'])->name('website.phase.timeline');
     
-    // General pages (not project-specific)
-    Route::get('/safety-checklist', [HomeController::class, 'safetyChecklist'])->name('website.safety-checklist');
+    // General pages
+    Route::middleware('web.permission:inspections,view')->get('/safety-checklist', [HomeController::class, 'safetyChecklist'])->name('website.safety-checklist');
     
-    // Project-specific routes
+    // Project-specific routes with permissions
     Route::prefix('project/{project_id}')->group(function () {
-        Route::get('/plans', [HomeController::class, 'plans'])->name('website.project.plans');
-        Route::get('/tasks', [HomeController::class, 'tasks'])->name('website.project.tasks');
-        Route::get('/inspections', [HomeController::class, 'inspections'])->name('website.project.inspections');
-        Route::get('/daily-logs', [HomeController::class, 'dailyLogs'])->name('website.project.daily-logs');
-        Route::get('/project-progress', [HomeController::class, 'projectProgress'])->name('website.project.progress');
-        Route::get('/project-files', [HomeController::class, 'projectFiles'])->name('website.project.files');
-        Route::get('/project-gallery', [HomeController::class, 'projectGallery'])->name('website.project.gallery');
-        Route::get('/team-members', [HomeController::class, 'teamMembers'])->name('website.project.team-members');
-        Route::get('/snag-list', [HomeController::class, 'snagList'])->name('website.project.snag-list');
-        Route::get('/safety-checklist', [HomeController::class, 'safetyChecklist'])->name('website.project.safety-checklist');
+        Route::middleware('web.permission:plans,view')->get('/plans', [HomeController::class, 'plans'])->name('website.project.plans');
+        Route::middleware('web.permission:tasks,view')->get('/tasks', [HomeController::class, 'tasks'])->name('website.project.tasks');
+        Route::middleware('web.permission:inspections,view')->get('/inspections', [HomeController::class, 'inspections'])->name('website.project.inspections');
+        Route::middleware('web.permission:daily_logs,view')->get('/daily-logs', [HomeController::class, 'dailyLogs'])->name('website.project.daily-logs');
+        Route::middleware('web.permission:progress,view')->get('/project-progress', [HomeController::class, 'projectProgress'])->name('website.project.progress');
+        Route::middleware('web.permission:files,view')->get('/project-files', [HomeController::class, 'projectFiles'])->name('website.project.files');
+        Route::middleware('web.permission:files,view')->get('/project-gallery', [HomeController::class, 'projectGallery'])->name('website.project.gallery');
+        Route::middleware('web.permission:team,view')->get('/team-members', [HomeController::class, 'teamMembers'])->name('website.project.team-members');
+        Route::middleware('web.permission:snags,view')->get('/snag-list', [HomeController::class, 'snagList'])->name('website.project.snag-list');
+        Route::middleware('web.permission:inspections,view')->get('/safety-checklist', [HomeController::class, 'safetyChecklist'])->name('website.project.safety-checklist');
         Route::get('/notifications', [HomeController::class, 'notifications'])->name('website.project.notifications');
         Route::get('/help-support', [HomeController::class, 'helpSupport'])->name('website.project.help-support');
     });
@@ -151,3 +154,7 @@ Route::post('/enc-dec', 'App\Http\Controllers\Controller@changeEncDecData')->nam
 Route::get('/test-lang', function () {
     return view('test-lang');
 })->name('test.lang');
+
+Route::get('/role-tester', function () {
+    return view('website.role-tester');
+})->name('role.tester');

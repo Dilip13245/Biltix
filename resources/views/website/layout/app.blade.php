@@ -61,11 +61,22 @@
   <script src="{{ asset('website/js/wow.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script src="{{ asset('website/js/toastr-config.js') }}"></script>
+  <script src="{{ asset('website/js/permissions.js') }}"></script>
   
   <!-- SIMPLE DRAWING LIBRARY -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
   
-  <script src="{{ asset('website/js/custom.js') }}"></script></script>
+  <script src="{{ asset('website/js/custom.js') }}"></script>
+  
+  <!-- Universal Auth System -->
+  <script src="{{ asset('website/js/universal-auth.js') }}"></script>
+  <script>
+      // Disable auth check on app layout pages - Laravel middleware handles it
+      window.DISABLE_JS_AUTH_CHECK = true;
+  </script>
+  
+  <!-- RTL Icon Spacing Fix -->
+  <script src="{{ asset('website/js/rtl-spacing-fix.js') }}"></script>
   
   @include('website.layout.auth-check')
   @include('website.layout.user-info')

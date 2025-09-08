@@ -22,6 +22,12 @@
               'placeholder' => 'Select date',
               'value' => date('Y-m-d')
             ])
+            @can('daily_logs', 'create')
+            <button class="btn orange_btn py-2" data-permission="daily_logs:create">
+                <i class="fas fa-plus"></i>
+                {{ __('messages.add_daily_log') }}
+            </button>
+            @endcan
         </div>
     </div>
     <section class="px-md-4">
