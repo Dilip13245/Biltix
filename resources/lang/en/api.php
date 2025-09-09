@@ -44,6 +44,7 @@ return [
         'user_not_found_phone' => 'User not found with this phone number',
         'user_not_found_id' => 'User not found with this ID',
         'otp_expired' => 'OTP has expired. Please request a new one',
+        'signup_success' => 'Registration successful! Welcome to Biltix.',
     ],
     'general' => [
         'language_changed' => 'Language changed successfully',

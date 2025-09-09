@@ -23,6 +23,15 @@ class AuthController extends Controller
     public function signup(Request $request)
     {
         try {
+            // Check for recent signup attempts from same IP/email
+            $recentAttempt = User::where('email', $request->email)
+                ->where('created_at', '>', now()->subMinutes(1))
+                ->first();
+                
+            if ($recentAttempt) {
+                return $this->toJsonEnc([], 'Account already exists or created recently', Config::get('constant.ERROR'));
+            }
+            
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'required|unique:users,phone',
@@ -545,6 +554,66 @@ class AuthController extends Controller
             ]);
 
             return $this->toJsonEnc([], trans('api.auth.account_deleted'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function validateSignupStep(Request $request)
+    {
+        try {
+            $step = $request->input('step');
+            
+            if ($step == 1) {
+                // Step 1: Basic user details
+                $validator = Validator::make($request->all(), [
+                    'email' => 'required|email|unique:users,email',
+                    'phone' => 'required|unique:users,phone',
+                    'name' => 'required|string|max:255',
+                    'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
+                ], [
+                    'email.required' => trans('api.auth.email_required'),
+                    'email.email' => trans('api.auth.email_invalid'),
+                    'email.unique' => trans('api.auth.email_unique'),
+                    'phone.required' => trans('api.auth.phone_number_required'),
+                    'phone.unique' => trans('api.auth.phone_number_unique'),
+                    'name.required' => trans('api.auth.name_required'),
+                    'password.required' => trans('api.auth.password_required'),
+                    'password.min' => trans('api.auth.password_min'),
+                ]);
+            } elseif ($step == 2) {
+                // Step 2: Company details + Step 1 validation
+                $validator = Validator::make($request->all(), [
+                    'email' => 'required|email|unique:users,email',
+                    'phone' => 'required|unique:users,phone',
+                    'name' => 'required|string|max:255',
+                    'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
+                    'company_name' => 'required|string|max:255',
+                    'designation' => 'required|in:contractor,consultant,site_engineer,project_manager,stakeholder',
+                    'employee_count' => 'required|integer|min:1',
+                ], [
+                    'email.required' => trans('api.auth.email_required'),
+                    'email.email' => trans('api.auth.email_invalid'),
+                    'email.unique' => trans('api.auth.email_unique'),
+                    'phone.required' => trans('api.auth.phone_number_required'),
+                    'phone.unique' => trans('api.auth.phone_number_unique'),
+                    'name.required' => trans('api.auth.name_required'),
+                    'password.required' => trans('api.auth.password_required'),
+                    'password.min' => trans('api.auth.password_min'),
+                    'company_name.required' => trans('api.auth.company_name_required'),
+                    'designation.required' => trans('api.auth.role_required'),
+                    'employee_count.required' => trans('api.auth.employee_count_required'),
+                ]);
+            } else {
+                return $this->toJsonEnc([], 'Invalid step', Config::get('constant.ERROR'));
+            }
+            
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+            
+            return $this->toJsonEnc([], 'Step validation successful', Config::get('constant.SUCCESS'));
+            
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

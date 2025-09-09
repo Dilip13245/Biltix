@@ -275,6 +275,11 @@
         .resend-link:hover {
             color: #357ABD;
         }
+        .resend-link.disabled {
+            color: #9ca3af;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
         .back-text {
             text-align: center;
             color: #6b7280;
@@ -372,7 +377,7 @@
                                         </div>
                                         <div class="error-message text-center" id="otpError"></div>
                                         <div class="resend-text">
-                                            {{ __('auth.didnt_receive_code') }} <a href="#" class="resend-link" onclick="resendOTP()">{{ __('auth.resend_otp') }}</a>
+                                            {{ __('auth.didnt_receive_code') }} <a href="#" class="resend-link" id="resendLink" onclick="resendOTP()">{{ __('auth.resend_otp') }}</a>
                                         </div>
                                     </div>
                                 </div>
@@ -430,6 +435,8 @@
         let currentStep = 1;
         const totalSteps = 3;
         let userPhone = '';
+        let resendTimer = null;
+        let resendCountdown = 0;
 
         function validateStep(step) {
             let isValid = true;
@@ -545,6 +552,7 @@
                     if (response.code === 200) {
                         userPhone = mobile;
                         document.getElementById('displayMobile').textContent = mobile;
+                        startResendTimer();
                         toastr.success(response.message);
                     } else {
                         toastr.error(response.message);
@@ -702,7 +710,26 @@
             return otp;
         }
 
+        function startResendTimer() {
+            resendCountdown = 30;
+            const resendLink = document.getElementById('resendLink');
+            resendLink.classList.add('disabled');
+            
+            resendTimer = setInterval(() => {
+                resendLink.textContent = `{{ __('auth.resend_otp') }} (${resendCountdown}s)`;
+                resendCountdown--;
+                
+                if (resendCountdown < 0) {
+                    clearInterval(resendTimer);
+                    resendLink.textContent = '{{ __('auth.resend_otp') }}';
+                    resendLink.classList.remove('disabled');
+                }
+            }, 1000);
+        }
+        
         async function resendOTP() {
+            if (resendCountdown > 0) return;
+            
             if (!userPhone) {
                 toastr.warning('{{ __('auth.enter_mobile') }}');
                 return;
@@ -715,6 +742,7 @@
                 });
                 
                 if (response.code === 200) {
+                    startResendTimer();
                     toastr.success(response.message);
                 } else {
                     toastr.error(response.message);

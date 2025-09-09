@@ -503,7 +503,7 @@
                                     <div class="row g-3">
                                         <div class="col-12 col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">(Optional)</span></label>
+                                                <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
                                                 <input type="text" class="form-control" name="members[0][name]"
                                                     placeholder="{{ __('auth.enter_member_name') }}">
                                             </div>
@@ -511,7 +511,7 @@
                                         </div>
                                         <div class="col-12 col-md-6">
                                             <div class="mb-3">
-                                                <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">(Optional)</span></label>
+                                                <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
                                                 <input type="tel" class="form-control" name="members[0][phone]"
                                                     placeholder="{{ __('auth.enter_member_phone') }}">
                                             </div>
@@ -673,15 +673,6 @@
                 } else if (!/^[a-zA-Z0-9\s\-\&\.\_\,\(\)]+$/.test(companyValue)) {
                     showError('company_name', 'companyNameError', '{{ __('auth.company_name_invalid') }}');
                     isValid = false;
-                } else if (isGenericCompanyName(companyValue)) {
-                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_generic') }}');
-                    isValid = false;
-                } else if (hasSpecialChars(companyValue)) {
-                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_special_chars') }}');
-                    isValid = false;
-                } else if (/[0-9]{10,}/.test(companyValue)) {
-                    showError('company_name', 'companyNameError', '{{ __('auth.company_name_numbers') }}');
-                    isValid = false;
                 }
 
                 // Employee count validation
@@ -821,26 +812,16 @@
             return strongRegex.test(password);
         }
         
-        function isGenericCompanyName(companyName) {
-            const genericNames = [
-                'company', 'business', 'construction', 'contractor', 'consultant', 
-                'corp', 'inc', 'ltd', 'llc', 'firm', 'enterprise', 'group',
-                'organization', 'services', 'solutions', 'pvt', 'private'
-            ];
-            const nameLower = companyName.toLowerCase().trim();
-            return genericNames.some(generic => 
-                nameLower === generic || nameLower.includes(generic)
-            );
-        }
+
         
         // Additional validation helpers
         function hasSpecialChars(text) {
-            return /[<>"'&\\]/.test(text);
+            return /[<>"&\\]/.test(text); // Removed apostrophe from forbidden chars
         }
         
         function isValidName(name) {
             // Only letters, spaces, hyphens, apostrophes, and dots allowed
-            return /^[a-zA-Z\s\-\'\.\.]+$/.test(name) && !hasSpecialChars(name) && !/\d/.test(name);
+            return /^[a-zA-Z\s\-\'\.\.]+$/.test(name) && !/\d/.test(name);
         }
         
         function showMemberError(inputElement, message) {
@@ -858,9 +839,87 @@
             errorEl.classList.add('show');
         }
 
-        function nextStep() {
+        // Step validation using dedicated API
+        async function validateStepWithBackend(step) {
+            // Only validate steps 1 and 2
+            if (step > 2) {
+                return true;
+            }
+            
+            const form = document.getElementById('registrationForm');
+            const formData = new FormData(form);
+            
+            // Prepare step data
+            let stepData = { step: step };
+            
+            if (step === 1) {
+                stepData = {
+                    step: 1,
+                    name: formData.get('full_name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    password: formData.get('password')
+                };
+            } else if (step === 2) {
+                stepData = {
+                    step: 2,
+                    name: formData.get('full_name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    password: formData.get('password'),
+                    company_name: formData.get('company_name'),
+                    designation: formData.get('designation'),
+                    employee_count: formData.get('employee_count')
+                };
+            }
+            
+            try {
+                // Show loading state
+                const nextBtn = document.getElementById('nextBtn');
+                const originalText = nextBtn.textContent;
+                nextBtn.disabled = true;
+                nextBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Validating...';
+                
+                // Call step validation API
+                const response = await api.validateSignupStep(stepData);
+                
+                // Restore button
+                nextBtn.disabled = false;
+                nextBtn.textContent = originalText;
+                
+                if (response.code === 200) {
+                    return true; // Validation passed
+                } else {
+                    // Show validation errors
+                    if (response.message) {
+                        toastr.error(response.message);
+                    }
+                    return false;
+                }
+                
+            } catch (error) {
+                // Restore button on error
+                const nextBtn = document.getElementById('nextBtn');
+                nextBtn.disabled = false;
+                nextBtn.textContent = originalText;
+                
+                // On network error, allow to continue
+                console.warn('Step validation failed:', error);
+                toastr.warning('Could not validate with server. Please check your connection.');
+                return true;
+            }
+        }
+
+        async function nextStep() {
             if (!validateStep(currentStep)) {
                 return;
+            }
+
+            // Only do backend validation for steps 1 and 2
+            if (currentStep <= 2) {
+                if (!(await validateStepWithBackend(currentStep))) {
+                    return;
+                }
             }
 
             if (currentStep < 3) {
@@ -896,14 +955,14 @@
                 <div class="row g-3">
                     <div class="col-12 col-md-6">
                         <div class="mb-3">
-                            <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">(Optional)</span></label>
+                            <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
                             <input type="text" class="form-control" name="members[${memberCount}][name]" placeholder="{{ __('auth.enter_member_name') }}">
                         </div>
                         <div class="error-message" id="memberNameError${memberCount}"></div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="mb-3">
-                            <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">(Optional)</span></label>
+                            <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
                             <input type="tel" class="form-control" name="members[${memberCount}][phone]" placeholder="{{ __('auth.enter_member_phone') }}">
                         </div>
                         <div class="error-message" id="memberPhoneError${memberCount}"></div>
@@ -914,11 +973,20 @@
             memberCount++;
         }
 
+        let isSubmitting = false; // Prevent duplicate submissions
+        
         async function submitForm() {
+            // Prevent duplicate submissions
+            if (isSubmitting) {
+                return;
+            }
+            
             // Validate Step 3 before submitting
             if (!validateStep(3)) {
                 return;
             }
+            
+            isSubmitting = true;
             
             const form = document.getElementById('registrationForm');
             const formData = new FormData(form);
@@ -963,11 +1031,35 @@
                 data.members = members;
             }
 
+            // Disable register button
+            const registerBtn = document.getElementById('nextBtn');
+            const originalText = registerBtn.textContent;
+            registerBtn.disabled = true;
+            registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...';
+            
             try {
                 const response = await api.signup(data);
 
                 if (response.code === 200) {
-                    // Store session data
+                    // Use UniversalAuth to properly store session data
+                    const userData = {
+                        ...response.data,
+                        token: response.data.token,
+                        id: response.data.id
+                    };
+                    
+                    // Store using UniversalAuth system
+                    const authData = {
+                        user: userData,
+                        token: userData.token,
+                        user_id: userData.id,
+                        timestamp: Date.now()
+                    };
+                    
+                    sessionStorage.setItem('biltix_session', JSON.stringify(authData));
+                    sessionStorage.setItem('browser_session_active', 'true');
+                    
+                    // Also keep old format for compatibility
                     sessionStorage.setItem('user', JSON.stringify(response.data));
                     sessionStorage.setItem('user_id', response.data.id);
                     sessionStorage.setItem('token', response.data.token);
@@ -991,15 +1083,46 @@
 
                     if (sessionResponse.ok) {
                         toastr.success(response.message);
-                        window.location.href = '/dashboard';
+                        
+                        // Update button to show success
+                        registerBtn.innerHTML = '<i class="fas fa-check me-2"></i>Registration Successful!';
+                        registerBtn.classList.remove('btn-next');
+                        registerBtn.classList.add('btn-success');
+                        
+                        // Wait longer and verify token before redirect
+                        setTimeout(() => {
+                            const finalToken = sessionStorage.getItem('token');
+                            console.log('Pre-redirect token check:', finalToken ? 'exists' : 'missing');
+                            
+                            if (finalToken && !window.redirecting) {
+                                window.redirecting = true;
+                                window.location.replace('/dashboard');
+                            } else {
+                                console.error('Token missing before redirect');
+                                toastr.error('Session setup incomplete. Please login manually.');
+                                window.location.replace('/login');
+                            }
+                        }, 2500);
                     } else {
                         toastr.error('Session setup failed');
+                        // Restore button on session error
+                        registerBtn.disabled = false;
+                        registerBtn.textContent = originalText;
+                        isSubmitting = false;
                     }
                 } else {
                     toastr.error(response.message);
+                    // Restore button on API error
+                    registerBtn.disabled = false;
+                    registerBtn.textContent = originalText;
+                    isSubmitting = false;
                 }
             } catch (error) {
                 toastr.error(error.message || 'Connection error. Please try again.');
+                // Restore button on network error
+                registerBtn.disabled = false;
+                registerBtn.textContent = originalText;
+                isSubmitting = false;
             }
         }
     </script>

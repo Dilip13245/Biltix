@@ -61,6 +61,7 @@ return [
     'enter_member_name' => 'أدخل اسم العضو',
     'enter_member_phone' => 'أدخل رقم هاتف العضو',
     'add_more_members' => 'إضافة أعضاء آخرين',
+    'optional' => 'اختياري',
     'registration_completed' => 'تم التسجيل بنجاح!',
     'confirm_password_mismatch' => 'كلمات المرور غير متطابقة',
     

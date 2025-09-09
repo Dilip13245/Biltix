@@ -39,6 +39,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language'])->group(
         Route::post('send_otp', [AuthController::class, 'sendOtp']);
         Route::post('reset_password', [AuthController::class, 'resetPassword']);
         Route::post('verify_otp', [AuthController::class, 'verifyOtp']);
+        Route::post('validate_signup_step', [AuthController::class, 'validateSignupStep']);
     });
 
     Route::prefix('general')->group(function () {

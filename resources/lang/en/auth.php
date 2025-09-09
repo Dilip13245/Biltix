@@ -61,6 +61,7 @@ return [
     'enter_member_name' => 'Enter member name',
     'enter_member_phone' => 'Enter member\'s phone number',
     'add_more_members' => 'Add more members',
+    'optional' => 'Optional',
     'registration_completed' => 'Registration completed!',
     'confirm_password_mismatch' => 'Passwords do not match',
     

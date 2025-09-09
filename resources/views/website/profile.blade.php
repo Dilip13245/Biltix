@@ -334,7 +334,7 @@
         }
         
         function isValidName(name) {
-            return /^[a-zA-Z\s\-\'\.\.]+$/.test(name) && !/\d/.test(name) && !/[<>"'&\\]/.test(name);
+            return /^[a-zA-Z\s\-\'\.\.]+$/.test(name) && !/\d/.test(name) && !/[<>"&\\]/.test(name);
         }
         
         function isValidProfessionalEmail(email) {
@@ -406,9 +406,6 @@
                 isValid = false;
             } else if (!/^[a-zA-Z0-9\s\-\&\.\_\,\(\)]+$/.test(companyName)) {
                 showEditError('editCompanyName', 'editCompanyError', '{{ __('auth.company_name_invalid') }}');
-                isValid = false;
-            } else if (isGenericCompanyName(companyName)) {
-                showEditError('editCompanyName', 'editCompanyError', '{{ __('auth.company_name_generic') }}');
                 isValid = false;
             }
             

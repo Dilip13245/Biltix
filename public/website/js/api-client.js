@@ -21,7 +21,12 @@ class ApiClient {
         console.log('Request data:', data);
         
         // Apply interceptors
-        ApiInterceptors.beforeRequest(config);
+        const interceptorResult = ApiInterceptors.beforeRequest(config);
+        
+        // If interceptor returns null, don't make the request
+        if (interceptorResult === null) {
+            return { code: 401, message: 'No token available', data: {} };
+        }
         
         try {
             const fetchOptions = {
@@ -121,6 +126,10 @@ class ApiClient {
 
     async deleteAccount(data) {
         return this.makeRequest('auth/delete_account', data);
+    }
+
+    async validateSignupStep(data) {
+        return this.makeRequest('auth/validate_signup_step', data);
     }
 
     // Project methods
