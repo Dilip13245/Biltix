@@ -706,6 +706,16 @@ return [
     'create_checklist' => 'Create Checklist',
     'enter_safety_item' => 'Enter safety item to check',
     'photo_gallery' => 'Photo Gallery',
+    
+    // Notification related
+    'mark_all_read' => 'Mark All Read',
+    'no_notifications' => 'No notifications',
+    'view_all_notifications' => 'View All Notifications',
+    'all_notifications_marked_read' => 'All notifications marked as read',
+    'failed_to_mark_notifications' => 'Failed to mark notifications as read',
+    'just_now' => 'Just now',
+    'minutes_ago' => 'm ago',
+    'hours_ago' => 'h ago',
 ];
 
 

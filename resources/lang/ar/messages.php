@@ -702,6 +702,16 @@ return [
     'create_checklist' => 'إنشاء قائمة تحقق',
     'enter_safety_item' => 'أدخل عنصر السلامة للفحص',
     'photo_gallery' => 'معرض الصور',
+    
+    // Notification related
+    'mark_all_read' => 'تعليم الكل كمقروء',
+    'no_notifications' => 'لا توجد إشعارات',
+    'view_all_notifications' => 'عرض جميع الإشعارات',
+    'all_notifications_marked_read' => 'تم تعليم جميع الإشعارات كمقروءة',
+    'failed_to_mark_notifications' => 'فشل في تعليم الإشعارات كمقروءة',
+    'just_now' => 'الآن',
+    'minutes_ago' => 'د مضت',
+    'hours_ago' => 'س مضت',
 
 ];
 

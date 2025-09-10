@@ -79,6 +79,87 @@
         color: #6c757d;
     }
     
+    .notification-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 380px;
+        max-width: calc(100vw - 20px);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        z-index: 1050;
+        border: 1px solid #e9ecef;
+    }
+    
+    @media (max-width: 768px) {
+        .notification-dropdown {
+            right: -150px;
+            width: 300px;
+            max-width: calc(100vw - 40px);
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .notification-dropdown {
+            right: -120px;
+            width: 280px;
+        }
+    }
+    
+    .notification-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .notification-body {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 0;
+    }
+    
+    .load-more-btn {
+        padding: 8px 16px;
+        text-align: center;
+        color: #F58D2E;
+        cursor: pointer;
+        border-top: 1px solid #f0f0f0;
+        font-size: 12px;
+    }
+    
+    .load-more-btn:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .notification-footer {
+        padding: 12px 16px;
+        border-top: 1px solid #f0f0f0;
+        text-align: center;
+        background: white;
+        border-radius: 0 0 12px 12px;
+    }
+    
+    .notification-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f8f9fa;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        word-wrap: break-word;
+    }
+    
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .notification-item.unread {
+        background-color: #fff5f0;
+        border-left: 3px solid #F58D2E;
+    }
 
     </style>
 
@@ -122,10 +203,26 @@
                                     placeholder="{{ __('messages.search_projects') }}" aria-label="Search"
                                     data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
                             </form>
-                            <div class="position-relative MessageBOx text-center" style="cursor: pointer;"><img
-                                    src="{{ asset('website/images/icons/bell.svg') }}" alt="Bell"
-                                    class="img-fluid notifaction-icon"><span
-                                    class="fw-normal fs12 text-white orangebg">3</span>
+                            <div class="notification-wrapper position-relative">
+                                <div class="position-relative MessageBOx text-center" style="cursor: pointer;" onclick="toggleNotifications()">
+                                    <img src="{{ asset('website/images/icons/bell.svg') }}" alt="Bell" class="img-fluid notifaction-icon">
+                                    <span class="fw-normal fs12 text-white orangebg" id="notificationCount" style="display: none;">0</span>
+                                </div>
+                                <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
+                                    <div class="notification-header">
+                                        <span class="fw-bold">{{ __('messages.notifications') }}</span>
+                                        <button class="btn btn-sm orange_btn" onclick="markAllAsRead()" style="font-size: 11px; padding: 4px 8px;">{{ __('messages.mark_all_read') }}</button>
+                                    </div>
+                                    <div class="notification-body" id="notificationList">
+                                        <div class="text-center py-3">
+                                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                                            <span class="ms-2">{{ __('messages.loading') }}...</span>
+                                        </div>
+                                    </div>
+                                    <div class="notification-footer">
+                                        <a href="#" class="text-primary">{{ __('messages.view_all_notifications') }}</a>
+                                    </div>
+                                </div>
                             </div>
                             <div class="dropdown">
                                 <a href="#" class="d-flex align-items-center gap-2 gap-md-3" type="button"
@@ -629,10 +726,131 @@
             }
         }
         
+        // Notification functions
+        async function loadNotifications() {
+            try {
+                const response = await api.getNotifications({ page: 1, limit: 50 });
+                
+                if (response.code === 200 && response.data) {
+                    let notifications = Array.isArray(response.data) ? response.data : (response.data.notifications || response.data.data || []);
+                    
+                    if (Array.isArray(notifications)) {
+                        displayNotifications(notifications);
+                        const unreadCount = notifications.filter(n => !n.is_read).length;
+                        console.log('Total notifications:', notifications.length);
+                        console.log('Unread notifications:', unreadCount);
+                        updateNotificationCount(unreadCount);
+                    } else {
+                        displayNoNotifications();
+                    }
+                } else {
+                    displayNoNotifications();
+                }
+            } catch (error) {
+                console.error('Failed to load notifications:', error);
+                displayNoNotifications();
+            }
+        }
+        
+        function displayNotifications(notifications) {
+            const notificationList = document.getElementById('notificationList');
+            if (!notifications || notifications.length === 0) {
+                displayNoNotifications();
+                return;
+            }
+            
+            notificationList.innerHTML = '';
+            notifications.forEach(notification => {
+                const div = document.createElement('div');
+                div.className = `notification-item ${!notification.is_read ? 'unread' : ''}`;
+                div.onclick = () => markAsRead(notification.id);
+                div.innerHTML = `
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="fw-medium mb-1">${notification.title || 'Notification'}</div>
+                            <div class="small text-muted mb-1">${notification.message || notification.content || ''}</div>
+                            <div style="font-size: 11px; color: #6c757d;">${formatNotificationTime(notification.created_at)}</div>
+                        </div>
+                        ${!notification.is_read ? '<div class="ms-2"><div class="rounded-circle" style="width: 8px; height: 8px; background: #F58D2E;"></div></div>' : ''}
+                    </div>
+                `;
+                notificationList.appendChild(div);
+            });
+        }
+        
+        function displayNoNotifications() {
+            const notificationList = document.getElementById('notificationList');
+            notificationList.innerHTML = '<div class="text-center py-4 text-muted"><i class="fas fa-bell-slash fa-2x mb-2 d-block"></i>{{ __('messages.no_notifications') }}</div>';
+            updateNotificationCount(0);
+        }
+        
+        window.toggleNotifications = function() {
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'block';
+                loadNotifications();
+                document.addEventListener('click', closeNotificationsOutside);
+            } else {
+                dropdown.style.display = 'none';
+                document.removeEventListener('click', closeNotificationsOutside);
+            }
+        };
+        
+        function closeNotificationsOutside(event) {
+            const wrapper = document.querySelector('.notification-wrapper');
+            if (!wrapper.contains(event.target)) {
+                document.getElementById('notificationDropdown').style.display = 'none';
+                document.removeEventListener('click', closeNotificationsOutside);
+            }
+        }
+        
+        function updateNotificationCount(count) {
+            const countBadge = document.getElementById('notificationCount');
+            if (countBadge) {
+                if (count > 0) {
+                    countBadge.textContent = count > 99 ? '99+' : count;
+                    countBadge.style.display = 'block';
+                } else {
+                    countBadge.style.display = 'none';
+                }
+            }
+        }
+        
+        async function markAsRead(notificationId) {
+            try {
+                await api.markNotificationAsRead({ notification_id: notificationId });
+                loadNotifications();
+            } catch (error) {
+                console.error('Failed to mark notification as read:', error);
+            }
+        }
+        
+        window.markAllAsRead = async function() {
+            try {
+                await api.markAllNotificationsAsRead();
+                loadNotifications();
+                showToast('{{ __('messages.all_notifications_marked_read') }}', 'success');
+            } catch (error) {
+                console.error('Failed to mark all notifications as read:', error);
+                showToast('{{ __('messages.failed_to_mark_notifications') }}', 'error');
+            }
+        };
+        
+        function formatNotificationTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+            if (diffInMinutes < 1) return '{{ __('messages.just_now') }}';
+            if (diffInMinutes < 60) return `${diffInMinutes}{{ __('messages.minutes_ago') }}`;
+            if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}{{ __('messages.hours_ago') }}`;
+            return date.toLocaleDateString();
+        }
+        
         // Filter functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Load stats on page load
+            // Load stats and notifications on page load
             loadDashboardStats();
+            loadNotifications();
             const statusFilter = document.getElementById('statusFilter');
             if (statusFilter) {
                 statusFilter.addEventListener('change', function() {
@@ -653,13 +871,7 @@
                 });
             }
 
-            // Notification bell click
-            const notificationBell = document.querySelector('.MessageBOx');
-            if (notificationBell) {
-                notificationBell.addEventListener('click', function() {
-                    showToast('Notification panel would open here showing recent updates.', 'info');
-                });
-            }
+
             
             // Multi-step form variables
             let currentStep = 1;

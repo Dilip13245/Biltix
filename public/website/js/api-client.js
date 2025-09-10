@@ -179,6 +179,23 @@ class ApiClient {
         return this.makeRequest(API_CONFIG.ENDPOINTS.TASKS.UPDATE_STATUS, data);
     }
 
+    // Notification methods
+    async getNotifications(data = {}) {
+        return this.makeRequest('notifications/list', data);
+    }
+    
+    async getNotificationCount(data = {}) {
+        return this.makeRequest('notifications/get_count', data);
+    }
+    
+    async markNotificationAsRead(data) {
+        return this.makeRequest('notifications/mark_read', data);
+    }
+    
+    async markAllNotificationsAsRead(data = {}) {
+        return this.makeRequest('notifications/mark_all_read', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic
