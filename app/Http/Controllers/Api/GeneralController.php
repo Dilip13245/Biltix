@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Validator;
+use App\Models\HelpSupport;
 
 class GeneralController extends Controller
 {
@@ -66,15 +68,37 @@ class GeneralController extends Controller
     public function submitHelpSupport(Request $request)
     {
         try {
-            // This would typically save to database
-            $data = [
-                'user_id' => $request->input('user_id'),
-                'subject' => $request->input('subject'),
-                'message' => $request->input('message'),
-                'status' => 'submitted'
-            ];
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'nullable|integer',
+                'full_name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'message' => 'required|string|min:10',
+            ], [
+                'full_name.required' => 'Full name is required',
+                'email.required' => 'Email is required',
+                'email.email' => 'Please enter a valid email address',
+                'message.required' => 'Message is required',
+                'message.min' => 'Message must be at least 10 characters',
+            ]);
 
-            return $this->toJsonEnc($data, 'Help support request submitted successfully', Config::get('constant.SUCCESS'));
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $helpSupport = HelpSupport::create([
+                'user_id' => $request->user_id,
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'message' => $request->message,
+                'status' => 'pending',
+                'is_active' => true,
+                'is_deleted' => false
+            ]);
+
+            return $this->toJsonEnc([
+                'id' => $helpSupport->id,
+                'status' => $helpSupport->status
+            ], 'Help support request submitted successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
