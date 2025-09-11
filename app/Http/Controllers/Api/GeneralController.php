@@ -72,13 +72,12 @@ class GeneralController extends Controller
                 'user_id' => 'nullable|integer',
                 'full_name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
-                'message' => 'required|string|min:10',
+                'message' => 'required|string',
             ], [
                 'full_name.required' => 'Full name is required',
                 'email.required' => 'Email is required',
                 'email.email' => 'Please enter a valid email address',
                 'message.required' => 'Message is required',
-                'message.min' => 'Message must be at least 10 characters',
             ]);
 
             if ($validator->fails()) {
