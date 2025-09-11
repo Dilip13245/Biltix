@@ -357,166 +357,10 @@
                 </div>
 
                 <!-- Ongoing Projects Cards -->
-                <div class="row g-4">
-                    <!-- Project Card 1 -->
-                    <div class="col-12 col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="0s">
-                        <a href="{{ route('website.project.plans', 1) }}">
-                            <div class="card project-card h-100">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0">{{ __('messages.downtown_office_complex') }}</h6>
-                                        <span class="badge bg-orange text-white">{{ __('messages.active') }}</span>
-                                    </div>
-                                    <div class="text-muted small mb-2">{{ __('messages.commercial_building') }}</div>
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between mb-3">
-                                            <span class="text-muted small">{{ __('messages.progress') }}</span>
-                                            <span class="fw-medium small">68%</span>
-                                        </div>
-                                        <div class="progress" style="height: 6px;">
-                                            <div class="progress-bar" style="width: 68%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="small text-muted mb-2 mb-md-3">{{ __('messages.due') }}: Dec 15, 2024
-                                    </div>
-                                    <div>
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <span class="ms-2 text-muted small">+5 {{ __('messages.more') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- Project Card 2 -->
-                    <div class="col-12 col-md-6 col-lg-4 wow fadeInUp" data-wow-delay=".4s">
-                        <a href="{{ route('website.project.plans', 2) }}">
-                            <div class="card project-card h-100">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0">{{ __('messages.residential_tower_a') }}</h6>
-                                        <span class="badge bg-orange text-white">{{ __('messages.active') }}</span>
-                                    </div>
-                                    <div class="text-muted small mb-2">{{ __('messages.residential_complex') }}</div>
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between mb-3">
-                                            <span class="text-muted small">{{ __('messages.progress') }}</span>
-                                            <span class="fw-medium small">45%</span>
-                                        </div>
-                                        <div class="progress" style="height: 6px;">
-                                            <div class="progress-bar bg-yellow" style="width: 45%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="small text-muted mb-2 mb-md-3">{{ __('messages.due') }}: Mar 20, 2025
-                                    </div>
-                                    <div>
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <span class="ms-2 text-muted small">+3 {{ __('messages.more') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- Project Card 3 -->
-                    <div class="col-12 col-md-6 col-lg-4 wow fadeInUp" data-wow-delay=".8s">
-                        <a href="{{ route('website.project.plans', 3) }}">
-                            <div class="card project-card h-100">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0">{{ __('messages.shopping_mall_renovation') }}</h6>
-                                        <span class="badge bg-green1">{{ __('messages.completed') }}</span>
-                                    </div>
-                                    <div class="text-muted small mb-2">{{ __('messages.renovation_project') }}</div>
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between mb-3">
-                                            <span class="text-muted small">{{ __('messages.progress') }}</span>
-                                            <span class="fw-medium small">100%</span>
-                                        </div>
-                                        <div class="progress" style="height: 6px;">
-                                            <div class="progress-bar bg-green" style="width: 100%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="small text-muted mb-2 mb-md-3">{{ __('messages.completed') }}: Nov 30,
-                                        2024</div>
-                                    <div>
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <span class="ms-2 text-muted small">+2 {{ __('messages.more') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- Project Card 4 -->
-                    <div class="col-12 col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="1.2s">
-                        <a href="{{ route('website.project.plans', 4) }}">
-                            <div class="card project-card h-100">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0">{{ __('messages.industrial_warehouse') }}</h6>
-                                        <span class="badge bg-orange text-white">{{ __('messages.active') }}</span>
-                                    </div>
-                                    <div class="text-muted small mb-2">{{ __('messages.industrial_building') }}</div>
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between mb-3">
-                                            <span class="text-muted small">{{ __('messages.progress') }}</span>
-                                            <span class="fw-medium small">32%</span>
-                                        </div>
-                                        <div class="progress" style="height: 6px;">
-                                            <div class="progress-bar bg-blue" style="width: 32%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="small text-muted mb-2 mb-md-3">{{ __('messages.due') }}: Jun 10, 2025
-                                    </div>
-                                    <div>
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <span class="ms-2 text-muted small">+4 {{ __('messages.more') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <!-- Project Card 5 -->
-                    <div class="col-12 col-md-6 col-lg-4  wow fadeInUp" data-wow-delay="1.6s">
-                        <a href="{{ route('website.project.plans', 5) }}">
-                            <div class="card project-card h-100">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0">{{ __('messages.hospital_extension') }}</h6>
-                                        <span class="badge bg-orange text-white">{{ __('messages.active') }}</span>
-                                    </div>
-                                    <div class="text-muted small mb-2">{{ __('messages.healthcare_facility') }}</div>
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between mb-3">
-                                            <span class="text-muted small">{{ __('messages.progress') }}</span>
-                                            <span class="fw-medium small">78%</span>
-                                        </div>
-                                        <div class="progress" style="height: 6px;">
-                                            <div class="progress-bar bg-blue" style="width: 78%;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="small text-muted mb-2 mb-md-3">{{ __('messages.due') }}: Jun 10, 2025
-                                    </div>
-                                    <div>
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar"
-                                            alt="avatar">
-                                        <span class="ms-2 text-muted small">+4 {{ __('messages.more') }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                <div class="row g-4" id="projectsContainer">
+                    <div class="col-12 text-center py-4">
+                        <div class="spinner-border" role="status"></div>
+                        <div class="mt-2">{{ __('messages.loading_projects') }}...</div>
                     </div>
                 </div>
             </div>
@@ -846,28 +690,128 @@
             return date.toLocaleDateString();
         }
         
+        // Load projects from API
+        async function loadProjects(filter = 'all') {
+            try {
+                const type = filter === 'all' ? '' : (filter === 'active' ? 'ongoing' : 'completed');
+                const response = await api.getProjects({ type: type, page: 1, limit: 20 });
+                
+                if (response.code === 200 && response.data) {
+                    displayProjects(response.data);
+                } else {
+                    displayNoProjects();
+                }
+            } catch (error) {
+                console.error('Failed to load projects:', error);
+                displayNoProjects();
+            }
+        }
+        
+        function displayProjects(projects) {
+            const container = document.getElementById('projectsContainer');
+            container.innerHTML = '';
+            
+            if (!projects || projects.length === 0) {
+                displayNoProjects();
+                return;
+            }
+            
+            projects.forEach((project, index) => {
+                const statusClass = getStatusClass(project.status);
+                const statusText = getStatusText(project.status);
+                const progressPercent = getRandomProgress(project.status);
+                const teamCount = Math.floor(Math.random() * 8) + 2;
+                
+                const projectCard = `
+                    <div class="col-12 col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="${index * 0.4}s">
+                        <a href="/website/project/${project.id}/plans">
+                            <div class="card project-card h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="fw-bold mb-0">${project.project_title}</h6>
+                                        <span class="badge ${statusClass}">${statusText}</span>
+                                    </div>
+                                    <div class="text-muted small mb-2">${project.type || 'Construction Project'}</div>
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between mb-3">
+                                            <span class="text-muted small">{{ __('messages.progress') }}</span>
+                                            <span class="fw-medium small">${progressPercent}%</span>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar ${getProgressBarClass(progressPercent)}" style="width: ${progressPercent}%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="small text-muted mb-2 mb-md-3">
+                                        ${project.status === 'completed' ? '{{ __('messages.completed') }}' : '{{ __('messages.due') }}'}: ${formatDate(project.project_due_date)}
+                                    </div>
+                                    <div>
+                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar" alt="avatar">
+                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar" alt="avatar">
+                                        <span class="ms-2 text-muted small">+${teamCount} {{ __('messages.more') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                `;
+                container.innerHTML += projectCard;
+            });
+        }
+        
+        function displayNoProjects() {
+            const container = document.getElementById('projectsContainer');
+            container.innerHTML = '<div class="col-12 text-center py-5"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_projects_found') }}</h5></div>';
+        }
+        
+        function getStatusClass(status) {
+            switch(status) {
+                case 'completed': return 'bg-green1';
+                case 'active': 
+                case 'in_progress': 
+                case 'planning': return 'bg-orange text-white';
+                default: return 'bg-secondary text-white';
+            }
+        }
+        
+        function getStatusText(status) {
+            switch(status) {
+                case 'completed': return '{{ __('messages.completed') }}';
+                case 'active': 
+                case 'in_progress': 
+                case 'planning': return '{{ __('messages.active') }}';
+                default: return status;
+            }
+        }
+        
+        function getRandomProgress(status) {
+            if (status === 'completed') return 100;
+            return Math.floor(Math.random() * 80) + 20;
+        }
+        
+        function getProgressBarClass(percent) {
+            if (percent === 100) return 'bg-green';
+            if (percent >= 70) return '';
+            if (percent >= 40) return 'bg-yellow';
+            return 'bg-blue';
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+        
         // Filter functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Load stats and notifications on page load
+            // Load stats, notifications and projects on page load
             loadDashboardStats();
             loadNotifications();
+            loadProjects();
+            
             const statusFilter = document.getElementById('statusFilter');
             if (statusFilter) {
                 statusFilter.addEventListener('change', function() {
-                    const filterValue = this.value.toLowerCase();
-                    const projectCards = document.querySelectorAll('.row.g-4 > div');
-
-                    projectCards.forEach(card => {
-                        const statusBadge = card.querySelector('.badge');
-                        if (statusBadge) {
-                            const cardStatus = statusBadge.textContent.toLowerCase();
-                            if (filterValue === 'all' || cardStatus.includes(filterValue)) {
-                                card.style.display = 'block';
-                            } else {
-                                card.style.display = 'none';
-                            }
-                        }
-                    });
+                    loadProjects(this.value);
                 });
             }
 

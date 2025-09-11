@@ -196,6 +196,58 @@ class ApiClient {
         return this.makeRequest('notifications/mark_all_read', data);
     }
 
+    // Team methods
+    async getTeamMembers(data) {
+        return this.makeRequest('team/list_members', data);
+    }
+
+    // File methods
+    async getFiles(data) {
+        return this.makeRequest('files/list', data);
+    }
+
+    async uploadFile(data) {
+        return this.makeFormDataRequest('files/upload', data);
+    }
+
+    // Snag methods
+    async getSnags(data) {
+        return this.makeRequest('snags/list', data);
+    }
+
+    async createSnag(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('snags/create', data);
+        }
+        return this.makeRequest('snags/create', data);
+    }
+
+    async updateSnag(data) {
+        return this.makeRequest('snags/update', data);
+    }
+
+    async getSnagCategories() {
+        return this.makeRequest('snags/categories', {});
+    }
+
+    // Inspection methods
+    async getInspections(data) {
+        return this.makeRequest('inspections/list', data);
+    }
+
+    async createInspection(data) {
+        return this.makeRequest('inspections/create', data);
+    }
+
+    // Daily Log methods
+    async getDailyLogs(data) {
+        return this.makeRequest('daily_logs/list', data);
+    }
+
+    async createDailyLog(data) {
+        return this.makeRequest('daily_logs/create', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic

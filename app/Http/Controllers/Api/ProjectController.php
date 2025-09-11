@@ -124,7 +124,7 @@ class ProjectController extends Controller
 
             if ($type) {
                 if ($type === 'ongoing') {
-                    $query->whereIn('status', ['planning', 'active', 'in_progress']);
+                    $query->whereIn('status', ['planning', 'active', 'on_hold', ]);
                 } elseif ($type === 'completed') {
                     $query->where('status', 'completed');
                 }

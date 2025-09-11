@@ -77,7 +77,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">>{{ __("messages.cancel") }}</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
         <button type="submit" form="addSafetyChecklistForm" class="btn orange_btn">
           <i class="fas fa-plus {{ margin_end(2) }}"></i>{{ __('messages.create_checklist') }}
         </button>

@@ -39,11 +39,11 @@
                     <div class="card-body p-md-4">
                         <h5 class="mb-3 mb-md-4 fw-semibold black_color">{{ __('messages.create_new_inspection') }}</h5>
                         @can('inspections', 'create')
-                        <button class="btn  orange_btn w-100 mb-3 mb-md-4 justify-content-center py-3" data-bs-toggle="modal"
-                            data-bs-target="#createInspectionModal" data-permission="inspections:create">
-                            <i class="fas fa-plus"></i>
-                            {{ __('messages.create_inspection') }}
-                        </button>
+                            <button class="btn  orange_btn w-100 mb-3 mb-md-4 justify-content-center py-3" data-bs-toggle="modal"
+                                data-bs-target="#createInspectionModal" data-permission="inspections:create">
+                                <i class="fas fa-plus"></i>
+                                {{ __('messages.create_inspection') }}
+                            </button>
                         @endcan
                         <div
                             class="file_upload_card d-flex flex-column align-items-center justify-content-center  text-muted">
@@ -105,7 +105,7 @@
                                             </span>
                                         </td>
                                         <td class="border-0">
-                                            <a href="#" class="text-primary  small">>{{ __('messages.view') }}</a>
+                                            <a href="#" class="text-primary  small">{{ __('messages.view') }}</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -120,7 +120,7 @@
                                             </span>
                                         </td>
                                         <td class="border-0">
-                                            <a href="#" class="text-primary  small">>{{ __('messages.view') }}</a>
+                                            <a href="#" class="text-primary  small">{{ __('messages.view') }}</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -135,7 +135,7 @@
                                             </span>
                                         </td>
                                         <td class="border-0">
-                                            <a href="#" class="text-primary  small">>{{ __('messages.view') }}</a>
+                                            <a href="#" class="text-primary  small">{{ __('messages.view') }}</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -179,7 +179,7 @@
         function viewInspection(title, type, date, status) {
             alert(
                 `Inspection Details:\n\nTitle: ${title}\nType: ${type}\nDate: ${date}\nStatus: ${status}\n\nDetailed inspection view would open here.`
-                );
+            );
         }
     </script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>

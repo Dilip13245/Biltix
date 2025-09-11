@@ -47,7 +47,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">>{{ __("messages.cancel") }}</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
         <button type="submit" form="addSnagForm" class="btn orange_btn">
           {{ __("messages.next") }} →
         </button>

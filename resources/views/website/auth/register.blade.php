@@ -194,6 +194,11 @@
             transition: all 0.2s ease;
             {{ is_rtl() ? 'text-align: right; direction: rtl;' : '' }}
         }
+        
+        .form-select {
+            {{ is_rtl() ? 'padding-left: 48px; padding-right: 16px;' : 'padding-right: 48px; padding-left: 16px;' }}
+            line-height: 1.2;
+        }
 
         .input-icon {
             position: absolute;
@@ -479,8 +484,7 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.designation') }}</label>
                                         <div class="position-relative">
-                                            <select class="form-select" name="designation" id="designation" required
-                                                style="{{ is_rtl() ? 'padding-left: 48px; padding-right: 16px;' : 'padding-right: 48px; padding-left: 16px;' }}">
+                                            <select class="form-select" name="designation" id="designation" required>
                                                 <option value="">{{ __('auth.select_designation') }}</option>
                                                 <option value="consultant">{{ __('auth.consultant') }}</option>
                                                 <option value="contractor">{{ __('auth.contractor') }}</option>
@@ -716,26 +720,20 @@
                         const memberName = nameInput.value.trim();
                         const memberPhone = phoneInput.value.trim();
                         
-                        // Only validate if user enters data in either field
-                        if (memberName || memberPhone) {
-                            memberCount++;
-                            
-                            // If one field filled, both are required
-                            if (!memberName) {
-                                showError(`memberNameError${index}`, `memberNameError${index}`, '{{ __('auth.member_name_required') }}');
-                                isValid = false;
-                            } else if (memberName.length < 2) {
+                        // Validate name if filled
+                        if (memberName) {
+                            if (memberName.length < 2) {
                                 showError(`memberNameError${index}`, `memberNameError${index}`, '{{ __('auth.member_name_min') }}');
                                 isValid = false;
                             } else if (!isValidName(memberName)) {
                                 showError(`memberNameError${index}`, `memberNameError${index}`, '{{ __('auth.member_name_invalid') }}');
                                 isValid = false;
                             }
-                            
-                            if (!memberPhone) {
-                                showError(`memberPhoneError${index}`, `memberPhoneError${index}`, '{{ __('auth.member_phone_required') }}');
-                                isValid = false;
-                            } else if (/\s/.test(memberPhone)) {
+                        }
+                        
+                        // Validate phone if filled
+                        if (memberPhone) {
+                            if (/\s/.test(memberPhone)) {
                                 showError(`memberPhoneError${index}`, `memberPhoneError${index}`, '{{ __('auth.member_phone_spaces') }}');
                                 isValid = false;
                             } else if (!isValidInternationalPhone(memberPhone)) {
@@ -747,6 +745,11 @@
                             } else {
                                 phoneNumbers.push(memberPhone);
                             }
+                        }
+                        
+                        // Count member if both fields are filled
+                        if (memberName && memberPhone) {
+                            memberCount++;
                         }
                     }
                 });
@@ -802,8 +805,8 @@
 
         function isValidInternationalPhone(phone) {
             const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
-            // Must be 10-15 digits, can start with +, no letters or special chars
-            const phoneRegex = /^[\+]?[1-9]\d{9,14}$/;
+            // Must be 10-15 digits, can start with + or 0, no letters or special chars
+            const phoneRegex = /^[\+]?[0-9]\d{9,14}$/;
             return phoneRegex.test(cleanPhone) && !/[a-zA-Z]/.test(cleanPhone);
         }
         
