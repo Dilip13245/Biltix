@@ -2,11 +2,31 @@
 <div class="modal fade" id="addSnagModal" tabindex="-1" aria-labelledby="addSnagModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
+      <div class="modal-header">
+        <style>
+          #addSnagModal .modal-header .btn-close {
+            position: static !important;
+            right: auto !important;
+            top: auto !important;
+            margin: 0 !important;
+          }
+          #addSnagModal .modal-header {
+            position: relative !important;
+          }
+        </style>
+        @if(app()->getLocale() == 'ar')
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <h5 class="modal-title" id="addSnagModalLabel">
+            {{ __("messages.add_new_snag") }}<i class="fas fa-exclamation-triangle ms-2"></i>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        @else
         <h5 class="modal-title" id="addSnagModalLabel">
-          <i class="fas fa-exclamation-triangle {{ margin_end(2) }}"></i>{{ __("messages.add_new_snag") }}
+          <i class="fas fa-exclamation-triangle me-2"></i>{{ __("messages.add_new_snag") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        @endif
       </div>
       <div class="modal-body">
         <form id="addSnagForm" enctype="multipart/form-data">

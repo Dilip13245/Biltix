@@ -107,14 +107,14 @@
                                                 <i class="fas fa-building {{ margin_end(2) }}"></i>
                                                 <span id="companyName">{{ __('messages.loading') }}...</span>
                                             </div>
-                                            <div class="d-flex gap-2 flex-wrap">
+                                            {{-- <div class="d-flex gap-2 flex-wrap">
                                                 <button class="btn orange_btn btn-sm" onclick="toggleEditMode()">
                                                     <i class="fas fa-edit {{ margin_end(2) }}"></i>{{ __('auth.edit_profile') }}
                                                 </button>
                                                 <button class="btn btn-danger btn-sm" onclick="deleteAccount()">
                                                     <i class="fas fa-trash {{ margin_end(2) }}"></i>{{ __('auth.delete_account') }}
                                                 </button>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
                                 </div>

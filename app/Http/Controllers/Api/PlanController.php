@@ -20,32 +20,38 @@ class PlanController extends Controller
                 'project_id' => 'required|integer',
                 'title' => 'required|string|max:255',
                 'drawing_number' => 'required|string|max:50',
-                'plan_type' => 'required|in:architectural,structural,electrical,plumbing',
-                'file' => 'required|file|mimes:pdf,dwg,jpg,png|max:10240',
+                'files' => 'required|array',
+                'files.*' => 'file|max:25600', // 25MB max per file
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $fileData = FileHelper::uploadFile($request->file('file'), 'plans');
+            $uploadedPlans = [];
+            $files = $request->file('files');
             
-            $planDetails = new Plan();
-            $planDetails->project_id = $request->project_id;
-            $planDetails->title = $request->title;
-            $planDetails->drawing_number = $request->drawing_number;
-            $planDetails->plan_type = $request->plan_type;
-            $planDetails->file_name = $fileData['filename'];
-            $planDetails->file_path = $fileData['path'];
-            $planDetails->file_size = $fileData['size'];
-            $planDetails->file_type = $fileData['mime_type'];
-            $planDetails->version = $request->version ?? '1.0';
-            $planDetails->uploaded_by = $request->user_id;
-            $planDetails->status = 'draft';
-            $planDetails->is_active = true;
+            foreach ($files as $index => $file) {
+                $fileData = FileHelper::uploadFile($file, 'plans');
+                
+                $planDetails = new Plan();
+                $planDetails->project_id = $request->project_id;
+                $planDetails->title = $request->title . ($index > 0 ? ' - ' . ($index + 1) : '');
+                $planDetails->drawing_number = $request->drawing_number . ($index > 0 ? '-' . ($index + 1) : '');
+                $planDetails->file_name = $fileData['filename'];
+                $planDetails->file_path = $fileData['path'];
+                $planDetails->file_size = $fileData['size'];
+                $planDetails->file_type = $fileData['mime_type'];
+                $planDetails->uploaded_by = $request->user_id;
+                $planDetails->is_active = true;
 
-            if ($planDetails->save()) {
-                return $this->toJsonEnc($planDetails, trans('api.plans.uploaded_success'), Config::get('constant.SUCCESS'));
+                if ($planDetails->save()) {
+                    $uploadedPlans[] = $planDetails;
+                }
+            }
+
+            if (count($uploadedPlans) > 0) {
+                return $this->toJsonEnc($uploadedPlans, trans('api.plans.uploaded_success'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.plans.upload_failed'), Config::get('constant.ERROR'));
             }
@@ -62,7 +68,7 @@ class PlanController extends Controller
             $plan_type = $request->input('plan_type');
             $limit = $request->input('limit', 10);
 
-            $query = Plan::where('is_active', 1)->where('is_deleted', 0);
+            $query = Plan::active();
 
             if ($project_id) {
                 $query->where('project_id', $project_id);
@@ -86,10 +92,7 @@ class PlanController extends Controller
             $plan_id = $request->input('plan_id');
             $user_id = $request->input('user_id');
 
-            $plan = Plan::where('id', $plan_id)
-                ->where('is_active', 1)
-                ->where('is_deleted', 0)
-                ->first();
+            $plan = Plan::active()->where('id', $plan_id)->first();
 
             if (!$plan) {
                 return $this->toJsonEnc([], trans('api.plans.not_found'), Config::get('constant.NOT_FOUND'));
@@ -110,10 +113,7 @@ class PlanController extends Controller
             $title = $request->input('title');
             $markup_data = $request->input('markup_data');
 
-            $plan = Plan::where('id', $plan_id)
-                ->where('is_active', 1)
-                ->where('is_deleted', 0)
-                ->first();
+            $plan = Plan::active()->where('id', $plan_id)->first();
 
             if (!$plan) {
                 return $this->toJsonEnc([], trans('api.plans.not_found'), Config::get('constant.NOT_FOUND'));
@@ -159,10 +159,7 @@ class PlanController extends Controller
             $plan_id = $request->input('plan_id');
             $user_id = $request->input('user_id');
 
-            $plan = Plan::where('id', $plan_id)
-                ->where('is_active', 1)
-                ->where('is_deleted', 0)
-                ->first();
+            $plan = Plan::active()->where('id', $plan_id)->first();
 
             if (!$plan) {
                 return $this->toJsonEnc([], trans('api.plans.not_found'), Config::get('constant.NOT_FOUND'));
@@ -185,19 +182,55 @@ class PlanController extends Controller
             $plan_id = $request->input('plan_id');
             $user_id = $request->input('user_id');
 
-            $plan = Plan::where('id', $plan_id)
-                ->where('is_active', 1)
-                ->where('is_deleted', 0)
-                ->first();
+            $plan = Plan::active()->where('id', $plan_id)->first();
 
             if (!$plan) {
                 return $this->toJsonEnc([], trans('api.plans.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            // Soft delete by setting is_deleted to true
             $plan->is_deleted = true;
             $plan->save();
 
             return $this->toJsonEnc([], trans('api.plans.deleted_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function replace(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer',
+                'plan_id' => 'required|integer',
+                'file' => 'required|file|max:25600', // 25MB max
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $plan = Plan::active()->where('id', $request->plan_id)->first();
+
+            if (!$plan) {
+                return $this->toJsonEnc([], trans('api.plans.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Delete old file
+            FileHelper::deleteFile($plan->file_path);
+
+            // Upload new file
+            $fileData = FileHelper::uploadFile($request->file('file'), 'plans');
+            
+            // Update plan with new file data
+            $plan->file_name = $fileData['filename'];
+            $plan->file_path = $fileData['path'];
+            $plan->file_size = $fileData['size'];
+            $plan->file_type = $fileData['mime_type'];
+            $plan->save();
+
+            return $this->toJsonEnc($plan, trans('api.plans.replaced_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

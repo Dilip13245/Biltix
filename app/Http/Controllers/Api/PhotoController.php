@@ -28,7 +28,7 @@ class PhotoController extends Controller
             $uploadedPhotos = [];
 
             foreach ($request->file('photos') as $photo) {
-                $fileData = FileHelper::uploadImage($photo, 'photos');
+                $fileData = FileHelper::uploadFile($photo, 'photos');
                 
                 $photoDetails = new Photo();
                 $photoDetails->project_id = $request->project_id;
@@ -38,7 +38,7 @@ class PhotoController extends Controller
                 $photoDetails->file_name = $fileData['filename'];
                 $photoDetails->file_path = $fileData['path'];
                 $photoDetails->file_size = $fileData['size'];
-                $photoDetails->taken_at = now();
+                $photoDetails->taken_at = $request->taken_at ?? now();
                 $photoDetails->taken_by = $request->user_id;
                 $photoDetails->location = $request->location ?? '';
                 $photoDetails->tags = $request->tags ?? [];
@@ -72,7 +72,7 @@ class PhotoController extends Controller
                 $query->where('phase_id', $phase_id);
             }
 
-            $photos = $query->orderBy('taken_at', 'desc')->paginate($limit);
+            $photos = $query->with(['uploader:id,name'])->orderBy('taken_at', 'desc')->paginate($limit);
 
             return $this->toJsonEnc($photos, trans('api.photos.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

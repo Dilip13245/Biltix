@@ -66,6 +66,13 @@
   <!-- SIMPLE DRAWING LIBRARY -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
   
+  <!-- API Client Scripts -->
+  <script src="{{ asset('website/js/api-config.js') }}"></script>
+  <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+  <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+  <script src="{{ asset('website/js/api-helpers.js') }}"></script>
+  <script src="{{ asset('website/js/api-client.js') }}"></script>
+  
   <script src="{{ asset('website/js/custom.js') }}"></script>
   
   <!-- Universal Auth System -->
@@ -73,6 +80,115 @@
   <script>
       // Disable auth check on app layout pages - Laravel middleware handles it
       window.DISABLE_JS_AUTH_CHECK = true;
+      
+      // Load header project data
+      document.addEventListener('DOMContentLoaded', function() {
+          loadHeaderProjectData();
+      });
+      
+      async function loadHeaderProjectData() {
+          // Get project ID from controller if available
+          const projectId = @json(isset($project) ? $project->id : null);
+          
+          if (projectId) {
+              
+              try {
+                  const response = await api.getProjectDetails({
+                      project_id: projectId
+                  });
+                  
+                  if (response.code === 200 && response.data) {
+                      const project = response.data;
+                      
+                      // Update header elements
+                      document.getElementById('headerProjectTitle').textContent = project.project_title || 'Project';
+                      
+                      if (project.project_start_date) {
+                          document.getElementById('headerStartDate').textContent = formatHeaderDate(project.project_start_date);
+                      }
+                      
+                      if (project.project_due_date) {
+                          document.getElementById('headerEndDate').textContent = formatHeaderDate(project.project_due_date);
+                      }
+                      
+                      // Calculate and display progress (placeholder - you can enhance this)
+                      const progress = calculateProjectProgress(project);
+                      document.getElementById('headerProgress').textContent = progress + '%';
+                      
+                      // Update status
+                      const statusElement = document.getElementById('headerStatus');
+                      const statusBadge = document.getElementById('headerStatusBadge');
+                      
+                      if (project.status) {
+                          statusElement.textContent = getStatusText(project.status);
+                          statusBadge.className = getStatusClass(project.status);
+                      }
+                  }
+              } catch (error) {
+                  console.error('Failed to load header project data:', error);
+                  // Keep loading text on error
+              }
+          }
+      }
+      
+      function formatHeaderDate(dateString) {
+          const date = new Date(dateString);
+          return date.toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric'
+          });
+      }
+      
+      function calculateProjectProgress(project) {
+          // Simple progress calculation based on dates
+          if (project.project_start_date && project.project_due_date) {
+              const startDate = new Date(project.project_start_date);
+              const endDate = new Date(project.project_due_date);
+              const currentDate = new Date();
+              
+              if (currentDate < startDate) return 0;
+              if (currentDate > endDate) return 100;
+              
+              const totalDuration = endDate - startDate;
+              const elapsed = currentDate - startDate;
+              
+              return Math.round((elapsed / totalDuration) * 100);
+          }
+          return 0;
+      }
+      
+      function getStatusText(status) {
+          switch (status?.toLowerCase()) {
+              case 'active':
+              case 'in_progress':
+                  return @json(__('messages.active'));
+              case 'completed':
+                  return @json(__('messages.completed'));
+              case 'planning':
+                  return @json(__('messages.planning'));
+              case 'on_hold':
+                  return @json(__('messages.on_hold'));
+              default:
+                  return @json(__('messages.active'));
+          }
+      }
+      
+      function getStatusClass(status) {
+          switch (status?.toLowerCase()) {
+              case 'active':
+              case 'in_progress':
+                  return 'status-badge-active';
+              case 'completed':
+                  return 'status-badge-completed';
+              case 'planning':
+                  return 'status-badge-planning';
+              case 'on_hold':
+                  return 'status-badge-hold';
+              default:
+                  return 'status-badge-active';
+          }
+      }
   </script>
   
   <!-- RTL Icon Spacing Fix -->

@@ -190,7 +190,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <a href="#" class="text-secondary" title="Edit" onclick="editSnag(${snag.id})"><i class="fas fa-pen-to-square fa-lg"></i></a>
+                                ${window.userPermissions && window.userPermissions.canUpdate('snags') ? 
+                                    `<a href="#" class="text-secondary" title="Edit" onclick="editSnag(${snag.id})"><i class="fas fa-pen-to-square fa-lg"></i></a>` : 
+                                    ''}
                             </div>
                             <p class="mb-3 text-muted">${snag.description || 'No description provided'}</p>
                             <div class="d-flex flex-wrap gap-3 text-muted small">
@@ -395,6 +397,17 @@
 
         // Add Snag Form Handler
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize user permissions
+            window.userPermissions = {
+                canUpdate: function(resource) {
+                    // Check if user has resolve permission for snags (which includes edit)
+                    @can('snags', 'resolve')
+                        if (resource === 'snags') return true;
+                    @endcan
+                    return false;
+                }
+            };
+            
             // Load snags and categories on page load
             loadSnags();
             loadSnagCategories();

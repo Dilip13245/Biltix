@@ -162,6 +162,13 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            // Add user names for project manager and technical engineer
+            $projectManager = $project->project_manager_id ? User::find($project->project_manager_id) : null;
+            $technicalEngineer = $project->technical_engineer_id ? User::find($project->technical_engineer_id) : null;
+            
+            $project->project_manager_name = $projectManager ? $projectManager->name : null;
+            $project->technical_engineer_name = $technicalEngineer ? $technicalEngineer->name : null;
+
             return $this->toJsonEnc($project, trans('api.projects.details_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));

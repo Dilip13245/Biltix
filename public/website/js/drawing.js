@@ -399,6 +399,12 @@ function clearCanvas() {
 }
 
 function openDrawingModal(config) {
+    const drawingModalElement = document.getElementById('drawingModal');
+    if (!drawingModalElement) {
+        console.error('Drawing modal not found in DOM');
+        return;
+    }
+    
     currentFiles = [];
     currentFileIndex = 0;
     backgroundImage = null;
@@ -406,9 +412,12 @@ function openDrawingModal(config) {
     drawingHistory = [];
     historyStep = -1;
     
-    document.getElementById('fileNavigation').style.display = 'none';
+    const fileNavigation = document.getElementById('fileNavigation');
+    if (fileNavigation) {
+        fileNavigation.style.display = 'none';
+    }
     
-    const modal = new bootstrap.Modal(document.getElementById('drawingModal'));
+    const modal = new bootstrap.Modal(drawingModalElement);
     modal.show();
     
     document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {

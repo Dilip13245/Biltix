@@ -166,6 +166,10 @@ class ApiClient {
         return this.makeRequest(API_CONFIG.ENDPOINTS.PROJECTS.DETAILS, data);
     }
 
+    async updateProject(data) {
+        return this.makeRequest('projects/update', data);
+    }
+
     // Task methods
     async getTasks(data) {
         return this.makeRequest(API_CONFIG.ENDPOINTS.TASKS.LIST, data);
@@ -195,6 +199,10 @@ class ApiClient {
     async markAllNotificationsAsRead(data = {}) {
         return this.makeRequest('notifications/mark_all_read', data);
     }
+    
+    async deleteAllNotifications(data = {}) {
+        return this.makeRequest('notifications/delete_all', data);
+    }
 
     // Team methods
     async getTeamMembers(data) {
@@ -208,6 +216,27 @@ class ApiClient {
 
     async uploadFile(data) {
         return this.makeFormDataRequest('files/upload', data);
+    }
+
+    async getFileCategories() {
+        return this.makeRequest('files/categories', {});
+    }
+
+    // Photo/Gallery methods
+    async getPhotos(data) {
+        return this.makeRequest('photos/list', data);
+    }
+
+    async uploadPhotos(data) {
+        return this.makeFormDataRequest('photos/upload', data);
+    }
+
+    async deletePhoto(data) {
+        return this.makeRequest('photos/delete', data);
+    }
+
+    async getPhotoCategories() {
+        return this.makeRequest('photos/categories', {});
     }
 
     // Snag methods
@@ -228,6 +257,37 @@ class ApiClient {
 
     async getSnagCategories() {
         return this.makeRequest('snags/categories', {});
+    }
+
+    // Plan methods
+    async getPlans(data) {
+        return this.makeRequest('plans/list', data);
+    }
+
+    async uploadPlan(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('plans/upload', data);
+        }
+        return this.makeRequest('plans/upload', data);
+    }
+
+    async deletePlan(data) {
+        return this.makeRequest('plans/delete', data);
+    }
+
+    async getPlanDetails(data) {
+        return this.makeRequest('plans/details', data);
+    }
+
+    async addPlanMarkup(data) {
+        return this.makeRequest('plans/add_markup', data);
+    }
+
+    async replacePlan(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('plans/replace', data);
+        }
+        return this.makeRequest('plans/replace', data);
     }
 
     // Inspection methods

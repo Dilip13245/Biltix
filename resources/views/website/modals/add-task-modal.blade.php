@@ -2,11 +2,31 @@
 <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
+      <div class="modal-header">
+        <style>
+          #addTaskModal .modal-header .btn-close {
+            position: static !important;
+            right: auto !important;
+            top: auto !important;
+            margin: 0 !important;
+          }
+          #addTaskModal .modal-header {
+            position: relative !important;
+          }
+        </style>
+        @if(app()->getLocale() == 'ar')
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <h5 class="modal-title" id="addTaskModalLabel">
+            {{ __("messages.add_new_task") }}<i class="fas fa-plus ms-2"></i>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        @else
         <h5 class="modal-title" id="addTaskModalLabel">
-          <i class="fas fa-plus {{ margin_end(2) }}"></i>{{ __("messages.add_new_task") }}
+          <i class="fas fa-plus me-2"></i>{{ __("messages.add_new_task") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        @endif
       </div>
       <div class="modal-body">
         <form id="addTaskForm">

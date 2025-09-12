@@ -28,4 +28,9 @@ class Photo extends Model
     {
         return $query->where('is_active', true)->where('is_deleted', false);
     }
+    
+    public function uploader()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'taken_by');
+    }
 }

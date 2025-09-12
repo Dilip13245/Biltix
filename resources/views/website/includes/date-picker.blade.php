@@ -163,10 +163,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (maxDate && date > maxDate) return;
         
         selectedDate = date;
-        const formattedDate = date.toISOString().split('T')[0];
+        // Format date manually to avoid timezone issues
+        const formattedDate = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
         input.value = formattedDate;
         calendar.style.display = 'none';
         renderCalendar();
+        
+        // Trigger change event
+        const changeEvent = new Event('change', { bubbles: true });
+        input.dispatchEvent(changeEvent);
     };
     
     input.addEventListener('click', function(e) {

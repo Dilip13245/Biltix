@@ -705,10 +705,13 @@ return [
     
     // Notification related
     'mark_all_read' => 'تعليم الكل كمقروء',
+    'delete_all' => 'حذف الكل',
     'no_notifications' => 'لا توجد إشعارات',
     'view_all_notifications' => 'عرض جميع الإشعارات',
     'all_notifications_marked_read' => 'تم تعليم جميع الإشعارات كمقروءة',
+    'all_notifications_deleted' => 'تم حذف جميع الإشعارات بنجاح',
     'failed_to_mark_notifications' => 'فشل في تعليم الإشعارات كمقروءة',
+    'failed_to_delete_notifications' => 'فشل في حذف الإشعارات',
     'just_now' => 'الآن',
     'minutes_ago' => 'د مضت',
     'hours_ago' => 'س مضت',
@@ -745,8 +748,80 @@ return [
     'update_snag' => 'تحديث المشكلة',
     'snag_updated_successfully' => 'تم تحديث المشكلة بنجاح!',
     'failed_to_update_snag' => 'فشل في تحديث المشكلة',
+    'upload_new_plan' => 'رفع مخطط جديد',
+    'plan_title' => 'عنوان المخطط',
+    'plan_title_example' => 'مثال: مخطط الطابق الأرضي',
+    'drawing_number' => 'رقم الرسم',
+    'drawing_number_example' => 'مثال: A2 01-1',
+    'plan_files' => 'ملفات المخطط',
+    'plan_files_help' => 'اختر ملفات متعددة (PDF، DWG، JPG، PNG، DOC، XLS) - الحد الأقصى 25 ميجابايت لكل ملف',
+    'plan_uploaded_successfully' => 'تم رفع المخطط بنجاح!',
+    'failed_to_upload_plan' => 'فشل في رفع المخطط',
+    'plan_deleted_successfully' => 'تم حذف المخطط بنجاح!',
+    'failed_to_delete_plan' => 'فشل في حذف المخطط',
+    'confirm_delete_plan' => 'هل أنت متأكد من حذف هذا المخطط؟',
+    'no_plans_found' => 'لم يتم العثور على مخططات',
+    'loading_plans' => 'جاري تحميل المخططات...',
+    'plan_viewer' => 'عارض المخططات',
+    'plan_information' => 'معلومات المخطط',
+    'name' => 'الاسم',
+    'file_type' => 'نوع الملف',
+    'tools' => 'الأدوات',
+    'add_note' => 'إضافة ملاحظة',
+    'measure' => 'قياس',
+    'report_issue' => 'الإبلاغ عن مشكلة',
+    'recent_comments' => 'التعليقات الأخيرة',
+    'no_comments_yet' => 'لا توجد تعليقات بعد',
+    'add_comment_placeholder' => 'إضافة تعليق...',
+    'add_comment' => 'إضافة تعليق',
+    'file' => 'ملف',
+    'open_file' => 'فتح الملف',
+    'replace_plan' => 'استبدال المخطط',
+    'plan_replaced_successfully' => 'تم استبدال المخطط بنجاح!',
+    'failed_to_replace_plan' => 'فشل في استبدال المخطط',
+    'annotation_feature_coming_soon' => 'ميزة التعليق قريباً!',
+    'measure_feature_coming_soon' => 'ميزة القياس قريباً!',
+    'issue_report_feature_coming_soon' => 'ميزة الإبلاغ عن المشاكل قريباً!',
+    'you' => 'أنت',
+    'just_now' => 'الآن',
+    'upload_date' => 'تاريخ الرفع',
+    'preview_not_available' => 'المعاينة غير متاحة',
+    'word_document' => 'مستند وورد',
+    'word_preview_info' => 'يُفضل عرض مستندات الوورد عن طريق التنزيل أو الفتح في علامة تبويب جديدة.',
+    'excel_document' => 'جدول بيانات إكسل',
+    'excel_preview_info' => 'يُفضل عرض ملفات الإكسل عن طريق التنزيل أو الفتح في علامة تبويب جديدة.',
+    
+    // Status translations for header
+    'planning' => 'التخطيط',
+    
+    // Delete confirmation messages
+    'delete_plan' => 'حذف المخطط',
+    'confirm_delete_plan_message' => 'هل أنت متأكد من حذف',
+    'access_denied' => 'تم رفض الوصول. ليس لديك صلاحية لتنفيذ هذا الإجراء.',
+    
+    // File upload translations
+    'select_category' => 'اختر الفئة',
+    'uploading_file' => 'رفع الملف',
+    'file_category' => 'فئة الملف',
+    'please_select_category' => 'يرجى اختيار فئة',
+    'general' => 'عام',
+    'upload' => 'رفع',
+    'file_uploaded_successfully' => 'تم رفع الملف بنجاح!',
+    'upload_failed' => 'فشل الرفع',
+    'please_select_files' => 'يرجى اختيار ملفات للرفع',
+    'no_photos_found' => 'لم يتم العثور على صور',
+    'by' => 'بواسطة',
+    'confirm_delete_photo' => 'هل أنت متأكد من حذف هذه الصورة؟',
+    'photo_deleted_successfully' => 'تم حذف الصورة بنجاح!',
+    'failed_to_delete_photo' => 'فشل في حذف الصورة',
+    'add_member' => 'إضافة عضو',
 
 ];
+
+
+
+
+
 
 
 

@@ -2,11 +2,31 @@
 <div class="modal fade" id="createInspectionModal" tabindex="-1" aria-labelledby="createInspectionModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
+      <div class="modal-header">
+        <style>
+          #createInspectionModal .modal-header .btn-close {
+            position: static !important;
+            right: auto !important;
+            top: auto !important;
+            margin: 0 !important;
+          }
+          #createInspectionModal .modal-header {
+            position: relative !important;
+          }
+        </style>
+        @if(app()->getLocale() == 'ar')
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <h5 class="modal-title" id="createInspectionModalLabel">
+            {{ __("messages.create_new_inspection") }}<i class="fas fa-clipboard-check ms-2"></i>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        @else
         <h5 class="modal-title" id="createInspectionModalLabel">
-          <i class="fas fa-clipboard-check {{ margin_end(2) }}"></i>{{ __("messages.create_new_inspection") }}
+          <i class="fas fa-clipboard-check me-2"></i>{{ __("messages.create_new_inspection") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        @endif
       </div>
       <div class="modal-body">
         <form id="createInspectionForm">

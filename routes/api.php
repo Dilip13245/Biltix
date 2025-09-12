@@ -119,6 +119,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('list', [PlanController::class, 'list'])->middleware('permission:plans,view');
         Route::post('details', [PlanController::class, 'details'])->middleware('permission:plans,view');
         Route::post('delete', [PlanController::class, 'delete'])->middleware('permission:plans,delete');
+        Route::post('replace', [PlanController::class, 'replace'])->middleware('permission:plans,upload');
         Route::post('add_markup', [PlanController::class, 'addMarkup'])->middleware('permission:plans,markup');
         Route::post('get_markups', [PlanController::class, 'getMarkups'])->middleware('permission:plans,view');
         Route::post('approve', [PlanController::class, 'approve'])->middleware('permission:plans,approve');
@@ -166,6 +167,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('mark_read', [NotificationController::class, 'markRead'])->middleware('permission:notifications,update');
         Route::post('mark_all_read', [NotificationController::class, 'markAllRead'])->middleware('permission:notifications,update');
         Route::post('delete', [NotificationController::class, 'delete'])->middleware('permission:notifications,delete');
+        Route::post('delete_all', [NotificationController::class, 'deleteAll'])->middleware('permission:notifications,delete');
         Route::post('get_count', [NotificationController::class, 'getCount'])->middleware('permission:notifications,view');
         Route::post('settings', [NotificationController::class, 'settings'])->middleware('permission:notifications,view');
     });

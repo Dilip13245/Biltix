@@ -2,11 +2,31 @@
 <div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
+      <div class="modal-header">
+        <style>
+          #taskDetailsModal .modal-header .btn-close {
+            position: static !important;
+            right: auto !important;
+            top: auto !important;
+            margin: 0 !important;
+          }
+          #taskDetailsModal .modal-header {
+            position: relative !important;
+          }
+        </style>
+        @if(app()->getLocale() == 'ar')
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <h5 class="modal-title" id="taskDetailsModalLabel">
+            {{ __("messages.task_details") }}<i class="fas fa-tasks ms-2"></i>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        @else
         <h5 class="modal-title" id="taskDetailsModalLabel">
-          <i class="fas fa-tasks {{ margin_end(2) }}"></i>{{ __("messages.task_details") }}
+          <i class="fas fa-tasks me-2"></i>{{ __("messages.task_details") }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        @endif
       </div>
       <div class="modal-body">
         <div class="row">

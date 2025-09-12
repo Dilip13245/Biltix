@@ -709,10 +709,13 @@ return [
     
     // Notification related
     'mark_all_read' => 'Mark All Read',
+    'delete_all' => 'Delete All',
     'no_notifications' => 'No notifications',
     'view_all_notifications' => 'View All Notifications',
     'all_notifications_marked_read' => 'All notifications marked as read',
+    'all_notifications_deleted' => 'All notifications deleted successfully',
     'failed_to_mark_notifications' => 'Failed to mark notifications as read',
+    'failed_to_delete_notifications' => 'Failed to delete notifications',
     'just_now' => 'Just now',
     'minutes_ago' => 'm ago',
     'hours_ago' => 'h ago',
@@ -749,8 +752,81 @@ return [
     'update_snag' => 'Update Snag',
     'snag_updated_successfully' => 'Snag updated successfully!',
     'failed_to_update_snag' => 'Failed to update snag',
+    'upload_new_plan' => 'Upload New Plan',
+    'plan_title' => 'Plan Title',
+    'plan_title_example' => 'e.g., Ground Floor Plan',
+    'drawing_number' => 'Drawing Number',
+    'drawing_number_example' => 'e.g., A2 01-1',
+    'plan_files' => 'Plan Files',
+    'plan_files_help' => 'Select multiple files (PDF, DWG, JPG, PNG, DOC, XLS) - Max 25MB each',
+    'plan_uploaded_successfully' => 'Plan uploaded successfully!',
+    'failed_to_upload_plan' => 'Failed to upload plan',
+    'plan_deleted_successfully' => 'Plan deleted successfully!',
+    'failed_to_delete_plan' => 'Failed to delete plan',
+    'confirm_delete_plan' => 'Are you sure you want to delete this plan?',
+    'no_plans_found' => 'No plans found',
+    'loading_plans' => 'Loading plans...',
+    'plan_viewer' => 'Plan Viewer',
+    'plan_information' => 'Plan Information',
+    'name' => 'Name',
+    'file_type' => 'File Type',
+    'tools' => 'Tools',
+    'add_note' => 'Add Note',
+    'measure' => 'Measure',
+    'report_issue' => 'Report Issue',
+    'recent_comments' => 'Recent Comments',
+    'no_comments_yet' => 'No comments yet',
+    'add_comment_placeholder' => 'Add a comment...',
+    'add_comment' => 'Add Comment',
+    'file' => 'File',
+    'open_file' => 'Open File',
+    'replace_plan' => 'Replace Plan',
+    'plan_replaced_successfully' => 'Plan replaced successfully!',
+    'failed_to_replace_plan' => 'Failed to replace plan',
+    'annotation_feature_coming_soon' => 'Annotation feature coming soon!',
+    'measure_feature_coming_soon' => 'Measure feature coming soon!',
+    'issue_report_feature_coming_soon' => 'Issue report feature coming soon!',
+    'you' => 'You',
+    'just_now' => 'Just now',
+    'upload_date' => 'Upload Date',
+    'preview_not_available' => 'Preview not available',
+    'word_document' => 'Word Document',
+    'word_preview_info' => 'Word documents are best viewed by downloading or opening in a new tab.',
+    'excel_document' => 'Excel Spreadsheet',
+    'excel_preview_info' => 'Excel files are best viewed by downloading or opening in a new tab.',
     'loading_projects' => 'Loading Projects',
+    
+    // Status translations for header
+    'planning' => 'Planning',
+    
+    // Delete confirmation messages
+    'delete_plan' => 'Delete Plan',
+    'confirm_delete_plan_message' => 'Are you sure you want to delete',
+    'access_denied' => 'Access denied. You do not have permission to perform this action.',
+    
+    // File upload translations
+    'select_category' => 'Select Category',
+    'uploading_file' => 'Uploading file',
+    'file_category' => 'File Category',
+    'please_select_category' => 'Please select a category',
+    'general' => 'General',
+    'upload' => 'Upload',
+    'file_uploaded_successfully' => 'File uploaded successfully!',
+    'upload_failed' => 'Upload failed',
+    'please_select_files' => 'Please select files to upload',
+    'no_photos_found' => 'No photos found',
+    'by' => 'by',
+    'confirm_delete_photo' => 'Are you sure you want to delete this photo?',
+    'photo_deleted_successfully' => 'Photo deleted successfully!',
+    'failed_to_delete_photo' => 'Failed to delete photo',
+    'add_member' => 'Add Member',
 ];
+
+
+
+
+
+
 
 
 

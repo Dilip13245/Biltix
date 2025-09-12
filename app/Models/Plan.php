@@ -12,9 +12,8 @@ class Plan extends Model
     protected $table = 'plans';
 
     protected $fillable = [
-        'project_id', 'title', 'drawing_number', 'plan_type', 'file_name', 'file_path', 'file_size',
-        'file_type', 'version', 'status', 'thumbnail_path', 'uploaded_by',
-        'approved_by', 'approved_at', 'is_active', 'is_deleted'
+        'project_id', 'title', 'drawing_number', 'file_name', 'file_path', 'file_size',
+        'file_type', 'uploaded_by', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [

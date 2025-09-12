@@ -132,6 +132,22 @@ class NotificationController extends Controller
         }
     }
 
+    public function deleteAll(Request $request)
+    {
+        try {
+            $user_id = $request->input('user_id');
+
+            Notification::where('user_id', $user_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->update(['is_deleted' => 1]);
+
+            return $this->toJsonEnc([], trans('api.notifications.all_deleted'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
     public function settings(Request $request)
     {
         try {

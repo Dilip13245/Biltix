@@ -166,6 +166,7 @@ return [
         'marked_read' => 'Notification marked as read',
         'all_marked_read' => 'All notifications marked as read',
         'deleted' => 'Notification deleted successfully',
+        'all_deleted' => 'All notifications deleted successfully',
         'count_retrieved' => 'Notification count retrieved successfully',
         'settings_retrieved' => 'Settings retrieved successfully',
         'not_found' => 'Notification not found',
