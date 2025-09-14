@@ -815,8 +815,38 @@ return [
     'photo_deleted_successfully' => 'تم حذف الصورة بنجاح!',
     'failed_to_delete_photo' => 'فشل في حذف الصورة',
     'add_member' => 'إضافة عضو',
+    
+    // Help Support messages
+    'sending' => 'جاري الإرسال',
+    'support_request_submitted' => 'تم إرسال طلب الدعم بنجاح! سنعود إليك خلال 24 ساعة.',
+    'failed_to_submit_request' => 'فشل في إرسال طلب الدعم. يرجى المحاولة مرة أخرى.',
+    'faq_section_info' => 'ستفتح هنا قسم الأسئلة الشائعة مع الأسئلة والأجوبة الشائعة.',
+    'documentation_section_info' => 'ستفتح هنا وثائق المستخدم مع الأدلة التفصيلية.',
+    'tutorials_section_info' => 'سيفتح هنا قسم الدروس التعليمية بالفيديو.',
+    
+    // Help Support RTL additions
+    'help_support_description' => 'تحتاج مساعدة؟ أرسل لنا رسالة وسنعود إليك.',
+    'enter_full_name' => 'أدخل اسمك الكامل',
+    'enter_email_address' => 'أدخل عنوان بريدك الإلكتروني',
+    'describe_issue_detail' => 'اوصف مشكلتك أو سؤالك بالتفصيل...',
+    'submit_request' => 'إرسال الطلب',
+    'message' => 'الرسائل',
+    'quick_help' => 'مساعدة سريعة',
+    'frequently_asked_questions' => 'الأسئلة الشائعة',
+    'user_documentation' => 'وثائق المستخدم',
+    'video_tutorials' => 'دروس الفيديو',
 
 ];
+
+
+
+
+
+
+
+
+
+
 
 
 

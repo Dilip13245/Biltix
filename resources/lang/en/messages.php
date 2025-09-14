@@ -820,6 +820,26 @@ return [
     'photo_deleted_successfully' => 'Photo deleted successfully!',
     'failed_to_delete_photo' => 'Failed to delete photo',
     'add_member' => 'Add Member',
+    
+    // Help Support messages
+    'sending' => 'Sending',
+    'support_request_submitted' => 'Support request submitted successfully! We will get back to you within 24 hours.',
+    'failed_to_submit_request' => 'Failed to submit support request. Please try again.',
+    'faq_section_info' => 'FAQ section would open here with common questions and answers.',
+    'documentation_section_info' => 'User documentation would open here with detailed guides.',
+    'tutorials_section_info' => 'Video tutorials section would open here.',
+    
+    // Help Support RTL additions
+    'help_support_description' => 'Need assistance? Send us a message and we\'ll get back to you.',
+    'enter_full_name' => 'Enter your full name',
+    'enter_email_address' => 'Enter your email address',
+    'describe_issue_detail' => 'Describe your issue or question in detail...',
+    'submit_request' => 'Submit Request',
+    'message' => 'Message',
+    'quick_help' => 'Quick Help',
+    'frequently_asked_questions' => 'Frequently Asked Questions',
+    'user_documentation' => 'User Documentation',
+    'video_tutorials' => 'Video Tutorials',
 ];
 
 

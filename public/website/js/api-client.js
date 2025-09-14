@@ -308,6 +308,11 @@ class ApiClient {
         return this.makeRequest('daily_logs/create', data);
     }
 
+    // Help Support methods
+    async submitHelpSupport(data) {
+        return this.makeRequest('general/help_support', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic
