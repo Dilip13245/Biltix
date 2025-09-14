@@ -16,6 +16,7 @@ use App\Models\FileCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
@@ -32,7 +33,9 @@ class ProjectController extends Controller
                 'project_start_date' => 'required|date',
                 'project_due_date' => 'required|date|after:project_start_date',
                 'priority' => 'nullable|in:low,medium,high,critical',
+                'construction_plans' => 'nullable|array',
                 'construction_plans.*' => 'nullable|file|mimes:pdf,docx,jpg,jpeg,png|max:25600',
+                'gantt_chart' => 'nullable|array', 
                 'gantt_chart.*' => 'nullable|file|mimes:pdf,docx,jpg,jpeg,png|max:25600',
             ], [
                 'project_title.required' => 'Project Title is required',
@@ -70,7 +73,12 @@ class ProjectController extends Controller
 
                 // Handle construction plans upload
                 if ($request->hasFile('construction_plans')) {
-                    foreach ($request->file('construction_plans') as $file) {
+                    $constructionFiles = $request->file('construction_plans');
+                    // Handle both single file and array of files
+                    if (!is_array($constructionFiles)) {
+                        $constructionFiles = [$constructionFiles];
+                    }
+                    foreach ($constructionFiles as $file) {
                         $fileData = FileHelper::uploadFile($file, 'projects/documents');
                         File::create([
                             'project_id' => $projectDetails->id,
@@ -87,7 +95,12 @@ class ProjectController extends Controller
 
                 // Handle gantt chart upload
                 if ($request->hasFile('gantt_chart')) {
-                    foreach ($request->file('gantt_chart') as $file) {
+                    $ganttFiles = $request->file('gantt_chart');
+                    // Handle both single file and array of files
+                    if (!is_array($ganttFiles)) {
+                        $ganttFiles = [$ganttFiles];
+                    }
+                    foreach ($ganttFiles as $file) {
                         $fileData = FileHelper::uploadFile($file, 'projects/documents');
                         File::create([
                             'project_id' => $projectDetails->id,
