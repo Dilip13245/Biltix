@@ -30,7 +30,7 @@ class AuthController extends Controller
         if (Auth::guard('admin')->attempt($credentials)) {
             $admin = Auth::guard('admin')->user();
             // Update last login
-            $admin->update(['last_login' => now()]);
+            $admin->update(['last_login_at' => now()]);
             
             session(['admin_logged_in' => true, 'admin_user' => $admin]);
             return redirect()->route('admin.dashboard');

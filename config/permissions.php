@@ -61,20 +61,20 @@ return [
         ],
         
         'site_engineer' => [
-            'auth' => ['login', 'profile_edit_limited'], // Login-only
-            'dashboard' => ['view_assigned'], // Assigned-only
+            'auth' => ['login', 'profile_edit_limited'],
+            'dashboard' => ['view', 'navigate'], // Full dashboard access
             'profile' => ['view', 'edit_limited'],
-            'projects' => [], // No Access
-            'plans' => ['annotate', 'view'], // Limited: annotate only
-            'files' => ['upload_logs', 'view'], // Limited: upload logs/snags only
-            'progress' => ['view'], // View-only
-            'tasks' => ['view_assigned'], // View-only assigned tasks
-            'snags' => ['create', 'view'], // Limited: submit snags
-            'inspections' => ['create', 'view'], // Limited: submit
-            'daily_logs' => ['create', 'edit', 'view'], // Full: submit logs
-            'team' => ['view'], // View-only
+            'projects' => ['view'], // Can view all projects
+            'plans' => ['annotate', 'view'], // Can view and annotate plans
+            'files' => ['upload_logs', 'download', 'view'], // Can view and download all files
+            'progress' => ['view'], // Can view all progress
+            'tasks' => ['view'], // Can view all tasks
+            'snags' => ['create', 'view'], // Can view all snags and create
+            'inspections' => ['create', 'view'], // Can view all inspections and create
+            'daily_logs' => ['create', 'edit', 'view'], // Full access to daily logs
+            'team' => ['view'], // Can view all team members
             'notifications' => ['view', 'mark_read', 'delete'],
-            'timeline' => ['view'] // View-only
+            'timeline' => ['view'] // Can view all timelines
         ],
         
         'stakeholder' => [
@@ -109,8 +109,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'dashboard_access' => [
-        'full' => ['consultant', 'contractor', 'project_manager'],
-        'assigned_only' => ['site_engineer'],
+        'full' => ['consultant', 'contractor', 'project_manager', 'site_engineer'],
+        'assigned_only' => [],
         'view_only' => ['stakeholder']
     ]
 ];

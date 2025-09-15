@@ -17,7 +17,7 @@ class Admin extends Authenticatable
         'phone',
         'role',
         'avatar',
-        'last_login',
+        'last_login_at',
     ];
 
     protected $hidden = [
@@ -27,6 +27,6 @@ class Admin extends Authenticatable
 
     protected $casts = [
         'password' => 'hashed',
-        'last_login' => 'datetime',
+        'last_login_at' => 'datetime',
     ];
 }
