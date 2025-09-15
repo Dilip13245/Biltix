@@ -768,75 +768,128 @@
             return date.toLocaleDateString();
         }
 
-        // Load projects from API
-        async function loadProjects(filter = 'all') {
+        // Pagination variables
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMoreProjects = true;
+        let currentFilter = 'all';
+        let allProjects = [];
+
+        // Load projects from API with pagination
+        async function loadProjects(filter = 'all', reset = true) {
+            if (isLoading) return;
+            
             try {
+                isLoading = true;
+                
+                if (reset) {
+                    currentPage = 1;
+                    allProjects = [];
+                    hasMoreProjects = true;
+                    currentFilter = filter;
+                    document.getElementById('projectsContainer').innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border" role="status"></div><div class="mt-2">Loading projects...</div></div>';
+                }
+                
                 const type = filter === 'all' ? '' : (filter === 'active' ? 'ongoing' : 'completed');
                 const response = await api.getProjects({
                     type: type,
-                    page: 1,
-                    limit: 20
+                    page: currentPage,
+                    limit: 10
                 });
 
                 if (response.code === 200 && response.data) {
-                    displayProjects(response.data);
+                    const newProjects = Array.isArray(response.data) ? response.data : [];
+                    
+                    if (newProjects.length === 0) {
+                        hasMoreProjects = false;
+                        if (reset && allProjects.length === 0) {
+                            displayNoProjects();
+                        }
+                        return;
+                    }
+                    
+                    allProjects = reset ? newProjects : [...allProjects, ...newProjects];
+                    displayProjects(allProjects, reset);
+                    
+                    if (newProjects.length < 10) {
+                        hasMoreProjects = false;
+                    }
+                    
+                    currentPage++;
                 } else {
-                    displayNoProjects();
+                    if (reset) {
+                        displayNoProjects();
+                    }
+                    hasMoreProjects = false;
                 }
             } catch (error) {
                 console.error('Failed to load projects:', error);
-                displayNoProjects();
+                if (reset) {
+                    displayNoProjects();
+                }
+                hasMoreProjects = false;
+            } finally {
+                isLoading = false;
             }
         }
 
-        function displayProjects(projects) {
+        function displayProjects(projects, reset = true) {
             const container = document.getElementById('projectsContainer');
-            container.innerHTML = '';
+            
+            if (reset) {
+                container.innerHTML = '';
+            }
 
             if (!projects || projects.length === 0) {
-                displayNoProjects();
+                if (reset) {
+                    displayNoProjects();
+                }
                 return;
             }
 
-            projects.forEach((project, index) => {
+            const newProjects = reset ? projects : projects.slice(-10);
+            
+            newProjects.forEach((project, index) => {
+                if (!reset && container.querySelector(`[data-project-id="${project.id}"]`)) {
+                    return;
+                }
+                
                 const statusClass = getStatusClass(project.status);
                 const statusText = getStatusText(project.status);
                 const progressPercent = getRandomProgress(project.status);
-                // const teamCount = Math.floor(Math.random() * 8) + 2;
-
-                const projectCard = `
-                    <div class="col-12 col-md-6 col-lg-4 wow fadeInUp" data-wow-delay="${index * 0.4}s">
-                        <a href="/website/project/${project.id}/plans">
-                            <div class="card project-card h-100">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="fw-bold mb-0">${project.project_title}</h6>
-                                        <span class="badge ${statusClass}">${statusText}</span>
+                
+                const projectCard = document.createElement('div');
+                projectCard.className = 'col-12 col-md-6 col-lg-4 wow fadeInUp';
+                projectCard.setAttribute('data-project-id', project.id);
+                projectCard.setAttribute('data-wow-delay', `${index * 0.1}s`);
+                
+                projectCard.innerHTML = `
+                    <a href="/website/project/${project.id}/plans">
+                        <div class="card project-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold mb-0">${project.project_title}</h6>
+                                    <span class="badge ${statusClass}">${statusText}</span>
+                                </div>
+                                <div class="text-muted small mb-2">${project.type || 'Construction Project'}</div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span class="text-muted small">Progress</span>
+                                        <span class="fw-medium small">${progressPercent}%</span>
                                     </div>
-                                    <div class="text-muted small mb-2">${project.type || 'Construction Project'}</div>
-                                    <div class="mb-2">
-                                        <div class="d-flex justify-content-between mb-3">
-                                            <span class="text-muted small">{{ __('messages.progress') }}</span>
-                                            <span class="fw-medium small">${progressPercent}%</span>
-                                        </div>
-                                        <div class="progress" style="height: 6px;">
-                                            <div class="progress-bar ${getProgressBarClass(progressPercent)}" style="width: ${progressPercent}%;"></div>
-                                        </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar ${getProgressBarClass(progressPercent)}" style="width: ${progressPercent}%;"></div>
                                     </div>
-                                    <div class="small text-muted mb-2 mb-md-3">
-                                        ${project.status === 'completed' ? '{{ __('messages.completed') }}' : '{{ __('messages.due') }}'}: ${formatDate(project.project_due_date)}
-                                    </div>
-                                    {{-- <div>
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar" alt="avatar">
-                                        <img src="{{ asset('website/images/icons/avtar.svg') }}" class="avatar" alt="avatar">
-                                        <span class="ms-2 text-muted small">+${teamCount} {{ __('messages.more') }}</span>
-                                    </div> --}}
+                                </div>
+                                <div class="small text-muted mb-2 mb-md-3">
+                                    ${project.status === 'completed' ? 'Completed' : 'Due'}: ${formatDate(project.project_due_date)}
                                 </div>
                             </div>
-                        </a>
-                    </div>
+                        </div>
+                    </a>
                 `;
-                container.innerHTML += projectCard;
+                
+                container.appendChild(projectCard);
             });
         }
 
@@ -899,14 +952,30 @@
             // Load stats, notifications and projects on page load
             loadDashboardStats();
             loadNotifications();
-            loadProjects();
+            loadProjects('all', true);
 
             const statusFilter = document.getElementById('statusFilter');
             if (statusFilter) {
                 statusFilter.addEventListener('change', function() {
-                    loadProjects(this.value);
+                    loadProjects(this.value, true);
                 });
             }
+            
+            // Infinite scroll implementation
+            let scrollTimeout;
+            window.addEventListener('scroll', function() {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(function() {
+                    if (hasMoreProjects && !isLoading) {
+                        const scrollPosition = window.innerHeight + window.scrollY;
+                        const documentHeight = document.documentElement.offsetHeight;
+                        
+                        if (scrollPosition >= documentHeight - 200) {
+                            loadProjects(currentFilter, false);
+                        }
+                    }
+                }, 100);
+            });
 
 
 
