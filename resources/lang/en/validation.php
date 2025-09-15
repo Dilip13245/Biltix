@@ -5,7 +5,7 @@ return [
     'email_required' => 'Email address is required',
     'email_invalid' => 'Please enter a valid email address',
     'password_required' => 'Password is required',
-    'password_min' => 'Password must be at least 6 characters',
+    'password_min' => 'Password must be at least 8 characters',
     
     // Register validation
     'full_name_required' => 'Full name is required',
@@ -59,7 +59,7 @@ return [
     'otp_required' => 'OTP is required',
     'otp_invalid' => 'Please enter a valid 6-digit OTP',
     'new_password_required' => 'New password is required',
-    'new_password_min' => 'New password must be at least 6 characters',
+    'new_password_min' => 'New password must be at least 8 characters',
     'confirm_password_required' => 'Please confirm your new password',
     'new_password_mismatch' => 'New passwords do not match',
 ];
