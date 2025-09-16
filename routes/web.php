@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\ProjectController;
+
 use App\Http\Controllers\Website\HomeController;
 use App\Http\Controllers\Website\ApiController;
 use Illuminate\Support\Facades\Session;
@@ -126,23 +125,7 @@ Route::prefix('api')->group(function () {
     });
 });
 
-/*
-|--------------------------------------------------------------------------
-| Admin Routes
-|--------------------------------------------------------------------------
-*/
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('login', [App\Http\Controllers\Admin\AuthController::class, 'showLogin'])->name('login');
-    Route::post('login', [App\Http\Controllers\Admin\AuthController::class, 'login'])->name('login.post');
-    Route::get('logout', [App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
-    
-    Route::middleware('admin.auth')->group(function () {
-        Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-        Route::get('profile', [App\Http\Controllers\Admin\ProfileController::class, 'show'])->name('profile.show');
-        Route::get('profile/edit', [App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
-    });
-});
+
 
 /*
 |--------------------------------------------------------------------------

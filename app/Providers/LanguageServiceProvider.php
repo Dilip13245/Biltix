@@ -13,8 +13,13 @@ class LanguageServiceProvider extends ServiceProvider
         // Share language helper with all views
         View::share('languageHelper', new LanguageHelper());
         
-        // Share common language variables
-        View::composer('*', function ($view) {
+        // Share common language variables (exclude admin panel)
+        View::composer(['*'], function ($view) {
+            // Skip for Filament admin panel to avoid RTL/LTR conflicts
+            if (request()->is('admin*') || request()->is('livewire/*') || str_contains(request()->path(), 'filament')) {
+                return;
+            }
+            
             $view->with([
                 'currentLocale' => app()->getLocale(),
                 'isRtl' => app()->getLocale() === 'ar',

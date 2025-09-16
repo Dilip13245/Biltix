@@ -20,6 +20,11 @@ class HelpSupport extends Model
         'is_active',
         'is_deleted'
     ];
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     protected $casts = [
         'is_active' => 'boolean',

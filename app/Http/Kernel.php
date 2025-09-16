@@ -76,5 +76,6 @@ class Kernel extends HttpKernel
         'web.guest' => \App\Http\Middleware\WebGuest::class,
         'web.permission' => \App\Http\Middleware\WebPermission::class,
         'web.api.auth' => \App\Http\Middleware\WebApiAuth::class,
+        'auto.permission' => \App\Http\Middleware\AutoPermission::class,
     ];
 }

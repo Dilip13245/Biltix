@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\User;
+use App\Helpers\DynamicRoleHelper;
 
 class RoleHelper
 {
@@ -11,17 +12,7 @@ class RoleHelper
      */
     public static function hasPermission($user, string $module, string $action): bool
     {
-        if (is_int($user)) {
-            $user = User::find($user);
-        }
-        
-        if (!$user || !$user->is_active) {
-            return false;
-        }
-
-        $permissions = self::getRolePermissions($user->role, $module);
-        
-        return in_array($action, $permissions);
+        return DynamicRoleHelper::hasPermission($user, $module, $action);
     }
 
     /**
@@ -29,8 +20,7 @@ class RoleHelper
      */
     public static function getRolePermissions(string $role, string $module): array
     {
-        $permissions = config('permissions.roles.' . $role . '.' . $module, []);
-        return $permissions;
+        return DynamicRoleHelper::getRolePermissions($role, $module);
     }
 
     /**
@@ -38,7 +28,7 @@ class RoleHelper
      */
     public static function canRegister(string $role): bool
     {
-        return in_array($role, config('permissions.can_register', []));
+        return DynamicRoleHelper::canRegister($role);
     }
 
     /**
@@ -46,7 +36,7 @@ class RoleHelper
      */
     public static function isLoginOnly(string $role): bool
     {
-        return in_array($role, config('permissions.login_only', []));
+        return DynamicRoleHelper::isLoginOnly($role);
     }
 
     /**
@@ -54,17 +44,7 @@ class RoleHelper
      */
     public static function getDashboardAccess(string $role): string
     {
-        $access = config('permissions.dashboard_access');
-        
-        if (in_array($role, $access['full'])) {
-            return 'full';
-        } elseif (in_array($role, $access['assigned_only'])) {
-            return 'assigned_only';
-        } elseif (in_array($role, $access['view_only'])) {
-            return 'view_only';
-        }
-        
-        return 'none';
+        return DynamicRoleHelper::getDashboardAccess($role);
     }
 
     /**
@@ -123,7 +103,7 @@ class RoleHelper
      */
     public static function getAllRoles(): array
     {
-        return ['consultant', 'contractor', 'project_manager', 'site_engineer', 'stakeholder'];
+        return DynamicRoleHelper::getAllRoles();
     }
 
     /**
@@ -131,14 +111,6 @@ class RoleHelper
      */
     public static function getRoleDisplayName(string $role): string
     {
-        $names = [
-            'consultant' => 'Consultant',
-            'contractor' => 'Contractor', 
-            'project_manager' => 'Project Manager',
-            'site_engineer' => 'Site Engineer',
-            'stakeholder' => 'Stakeholder'
-        ];
-        
-        return $names[$role] ?? ucfirst(str_replace('_', ' ', $role));
+        return DynamicRoleHelper::getRoleDisplayName($role);
     }
 }

@@ -29,4 +29,23 @@ class Admin extends Authenticatable
         'password' => 'hashed',
         'last_login_at' => 'datetime',
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'admin_roles');
+    }
+
+    public function hasPermission($module, $action)
+    {
+        return $this->roles()->whereHas('permissions', function ($query) use ($module, $action) {
+            $query->where('module', $module)
+                  ->where('action', $action)
+                  ->where('is_active', true);
+        })->exists();
+    }
+
+    public function hasRole($roleName)
+    {
+        return $this->roles()->where('name', $roleName)->exists();
+    }
 }

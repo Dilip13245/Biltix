@@ -62,4 +62,43 @@ return [
     'new_password_min' => 'New password must be at least 8 characters',
     'confirm_password_required' => 'Please confirm your new password',
     'new_password_mismatch' => 'New passwords do not match',
+    
+    // Role validations
+    'role_name_format' => 'Role name must contain only lowercase letters and underscores',
+    'role_name_min' => 'Role name must be at least 3 characters',
+    'display_name_format' => 'Display name can only contain letters and spaces',
+    'display_name_min' => 'Display name must be at least 2 characters',
+    'description_min' => 'Description must be at least 10 characters',
+    'description_max' => 'Description cannot exceed 500 characters',
+    'permissions_required' => 'At least one permission must be selected',
+    'permissions_min' => 'Please select at least one permission for this role',
+    
+    // Permission validations
+    'permission_name_format' => 'Permission name must contain only lowercase letters, underscores, and dots',
+    'permission_name_min' => 'Permission name must be at least 3 characters',
+    'permission_name_unique' => 'This permission name already exists',
+    'permission_display_format' => 'Display name can only contain letters, spaces, and hyphens',
+    'permission_display_min' => 'Display name must be at least 3 characters',
+    'permission_description_min' => 'Description must be at least 5 characters',
+    'permission_description_max' => 'Description cannot exceed 300 characters',
+    
+    // Success messages
+    'role_created' => 'Role created successfully!',
+    'role_updated' => 'Role updated successfully!',
+    'role_deleted' => 'Role deleted successfully!',
+    'permission_created' => 'Permission created successfully!',
+    'permission_updated' => 'Permission updated successfully!',
+    'permission_deleted' => 'Permission deleted successfully!',
+    
+    // Error messages
+    'operation_failed' => 'Operation failed. Please try again.',
+    'delete_failed' => 'Cannot delete this item as it is being used.',
+    
+    // Help & Support messages
+    'support_created' => 'Support ticket created successfully!',
+    'support_updated' => 'Support ticket updated successfully!',
+    'support_deleted' => 'Support ticket deleted successfully!',
+    'status_updated' => 'Ticket status updated successfully!',
+    'ticket_not_found' => 'Ticket not found',
+    'status_required' => 'Please select a status',
 ];

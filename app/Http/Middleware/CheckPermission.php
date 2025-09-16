@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 use App\Helpers\EncryptDecrypt;
+use App\Helpers\DynamicRoleHelper;
 
 class CheckPermission
 {
@@ -29,11 +30,8 @@ class CheckPermission
                 return $this->unauthorizedResponse('User not found or inactive');
             }
 
-            // Get user's role permissions
-            $permissions = $this->getUserPermissions($user->role, $module);
-            
-            // Check if user has required permission
-            if (!in_array($action, $permissions)) {
+            // Check if user has required permission using database
+            if (!DynamicRoleHelper::hasPermission($user, $module, $action)) {
                 return $this->unauthorizedResponse('Access denied. Insufficient permissions.');
             }
             
