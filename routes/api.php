@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\PhotoController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +49,11 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language'])->group(
         Route::post('static_content', [GeneralController::class, 'getStaticContent']);
         Route::post('help_support', [GeneralController::class, 'submitHelpSupport'])->middleware(['tokencheck', 'throttle:5,1']);
         Route::post('change_language', [GeneralController::class, 'changeLanguage'])->middleware('tokencheck');
+    });
+    
+    Route::prefix('roles')->group(function () {
+        Route::post('permissions', [RoleController::class, 'getRolePermissions']);
+        Route::post('user_permissions', [RoleController::class, 'getUserPermissions']);
     });
 });
 
