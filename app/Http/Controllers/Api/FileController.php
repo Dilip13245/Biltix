@@ -67,6 +67,12 @@ class FileController extends Controller
             }
 
             $files = $query->paginate($request->limit ?? 10);
+            
+            // Add full URLs to file paths
+            $files->getCollection()->transform(function ($file) {
+                $file->file_url = asset('storage/' . $file->file_path);
+                return $file;
+            });
 
             return $this->toJsonEnc($files, trans('api.files.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -187,6 +193,12 @@ class FileController extends Controller
             }
 
             $files = $query->paginate($limit);
+            
+            // Add full URLs to file paths
+            $files->getCollection()->transform(function ($file) {
+                $file->file_url = asset('storage/' . $file->file_path);
+                return $file;
+            });
 
             return $this->toJsonEnc($files, trans('api.files.search_results'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

@@ -79,6 +79,12 @@ class PlanController extends Controller
             }
 
             $plans = $query->paginate($limit);
+            
+            // Add full URLs to file paths
+            $plans->getCollection()->transform(function ($plan) {
+                $plan->file_url = asset('storage/' . $plan->file_path);
+                return $plan;
+            });
 
             return $this->toJsonEnc($plans, trans('api.plans.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -97,6 +103,9 @@ class PlanController extends Controller
             if (!$plan) {
                 return $this->toJsonEnc([], trans('api.plans.not_found'), Config::get('constant.NOT_FOUND'));
             }
+            
+            // Add full URL to file path
+            $plan->file_url = asset('storage/' . $plan->file_path);
 
             return $this->toJsonEnc($plan, trans('api.plans.details_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
