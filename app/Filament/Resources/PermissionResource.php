@@ -64,6 +64,7 @@ class PermissionResource extends Resource
                             ->label(__('filament.fields.module'))
                             ->required()
                             ->options([
+                                'auth' => 'Authentication',
                                 'projects' => 'Projects',
                                 'tasks' => 'Tasks',
                                 'inspections' => 'Inspections',
@@ -74,9 +75,9 @@ class PermissionResource extends Resource
                                 'daily_logs' => 'Daily Logs',
                                 'team' => 'Team Management',
                                 'notifications' => 'Notifications',
-                                'reports' => 'Reports',
-                                'timeline' => 'Timeline',
-                                'progress' => 'Progress Tracking',
+                                'users' => 'User Management',
+                                'general' => 'General',
+                                'roles' => 'Role Management',
                             ])
                             ->searchable()
                             ->live()
@@ -90,20 +91,16 @@ class PermissionResource extends Resource
                                 'create' => 'Create',
                                 'view' => 'View',
                                 'edit' => 'Edit',
-                                'update' => 'Update',
                                 'delete' => 'Delete',
-                                'assign' => 'Assign',
-                                'approve' => 'Approve',
-                                'conduct' => 'Conduct',
-                                'complete' => 'Complete',
-                                'resolve' => 'Resolve',
-                                'comment' => 'Comment',
                                 'upload' => 'Upload',
                                 'download' => 'Download',
+                                'approve' => 'Approve',
+                                'assign' => 'Assign',
+                                'resolve' => 'Resolve',
+                                'complete' => 'Complete',
+                                'conduct' => 'Conduct',
+                                'comment' => 'Comment',
                                 'markup' => 'Markup',
-                                'track' => 'Track',
-                                'coordinate' => 'Coordinate',
-                                'review' => 'Review',
                             ])
                             ->searchable()
                             ->live()
