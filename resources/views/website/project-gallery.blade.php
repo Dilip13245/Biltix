@@ -44,11 +44,14 @@
     <script>
         let allPhotos = [];
         let filteredPhotos = [];
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Auto-detect user timezone
         
         async function loadPhotos() {
             try {
                 const projectId = getProjectIdFromUrl();
                 console.log('Loading photos for project:', projectId);
+                
+                // Load all photos without date filter
                 const response = await api.getPhotos({ project_id: projectId });
                 console.log('Photos API response:', response);
                 
@@ -58,11 +61,16 @@
                     if (!Array.isArray(photos)) {
                         photos = [];
                     }
+                    
+                    // Convert UTC dates to local timezone for display
+                    photos = photos.map(photo => {
+                        photo.local_created_at = convertUTCToLocal(photo.created_at);
+                        photo.local_taken_at = convertUTCToLocal(photo.taken_at);
+                        return photo;
+                    });
+                    
                     allPhotos = photos;
                     filteredPhotos = photos;
-                    
-                    // Log photo dates for debugging
-                    console.log('First photo dates:', photos[0]?.taken_at, photos[0]?.created_at);
                     
                     displayPhotos(photos);
                     updatePhotoCount(photos.length);
@@ -73,6 +81,34 @@
             } catch (error) {
                 console.error('Failed to load photos:', error);
                 displayNoPhotos();
+            }
+        }
+        
+        function convertLocalDateToUTC(localDate) {
+            // Convert user's local date to UTC date for proper filtering
+            // Create date in user's timezone
+            const localDateTime = new Date(localDate + 'T12:00:00'); // Use noon to avoid timezone edge cases
+            // Convert to UTC and get date part
+            const utcDate = new Date(localDateTime.getTime() - (localDateTime.getTimezoneOffset() * 60000));
+            return utcDate.toISOString().split('T')[0];
+        }
+        
+        function convertUTCToLocal(utcDateString) {
+            if (!utcDateString) return null;
+            try {
+                // Create date object from UTC string
+                const utcDate = new Date(utcDateString);
+                if (isNaN(utcDate.getTime())) return utcDateString;
+                
+                // Get local date string in YYYY-MM-DD format
+                const year = utcDate.getFullYear();
+                const month = String(utcDate.getMonth() + 1).padStart(2, '0');
+                const day = String(utcDate.getDate()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            } catch (error) {
+                console.error('Date conversion error:', error);
+                return utcDateString;
             }
         }
         
@@ -87,7 +123,9 @@
             }
             
             container.innerHTML = '<div class="CarDs-grid">' + photos.map((photo, index) => {
-                const uploadDate = formatDate(photo.taken_at || photo.created_at);
+                // Use local dates for display, fallback to original dates
+                const dateToShow = photo.local_taken_at || photo.local_created_at || photo.taken_at || photo.created_at;
+                const uploadDate = formatDate(dateToShow);
                 const uploaderName = getUploaderName(photo);
                 const imagePath = photo.file_path.startsWith('http') ? photo.file_path : `{{ asset('storage') }}/${photo.file_path}`;
                 
@@ -135,8 +173,14 @@
         
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('{{ app()->getLocale() }}', { year: 'numeric', month: 'short', day: 'numeric' });
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'N/A';
+                return date.toLocaleDateString('{{ app()->getLocale() }}', { year: 'numeric', month: 'short', day: 'numeric' });
+            } catch (error) {
+                console.error('Date formatting error:', error);
+                return 'N/A';
+            }
         }
         
         function getProjectIdFromUrl() {
@@ -269,17 +313,14 @@
                     console.log('Date filter changed:', selectedDate);
                     
                     if (selectedDate) {
+                        // Filter photos client-side by local date
                         filteredPhotos = allPhotos.filter(photo => {
-                            const photoDateStr = photo.taken_at || photo.created_at;
-                            if (!photoDateStr) return false;
-                            
-                            const photoDate = photoDateStr.split('T')[0]; // Get date part only (YYYY-MM-DD)
-                            console.log('Comparing:', photoDate, 'with', selectedDate);
-                            return photoDate === selectedDate;
+                            const photoLocalDate = photo.local_created_at || convertUTCToLocal(photo.created_at);
+                            return photoLocalDate === selectedDate;
                         });
                         clearBtn.style.display = 'inline-block';
-                        console.log('Filtered photos:', filteredPhotos.length);
                     } else {
+                        // Show all photos
                         filteredPhotos = allPhotos;
                         clearBtn.style.display = 'none';
                     }
