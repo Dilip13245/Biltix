@@ -14,6 +14,7 @@ class NotificationController extends Controller
     {
         try {
             $user_id = $request->input('user_id');
+            $page = $request->input('page', 1);
             $limit = $request->input('limit', 20);
             $type = $request->input('type');
 
@@ -26,9 +27,13 @@ class NotificationController extends Controller
             }
 
             $notifications = $query->orderBy('created_at', 'desc')
-                ->paginate($limit);
+                ->paginate($limit, ['*'], 'page', $page);
 
-            return $this->toJsonEnc($notifications, trans('api.notifications.list_retrieved'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $notifications->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.notifications.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

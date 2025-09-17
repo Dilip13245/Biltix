@@ -134,8 +134,7 @@ class ProjectController extends Controller
             $search = $request->input('search');
             $type = $request->input('type'); // ongoing or completed
             $page = $request->input('page', 1);
-            $limit = 10;
-            $offset = ($page - 1) * $limit;
+            $limit = $request->input('limit', 10);
 
             $query = Project::where('is_active', 1)->where('is_deleted', 0);
 
@@ -156,9 +155,13 @@ class ProjectController extends Controller
                 });
             }
 
-            $projects = $query->skip($offset)->take($limit)->get();
+            $projects = $query->paginate($limit, ['*'], 'page', $page);
 
-            return $this->toJsonEnc($projects, 'Projects retrieved successfully', Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $projects->items()
+            ];
+
+            return $this->toJsonEnc($data, 'Projects retrieved successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

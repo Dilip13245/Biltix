@@ -66,6 +66,7 @@ class PlanController extends Controller
             $user_id = $request->input('user_id');
             $project_id = $request->input('project_id');
             $plan_type = $request->input('plan_type');
+            $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
             $query = Plan::active();
@@ -78,7 +79,7 @@ class PlanController extends Controller
                 $query->where('plan_type', $plan_type);
             }
 
-            $plans = $query->paginate($limit);
+            $plans = $query->paginate($limit, ['*'], 'page', $page);
             
             // Add full URLs to file paths
             $plans->getCollection()->transform(function ($plan) {
@@ -86,7 +87,11 @@ class PlanController extends Controller
                 return $plan;
             });
 
-            return $this->toJsonEnc($plans, trans('api.plans.list_retrieved'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $plans->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.plans.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

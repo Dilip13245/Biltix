@@ -798,7 +798,7 @@
                 });
 
                 if (response.code === 200 && response.data) {
-                    const newProjects = Array.isArray(response.data) ? response.data : [];
+                    const newProjects = Array.isArray(response.data.data) ? response.data.data : (Array.isArray(response.data) ? response.data : []);
                     
                     if (newProjects.length === 0) {
                         hasMoreProjects = false;

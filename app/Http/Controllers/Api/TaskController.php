@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\FileHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\TaskComment;
@@ -71,6 +72,7 @@ class TaskController extends Controller
             $project_id = $request->input('project_id');
             $status = $request->input('status');
             $assigned_to = $request->input('assigned_to');
+            $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
             $query = Task::where('is_active', 1)->where('is_deleted', 0);
@@ -87,9 +89,13 @@ class TaskController extends Controller
                 $query->where('assigned_to', $assigned_to);
             }
 
-            $tasks = $query->paginate($limit);
+            $tasks = $query->paginate($limit, ['*'], 'page', $page);
 
-            return $this->toJsonEnc($tasks, trans('api.tasks.list_retrieved'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $tasks->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.tasks.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

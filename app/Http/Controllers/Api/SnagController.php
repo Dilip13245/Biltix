@@ -81,6 +81,7 @@ class SnagController extends Controller
             $project_id = $request->input('project_id');
             $status = $request->input('status');
             $priority = $request->input('priority');
+            $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
             $query = Snag::with(['reporter:id,name,role', 'assignedUser:id,name,role', 'category:id,name'])
@@ -98,7 +99,7 @@ class SnagController extends Controller
                 $query->where('priority', $priority);
             }
 
-            $snags = $query->orderBy('created_at', 'desc')->paginate($limit);
+            $snags = $query->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
 
             // Format response to match Figma design
             $snags->getCollection()->transform(function ($snag) {
@@ -118,7 +119,11 @@ class SnagController extends Controller
                 ];
             });
 
-            return $this->toJsonEnc($snags, trans('api.snags.list_retrieved'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $snags->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.snags.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

@@ -83,8 +83,7 @@ class InspectionController extends Controller
             $project_id = $request->input('project_id');
             $status = $request->input('status');
             $page = $request->input('page', 1);
-            $limit = 10;
-            $offset = ($page - 1) * $limit;
+            $limit = $request->input('limit', 10);
 
             $query = Inspection::with(['checklists', 'images'])
                 ->where('is_active', 1)
@@ -98,9 +97,13 @@ class InspectionController extends Controller
                 $query->where('status', $status);
             }
 
-            $inspections = $query->skip($offset)->take($limit)->get();
+            $inspections = $query->paginate($limit, ['*'], 'page', $page);
 
-            return $this->toJsonEnc($inspections, trans('api.inspections.list_retrieved'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $inspections->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.inspections.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

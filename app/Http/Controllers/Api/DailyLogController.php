@@ -54,6 +54,7 @@ class DailyLogController extends Controller
             $user_id = $request->input('user_id');
             $project_id = $request->input('project_id');
             $log_date = $request->input('log_date');
+            $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
             $query = DailyLog::where('is_active', 1)->where('is_deleted', 0);
@@ -66,9 +67,13 @@ class DailyLogController extends Controller
                 $query->where('log_date', $log_date);
             }
 
-            $dailyLogs = $query->paginate($limit);
+            $dailyLogs = $query->paginate($limit, ['*'], 'page', $page);
 
-            return $this->toJsonEnc($dailyLogs, trans('api.daily_logs.list_retrieved'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $dailyLogs->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.daily_logs.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

@@ -66,6 +66,8 @@ class PhotoController extends Controller
             $user_id = $request->input('user_id');
             $project_id = $request->input('project_id');
             $phase_id = $request->input('phase_id');
+            $date = $request->input('date');
+            $page = $request->input('page', 1);
             $limit = $request->input('limit', 20);
 
             $query = Photo::where('is_active', 1)->where('is_deleted', 0);
@@ -78,7 +80,11 @@ class PhotoController extends Controller
                 $query->where('phase_id', $phase_id);
             }
 
-            $photos = $query->with(['uploader:id,name'])->orderBy('taken_at', 'desc')->paginate($limit);
+            if ($date) {
+                $query->whereDate('created_at', $date);
+            }
+
+            $photos = $query->with(['uploader:id,name'])->orderBy('taken_at', 'desc')->paginate($limit, ['*'], 'page', $page);
             
             // Add full URLs to file paths
             $photos->getCollection()->transform(function ($photo) {
@@ -89,7 +95,11 @@ class PhotoController extends Controller
                 return $photo;
             });
 
-            return $this->toJsonEnc($photos, trans('api.photos.list_retrieved'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $photos->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.photos.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

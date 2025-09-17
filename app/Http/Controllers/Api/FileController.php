@@ -56,6 +56,8 @@ class FileController extends Controller
     public function list(Request $request)
     {
         try {
+            $page = $request->input('page', 1);
+            $limit = $request->input('limit', 10);
             $query = File::active();
 
             if ($request->project_id) {
@@ -66,7 +68,7 @@ class FileController extends Controller
                 $query->where('category_id', $request->category_id);
             }
 
-            $files = $query->paginate($request->limit ?? 10);
+            $files = $query->paginate($limit, ['*'], 'page', $page);
             
             // Add full URLs to file paths
             $files->getCollection()->transform(function ($file) {
@@ -74,7 +76,11 @@ class FileController extends Controller
                 return $file;
             });
 
-            return $this->toJsonEnc($files, trans('api.files.list_retrieved'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $files->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.files.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -173,6 +179,7 @@ class FileController extends Controller
             $project_id = $request->input('project_id');
             $search_term = $request->input('search_term');
             $file_type = $request->input('file_type');
+            $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
             $query = File::active();
@@ -192,7 +199,7 @@ class FileController extends Controller
                 $query->where('file_type', 'like', "%{$file_type}%");
             }
 
-            $files = $query->paginate($limit);
+            $files = $query->paginate($limit, ['*'], 'page', $page);
             
             // Add full URLs to file paths
             $files->getCollection()->transform(function ($file) {
@@ -200,7 +207,11 @@ class FileController extends Controller
                 return $file;
             });
 
-            return $this->toJsonEnc($files, trans('api.files.search_results'), Config::get('constant.SUCCESS'));
+            $data = [
+                'data' => $files->items()
+            ];
+
+            return $this->toJsonEnc($data, trans('api.files.search_results'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
