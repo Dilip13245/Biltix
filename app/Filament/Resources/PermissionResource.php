@@ -63,22 +63,59 @@ class PermissionResource extends Resource
                         Forms\Components\Select::make('module')
                             ->label(__('filament.fields.module'))
                             ->required()
-                            ->options([
-                                'auth' => 'Authentication',
-                                'projects' => 'Projects',
-                                'tasks' => 'Tasks',
-                                'inspections' => 'Inspections',
-                                'snags' => 'Snags',
-                                'plans' => 'Plans',
-                                'files' => 'Files',
-                                'photos' => 'Photos',
-                                'daily_logs' => 'Daily Logs',
-                                'team' => 'Team Management',
-                                'notifications' => 'Notifications',
-                                'users' => 'User Management',
-                                'general' => 'General',
-                                'roles' => 'Role Management',
+                            ->options(function () {
+                                // Get existing modules from database
+                                $existingModules = Permission::distinct()->pluck('module', 'module')->toArray();
+                                
+                                // Default modules
+                                $defaultModules = [
+                                    'projects' => 'Projects',
+                                    'tasks' => 'Tasks',
+                                    'inspections' => 'Inspections',
+                                    'snags' => 'Snags',
+                                    'plans' => 'Plans',
+                                    'files' => 'Files',
+                                    'photos' => 'Photos',
+                                    'daily_logs' => 'Daily Logs',
+                                    'team' => 'Team Management',
+                                    'notifications' => 'Notifications',
+                                    'users' => 'User Management',
+                                    'help_support' => 'Help & Support',
+                                    'reports' => 'Reports',
+                                    'general' => 'General',
+                                    'roles' => 'Role Management',
+                                ];
+                                
+                                // Merge and format
+                                $allModules = array_merge($defaultModules, $existingModules);
+                                
+                                // Format display names
+                                $formattedModules = [];
+                                foreach ($allModules as $key => $value) {
+                                    $formattedModules[$key] = is_string($value) ? $value : ucfirst(str_replace('_', ' ', $key));
+                                }
+                                
+                                return $formattedModules;
+                            })
+                            ->allowHtml()
+                            ->searchable()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('new_module')
+                                    ->label('New Module Name')
+                                    ->required()
+                                    ->placeholder('e.g., inventory, billing, etc.')
+                                    ->regex('/^[a-z_]+$/')
+                                    ->helperText('Use lowercase letters and underscores only')
                             ])
+                            ->createOptionUsing(function (array $data) {
+                                return $data['new_module'];
+                            })
+                            ->createOptionAction(function (Forms\Components\Actions\Action $action) {
+                                return $action
+                                    ->modalHeading('Add New Module')
+                                    ->modalSubmitActionLabel('Add Module')
+                                    ->modalWidth('md');
+                            })
                             ->searchable()
                             ->live()
                             ->afterStateUpdated(function (callable $set, $state) {
@@ -87,21 +124,57 @@ class PermissionResource extends Resource
                         Forms\Components\Select::make('action')
                             ->label(__('filament.fields.action'))
                             ->required()
-                            ->options([
-                                'create' => 'Create',
-                                'view' => 'View',
-                                'edit' => 'Edit',
-                                'delete' => 'Delete',
-                                'upload' => 'Upload',
-                                'download' => 'Download',
-                                'approve' => 'Approve',
-                                'assign' => 'Assign',
-                                'resolve' => 'Resolve',
-                                'complete' => 'Complete',
-                                'conduct' => 'Conduct',
-                                'comment' => 'Comment',
-                                'markup' => 'Markup',
+                            ->options(function () {
+                                // Get existing actions from database
+                                $existingActions = Permission::distinct()->pluck('action', 'action')->toArray();
+                                
+                                // Default actions
+                                $defaultActions = [
+                                    'view' => 'View',
+                                    'create' => 'Create',
+                                    'edit' => 'Edit',
+                                    'delete' => 'Delete',
+                                    'assign' => 'Assign',
+                                    'approve' => 'Approve',
+                                    'download' => 'Download',
+                                    'upload' => 'Upload',
+                                    'update_status' => 'Update Status',
+                                    'resolve' => 'Resolve',
+                                    'complete' => 'Complete',
+                                    'conduct' => 'Conduct',
+                                    'comment' => 'Comment',
+                                    'markup' => 'Markup',
+                                ];
+                                
+                                // Merge and format
+                                $allActions = array_merge($defaultActions, $existingActions);
+                                
+                                // Format display names
+                                $formattedActions = [];
+                                foreach ($allActions as $key => $value) {
+                                    $formattedActions[$key] = is_string($value) ? $value : ucfirst(str_replace('_', ' ', $key));
+                                }
+                                
+                                return $formattedActions;
+                            })
+                            ->searchable()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('new_action')
+                                    ->label('New Action Name')
+                                    ->required()
+                                    ->placeholder('e.g., export, import, etc.')
+                                    ->regex('/^[a-z_]+$/')
+                                    ->helperText('Use lowercase letters and underscores only')
                             ])
+                            ->createOptionUsing(function (array $data) {
+                                return $data['new_action'];
+                            })
+                            ->createOptionAction(function (Forms\Components\Actions\Action $action) {
+                                return $action
+                                    ->modalHeading('Add New Action')
+                                    ->modalSubmitActionLabel('Add Action')
+                                    ->modalWidth('md');
+                            })
                             ->searchable()
                             ->live()
                             ->afterStateUpdated(function (callable $set, $get) {

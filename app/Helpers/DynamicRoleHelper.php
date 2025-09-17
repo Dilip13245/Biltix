@@ -128,6 +128,55 @@ class DynamicRoleHelper
     {
         return Role::where('is_active', true)->pluck('display_name', 'name')->toArray();
     }
+    
+    /**
+     * Get all available modules dynamically
+     */
+    public static function getAllModules(): array
+    {
+        $modules = Permission::distinct()->pluck('module')->toArray();
+        $formattedModules = [];
+        
+        foreach ($modules as $module) {
+            $formattedModules[$module] = ucfirst(str_replace('_', ' ', $module));
+        }
+        
+        return $formattedModules;
+    }
+    
+    /**
+     * Get all available actions dynamically
+     */
+    public static function getAllActions(): array
+    {
+        $actions = Permission::distinct()->pluck('action')->toArray();
+        $formattedActions = [];
+        
+        foreach ($actions as $action) {
+            $formattedActions[$action] = ucfirst(str_replace('_', ' ', $action));
+        }
+        
+        return $formattedActions;
+    }
+    
+    /**
+     * Auto-create permissions for new modules
+     */
+    public static function createModulePermissions(string $module, array $actions = ['view', 'create', 'edit', 'delete']): void
+    {
+        foreach ($actions as $action) {
+            Permission::firstOrCreate(
+                ['name' => $module . '.' . $action],
+                [
+                    'module' => $module,
+                    'action' => $action,
+                    'display_name' => ucfirst(str_replace('_', ' ', $module)) . ' - ' . ucfirst($action),
+                    'description' => 'Can ' . $action . ' ' . str_replace('_', ' ', $module),
+                    'is_active' => true
+                ]
+            );
+        }
+    }
 
     /**
      * Get role display name
