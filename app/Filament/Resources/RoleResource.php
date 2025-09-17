@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Cache;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\View;
 
 class RoleResource extends Resource
 {
@@ -105,6 +106,8 @@ class RoleResource extends Resource
                     
                 Forms\Components\Section::make(__('filament.fields.permissions'))
                     ->schema([
+                        Forms\Components\View::make('filament.bulk-actions')
+                            ->view('filament.components.permission-bulk-actions'),
                         Forms\Components\CheckboxList::make('permissions')
                             ->label(__('filament.fields.select_permissions'))
                             ->relationship('permissions', 'display_name')
@@ -122,7 +125,8 @@ class RoleResource extends Resource
                             ->validationMessages([
                                 'required' => __('validation.permissions_required'),
                                 'min_items' => __('validation.permissions_min'),
-                            ]),
+                            ])
+                            ->extraAttributes(['id' => 'permissions-checkbox-list']),
                     ])
             ]);
     }
