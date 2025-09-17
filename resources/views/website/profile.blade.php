@@ -54,8 +54,20 @@
                                 <a href="#" class="d-flex align-items-center gap-2 gap-md-3" type="button" data-bs-toggle="dropdown">
                                     <img src="{{ asset('website/images/icons/avtar.svg') }}" alt="user img" class="User_iMg">
                                     <span class="{{ is_rtl() ? 'text-start' : 'text-end' }}">
-                                        <h6 class="fs14 fw-medium black_color">John Smith</h6>
-                                        <p class="Gray_color fs12 fw-normal">{{ __('auth.consultant') }}</p>
+                                        <h6 class="fs14 fw-medium black_color">
+                                            @if (isset($currentUser))
+                                                {{ $currentUser->name }}
+                                            @else
+                                                {{ __('messages.john_smith') }}
+                                            @endif
+                                        </h6>
+                                        <p class="Gray_color fs12 fw-normal">
+                                            @if (isset($currentUser))
+                                                {{ $currentUser->getRoleDisplayName() }}
+                                            @else
+                                                {{ __('messages.consultant') }}
+                                            @endif
+                                        </p>
                                     </span>
                                     <img src="{{ asset('website/images/icons/arrow-up.svg') }}" alt="arrow" class="arrow">
                                 </a>

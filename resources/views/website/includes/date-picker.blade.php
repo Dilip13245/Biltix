@@ -101,7 +101,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!input || !calendar) return;
     
-    const minDate = @if($minDate) new Date('{{ $minDate }}') @else null @endif;
+    let minDate = @if($minDate) new Date('{{ $minDate }}') @else null @endif;
+    
+    // Check for dynamic minimum date (for due date picker)
+    if ('{{ $id }}' === 'project_due_date' && window.dueDateMinDate) {
+        minDate = window.dueDateMinDate;
+    }
     const maxDate = @if($maxDate) new Date('{{ $maxDate }}') @else null @endif;
     
     let currentDate = new Date();
@@ -116,9 +121,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const month = currentDate.getMonth();
         
         let html = '<div class="vanilla-calendar-header">';
+        @if(is_rtl())
+        html += '<button type="button" class="vanilla-calendar-nav" onclick="window.calendarNext_{{ $id }}()">›</button>';
+        html += '<div class="vanilla-calendar-month">' + months[month] + ' ' + year + '</div>';
+        html += '<button type="button" class="vanilla-calendar-nav" onclick="window.calendarPrev_{{ $id }}()">‹</button>';
+        @else
         html += '<button type="button" class="vanilla-calendar-nav" onclick="window.calendarPrev_{{ $id }}()">‹</button>';
         html += '<div class="vanilla-calendar-month">' + months[month] + ' ' + year + '</div>';
         html += '<button type="button" class="vanilla-calendar-nav" onclick="window.calendarNext_{{ $id }}()">›</button>';
+        @endif
         html += '</div><div class="vanilla-calendar-grid">';
         
         weekdays.forEach(day => {
@@ -176,6 +187,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     input.addEventListener('click', function(e) {
         e.preventDefault();
+        
+        // Update minimum date and starting month if this is due date picker
+        if ('{{ $id }}' === 'project_due_date' && window.dueDateMinDate) {
+            minDate = window.dueDateMinDate;
+            if (window.dueDateStartMonth) {
+                currentDate = new Date(window.dueDateStartMonth);
+            }
+        }
+        
         calendar.style.display = calendar.style.display === 'none' ? 'block' : 'none';
         if (calendar.style.display === 'block') renderCalendar();
     });

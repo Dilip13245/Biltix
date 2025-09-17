@@ -26,8 +26,8 @@ class ProjectController extends Controller
             $validator = Validator::make($request->all(), [
                 'project_title' => 'required|string|max:255',
                 'contractor_name' => 'required|string|max:255',
-                'project_manager_id' => 'nullable|integer',
-                'technical_engineer_id' => 'nullable|integer',
+                'project_manager_id' => 'required|integer|exists:users,id',
+                'technical_engineer_id' => 'required|integer|exists:users,id',
                 'type' => 'required|string|max:255',
                 'project_location' => 'required|string|max:255',
                 'project_start_date' => 'required|date',
@@ -40,8 +40,12 @@ class ProjectController extends Controller
             ], [
                 'project_title.required' => 'Project Title is required',
                 'contractor_name.required' => 'Contractor Name is required',
-                'type.required' => 'Project Type is required',
-                'project_location.required' => 'Project Location is required',
+                'project_manager_id.required' => 'Project Manager assignment is mandatory',
+                'project_manager_id.exists' => 'Selected Project Manager does not exist',
+                'technical_engineer_id.required' => 'Technical Engineer assignment is mandatory',
+                'technical_engineer_id.exists' => 'Selected Technical Engineer does not exist',
+                'type.required' => 'Project Type is mandatory',
+                'project_location.required' => 'Project Location is mandatory',
                 'project_start_date.required' => 'Project Start Date is required',
                 'project_due_date.required' => 'Project Due Date is required',
                 'project_due_date.after' => 'Project Due Date must be after Start Date',
@@ -55,7 +59,7 @@ class ProjectController extends Controller
             $projectDetails->project_code = NumberHelper::generateProjectCode();
             $projectDetails->project_title = $request->project_title;
             $projectDetails->contractor_name = $request->contractor_name;
-            $projectDetails->project_manager_id = $request->project_manager_id ?? $request->user_id;
+            $projectDetails->project_manager_id = $request->project_manager_id;
             $projectDetails->technical_engineer_id = $request->technical_engineer_id;
             $projectDetails->type = $request->type;
             $projectDetails->project_location = $request->project_location;

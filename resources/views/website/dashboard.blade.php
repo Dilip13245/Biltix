@@ -468,7 +468,7 @@
                                             <label for="project_manager_id"
                                                 class="form-label fw-medium">{{ __('messages.assign_project_manager') }}</label>
                                             <select class="form-select Input_control" id="project_manager_id"
-                                                name="project_manager_id">
+                                                name="project_manager_id" required>
                                                 <option value="">{{ __('messages.select_manager') }}</option>
                                                 <option value="1">John Smith</option>
                                                 <option value="2">Sarah Johnson</option>
@@ -480,7 +480,7 @@
                                             <label for="technical_engineer_id"
                                                 class="form-label fw-medium">{{ __('messages.assign_technical_engineer') }}</label>
                                             <select class="form-select Input_control" id="technical_engineer_id"
-                                                name="technical_engineer_id">
+                                                name="technical_engineer_id" required>
                                                 <option value="">{{ __('messages.select_engineer') }}</option>
                                                 <option value="1">Mike Wilson</option>
                                                 <option value="2">Lisa Brown</option>
@@ -600,10 +600,10 @@
                             data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
                         <button type="button" class="btn btn-outline-primary d-none" id="prevBtn"
                             onclick="changeStep(-1)">
-                            <i class="fas fa-arrow-left me-2"></i>{{ __('messages.previous') }}
+                            <i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }} {{ is_rtl() ? 'ms-2' : 'me-2' }}"></i>{{ __('messages.previous') }}
                         </button>
                         <button type="button" class="btn orange_btn" id="nextBtn" onclick="changeStep(1)">
-                            {{ __('messages.next') }}<i class="fas fa-arrow-right ms-2"></i>
+                            {{ __('messages.next') }}<i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-right' }} {{ is_rtl() ? 'me-2' : 'ms-2' }}"></i>
                         </button>
                         <button type="submit" form="createProjectForm" class="btn orange_btn d-none" id="submitBtn">
                             <i class="fas fa-plus me-2"></i>{{ __('messages.create') }}
@@ -953,6 +953,33 @@
             loadDashboardStats();
             loadNotifications();
             loadProjects('all', true);
+            
+            // Setup date picker listeners for vanilla calendar
+            setTimeout(() => {
+                const startDateInput = document.getElementById('project_start_date');
+                if (startDateInput) {
+                    startDateInput.addEventListener('change', function() {
+                        if (this.value) {
+                            // Parse date string directly to avoid timezone issues
+                            const dateParts = this.value.split('-');
+                            const year = parseInt(dateParts[0]);
+                            const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed
+                            const day = parseInt(dateParts[2]);
+                            
+                            const startDate = new Date(year, month, day);
+                            const nextDay = new Date(year, month, day + 1);
+                            
+                            // Update due date minimum and starting month
+                            const dueDateInput = document.getElementById('project_due_date');
+                            if (dueDateInput) {
+                                dueDateInput.value = '';
+                                window.dueDateMinDate = nextDay;
+                                window.dueDateStartMonth = nextDay; // Set calendar to open at this month
+                            }
+                        }
+                    });
+                }
+            }, 500);
 
             const statusFilter = document.getElementById('statusFilter');
             if (statusFilter) {
