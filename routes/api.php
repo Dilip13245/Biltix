@@ -154,6 +154,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('upload', [FileController::class, 'upload']);
         Route::post('list', [FileController::class, 'list']);
         Route::post('delete', [FileController::class, 'delete']);
+        Route::post('replace', [FileController::class, 'replace']);
         Route::post('download', [FileController::class, 'download']);
         Route::post('share', [FileController::class, 'share']);
         Route::post('search', [FileController::class, 'search']);

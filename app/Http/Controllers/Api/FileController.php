@@ -216,4 +216,46 @@ class FileController extends Controller
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
     }
+
+    public function replace(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer',
+                'file_id' => 'required|integer',
+                'file' => 'required|file|max:10240', // 10MB max
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $file = File::active()->find($request->file_id);
+
+            if (!$file) {
+                return $this->toJsonEnc([], trans('api.files.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Delete old file
+            FileHelper::deleteFile($file->file_path);
+
+            // Upload new file
+            $fileData = FileHelper::uploadFile($request->file('file'), 'project_files');
+            
+            // Update file with new file data
+            $file->name = $fileData['filename'];
+            $file->original_name = $fileData['original_name'];
+            $file->file_path = $fileData['path'];
+            $file->file_size = $fileData['size'];
+            $file->file_type = $fileData['mime_type'];
+            $file->save();
+            
+            // Add full URL to response
+            $file->file_url = asset('storage/' . $file->file_path);
+
+            return $this->toJsonEnc($file, trans('api.files.replaced_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
 }
