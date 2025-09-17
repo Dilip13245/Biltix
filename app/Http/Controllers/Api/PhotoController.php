@@ -45,6 +45,12 @@ class PhotoController extends Controller
                 $photoDetails->is_active = true;
                 $photoDetails->save();
 
+                // Add full URL to the uploaded photo
+                $photoDetails->file_url = asset('storage/' . $photoDetails->file_path);
+                if ($photoDetails->thumbnail_path) {
+                    $photoDetails->thumbnail_url = asset('storage/' . $photoDetails->thumbnail_path);
+                }
+                
                 $uploadedPhotos[] = $photoDetails;
             }
 
@@ -73,6 +79,15 @@ class PhotoController extends Controller
             }
 
             $photos = $query->with(['uploader:id,name'])->orderBy('taken_at', 'desc')->paginate($limit);
+            
+            // Add full URLs to file paths
+            $photos->getCollection()->transform(function ($photo) {
+                $photo->file_url = asset('storage/' . $photo->file_path);
+                if ($photo->thumbnail_path) {
+                    $photo->thumbnail_url = asset('storage/' . $photo->thumbnail_path);
+                }
+                return $photo;
+            });
 
             return $this->toJsonEnc($photos, trans('api.photos.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -98,6 +113,15 @@ class PhotoController extends Controller
             }
 
             $photos = $query->orderBy('taken_at', 'desc')->get();
+            
+            // Add full URLs to file paths
+            $photos->transform(function ($photo) {
+                $photo->file_url = asset('storage/' . $photo->file_path);
+                if ($photo->thumbnail_path) {
+                    $photo->thumbnail_url = asset('storage/' . $photo->thumbnail_path);
+                }
+                return $photo;
+            });
 
             // Group by date
             $groupedPhotos = $photos->groupBy(function($photo) {
