@@ -21,6 +21,7 @@
         </div>
     </div>
 
+    {{-- Static Plan Cards - Commented Out
     <div class="CarDs-grid">
         <!-- Plan Card 1 -->
         <div class="CustOm_Card wow fadeInUp" data-wow-delay="0s">
@@ -154,49 +155,83 @@
             </div>
         </div>
     </div>
+    --}}
     @include('website.modals.upload-plan-modal')
     @include('website.modals.plan-viewer-modal')
     @include('website.modals.drawing-modal')
 
     <script>
+        // Pagination variables
         let allPlans = [];
+        let currentDisplayedPlans = [];
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMorePages = true;
+        const plansPerPage = 6;
         
-        // Load plans from API
-        async function loadPlans() {
+        // Load plans from API with server-side pagination
+        async function loadPlans(resetPagination = true) {
+            if (isLoading) return;
+            
             try {
+                isLoading = true;
                 const projectId = getProjectIdFromUrl();
-                const response = await api.getPlans({ project_id: projectId });
+                
+                if (resetPagination) {
+                    currentPage = 1;
+                    currentDisplayedPlans = [];
+                    hasMorePages = true;
+                }
+                
+                const response = await api.getPlans({ 
+                    project_id: projectId,
+                    page: currentPage,
+                    limit: plansPerPage
+                });
                 
                 if (response.code === 200 && response.data) {
                     let plans = response.data.data || response.data;
                     if (!Array.isArray(plans)) {
                         plans = [];
                     }
-                    allPlans = plans;
-                    displayPlans(plans);
+                    
+                    if (resetPagination) {
+                        currentDisplayedPlans = plans;
+                        displayPlans(currentDisplayedPlans, false);
+                    } else {
+                        currentDisplayedPlans = currentDisplayedPlans.concat(plans);
+                        displayPlans(plans, true);
+                    }
+                    
+                    hasMorePages = plans.length === plansPerPage;
                 } else {
                     displayNoPlans();
                 }
             } catch (error) {
                 console.error('Failed to load plans:', error);
                 displayNoPlans();
+            } finally {
+                isLoading = false;
             }
         }
         
-        function displayPlans(plans) {
+        function displayPlans(plans, append = false) {
             const container = document.getElementById('plansContainer');
             
             if (!plans || plans.length === 0) {
-                displayNoPlans();
+                if (!append) displayNoPlans();
                 return;
             }
             
-            container.className = 'CarDs-grid';
-            container.innerHTML = plans.map((plan, index) => {
-                const fileIcon = getFileIcon(plan.file_type);
+            if (!append) {
+                container.className = 'CarDs-grid';
+            }
+            
+            const plansHtml = plans.map((plan, index) => {
+                const fileIcon = getFileIcon(plan.file_type, plan.file_name);
                 const fileSize = formatFileSize(plan.file_size);
                 const uploadDate = formatDate(plan.created_at);
-                const isImage = isImageFile(plan.file_type);
+                const isImage = isImageFile(plan.file_type, plan.file_name);
                 
                 const fullImagePath = plan.file_path.startsWith('http') ? plan.file_path : `{{ asset('storage') }}/${plan.file_path}`;
                 
@@ -232,6 +267,34 @@
                     </div>
                 `;
             }).join('');
+            
+            if (append) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = plansHtml;
+                while (tempDiv.firstChild) {
+                    container.appendChild(tempDiv.firstChild);
+                }
+            } else {
+                container.innerHTML = plansHtml;
+            }
+        }
+        
+        function handlePlansScroll() {
+            if (isLoading || !hasMorePages) return;
+            
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.offsetHeight;
+            
+            if (scrollTop + windowHeight >= documentHeight - 200) {
+                loadMorePlans();
+            }
+        }
+        
+        function loadMorePlans() {
+            if (isLoading || !hasMorePages) return;
+            currentPage++;
+            loadPlans(false);
         }
         
         function displayNoPlans() {
@@ -247,13 +310,24 @@
             `;
         }
         
-        function getFileIcon(fileType) {
+        function getFileIcon(fileType, fileName = '') {
             const type = fileType?.toLowerCase();
+            const name = fileName?.toLowerCase();
+            
+            // Check by file extension first
+            if (name.endsWith('.dwg')) return 'fas fa-drafting-compass';
+            if (name.endsWith('.pdf')) return 'fas fa-file-pdf';
+            if (name.endsWith('.doc') || name.endsWith('.docx')) return 'fas fa-file-word';
+            if (name.endsWith('.xls') || name.endsWith('.xlsx')) return 'fas fa-file-excel';
+            if (name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png') || name.endsWith('.gif')) return 'fas fa-image';
+            
+            // Fallback to mime type
             if (type?.includes('pdf')) return 'fas fa-file-pdf';
             if (type?.includes('dwg')) return 'fas fa-drafting-compass';
             if (type?.includes('image') || type?.includes('jpg') || type?.includes('png')) return 'fas fa-image';
             if (type?.includes('word') || type?.includes('doc')) return 'fas fa-file-word';
             if (type?.includes('excel') || type?.includes('sheet')) return 'fas fa-file-excel';
+            
             return 'fas fa-file';
         }
         
@@ -274,8 +348,11 @@
             return fileType?.split('/').pop()?.toUpperCase() || 'Unknown File';
         }
         
-        function isImageFile(fileType) {
+        function isImageFile(fileType, fileName = '') {
             const type = fileType?.toLowerCase();
+            const name = fileName?.toLowerCase();
+            // Exclude DWG files even if they have image mime type
+            if (name.endsWith('.dwg')) return false;
             return type?.includes('image') || type?.includes('jpg') || type?.includes('jpeg') || type?.includes('png');
         }
         
@@ -300,9 +377,11 @@
         }
         
         function viewPlan(planId) {
-            const plan = allPlans.find(p => p.id === planId);
+            const plan = currentDisplayedPlans.find(p => p.id === planId);
             if (plan) {
                 openPlanViewer(plan);
+            } else {
+                console.error('Plan not found:', planId);
             }
         }
         
@@ -559,7 +638,7 @@
         async function deletePlan(planId) {
             // Skip permission check - buttons already control access
             
-            const plan = allPlans.find(p => p.id === planId);
+            const plan = currentDisplayedPlans.find(p => p.id === planId);
             const planTitle = plan ? plan.title : 'this plan';
             
             confirmationModal.show({
@@ -601,8 +680,8 @@
                 
                 console.log('File selected for replacement:', file.name);
                 
-                // Check if file is image
-                if (file.type.startsWith('image/')) {
+                // Check if file is image (exclude DWG)
+                if (file.type.startsWith('image/') && !file.name.toLowerCase().endsWith('.dwg')) {
                     // Store data for drawing modal
                     window.replacingPlanId = planId;
                     window.replacingFile = file;
@@ -762,6 +841,9 @@
             
             loadPlans();
             
+            // Add scroll listener for pagination
+            window.addEventListener('scroll', handlePlansScroll);
+            
             const uploadForm = document.getElementById('uploadPlanForm');
             if (uploadForm) {
                 console.log('Upload form found, adding event listener');
@@ -782,9 +864,13 @@
                     const projectId = getProjectIdFromUrl();
                     window.planFormData.append('project_id', projectId);
                     
-                    // Separate image and document files
-                    const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-                    const documentFiles = Array.from(files).filter(file => !file.type.startsWith('image/'));
+                    // Separate image and document files (exclude DWG from images)
+                    const imageFiles = Array.from(files).filter(file => {
+                        return file.type.startsWith('image/') && !file.name.toLowerCase().endsWith('.dwg');
+                    });
+                    const documentFiles = Array.from(files).filter(file => {
+                        return !file.type.startsWith('image/') || file.name.toLowerCase().endsWith('.dwg');
+                    });
                     
                     // Store all files for later processing
                     window.allSelectedFiles = { images: imageFiles, documents: documentFiles };

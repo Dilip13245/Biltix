@@ -819,6 +819,7 @@ return [
     'confirm_delete_photo' => 'Are you sure you want to delete this photo?',
     'photo_deleted_successfully' => 'Photo deleted successfully!',
     'failed_to_delete_photo' => 'Failed to delete photo',
+    'delete_photo' => 'Delete Photo',
     'add_member' => 'Add Member',
     
     // Help Support messages

@@ -41,8 +41,11 @@
           <div class="mb-3">
             <label for="planFiles" class="form-label fw-medium">{{ __('messages.plan_files') }}</label>
             <input type="file" class="form-control Input_control" id="planFiles" name="files[]" 
-              multiple required>
-            <div class="form-text">{{ __('messages.plan_files_help') }}</div>
+              multiple required accept=".pdf,.dwg,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx">
+            <div class="form-text">
+              <i class="fas fa-info-circle me-1"></i>
+              {{ __('messages.plan_files_help') }}
+            </div>
           </div>
         </form>
       </div>

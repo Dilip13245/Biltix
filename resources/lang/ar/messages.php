@@ -814,6 +814,7 @@ return [
     'confirm_delete_photo' => 'هل أنت متأكد من حذف هذه الصورة؟',
     'photo_deleted_successfully' => 'تم حذف الصورة بنجاح!',
     'failed_to_delete_photo' => 'فشل في حذف الصورة',
+    'delete_photo' => 'حذف الصورة',
     'add_member' => 'إضافة عضو',
     
     // Help Support messages

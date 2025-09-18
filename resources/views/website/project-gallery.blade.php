@@ -42,17 +42,55 @@
 
 
     <script>
-        let allPhotos = [];
-        let filteredPhotos = [];
+        let currentPhotos = [];
+        let currentPage = 1;
+        let currentDateFilter = null;
+        let totalPhotoCount = 0;
         const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Auto-detect user timezone
         
-        async function loadPhotos() {
+        // Get total photo count
+        async function getTotalPhotoCount() {
             try {
                 const projectId = getProjectIdFromUrl();
-                console.log('Loading photos for project:', projectId);
+                const params = { 
+                    project_id: projectId,
+                    page: 1,
+                    limit: 1000 // Get all to count
+                };
                 
-                // Load all photos without date filter
-                const response = await api.getPhotos({ project_id: projectId });
+                if (currentDateFilter) {
+                    params.date = currentDateFilter;
+                }
+                
+                const response = await api.getPhotos(params);
+                if (response.code === 200 && response.data) {
+                    const allPhotos = response.data.data || [];
+                    totalPhotoCount = allPhotos.length;
+                    updatePhotoCount(totalPhotoCount);
+                }
+            } catch (error) {
+                console.error('Failed to get total count:', error);
+            }
+        }
+        
+        async function loadPhotos(dateFilter = null, page = 1, append = false) {
+            try {
+                const projectId = getProjectIdFromUrl();
+                console.log('Loading photos for project:', projectId, 'date:', dateFilter, 'page:', page);
+                
+                // Build API parameters
+                const params = { 
+                    project_id: projectId,
+                    page: page,
+                    limit: 20
+                };
+                
+                // Add date filter if provided
+                if (dateFilter) {
+                    params.date = dateFilter;
+                }
+                
+                const response = await api.getPhotos(params);
                 console.log('Photos API response:', response);
                 
                 if (response.code === 200 && response.data) {
@@ -69,17 +107,38 @@
                         return photo;
                     });
                     
-                    allPhotos = photos;
-                    filteredPhotos = photos;
+                    // Handle append vs replace
+                    if (append && currentPhotos.length > 0) {
+                        currentPhotos = currentPhotos.concat(photos);
+                        displayPhotos(photos, true); // Only display new photos
+                    } else {
+                        currentPhotos = photos;
+                        displayPhotos(photos, false); // Display all photos
+                    }
                     
-                    displayPhotos(photos);
-                    updatePhotoCount(photos.length);
+                    // Update count with current loaded photos
+                    updatePhotoCount(currentPhotos.length);
+                    
+                    // Get total count on first load
+                    if (!append) {
+                        getTotalPhotoCount();
+                    }
+                    
+                    // Check if more photos available (dashboard style)
+                    if (photos.length < 20) {
+                        hasMorePages = false;
+                    }
+                    isLoading = false;
                 } else {
                     console.log('No photos or error response:', response);
+                    hasMorePages = false;
+                    isLoading = false;
                     displayNoPhotos();
                 }
             } catch (error) {
                 console.error('Failed to load photos:', error);
+                hasMorePages = false;
+                isLoading = false;
                 displayNoPhotos();
             }
         }
@@ -114,7 +173,7 @@
         
 
         
-        function displayPhotos(photos) {
+        function displayPhotos(photos, append = false) {
             const container = document.getElementById('photosContainer');
             
             if (!photos || photos.length === 0) {
@@ -122,7 +181,7 @@
                 return;
             }
             
-            container.innerHTML = '<div class="CarDs-grid">' + photos.map((photo, index) => {
+            const photosHtml = photos.map((photo, index) => {
                 // Use local dates for display, fallback to original dates
                 const dateToShow = photo.local_taken_at || photo.local_created_at || photo.taken_at || photo.created_at;
                 const uploadDate = formatDate(dateToShow);
@@ -145,7 +204,21 @@
                         </div>
                     </div>
                 `;
-            }).join('') + '</div>';
+            }).join('');
+            
+            if (append) {
+                // Find existing grid and append new photos
+                const existingGrid = container.querySelector('.CarDs-grid');
+                if (existingGrid) {
+                    existingGrid.innerHTML += photosHtml;
+                } else {
+                    container.innerHTML = '<div class="CarDs-grid">' + photosHtml + '</div>';
+                }
+            } else {
+                // Replace all content
+                container.innerHTML = '<div class="CarDs-grid">' + photosHtml + '</div>';
+            }
+
         }
         
         function getUploaderName(photo) {
@@ -279,29 +352,76 @@
         }
         
         async function deletePhoto(photoId) {
-            if (confirm('{{ __('messages.confirm_delete_photo') }}')) {
-                try {
-                    const response = await api.deletePhoto({ photo_id: photoId });
-                    
-                    if (response.code === 200) {
-                        toastr.success('{{ __('messages.photo_deleted_successfully') }}');
-                        bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
-                        loadPhotos();
-                    } else {
-                        toastr.error('{{ __('messages.failed_to_delete_photo') }}');
-                    }
-                } catch (error) {
-                    console.error('Delete error:', error);
-                    toastr.error('{{ __('messages.failed_to_delete_photo') }}');
+            // Close photo modal first
+            const photoModal = document.querySelector('.modal.show');
+            if (photoModal) {
+                const modalInstance = bootstrap.Modal.getInstance(photoModal);
+                if (modalInstance) {
+                    modalInstance.hide();
                 }
             }
+            
+            // Wait for photo modal to close, then show confirmation
+            setTimeout(() => {
+                confirmationModal.show({
+                    title: '{{ __('messages.delete_photo') }}',
+                    message: '{{ __('messages.confirm_delete_photo') }}',
+                    icon: 'fas fa-trash text-danger',
+                    confirmText: '{{ __('messages.delete') }}',
+                    cancelText: '{{ __('messages.cancel') }}',
+                    confirmClass: 'btn-danger',
+                    onConfirm: async () => {
+                        try {
+                            const response = await api.deletePhoto({ photo_id: photoId });
+                            
+                            if (response.code === 200) {
+                                toastr.success('{{ __('messages.photo_deleted_successfully') }}');
+                                loadPhotos();
+                            } else {
+                                toastr.error('{{ __('messages.failed_to_delete_photo') }}');
+                            }
+                        } catch (error) {
+                            console.error('Delete error:', error);
+                            toastr.error('{{ __('messages.failed_to_delete_photo') }}');
+                        }
+                    }
+                });
+            }, 300);
         }
         
 
         
+        // Infinite scroll handler
+        let isLoading = false;
+        let hasMorePages = true;
+        
+        function handleScroll() {
+            if (isLoading || !hasMorePages) return;
+            
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            // Load more when user is 200px from bottom
+            if (scrollTop + windowHeight >= documentHeight - 200) {
+                loadMorePhotos();
+            }
+        }
+        
+        function loadMorePhotos() {
+            if (isLoading || !hasMorePages) return;
+            
+            isLoading = true;
+            currentPage++;
+            loadPhotos(currentDateFilter, currentPage, true); // true = append to existing
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, calling loadPhotos');
             loadPhotos();
+            
+            // Add scroll event listener for infinite scroll
+            window.addEventListener('scroll', handleScroll);
             
             // Date filter
             const dateInput = document.getElementById('photoDateFilter');
@@ -312,21 +432,19 @@
                     const selectedDate = this.value;
                     console.log('Date filter changed:', selectedDate);
                     
+                    currentDateFilter = selectedDate;
+                    currentPage = 1; // Reset to first page
+                    hasMorePages = true; // Reset pagination state
+                    totalPhotoCount = 0; // Reset total count
+                    
                     if (selectedDate) {
-                        // Filter photos client-side by local date
-                        filteredPhotos = allPhotos.filter(photo => {
-                            const photoLocalDate = photo.local_created_at || convertUTCToLocal(photo.created_at);
-                            return photoLocalDate === selectedDate;
-                        });
                         clearBtn.style.display = 'inline-block';
                     } else {
-                        // Show all photos
-                        filteredPhotos = allPhotos;
                         clearBtn.style.display = 'none';
                     }
                     
-                    displayPhotos(filteredPhotos);
-                    updatePhotoCount(filteredPhotos.length);
+                    // Load photos with server-side date filter
+                    loadPhotos(selectedDate, 1);
                 });
             }
             

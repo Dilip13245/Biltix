@@ -131,9 +131,9 @@
                     <div class="card B_shadow">
                         <div class="card-body card-body py-md-4 px-0">
                             <h5 class="fw-semibold  black_color px-md-4 px-2 mb-4">{{ __('messages.recent_files') }}</h5>
-                            <div class="table-responsive">
+                            <div class="table-responsive" id="filesTableContainer" style="height: 400px; overflow-y: auto;">
                                 <table class="table table-hover mb-0">
-                                    <thead class="table-light">
+                                    <thead class="table-light sticky-top">
                                         <tr>
                                             <th>{{ __('messages.file_name') }}</th>
                                             <th>{{ __('messages.type') }}</th>
@@ -286,8 +286,16 @@
                 .toLowerCase()));
         }
 
+        // Pagination variables
+        let allFiles = []; // Store all files for proper counting
+        let currentDisplayedFiles = []; // Currently displayed files
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMorePages = true;
+        const filesPerPage = 10;
+
         // Load project files from API
-        async function loadProjectFiles() {
+        async function loadProjectFiles(resetPagination = true) {
             try {
                 const projectId = getProjectIdFromUrl();
                 const response = await api.getFiles({
@@ -295,18 +303,50 @@
                 });
 
                 if (response.code === 200 && response.data && response.data.data) {
-                    let files = response.data.data;
-                    files = applyClientSideFilters(files);
-                    files = applyClientSideSorting(files);
-                    displayFiles(files);
-                    updateFileCounts(files);
+                    allFiles = response.data.data; // Store all files
+                    
+                    if (resetPagination) {
+                        currentPage = 1;
+                        currentDisplayedFiles = [];
+                        hasMorePages = true;
+                    }
+                    
+                    // Apply filters and sorting to all files
+                    let filteredFiles = applyClientSideFilters(allFiles);
+                    filteredFiles = applyClientSideSorting(filteredFiles);
+                    
+                    // Load first page
+                    loadFilesPage(filteredFiles, resetPagination);
+                    
+                    // Update counts with total vs filtered
+                    updateFileCounts(allFiles, filteredFiles);
                 } else {
                     displayNoFiles();
+                    updateFileCounts([], []);
                 }
             } catch (error) {
                 console.error('Failed to load files:', error);
                 displayNoFiles();
+                updateFileCounts([], []);
             }
+        }
+        
+        function loadFilesPage(filteredFiles, resetDisplay = false) {
+            const startIndex = (currentPage - 1) * filesPerPage;
+            const endIndex = startIndex + filesPerPage;
+            const pageFiles = filteredFiles.slice(startIndex, endIndex);
+            
+            if (resetDisplay) {
+                currentDisplayedFiles = pageFiles;
+                displayFiles(currentDisplayedFiles, false);
+            } else {
+                currentDisplayedFiles = currentDisplayedFiles.concat(pageFiles);
+                displayFiles(pageFiles, true); // Append mode
+            }
+            
+            // Check if more pages available
+            hasMorePages = endIndex < filteredFiles.length;
+            isLoading = false;
         }
 
         function applyClientSideFilters(files) {
@@ -381,16 +421,18 @@
             });
         }
 
-        function displayFiles(files) {
+        function displayFiles(files, append = false) {
             const tbody = document.getElementById('filesTableBody');
 
             if (!files || files.length === 0) {
-                tbody.innerHTML =
-                    '<tr><td colspan="4" class="text-center py-4"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
+                if (!append) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="4" class="text-center py-4"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
+                }
                 return;
             }
 
-            tbody.innerHTML = files.map(file => {
+            const filesHtml = files.map(file => {
                 const fileIcon = getFileIcon(file.file_type);
                 const fileSize = formatFileSize(file.file_size);
                 const uploadDate = formatDate(file.created_at);
@@ -409,6 +451,12 @@
                     </tr>
                 `;
             }).join('');
+            
+            if (append) {
+                tbody.innerHTML += filesHtml;
+            } else {
+                tbody.innerHTML = filesHtml;
+            }
         }
 
         function displayNoFiles() {
@@ -417,16 +465,46 @@
                 '<tr><td colspan="4" class="text-center py-4"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
         }
 
-        function updateFileCounts(files) {
-            const totalFiles = files.length;
-            const drawings = files.filter(f => ['dwg', 'dxf', 'dwf'].includes(getFileExtension(f.file_type))).length;
-            const documents = files.filter(f => ['doc', 'docx', 'txt', 'rtf'].includes(getFileExtension(f.file_type))).length;
-            const pdfs = files.filter(f => getFileExtension(f.file_type) === 'pdf').length;
+        function updateFileCounts(allFiles, filteredFiles = null) {
+            // Always show total counts from all files (not filtered)
+            const totalFiles = allFiles.length;
+            const drawings = allFiles.filter(f => ['dwg', 'dxf', 'dwf'].includes(getFileExtension(f.file_type))).length;
+            const documents = allFiles.filter(f => ['doc', 'docx', 'txt', 'rtf'].includes(getFileExtension(f.file_type))).length;
+            const pdfs = allFiles.filter(f => getFileExtension(f.file_type) === 'pdf').length;
 
             document.getElementById('totalFilesCount').textContent = totalFiles;
             document.getElementById('drawingsCount').textContent = drawings;
             document.getElementById('documentsCount').textContent = documents;
             document.getElementById('pdfsCount').textContent = pdfs;
+        }
+        
+        // Table scroll handler for infinite scroll
+        function handleTableScroll() {
+            if (isLoading || !hasMorePages) return;
+            
+            const container = document.getElementById('filesTableContainer');
+            if (!container) return;
+            
+            const scrollTop = container.scrollTop;
+            const scrollHeight = container.scrollHeight;
+            const clientHeight = container.clientHeight;
+            
+            // Load more when user is 50px from bottom
+            if (scrollTop + clientHeight >= scrollHeight - 50) {
+                loadMoreFiles();
+            }
+        }
+        
+        function loadMoreFiles() {
+            if (isLoading || !hasMorePages) return;
+            
+            isLoading = true;
+            currentPage++;
+            
+            // Get current filtered files and load next page
+            let filteredFiles = applyClientSideFilters(allFiles);
+            filteredFiles = applyClientSideSorting(filteredFiles);
+            loadFilesPage(filteredFiles, false); // Don't reset display
         }
 
         function getFileIcon(fileType) {
@@ -629,6 +707,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Load files on page load
             loadProjectFiles();
+            
+            // Add scroll event listener for infinite scroll
+            const tableContainer = document.getElementById('filesTableContainer');
+            if (tableContainer) {
+                tableContainer.addEventListener('scroll', handleTableScroll);
+            }
 
             // Filter button functionality
             const filterBtn = document.querySelector('.filter-btn');
@@ -776,7 +860,7 @@
                 currentFilters.dateRange = document.getElementById('filterDate').value;
                 currentFilters.sizeRange = document.getElementById('filterSize').value;
                 bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
-                loadProjectFiles();
+                loadProjectFiles(true); // Reset pagination
             };
 
             window.clearFilters = function() {
@@ -786,14 +870,14 @@
                     sizeRange: ''
                 };
                 bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
-                loadProjectFiles();
+                loadProjectFiles(true); // Reset pagination
             };
 
             window.applySorting = function(field, direction) {
                 currentSort.field = field;
                 currentSort.direction = direction;
                 bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
-                loadProjectFiles();
+                loadProjectFiles(true); // Reset pagination
             };
 
 

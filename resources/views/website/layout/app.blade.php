@@ -61,6 +61,7 @@
   <script src="{{ asset('website/js/wow.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script src="{{ asset('website/js/toastr-config.js') }}"></script>
+  <script src="{{ asset('website/js/confirmation-modal.js') }}"></script>
   <script src="{{ asset('website/js/permissions.js') }}"></script>
   
   <!-- SIMPLE DRAWING LIBRARY -->
