@@ -11,6 +11,7 @@ return [
         'roles' => 'الأدوار',
         'permissions' => 'الصلاحيات',
         'admins' => 'المديرين',
+        'admin_management' => 'إدارة المشرفين',
         'support' => 'الدعم',
         'help_support' => 'المساعدة والدعم',
     ],

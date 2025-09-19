@@ -20,22 +20,27 @@ class HelpSupportResource extends Resource
     
     public static function canViewAny(): bool
     {
-        return true; // Allow all admins to view
+        return true;
+    }
+    
+    public static function canView($record): bool
+    {
+        return true;
     }
     
     public static function canCreate(): bool
     {
-        return true; // Allow all admins to create
+        return true;
     }
     
     public static function canEdit($record): bool
     {
-        return true; // Allow all admins to edit
+        return true;
     }
     
     public static function canDelete($record): bool
     {
-        return true; // Allow all admins to delete
+        return true;
     }
     
     public static function getNavigationLabel(): string

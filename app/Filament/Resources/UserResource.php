@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
@@ -35,6 +36,11 @@ class UserResource extends Resource
         return true;
     }
     
+    public static function canView($record): bool
+    {
+        return true;
+    }
+    
     public static function canCreate(): bool
     {
         return true;
@@ -48,6 +54,31 @@ class UserResource extends Resource
     public static function canDelete($record): bool
     {
         return true;
+    }
+    
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email', 'phone', 'company_name', 'designation', 'role'];
+    }
+    
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->name;
+    }
+    
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Email' => $record->email,
+            'Company' => $record->company_name,
+            'Role' => ucfirst(str_replace('_', ' ', $record->role)),
+            'Status' => $record->is_active ? 'Active' : 'Inactive',
+        ];
+    }
+    
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return UserResource::getUrl('view', ['record' => $record]);
     }
 
     public static function form(Form $form): Form
@@ -191,11 +222,12 @@ class UserResource extends Resource
                     ->trueLabel(__('filament.options.active_only'))
                     ->falseLabel(__('filament.options.inactive_only')),
             ])
+            ->actionsColumnLabel('Actions')
             ->actions([
                 Tables\Actions\Action::make('resetPassword')
                     ->label(__('filament.actions.reset_password'))
                     ->icon('heroicon-o-key')
-                    ->color('warning')
+                    ->color('secondary')
                     ->form([
                         Forms\Components\TextInput::make('password')
                             ->label(__('filament.fields.new_password'))
@@ -224,10 +256,11 @@ class UserResource extends Resource
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->label('')->tooltip('View'),
+                Tables\Actions\EditAction::make()->label('')->tooltip('Edit'),
                 Tables\Actions\Action::make('delete')
-                    ->label('Delete')
+                    ->label('')
+                    ->tooltip('Delete')
                     ->icon('heroicon-o-trash')
                     ->color('danger')
                     ->requiresConfirmation()

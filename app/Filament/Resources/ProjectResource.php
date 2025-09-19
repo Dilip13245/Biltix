@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
 
 class ProjectResource extends Resource
 {
@@ -34,6 +35,11 @@ class ProjectResource extends Resource
         return true;
     }
     
+    public static function canView($record): bool
+    {
+        return true;
+    }
+    
     public static function canCreate(): bool
     {
         return true;
@@ -47,6 +53,32 @@ class ProjectResource extends Resource
     public static function canDelete($record): bool
     {
         return true;
+    }
+    
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['project_code', 'project_title', 'contractor_name', 'project_location', 'type', 'status'];
+    }
+    
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->project_title;
+    }
+    
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Code' => $record->project_code,
+            'Contractor' => $record->contractor_name,
+            'Type' => ucfirst($record->type),
+            'Status' => ucfirst(str_replace('_', ' ', $record->status)),
+            'Location' => $record->project_location,
+        ];
+    }
+    
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return ProjectResource::getUrl('view', ['record' => $record]);
     }
     
 
@@ -272,11 +304,12 @@ class ProjectResource extends Resource
                     ->trueLabel(__('filament.options.deleted_only'))
                     ->falseLabel(__('filament.options.not_deleted')),
             ])
+            ->actionsColumnLabel('Actions')
             ->actions([
                 Tables\Actions\Action::make('archive')
                     ->label(__('filament.actions.archive'))
                     ->icon('heroicon-o-archive-box')
-                    ->color('warning')
+                    ->color('info')
                     ->visible(fn (Project $record): bool => $record->is_active)
                     ->requiresConfirmation()
                     ->action(function (Project $record): void {
@@ -298,10 +331,11 @@ class ProjectResource extends Resource
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->label('')->tooltip('View'),
+                Tables\Actions\EditAction::make()->label('')->tooltip('Edit'),
                 Tables\Actions\Action::make('delete')
-                    ->label(__('filament.actions.delete'))
+                    ->label('')
+                    ->tooltip(__('filament.actions.delete'))
                     ->icon('heroicon-o-trash')
                     ->color('danger')
                     ->visible(fn (Project $record): bool => !$record->is_deleted)
@@ -314,7 +348,8 @@ class ProjectResource extends Resource
                             ->send();
                     }),
                 Tables\Actions\Action::make('restore_deleted')
-                    ->label(__('filament.actions.restore'))
+                    ->label('')
+                    ->tooltip(__('filament.actions.restore'))
                     ->icon('heroicon-o-arrow-path')
                     ->color('success')
                     ->visible(fn (Project $record): bool => $record->is_deleted)

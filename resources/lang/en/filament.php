@@ -11,6 +11,7 @@ return [
         'roles' => 'Roles',
         'permissions' => 'Permissions',
         'admins' => 'Admins',
+        'admin_management' => 'Admin Management',
         'support' => 'Support',
         'help_support' => 'Help & Support',
     ],

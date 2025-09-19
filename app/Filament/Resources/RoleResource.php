@@ -39,7 +39,12 @@ class RoleResource extends Resource
     
     public static function canViewAny(): bool
     {
-        return true; // Allow all authenticated admin users
+        return true;
+    }
+    
+    public static function canView($record): bool
+    {
+        return true;
     }
     
     public static function canCreate(): bool

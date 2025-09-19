@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 
@@ -30,12 +31,17 @@ class AdminResource extends Resource
     
     public static function getNavigationGroup(): ?string
     {
-        return 'Admin Management';
+        return __('filament.navigation.admin_management');
     }
     
     protected static ?int $navigationSort = 3;
     
     public static function canViewAny(): bool
+    {
+        return true;
+    }
+    
+    public static function canView($record): bool
     {
         return true;
     }
@@ -53,6 +59,25 @@ class AdminResource extends Resource
     public static function canDelete($record): bool
     {
         return true;
+    }
+    
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email', 'phone'];
+    }
+    
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->name;
+    }
+    
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Email' => $record->email,
+            'Phone' => $record->phone,
+            'Status' => $record->is_active ? 'Active' : 'Inactive',
+        ];
     }
 
     public static function form(Form $form): Form
