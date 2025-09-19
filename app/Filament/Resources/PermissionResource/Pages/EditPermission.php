@@ -22,4 +22,9 @@ class EditPermission extends EditRecord
     {
         Cache::flush();
     }
+    
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

@@ -4,6 +4,8 @@ return [
     'navigation' => [
         'dashboard' => 'Dashboard',
         'user_management' => 'User Management',
+        'users' => 'Users',
+        'system_users' => 'System Users',
         'roles' => 'Roles',
         'permissions' => 'Permissions',
         'admins' => 'Admins',
@@ -42,6 +44,9 @@ return [
         'confirm' => 'Confirm',
         'are_you_sure' => 'Are you sure?',
         'this_action_cannot_be_undone' => 'This action cannot be undone.',
+        'reset_password' => 'Reset Password',
+        'activate' => 'Activate',
+        'deactivate' => 'Deactivate',
     ],
     
     'fields' => [
@@ -100,6 +105,37 @@ return [
         'are_you_sure' => 'Are you sure?',
         'this_action_cannot_be_undone' => 'This action cannot be undone.',
         'actions' => 'Actions',
+        'user_information' => 'User Information',
+        'company_details' => 'Company Details', 
+        'account_settings' => 'Account Settings',
+        'role' => 'Role',
+        'company_name' => 'Company Name',
+        'designation' => 'Designation',
+        'employee_count' => 'Employee Count',
+        'new_password' => 'New Password',
+    ],
+    
+    'roles' => [
+        'contractor' => 'Contractor',
+        'consultant' => 'Consultant',
+        'project_manager' => 'Project Manager',
+        'site_engineer' => 'Site Engineer',
+        'stakeholder' => 'Stakeholder',
+    ],
+    
+    'placeholders' => [
+        'role_example' => 'e.g., project_manager',
+        'display_example' => 'e.g., Project Manager',
+        'role_description' => 'Brief description of this role...',
+        'permission_description' => 'What does this permission allow?',
+        'enter_full_name' => 'Enter full name',
+        'enter_email' => 'Enter email address', 
+        'enter_phone' => 'Enter phone number',
+        'select_role' => 'Select role',
+        'enter_company_name' => 'Enter company name',
+        'enter_designation' => 'Enter designation',
+        'enter_employee_count' => 'Enter employee count',
+        'enter_password' => 'Enter password',
     ],
     
     'helpers' => [
@@ -110,6 +146,8 @@ return [
         'auto_generated' => 'Auto-generated from module and action',
         'inactive_admins' => 'Inactive admins cannot login',
         'leave_blank_password' => 'Leave blank to keep current password',
+        'password_requirements' => 'Must contain uppercase, lowercase, number and special character',
+        'inactive_users' => 'Inactive users cannot login to the system',
     ],
     
     'placeholders' => [
@@ -139,6 +177,7 @@ return [
         'all' => 'All',
         'active_only' => 'Active Only',
         'inactive_only' => 'Inactive Only',
+        'all_users' => 'All users',
     ],
     
     'messages' => [
@@ -147,5 +186,9 @@ return [
         'deleted' => 'Deleted successfully',
         'no_tickets' => 'No support tickets found',
         'no_tickets_description' => 'Support tickets will appear here once they are submitted.',
+        'password_reset_success' => 'Password reset successfully',
+        'user_status_updated' => 'User status updated successfully',
+        'users_activated' => 'Users activated successfully',
+        'users_deactivated' => 'Users deactivated successfully',
     ],
 ];

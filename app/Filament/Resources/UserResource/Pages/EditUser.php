@@ -1,26 +1,21 @@
 <?php
 
-namespace App\Filament\Resources\RoleResource\Pages;
+namespace App\Filament\Resources\UserResource\Pages;
 
-use App\Filament\Resources\RoleResource;
+use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Cache;
 
-class EditRole extends EditRecord
+class EditUser extends EditRecord
 {
-    protected static string $resource = RoleResource::class;
+    protected static string $resource = UserResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
+            Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
         ];
-    }
-
-    protected function afterSave(): void
-    {
-        Cache::flush();
     }
     
     protected function getRedirectUrl(): string

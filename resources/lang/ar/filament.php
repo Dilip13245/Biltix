@@ -4,6 +4,8 @@ return [
     'navigation' => [
         'dashboard' => 'لوحة التحكم',
         'user_management' => 'إدارة المستخدمين',
+        'users' => 'المستخدمين',
+        'system_users' => 'مستخدمي النظام',
         'roles' => 'الأدوار',
         'permissions' => 'الصلاحيات',
         'admins' => 'المديرين',
@@ -33,6 +35,9 @@ return [
         'confirm' => 'تأكيد',
         'are_you_sure' => 'هل أنت متأكد؟',
         'this_action_cannot_be_undone' => 'لا يمكن التراجع عن هذا الإجراء.',
+        'reset_password' => 'إعادة تعيين كلمة المرور',
+        'activate' => 'تفعيل',
+        'deactivate' => 'إلغاء تفعيل',
     ],
     
     'fields' => [
@@ -82,6 +87,37 @@ return [
         'ticket_management' => 'إدارة التذاكر',
         'subject' => 'الموضوع',
         'actions' => 'الإجراءات',
+        'user_information' => 'معلومات المستخدم',
+        'company_details' => 'تفاصيل الشركة', 
+        'account_settings' => 'إعدادات الحساب',
+        'role' => 'الدور',
+        'company_name' => 'اسم الشركة',
+        'designation' => 'المسمى الوظيفي',
+        'employee_count' => 'عدد الموظفين',
+        'new_password' => 'كلمة المرور الجديدة',
+    ],
+    
+    'roles' => [
+        'contractor' => 'مقاول',
+        'consultant' => 'استشاري',
+        'project_manager' => 'مدير مشروع',
+        'site_engineer' => 'مهندس موقع',
+        'stakeholder' => 'صاحب مصلحة',
+    ],
+    
+    'placeholders' => [
+        'role_example' => 'مثال: project_manager',
+        'display_example' => 'مثال: مدير المشروع', 
+        'role_description' => 'وصف موجز لهذا الدور...',
+        'permission_description' => 'ماذا تسمح هذه الصلاحية؟',
+        'enter_full_name' => 'أدخل الاسم الكامل',
+        'enter_email' => 'أدخل عنوان البريد الإلكتروني',
+        'enter_phone' => 'أدخل رقم الهاتف', 
+        'select_role' => 'اختر الدور',
+        'enter_company_name' => 'أدخل اسم الشركة',
+        'enter_designation' => 'أدخل المسمى الوظيفي',
+        'enter_employee_count' => 'أدخل عدد الموظفين',
+        'enter_password' => 'أدخل كلمة المرور',
     ],
     
     'helpers' => [
@@ -92,6 +128,8 @@ return [
         'auto_generated' => 'يتم إنشاؤه تلقائياً من الوحدة والإجراء',
         'inactive_admins' => 'المديرين غير النشطين لا يمكنهم تسجيل الدخول',
         'leave_blank_password' => 'اترك فارغاً للاحتفاظ بكلمة المرور الحالية',
+        'password_requirements' => 'يجب أن تحتوي على أحرف كبيرة وصغيرة ورقم ورمز خاص',
+        'inactive_users' => 'المستخدمين غير النشطين لا يمكنهم تسجيل الدخول',
     ],
     
     'placeholders' => [
@@ -121,6 +159,7 @@ return [
         'all' => 'الكل',
         'active_only' => 'النشط فقط',
         'inactive_only' => 'غير النشط فقط',
+        'all_users' => 'جميع المستخدمين',
     ],
     
     'messages' => [
@@ -129,5 +168,9 @@ return [
         'deleted' => 'تم الحذف بنجاح',
         'no_tickets' => 'لم يتم العثور على تذاكر دعم',
         'no_tickets_description' => 'ستظهر تذاكر الدعم هنا بمجرد إرسالها.',
+        'password_reset_success' => 'تم إعادة تعيين كلمة المرور بنجاح',
+        'user_status_updated' => 'تم تحديث حالة المستخدم بنجاح',
+        'users_activated' => 'تم تفعيل المستخدمين بنجاح',
+        'users_deactivated' => 'تم إلغاء تفعيل المستخدمين بنجاح',
     ],
 ];

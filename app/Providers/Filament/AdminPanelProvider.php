@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->resources([
                 \App\Filament\Resources\HelpSupportResource::class,
             ])
-            // ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 \App\Filament\Pages\Dashboard::class,
             ])
