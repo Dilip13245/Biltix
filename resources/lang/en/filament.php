@@ -6,6 +6,8 @@ return [
         'user_management' => 'User Management',
         'users' => 'Users',
         'system_users' => 'System Users',
+        'project_management' => 'Project Management',
+        'projects' => 'Projects',
         'roles' => 'Roles',
         'permissions' => 'Permissions',
         'admins' => 'Admins',
@@ -47,6 +49,18 @@ return [
         'reset_password' => 'Reset Password',
         'activate' => 'Activate',
         'deactivate' => 'Deactivate',
+        'archive' => 'Archive',
+        'restore' => 'Restore',
+        'markup_files' => 'Markup Files',
+        'markup' => 'Markup',
+        'view' => 'View',
+        'save_markup' => 'Save Markup',
+        'undo' => 'Undo',
+        'clear' => 'Clear',
+        'cancel' => 'Cancel',
+        'save_and_continue' => 'Save & Continue',
+        'previous' => 'Previous',
+        'next' => 'Next',
     ],
     
     'fields' => [
@@ -113,6 +127,27 @@ return [
         'designation' => 'Designation',
         'employee_count' => 'Employee Count',
         'new_password' => 'New Password',
+        'project_information' => 'Project Information',
+        'project_details' => 'Project Details',
+        'team_assignment' => 'Team Assignment',
+        'project_timeline' => 'Project Timeline',
+        'team_information' => 'Team Information',
+        'project_code' => 'Project Code',
+        'project_title' => 'Project Title',
+        'contractor_name' => 'Contractor Name',
+        'project_type' => 'Project Type',
+        'project_location' => 'Project Location',
+        'start_date' => 'Start Date',
+        'due_date' => 'Due Date',
+        'priority' => 'Priority',
+        'project_manager' => 'Project Manager',
+        'technical_engineer' => 'Technical Engineer',
+        'type' => 'Type',
+        'created_by' => 'Created By',
+        'deleted_status' => 'Deleted Status',
+        'project_files' => 'Project Files',
+        'construction_plans' => 'Construction Plans',
+        'gantt_charts' => 'Gantt Charts',
     ],
     
     'roles' => [
@@ -136,6 +171,31 @@ return [
         'enter_designation' => 'Enter designation',
         'enter_employee_count' => 'Enter employee count',
         'enter_password' => 'Enter password',
+        'select_project_type' => 'Select project type',
+        'select_project_manager' => 'Select project manager',
+        'select_technical_engineer' => 'Select technical engineer',
+    ],
+    
+    'project_types' => [
+        'commercial' => 'Commercial',
+        'residential' => 'Residential',
+        'industrial' => 'Industrial',
+        'renovation' => 'Renovation',
+    ],
+    
+    'project_status' => [
+        'planning' => 'Planning',
+        'active' => 'Active',
+        'on_hold' => 'On Hold',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
+    ],
+    
+    'priorities' => [
+        'low' => 'Low',
+        'medium' => 'Medium',
+        'high' => 'High',
+        'critical' => 'Critical',
     ],
     
     'helpers' => [
@@ -148,6 +208,11 @@ return [
         'leave_blank_password' => 'Leave blank to keep current password',
         'password_requirements' => 'Must contain uppercase, lowercase, number and special character',
         'inactive_users' => 'Inactive users cannot login to the system',
+        'inactive_projects' => 'Inactive projects are archived and hidden from active lists',
+        'project_manager_help' => 'Optional: Assign a project manager to oversee this project',
+        'technical_engineer_help' => 'Optional: Assign a technical engineer for this project',
+        'construction_plans_help' => 'Upload construction plans, blueprints, and technical drawings',
+        'gantt_charts_help' => 'Upload project timeline charts and scheduling documents',
     ],
     
     'placeholders' => [
@@ -178,6 +243,9 @@ return [
         'active_only' => 'Active Only',
         'inactive_only' => 'Inactive Only',
         'all_users' => 'All users',
+        'all_projects' => 'All projects',
+        'deleted_only' => 'Deleted only',
+        'not_deleted' => 'Not deleted',
     ],
     
     'messages' => [
@@ -190,5 +258,38 @@ return [
         'user_status_updated' => 'User status updated successfully',
         'users_activated' => 'Users activated successfully',
         'users_deactivated' => 'Users deactivated successfully',
+        'project_archived' => 'Project archived successfully',
+        'project_restored' => 'Project restored successfully',
+        'projects_archived' => 'Projects archived successfully',
+        'projects_restored' => 'Projects restored successfully',
+        'project_deleted' => 'Project deleted successfully',
+        'projects_deleted' => 'Projects deleted successfully',
+        'markup_saved' => 'Markup saved successfully',
+        'no_files' => 'No Files Available',
+        'upload_files_first' => 'Upload files to this project first to enable markup functionality',
+    ],
+    
+    'labels' => [
+        'project_code' => 'Project Code',
+        'markup_file' => 'Markup File',
+        'drawing_tools' => 'Drawing Tools',
+        'color' => 'Color',
+        'brush_size' => 'Brush Size',
+        'files' => 'Files',
+    ],
+    
+    'tools' => [
+        'pen' => 'Pen',
+        'circle' => 'Circle',
+        'arrow' => 'Arrow',
+        'text' => 'Text',
+    ],
+    
+    'pages' => [
+        'markup_files' => 'Markup Files',
+    ],
+    
+    'prompts' => [
+        'enter_text' => 'Enter text:',
     ],
 ];

@@ -6,6 +6,8 @@ return [
         'user_management' => 'إدارة المستخدمين',
         'users' => 'المستخدمين',
         'system_users' => 'مستخدمي النظام',
+        'project_management' => 'إدارة المشاريع',
+        'projects' => 'المشاريع',
         'roles' => 'الأدوار',
         'permissions' => 'الصلاحيات',
         'admins' => 'المديرين',
@@ -38,6 +40,15 @@ return [
         'reset_password' => 'إعادة تعيين كلمة المرور',
         'activate' => 'تفعيل',
         'deactivate' => 'إلغاء تفعيل',
+        'archive' => 'أرشفة',
+        'restore' => 'استعادة',
+        'markup_files' => 'تعديل الملفات',
+        'markup' => 'تعديل',
+        'view' => 'عرض',
+        'save_markup' => 'حفظ التعديل',
+        'undo' => 'تراجع',
+        'clear' => 'مسح',
+        'cancel' => 'إلغاء',
     ],
     
     'fields' => [
@@ -95,6 +106,27 @@ return [
         'designation' => 'المسمى الوظيفي',
         'employee_count' => 'عدد الموظفين',
         'new_password' => 'كلمة المرور الجديدة',
+        'project_information' => 'معلومات المشروع',
+        'project_details' => 'تفاصيل المشروع',
+        'team_assignment' => 'تعيين الفريق',
+        'project_timeline' => 'جدول المشروع الزمني',
+        'team_information' => 'معلومات الفريق',
+        'project_code' => 'رمز المشروع',
+        'project_title' => 'عنوان المشروع',
+        'contractor_name' => 'اسم المقاول',
+        'project_type' => 'نوع المشروع',
+        'project_location' => 'موقع المشروع',
+        'start_date' => 'تاريخ البدء',
+        'due_date' => 'تاريخ الاستحقاق',
+        'priority' => 'الأولوية',
+        'project_manager' => 'مدير المشروع',
+        'technical_engineer' => 'المهندس التقني',
+        'type' => 'النوع',
+        'created_by' => 'أنشئ بواسطة',
+        'deleted_status' => 'حالة الحذف',
+        'project_files' => 'ملفات المشروع',
+        'construction_plans' => 'مخططات البناء',
+        'gantt_charts' => 'مخططات جانت',
     ],
     
     'roles' => [
@@ -118,6 +150,31 @@ return [
         'enter_designation' => 'أدخل المسمى الوظيفي',
         'enter_employee_count' => 'أدخل عدد الموظفين',
         'enter_password' => 'أدخل كلمة المرور',
+        'select_project_type' => 'اختر نوع المشروع',
+        'select_project_manager' => 'اختر مدير المشروع',
+        'select_technical_engineer' => 'اختر المهندس التقني',
+    ],
+    
+    'project_types' => [
+        'commercial' => 'Commercial',
+        'residential' => 'Residential',
+        'industrial' => 'Industrial',
+        'renovation' => 'Renovation',
+    ],
+    
+    'project_status' => [
+        'planning' => 'تخطيط',
+        'active' => 'نشط',
+        'on_hold' => 'معلق',
+        'completed' => 'مكتمل',
+        'cancelled' => 'ملغى',
+    ],
+    
+    'priorities' => [
+        'low' => 'منخفض',
+        'medium' => 'متوسط',
+        'high' => 'عالي',
+        'critical' => 'حرج',
     ],
     
     'helpers' => [
@@ -130,6 +187,11 @@ return [
         'leave_blank_password' => 'اترك فارغاً للاحتفاظ بكلمة المرور الحالية',
         'password_requirements' => 'يجب أن تحتوي على أحرف كبيرة وصغيرة ورقم ورمز خاص',
         'inactive_users' => 'المستخدمين غير النشطين لا يمكنهم تسجيل الدخول',
+        'inactive_projects' => 'المشاريع غير النشطة مؤرشفة ومخفية من القوائم النشطة',
+        'project_manager_help' => 'اختياري: تعيين مدير مشروع للإشراف على هذا المشروع',
+        'technical_engineer_help' => 'اختياري: تعيين مهندس تقني لهذا المشروع',
+        'construction_plans_help' => 'رفع مخططات البناء والرسومات التقنية',
+        'gantt_charts_help' => 'رفع مخططات الجدول الزمني ووثائق الجدولة',
     ],
     
     'placeholders' => [
@@ -160,6 +222,9 @@ return [
         'active_only' => 'النشط فقط',
         'inactive_only' => 'غير النشط فقط',
         'all_users' => 'جميع المستخدمين',
+        'all_projects' => 'جميع المشاريع',
+        'deleted_only' => 'المحذوف فقط',
+        'not_deleted' => 'غير محذوف',
     ],
     
     'messages' => [
@@ -172,5 +237,37 @@ return [
         'user_status_updated' => 'تم تحديث حالة المستخدم بنجاح',
         'users_activated' => 'تم تفعيل المستخدمين بنجاح',
         'users_deactivated' => 'تم إلغاء تفعيل المستخدمين بنجاح',
+        'project_archived' => 'تم أرشفة المشروع بنجاح',
+        'project_restored' => 'تم استعادة المشروع بنجاح',
+        'projects_archived' => 'تم أرشفة المشاريع بنجاح',
+        'projects_restored' => 'تم استعادة المشاريع بنجاح',
+        'project_deleted' => 'تم حذف المشروع بنجاح',
+        'projects_deleted' => 'تم حذف المشاريع بنجاح',
+        'markup_saved' => 'تم حفظ التعديل بنجاح',
+        'no_files' => 'لا توجد ملفات',
+        'upload_files_first' => 'قم برفع ملفات لهذا المشروع أولاً لتفعيل وظيفة التعديل',
+    ],
+    
+    'labels' => [
+        'project_code' => 'رمز المشروع',
+        'markup_file' => 'تعديل الملف',
+        'drawing_tools' => 'أدوات الرسم',
+        'color' => 'اللون',
+        'brush_size' => 'حجم الفرشاة',
+    ],
+    
+    'tools' => [
+        'pen' => 'قلم',
+        'circle' => 'دائرة',
+        'arrow' => 'سهم',
+        'text' => 'نص',
+    ],
+    
+    'pages' => [
+        'markup_files' => 'تعديل الملفات',
+    ],
+    
+    'prompts' => [
+        'enter_text' => 'أدخل النص:',
     ],
 ];

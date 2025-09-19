@@ -14,7 +14,15 @@ class EditPermission extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\Action::make('delete')
+                ->label('Delete')
+                ->icon('heroicon-o-trash')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->action(function (): void {
+                    $this->record->update(['is_deleted' => true]);
+                    $this->redirect($this->getResource()::getUrl('index'));
+                }),
         ];
     }
 

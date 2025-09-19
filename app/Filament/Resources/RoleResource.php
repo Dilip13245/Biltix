@@ -181,8 +181,13 @@ class RoleResource extends Resource
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\DeleteAction::make()
-                    ->after(function () {
+                Tables\Actions\Action::make('delete')
+                    ->label('Delete')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['is_deleted' => true]);
                         Notification::make()
                             ->title(__('validation.role_deleted'))
                             ->success()
@@ -191,7 +196,11 @@ class RoleResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('delete')
+                        ->label('Delete')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->action(fn ($records) => $records->each->update(['is_deleted' => true])),
                 ]),
             ]);
     }

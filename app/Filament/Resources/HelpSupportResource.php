@@ -214,7 +214,11 @@ class HelpSupportResource extends Resource
             ->recordUrl(null)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('delete')
+                        ->label('Delete')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->action(fn ($records) => $records->each->update(['is_deleted' => true])),
                 ]),
             ]);
     }

@@ -273,10 +273,13 @@ class PermissionResource extends Resource
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\Action::make('delete')
                     ->label(__('filament.actions.delete'))
                     ->icon('heroicon-o-trash')
-                    ->after(function () {
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['is_deleted' => true]);
                         Notification::make()
                             ->title(__('validation.permission_deleted'))
                             ->success()
@@ -285,7 +288,11 @@ class PermissionResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('delete')
+                        ->label('Delete')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->action(fn ($records) => $records->each->update(['is_deleted' => true])),
                 ]),
             ]);
     }
