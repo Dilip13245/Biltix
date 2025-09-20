@@ -26,88 +26,8 @@
                         -->
 
             <!-- Project Phases Cards -->
-            <div class="row g-4">
-                <!-- Foundation Phase -->
-                <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay="0s">
-                    <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Foundation Phase')">
-                        <div class="card-body p-md-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-semibold black_color mb-0">{{ __('messages.foundation_phase') }}</h5>
-                                <span class="badge badge1">{{ __('messages.completed') }}</span>
-                            </div>
-                            <div class="mb-3">
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
-                                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted">100% Complete</small>
-                                    <small class="text-muted">30 days</small>
-                                </div>
-                            </div>
-                            <div class="small text-muted">
-                                <div>• {{ __('messages.site_preparation') }} - 10 {{ __('messages.days') }}</div>
-                                <div>• {{ __('messages.excavation_work') }} - 8 {{ __('messages.days') }}</div>
-                                <div>• {{ __('messages.foundation_pouring') }} - 12 {{ __('messages.days') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Structure Phase -->
-                <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay=".4s">
-                    <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Structure Phase')">
-                        <div class="card-body p-md-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-semibold black_color mb-0">{{ __('messages.structure_phase') }}</h5>
-                                <span class="badge badge4">{{ __('messages.in_progress') }}</span>
-                            </div>
-                            <div class="mb-3">
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" role="progressbar"
-                                        style="width: 65%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
-                                        aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted">65% Complete</small>
-                                    <small class="text-muted">45 days</small>
-                                </div>
-                            </div>
-                            <div class="small text-muted">
-                                <div>• {{ __('messages.column_construction') }} - 20 {{ __('messages.days') }}</div>
-                                <div>• {{ __('messages.beam_installation') }} - 15 {{ __('messages.days') }}</div>
-                                <div>• {{ __('messages.slab_work') }} - 10 {{ __('messages.days') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Finishing Phase -->
-                <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay=".8s">
-                    <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('Finishing Phase')">
-                        <div class="card-body p-md-4">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-semibold black_color mb-0">{{ __('messages.finishing_phase') }}</h5>
-                                <span class="badge badge2">{{ __('messages.pending') }}</span>
-                            </div>
-                            <div class="mb-3">
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar bg-secondary" role="progressbar" style="width: 0%"
-                                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted">0% Complete</small>
-                                    <small class="text-muted">25 days</small>
-                                </div>
-                            </div>
-                            <div class="small text-muted">
-                                <div>• {{ __('messages.interior_work') }} - 12 {{ __('messages.days') }}</div>
-                                <div>• {{ __('messages.painting_tiling') }} - 8 {{ __('messages.days') }}</div>
-                                <div>• {{ __('messages.final_touches') }} - 5 {{ __('messages.days') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="row g-4" id="phasesContainer">
+                <!-- Dynamic phases will be loaded here -->
             </div>
             <div class="row mt-4 wow fadeInUp" data-wow-delay="0.9s">
                 <div class="col-12">
@@ -485,6 +405,7 @@
         // Load project data and make edit buttons functional
         document.addEventListener('DOMContentLoaded', function() {
             loadProjectData();
+            loadPhases();
             
             const editButtons = document.querySelectorAll('a[title="Edit"]');
             editButtons.forEach(button => {
@@ -507,6 +428,77 @@
                 });
             });
         });
+        
+        async function loadPhases() {
+            try {
+                const response = await api.makeRequest('projects/list_phases', {
+                    project_id: currentProjectId,
+                    user_id: {{ auth()->id() ?? 1 }}
+                });
+                
+                if (response.code === 200 && response.data) {
+                    renderPhases(response.data);
+                } else {
+                    console.error('Failed to load phases:', response.message);
+                }
+            } catch (error) {
+                console.error('Error loading phases:', error);
+            }
+        }
+        
+        function renderPhases(phases) {
+            const container = document.getElementById('phasesContainer');
+            
+            if (!phases || phases.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <div class="text-muted">
+                            <i class="fas fa-layer-group fa-3x mb-3"></i>
+                            <h5>No phases created yet</h5>
+                            <p>Create your first project phase to get started</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = phases.map((phase, index) => {
+                const progress = Math.floor(Math.random() * 101); // Random progress
+                const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) : 0;
+                const badgeClass = progress === 100 ? 'badge1' : progress > 0 ? 'badge4' : 'badge2';
+                const badgeText = progress === 100 ? 'Completed' : progress > 0 ? 'In Progress' : 'Pending';
+                const progressColor = progress === 100 ? 'bg-success' : 'linear-gradient(90deg, #4477C4 0%, #F58D2E 100%)';
+                
+                return `
+                    <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay="${index * 0.4}s">
+                        <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('${phase.title}')">
+                            <div class="card-body p-md-4">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <h5 class="fw-semibold black_color mb-0">${phase.title}</h5>
+                                    <span class="badge ${badgeClass}">${badgeText}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="progress" style="height:8px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                            style="width: ${progress}%; background: ${progressColor};"
+                                            aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-1">
+                                        <small class="text-muted">${progress}% Complete</small>
+                                        <small class="text-muted">${totalDays} days</small>
+                                    </div>
+                                </div>
+                                <div class="small text-muted">
+                                    ${phase.milestones ? phase.milestones.map(milestone => 
+                                        `<div>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</div>`
+                                    ).join('') : '<div>No milestones defined</div>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
         
         async function loadProjectData() {
             try {
@@ -756,7 +748,7 @@
                                         <div class="col-3">
                                             <input type="number" class="form-control Input_control"
                                                 name="milestones[0][days]" placeholder="{{ __('messages.days') }}"
-                                                min="1" required>
+                                                min="1">
                                         </div>
                                         <div class="col-1">
                                             <button type="button" class="btn btn-outline-danger btn-sm"
@@ -798,7 +790,7 @@
       </div>
       <div class="col-3">
         <input type="number" class="form-control Input_control" name="milestones[${milestoneIndex}][days]" 
-          placeholder="Days" min="1" required>
+          placeholder="Days" min="1">
       </div>
       <div class="col-1">
         <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
@@ -822,53 +814,86 @@
         document.addEventListener('DOMContentLoaded', function() {
             const createPhaseForm = document.getElementById('createPhaseForm');
             if (createPhaseForm) {
-                createPhaseForm.addEventListener('submit', function(e) {
+                createPhaseForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
 
-                    const title = document.getElementById('title').value;
-                    const milestones = document.querySelectorAll('.milestone-item');
+                    const formData = new FormData(createPhaseForm);
+                    const title = formData.get('title');
+                    
+                    // Collect milestones
+                    const milestones = [];
+                    const milestoneItems = document.querySelectorAll('.milestone-item');
+                    
+                    milestoneItems.forEach((item, index) => {
+                        const nameInput = item.querySelector(`input[name="milestones[${index}][milestone_name]"]`);
+                        const daysInput = item.querySelector(`input[name="milestones[${index}][days]"]`);
+                        
+                        if (nameInput && nameInput.value.trim()) {
+                            milestones.push({
+                                milestone_name: nameInput.value.trim(),
+                                days: daysInput && daysInput.value ? parseInt(daysInput.value) : null
+                            });
+                        }
+                    });
 
-                    if (title.trim() && milestones.length > 0) {
-                        // Close modal
-                        const modal = bootstrap.Modal.getInstance(document.getElementById(
-                            'createPhaseModal'));
-                        if (modal) modal.hide();
-
-                        alert('Phase "' + title + '" with ' + milestones.length +
-                            ' milestone(s) created successfully!');
-
-                        // Reset form
-                        createPhaseForm.reset();
-                        milestoneIndex = 1;
-
-                        // Reset milestones container
-                        const container = document.getElementById('milestonesContainer');
-                        container.innerHTML = `
-          <div class="milestone-item mb-2">
-            <div class="row">
-              <div class="col-8">
-                <input type="text" class="form-control Input_control" name="milestones[0][milestone_name]" 
-                  placeholder="Milestone name" required>
-              </div>
-              <div class="col-3">
-                <input type="number" class="form-control Input_control" name="milestones[0][days]" 
-                  placeholder="Days" min="1" required>
-              </div>
-              <div class="col-1">
-                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-
-                        // Reload page to show new phase
-                        location.reload();
+                    if (title.trim()) {
+                        try {
+                            const response = await api.makeRequest('projects/create_phase', {
+                                project_id: currentProjectId,
+                                user_id: {{ auth()->id() ?? 1 }},
+                                title: title,
+                                milestones: milestones.length > 0 ? milestones : null
+                            });
+                            
+                            if (response.code === 200) {
+                                // Close modal
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
+                                if (modal) modal.hide();
+                                
+                                // Show success message
+                                alert('Phase "' + title + '" created successfully!');
+                                
+                                // Reset form
+                                createPhaseForm.reset();
+                                milestoneIndex = 1;
+                                resetMilestonesContainer();
+                                
+                                // Reload phases
+                                loadPhases();
+                            } else {
+                                alert('Error creating phase: ' + response.message);
+                            }
+                        } catch (error) {
+                            console.error('Error creating phase:', error);
+                            alert('Error creating phase. Please try again.');
+                        }
                     }
                 });
             }
         });
+        
+        function resetMilestonesContainer() {
+            const container = document.getElementById('milestonesContainer');
+            container.innerHTML = `
+                <div class="milestone-item mb-2">
+                    <div class="row">
+                        <div class="col-8">
+                            <input type="text" class="form-control Input_control" name="milestones[0][milestone_name]" 
+                                placeholder="Milestone name" required>
+                        </div>
+                        <div class="col-3">
+                            <input type="number" class="form-control Input_control" name="milestones[0][days]" 
+                                placeholder="Days" min="1">
+                        </div>
+                        <div class="col-1">
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
     </script>
 
     <!-- Phase Navigation Modal -->

@@ -329,9 +329,9 @@ class ProjectController extends Controller
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
                 'title' => 'required|string|max:255',
-                'milestones' => 'required|array|min:1',
-                'milestones.*.milestone_name' => 'required|string|max:255',
-                'milestones.*.days' => 'required|integer|min:1',
+                'milestones' => 'nullable|array',
+                'milestones.*.milestone_name' => 'required_with:milestones|string|max:255',
+                'milestones.*.days' => 'nullable|integer|min:1',
             ]);
 
             if ($validator->fails()) {
@@ -345,15 +345,17 @@ class ProjectController extends Controller
             $phaseDetails->is_active = true;
 
             if ($phaseDetails->save()) {
-                // Create milestones
-                foreach ($request->milestones as $milestone) {
-                    PhaseMilestone::create([
-                        'phase_id' => $phaseDetails->id,
-                        'milestone_name' => $milestone['milestone_name'],
-                        'days' => $milestone['days'],
-                        'is_active' => true,
-                        'is_deleted' => false
-                    ]);
+                // Create milestones if provided
+                if ($request->has('milestones') && is_array($request->milestones)) {
+                    foreach ($request->milestones as $milestone) {
+                        PhaseMilestone::create([
+                            'phase_id' => $phaseDetails->id,
+                            'milestone_name' => $milestone['milestone_name'],
+                            'days' => $milestone['days'] ?? null,
+                            'is_active' => true,
+                            'is_deleted' => false
+                        ]);
+                    }
                 }
 
                 $phaseDetails->load('milestones');

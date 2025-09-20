@@ -42,4 +42,9 @@ class Task extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
+
+    public function images()
+    {
+        return $this->hasMany(TaskImage::class)->where('is_active', true)->where('is_deleted', false);
+    }
 }

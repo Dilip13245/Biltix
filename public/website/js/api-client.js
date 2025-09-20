@@ -144,6 +144,14 @@ class ApiClient {
         }
         return this.makeRequest(API_CONFIG.ENDPOINTS.PROJECTS.CREATE, data);
     }
+
+    async createPhase(data) {
+        return this.makeRequest('projects/create_phase', data);
+    }
+
+    async listPhases(data) {
+        return this.makeRequest('projects/list_phases', data);
+    }
     
     async getDashboardStats() {
         return this.makeRequest('projects/dashboard_stats', {});

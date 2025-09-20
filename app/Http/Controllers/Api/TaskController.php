@@ -6,6 +6,7 @@ use App\Helpers\FileHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\TaskComment;
+use App\Models\TaskImage;
 use App\Helpers\NumberHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -19,16 +20,19 @@ class TaskController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
+                'phase_id' => 'nullable|integer',
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'priority' => 'required|in:low,medium,high,critical',
+                'priority' => 'nullable|in:low,medium,high,critical',
                 'assigned_to' => 'required|integer',
                 'due_date' => 'required|date',
                 'estimated_hours' => 'nullable|numeric|min:0',
                 'location' => 'nullable|string',
+                'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
             ], [
                 'user_id.required' => trans('api.tasks.user_id_required'),
                 'project_id.required' => trans('api.tasks.project_id_required'),
+                'phase_id.required' => trans('api.tasks.phase_id_required'),
                 'title.required' => trans('api.tasks.title_required'),
                 'priority.required' => trans('api.tasks.priority_required'),
                 'assigned_to.required' => trans('api.tasks.assigned_to_required'),
@@ -45,17 +49,35 @@ class TaskController extends Controller
             $taskDetails->phase_id = $request->phase_id;
             $taskDetails->title = $request->title;
             $taskDetails->description = $request->description ?? '';
-            $taskDetails->priority = $request->priority;
+            // $taskDetails->priority = $request->priority;
             $taskDetails->assigned_to = $request->assigned_to;
             $taskDetails->created_by = $request->user_id;
             $taskDetails->due_date = $request->due_date;
-            $taskDetails->estimated_hours = $request->estimated_hours;
+            // $taskDetails->estimated_hours = $request->estimated_hours;
             $taskDetails->location = $request->location ?? '';
-            $taskDetails->attachments = $request->attachments ?? [];
             $taskDetails->status = 'pending';
             $taskDetails->is_active = true;
 
             if ($taskDetails->save()) {
+                // Handle image uploads
+                if ($request->hasFile('images')) {
+                    foreach ($request->file('images') as $image) {
+                        $uploadResult = FileHelper::uploadFile($image, 'tasks');
+                        
+                        if ($uploadResult['success']) {
+                            TaskImage::create([
+                                'task_id' => $taskDetails->id,
+                                'image_path' => $uploadResult['file_path'],
+                                'original_name' => $image->getClientOriginalName(),
+                                'file_size' => $image->getSize(),
+                                'is_active' => true,
+                                'is_deleted' => false
+                            ]);
+                        }
+                    }
+                }
+                
+                $taskDetails->load('images');
                 return $this->toJsonEnc($taskDetails, trans('api.tasks.created_success'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.tasks.creation_failed'), Config::get('constant.ERROR'));
@@ -89,10 +111,18 @@ class TaskController extends Controller
                 $query->where('assigned_to', $assigned_to);
             }
 
-            $tasks = $query->paginate($limit, ['*'], 'page', $page);
+            $tasks = $query->with('images')->paginate($limit, ['*'], 'page', $page);
+
+            $tasksData = collect($tasks->items())->map(function ($task) {
+                $task->images = $task->images->map(function ($image) {
+                    $image->image_url = url($image->image_path);
+                    return $image;
+                });
+                return $task;
+            });
 
             $data = [
-                'data' => $tasks->items()
+                'data' => $tasksData
             ];
 
             return $this->toJsonEnc($data, trans('api.tasks.list_retrieved'), Config::get('constant.SUCCESS'));
@@ -107,7 +137,8 @@ class TaskController extends Controller
             $task_id = $request->input('task_id');
             $user_id = $request->input('user_id');
 
-            $task = Task::where('id', $task_id)
+            $task = Task::with('images')
+                ->where('id', $task_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->first();
@@ -115,6 +146,11 @@ class TaskController extends Controller
             if (!$task) {
                 return $this->toJsonEnc([], trans('api.tasks.not_found'), Config::get('constant.NOT_FOUND'));
             }
+
+            $task->images = $task->images->map(function ($image) {
+                $image->image_url = url($image->image_path);
+                return $image;
+            });
 
             return $this->toJsonEnc($task, trans('api.tasks.details_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

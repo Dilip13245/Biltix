@@ -18,6 +18,7 @@ class TeamController extends Controller
             $project_id = $request->input('project_id');
             $role_type = $request->input('role_type');
             $limit = $request->input('limit', 10);
+            $page = $request->input('page', 1);
 
             $query = TeamMember::where('is_active', 1)->where('is_deleted', 0);
 
@@ -25,7 +26,21 @@ class TeamController extends Controller
                 $query->where('project_id', $project_id);
             }
 
-            $teamMembers = $query->paginate($limit);
+            $teamMembers = $query->paginate($limit, ['*'], 'page', $page)->items();
+
+            // Add user details with role_name
+            $teamMembers = collect($teamMembers)->map(function ($member) {
+                $user = User::where('id', $member->user_id)
+                    ->select('id', 'name', 'role')
+                    ->first();
+                
+                if ($user) {
+                    $user->role_name = str_replace('_', ' ', ucwords($user->role, '_'));
+                    $member->user = $user;
+                }
+                
+                return $member;
+            });
 
             return $this->toJsonEnc($teamMembers, trans('api.team.members_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

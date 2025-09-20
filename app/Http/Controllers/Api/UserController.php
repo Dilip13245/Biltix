@@ -57,23 +57,23 @@ class UserController extends Controller
         try {
             $role = $request->input('role');
             
-            if (!$role) {
-                return $this->toJsonEnc([], trans('api.users.role_required'), Config::get('constant.ERROR'));
-            }
-
-            $validRoles = ['project_manager', 'site_engineer', 'contractor', 'consultant', 'stakeholder'];
-            
-            if (!in_array($role, $validRoles)) {
-                return $this->toJsonEnc([], trans('api.users.invalid_role'), Config::get('constant.ERROR'));
-            }
-
-            $users = User::where('role', $role)
-                ->where('is_active', 1)
+            $query = User::where('is_active', 1)
                 ->where('is_verified', 1)
                 ->where('is_deleted', 0)
                 ->select('id', 'name', 'email', 'company_name', 'role')
-                ->orderBy('name', 'asc')
-                ->get();
+                ->orderBy('name', 'asc');
+            
+            if ($role) {
+                $validRoles = ['project_manager', 'site_engineer', 'contractor', 'consultant', 'stakeholder'];
+                
+                if (!in_array($role, $validRoles)) {
+                    return $this->toJsonEnc([], trans('api.users.invalid_role'), Config::get('constant.ERROR'));
+                }
+                
+                $query->where('role', $role);
+            }
+
+            $users = $query->get();
 
             return $this->toJsonEnc($users, trans('api.users.users_by_role_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
