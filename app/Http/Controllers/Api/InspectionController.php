@@ -133,7 +133,7 @@ class InspectionController extends Controller
             $inspection_id = $request->input('inspection_id');
             $user_id = $request->input('user_id');
 
-            $inspection = Inspection::with(['images', 'createdBy:id,name', 'inspectedBy:id,name'])
+            $inspection = Inspection::with(['checklists', 'images', 'createdBy:id,name', 'inspectedBy:id,name'])
                 ->where('id', $inspection_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
