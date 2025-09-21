@@ -19,17 +19,15 @@ class SnagController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
-                'category_id' => 'nullable|integer', // Made optional to match Figma
-                'title' => 'required|string|max:255', // This is "Type of Issue" in Figma
-                'description' => 'nullable|string', // Optional in Figma
+                'phase_id' => 'nullable|integer',
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
                 'location' => 'required|string',
-                'priority' => 'nullable|in:low,medium,high,critical',
-                'severity' => 'nullable|in:minor,major,critical',
-                'images_before' => 'nullable|array'
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
             ], [
                 'user_id.required' => trans('api.snags.user_id_required'),
                 'project_id.required' => trans('api.snags.project_id_required'),
-                'title.required' => trans('api.snags.issue_type_required'),
+                'title.required' => trans('api.snags.title_required'),
                 'location.required' => trans('api.snags.location_required'),
             ]);
 
@@ -40,20 +38,23 @@ class SnagController extends Controller
             $snagDetails = new Snag();
             $snagDetails->snag_number = NumberHelper::generateSnagNumber($request->project_id);
             $snagDetails->project_id = $request->project_id;
-            $snagDetails->category_id = $request->category_id ?? 1; // Default category
-            $snagDetails->title = $request->title; // "Type of Issue" from Figma
+            $snagDetails->phase_id = $request->phase_id;
+            $snagDetails->title = $request->title;
             $snagDetails->description = $request->description ?? '';
             $snagDetails->location = $request->location;
-            $snagDetails->priority = $request->priority ?? 'medium';
-            $snagDetails->severity = $request->severity ?? 'minor';
             $snagDetails->reported_by = $request->user_id;
             $snagDetails->status = 'open';
-            $snagDetails->images_before = $request->images_before ?? [];
             $snagDetails->is_active = true;
+            
+            // Handle single image upload
+            if ($request->hasFile('image')) {
+                $uploadResult = \App\Helpers\FileHelper::uploadFile($request->file('image'), 'snags');
+                $snagDetails->image = $uploadResult['path'];
+            }
 
             if ($snagDetails->save()) {
                 // Load relationships for response
-                $snagDetails->load(['reporter:id,name,role', 'category:id,name']);
+                $snagDetails->load(['reporter:id,name']);
                 
                 $response = [
                     'id' => $snagDetails->id,
@@ -61,8 +62,9 @@ class SnagController extends Controller
                     'title' => $snagDetails->title,
                     'description' => $snagDetails->description,
                     'location' => $snagDetails->location,
-                    'status' => 'In Progress', // Match Figma status
-                    'message' => 'Snag report created successfully. You can now add images and additional details.'
+                    'status' => $snagDetails->status,
+                    'image_url' => $snagDetails->image ? asset('storage/' . $snagDetails->image) : null,
+                    'message' => 'Snag created successfully.'
                 ];
                 
                 return $this->toJsonEnc($response, trans('api.snags.created_success'), Config::get('constant.SUCCESS'));
@@ -84,43 +86,40 @@ class SnagController extends Controller
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
-            $query = Snag::with(['reporter:id,name,role', 'assignedUser:id,name,role', 'category:id,name'])
+            $query = Snag::with(['reporter:id,name', 'assignedUser:id,name'])
                 ->where('is_active', 1)->where('is_deleted', 0);
 
             if ($project_id) {
                 $query->where('project_id', $project_id);
             }
 
+            if ($request->input('phase_id')) {
+                $query->where('phase_id', $request->input('phase_id'));
+            }
+
             if ($status) {
                 $query->where('status', $status);
             }
 
-            if ($priority) {
-                $query->where('priority', $priority);
-            }
-
             $snags = $query->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
 
-            // Format response to match Figma design
-            $snags->getCollection()->transform(function ($snag) {
+            $snagsData = collect($snags->items())->map(function ($snag) {
                 return [
                     'id' => $snag->id,
                     'snag_number' => $snag->snag_number,
                     'title' => $snag->title,
                     'description' => $snag->description,
                     'location' => $snag->location,
-                    'status' => $snag->status === 'open' ? 'In Progress' : ucfirst($snag->status),
-                    'priority' => ucfirst($snag->priority),
-                    'reported_by' => $snag->reporter ? $snag->reporter->name . ' (' . ucfirst($snag->reporter->role) . ')' : 'Unknown',
-                    'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name . ' Team' : null,
+                    'status' => ucfirst($snag->status),
+                    'reported_by' => $snag->reporter ? $snag->reporter->name : 'Unknown',
+                    'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name : null,
                     'date' => $snag->created_at->format('jS M, Y'),
-                    'images_before' => $snag->images_before,
-                    'category' => $snag->category ? $snag->category->name : 'General'
+                    'image_url' => $snag->image ? asset('storage/' . $snag->image) : null
                 ];
             });
 
             $data = [
-                'data' => $snags->items()
+                'data' => $snagsData
             ];
 
             return $this->toJsonEnc($data, trans('api.snags.list_retrieved'), Config::get('constant.SUCCESS'));
@@ -135,7 +134,7 @@ class SnagController extends Controller
             $snag_id = $request->input('snag_id');
             $user_id = $request->input('user_id');
 
-            $snag = Snag::with(['reporter:id,name,role', 'assignedUser:id,name,role', 'category:id,name', 'comments.user:id,name'])
+            $snag = Snag::with(['reporter:id,name', 'assignedUser:id,name', 'comments.user:id,name'])
                 ->where('id', $snag_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
@@ -145,7 +144,6 @@ class SnagController extends Controller
                 return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            // Format response to match Figma design
             $formattedSnag = [
                 'id' => $snag->id,
                 'snag_number' => $snag->snag_number,
@@ -153,13 +151,10 @@ class SnagController extends Controller
                 'description' => $snag->description,
                 'location' => $snag->location,
                 'status' => ucfirst($snag->status),
-                'priority' => ucfirst($snag->priority),
-                'reported_by' => $snag->reporter ? $snag->reporter->name . ' (' . ucfirst($snag->reporter->role) . ')' : 'Unknown',
+                'reported_by' => $snag->reporter ? $snag->reporter->name : 'Unknown',
                 'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name : null,
                 'date' => $snag->created_at->format('jS M, Y'),
-                'images_before' => $snag->images_before,
-                'images_after' => $snag->images_after,
-                'category' => $snag->category ? $snag->category->name : 'General',
+                'image_url' => $snag->image ? asset('storage/' . $snag->image) : null,
                 'comments' => $snag->comments->map(function($comment) {
                     return [
                         'id' => $comment->id,
@@ -191,14 +186,11 @@ class SnagController extends Controller
                 return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            if ($request->filled('title')) $snag->title = $request->title;
-            if ($request->filled('description')) $snag->description = $request->description;
-            if ($request->filled('status')) $snag->status = $request->status;
-            if ($request->filled('priority')) $snag->priority = $request->priority;
-            if ($request->filled('severity')) $snag->severity = $request->severity;
-            if ($request->filled('assigned_to')) $snag->assigned_to = $request->assigned_to;
-
-            $snag->save();
+            // Only handle comment update
+            if ($request->filled('comment')) {
+                $snag->comment = $request->comment;
+                $snag->save();
+            }
 
             return $this->toJsonEnc($snag, trans('api.snags.updated_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

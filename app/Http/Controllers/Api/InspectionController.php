@@ -9,6 +9,7 @@ use App\Models\InspectionImage;
 use App\Helpers\FileHelper;
 use App\Models\InspectionResult;
 use App\Models\InspectionTemplate;
+use App\Models\ProjectPhase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -21,6 +22,7 @@ class InspectionController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
+                'phase_id' => 'nullable|integer',
                 'category' => 'required|string|max:255',
                 'description' => 'required|string',
                 'checklist_items' => 'required|array|min:1',
@@ -34,6 +36,7 @@ class InspectionController extends Controller
 
             $inspectionDetails = new Inspection();
             $inspectionDetails->project_id = $request->project_id;
+            $inspectionDetails->phase_id = $request->phase_id;
             $inspectionDetails->category = $request->category;
             $inspectionDetails->description = $request->description;
             $inspectionDetails->created_by = $request->user_id;
@@ -81,16 +84,21 @@ class InspectionController extends Controller
         try {
             $user_id = $request->input('user_id');
             $project_id = $request->input('project_id');
+            $phase_id = $request->input('phase_id');
             $status = $request->input('status');
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
-            $query = Inspection::with(['checklists', 'images'])
+            $query = Inspection::with(['checklists', 'images', 'createdBy:id,name'])
                 ->where('is_active', 1)
                 ->where('is_deleted', 0);
 
             if ($project_id) {
                 $query->where('project_id', $project_id);
+            }
+
+            if ($phase_id) {
+                $query->where('phase_id', $phase_id);
             }
 
             if ($status) {
@@ -99,8 +107,18 @@ class InspectionController extends Controller
 
             $inspections = $query->paginate($limit, ['*'], 'page', $page);
 
+            $inspectionsData = collect($inspections->items())->map(function ($inspection) {
+                $inspection->images = $inspection->images->map(function ($image) {
+                    $image->image_url = asset('storage/' . $image->image_path);
+                    return $image;
+                });
+                $inspection->created_by_name = $inspection->createdBy ? $inspection->createdBy->name : null;
+                unset($inspection->createdBy); // Remove the full created_by object
+                return $inspection;
+            });
+
             $data = [
-                'data' => $inspections->items()
+                'data' => $inspectionsData
             ];
 
             return $this->toJsonEnc($data, trans('api.inspections.list_retrieved'), Config::get('constant.SUCCESS'));
@@ -115,6 +133,50 @@ class InspectionController extends Controller
             $inspection_id = $request->input('inspection_id');
             $user_id = $request->input('user_id');
 
+            $inspection = Inspection::with(['images', 'createdBy:id,name', 'inspectedBy:id,name'])
+                ->where('id', $inspection_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$inspection) {
+                return $this->toJsonEnc([], trans('api.inspections.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            $inspection->images = $inspection->images->map(function ($image) {
+                $image->image_url = asset('storage/' . $image->image_path);
+                return $image;
+            });
+            
+            $inspection->created_by_name = $inspection->createdBy ? $inspection->createdBy->name : null;
+            $inspection->inspected_by_name = $inspection->inspectedBy ? $inspection->inspectedBy->name : null;
+            unset($inspection->createdBy, $inspection->inspectedBy);
+
+            return $this->toJsonEnc($inspection, trans('api.inspections.details_retrieved'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+    public function update(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer',
+                'inspection_id' => 'required|integer',
+                'checklist_updates' => 'nullable|array',
+                'checklist_updates.*.id' => 'required|integer',
+                'checklist_updates.*.is_checked' => 'required|boolean',
+                'comment' => 'nullable|string',
+                'images.*' => 'nullable|file|mimes:jpg,jpeg,png|max:10240',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $inspection_id = $request->input('inspection_id');
+            $user_id = $request->input('user_id');
+
             $inspection = Inspection::where('id', $inspection_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
@@ -124,7 +186,41 @@ class InspectionController extends Controller
                 return $this->toJsonEnc([], trans('api.inspections.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            return $this->toJsonEnc($inspection, trans('api.inspections.details_retrieved'), Config::get('constant.SUCCESS'));
+            // Update checklist items
+            if ($request->has('checklist_updates')) {
+                foreach ($request->checklist_updates as $update) {
+                    InspectionChecklist::where('id', $update['id'])
+                        ->where('inspection_id', $inspection_id)
+                        ->update([
+                            'is_checked' => $update['is_checked']
+                        ]);
+                }
+            }
+
+            // Handle new image uploads
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imageData = FileHelper::uploadFile($image, 'inspections/images');
+                    InspectionImage::create([
+                        'inspection_id' => $inspection_id,
+                        'image_path' => $imageData['path'],
+                        'original_name' => $imageData['original_name'],
+                        'file_size' => $imageData['size'],
+                        'uploaded_by' => $user_id,
+                        'is_active' => true,
+                        'is_deleted' => false
+                    ]);
+                }
+            }
+
+            // Store comment in inspection
+            if ($request->filled('comment')) {
+                $inspection->comment = $request->comment;
+                $inspection->save();
+            }
+
+            $inspection->load(['checklists', 'images']);
+            return $this->toJsonEnc($inspection, trans('api.inspections.updated_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -233,6 +329,28 @@ class InspectionController extends Controller
             ];
 
             return $this->toJsonEnc($data, trans('api.inspections.results_retrieved'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function phases(Request $request)
+    {
+        try {
+            $user_id = $request->input('user_id');
+            $project_id = $request->input('project_id');
+
+            $query = ProjectPhase::select('id', 'title')
+                ->where('is_active', 1)
+                ->where('is_deleted', 0);
+
+            if ($project_id) {
+                $query->where('project_id', $project_id);
+            }
+
+            $phases = $query->get();
+
+            return $this->toJsonEnc($phases, trans('api.inspections.phases_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

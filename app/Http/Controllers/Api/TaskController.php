@@ -23,10 +23,8 @@ class TaskController extends Controller
                 'phase_id' => 'nullable|integer',
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'priority' => 'nullable|in:low,medium,high,critical',
                 'assigned_to' => 'required|integer',
                 'due_date' => 'required|date',
-                'estimated_hours' => 'nullable|numeric|min:0',
                 'location' => 'nullable|string',
                 'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
             ], [
@@ -34,7 +32,6 @@ class TaskController extends Controller
                 'project_id.required' => trans('api.tasks.project_id_required'),
                 'phase_id.required' => trans('api.tasks.phase_id_required'),
                 'title.required' => trans('api.tasks.title_required'),
-                'priority.required' => trans('api.tasks.priority_required'),
                 'assigned_to.required' => trans('api.tasks.assigned_to_required'),
                 'due_date.required' => trans('api.tasks.due_date_required'),
             ]);
@@ -55,7 +52,6 @@ class TaskController extends Controller
             $taskDetails->due_date = $request->due_date;
             // $taskDetails->estimated_hours = $request->estimated_hours;
             $taskDetails->location = $request->location ?? '';
-            $taskDetails->status = 'pending';
             $taskDetails->is_active = true;
 
             if ($taskDetails->save()) {
@@ -64,16 +60,14 @@ class TaskController extends Controller
                     foreach ($request->file('images') as $image) {
                         $uploadResult = FileHelper::uploadFile($image, 'tasks');
                         
-                        if ($uploadResult['success']) {
-                            TaskImage::create([
-                                'task_id' => $taskDetails->id,
-                                'image_path' => $uploadResult['file_path'],
-                                'original_name' => $image->getClientOriginalName(),
-                                'file_size' => $image->getSize(),
-                                'is_active' => true,
-                                'is_deleted' => false
-                            ]);
-                        }
+                        TaskImage::create([
+                            'task_id' => $taskDetails->id,
+                            'image_path' => $uploadResult['path'],
+                            'original_name' => $uploadResult['original_name'],
+                            'file_size' => $uploadResult['size'],
+                            'is_active' => true,
+                            'is_deleted' => false
+                        ]);
                     }
                 }
                 
@@ -92,6 +86,7 @@ class TaskController extends Controller
         try {
             $user_id = $request->input('user_id');
             $project_id = $request->input('project_id');
+            $phase_id = $request->input('phase_id');
             $status = $request->input('status');
             $assigned_to = $request->input('assigned_to');
             $page = $request->input('page', 1);
@@ -103,6 +98,10 @@ class TaskController extends Controller
                 $query->where('project_id', $project_id);
             }
 
+            if ($phase_id) {
+                $query->where('phase_id', $phase_id);
+            }
+
             if ($status) {
                 $query->where('status', $status);
             }
@@ -111,13 +110,14 @@ class TaskController extends Controller
                 $query->where('assigned_to', $assigned_to);
             }
 
-            $tasks = $query->with('images')->paginate($limit, ['*'], 'page', $page);
+            $tasks = $query->with(['images', 'assignedUser'])->paginate($limit, ['*'], 'page', $page);
 
             $tasksData = collect($tasks->items())->map(function ($task) {
                 $task->images = $task->images->map(function ($image) {
-                    $image->image_url = url($image->image_path);
+                    $image->image_url = asset('storage/' . $image->image_path);
                     return $image;
                 });
+                $task->assigned_user_name = $task->assignedUser ? $task->assignedUser->name : null;
                 return $task;
             });
 
@@ -137,7 +137,7 @@ class TaskController extends Controller
             $task_id = $request->input('task_id');
             $user_id = $request->input('user_id');
 
-            $task = Task::with('images')
+            $task = Task::with(['images', 'assignedUser'])
                 ->where('id', $task_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
@@ -148,9 +148,11 @@ class TaskController extends Controller
             }
 
             $task->images = $task->images->map(function ($image) {
-                $image->image_url = url($image->image_path);
+                $image->image_url = asset('storage/' . $image->image_path);
                 return $image;
             });
+            
+            $task->assigned_user_name = $task->assignedUser ? $task->assignedUser->name : null;
 
             return $this->toJsonEnc($task, trans('api.tasks.details_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -162,7 +164,6 @@ class TaskController extends Controller
     {
         try {
             $task_id = $request->input('task_id');
-            $user_id = $request->input('user_id');
 
             $task = Task::where('id', $task_id)
                 ->where('is_active', 1)
@@ -173,12 +174,26 @@ class TaskController extends Controller
                 return $this->toJsonEnc([], trans('api.tasks.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            if ($request->filled('title')) $task->title = $request->title;
-            if ($request->filled('description')) $task->description = $request->description;
-            if ($request->filled('status')) $task->status = $request->status;
-            if ($request->filled('priority')) $task->priority = $request->priority;
-            if ($request->filled('estimated_hours')) $task->estimated_hours = $request->estimated_hours;
-            if ($request->filled('progress_percentage')) $task->progress_percentage = $request->progress_percentage;
+            // Check if images are provided
+            if ($request->hasFile('images')) {
+                // Handle image uploads
+                foreach ($request->file('images') as $image) {
+                    $uploadResult = FileHelper::uploadFile($image, 'tasks');
+                    
+                    TaskImage::create([
+                        'task_id' => $task->id,
+                        'image_path' => $uploadResult['path'],
+                        'original_name' => $uploadResult['original_name'],
+                        'file_size' => $uploadResult['size'],
+                        'is_active' => true,
+                        'is_deleted' => false
+                    ]);
+                }
+                $task->load('images');
+            } else {
+                // No images, just mark as completed
+                $task->status = 'completed';
+            }
 
             $task->save();
 

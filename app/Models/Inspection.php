@@ -12,7 +12,7 @@ class Inspection extends Model
     protected $table = 'inspections';
 
     protected $fillable = [
-        'project_id', 'category', 'description', 'comment', 'status', 'inspected_by', 'created_by',
+        'project_id', 'phase_id', 'category', 'description', 'comment', 'status', 'inspected_by', 'created_by',
         'is_active', 'is_deleted'
     ];
 
@@ -36,5 +36,15 @@ class Inspection extends Model
         return $this->hasMany(InspectionImage::class, 'inspection_id')
             ->where('is_active', true)
             ->where('is_deleted', false);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function inspectedBy()
+    {
+        return $this->belongsTo(User::class, 'inspected_by');
     }
 }

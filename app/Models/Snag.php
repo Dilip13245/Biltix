@@ -12,18 +12,14 @@ class Snag extends Model
     protected $table = 'snags';
 
     protected $fillable = [
-        'snag_number', 'project_id', 'category_id', 'title', 'description', 'location',
-        'priority', 'severity', 'status', 'reported_by', 'assigned_to', 'due_date',
-        'resolved_at', 'resolved_by', 'resolution_notes', 'images_before',
-        'images_after', 'cost_impact', 'is_active', 'is_deleted'
+        'snag_number', 'project_id', 'phase_id', 'title', 'description', 'comment', 'location',
+        'image', 'status', 'reported_by', 'assigned_to', 'due_date',
+        'resolved_at', 'resolved_by', 'resolution_notes', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
         'due_date' => 'date',
         'resolved_at' => 'datetime',
-        'images_before' => 'array',
-        'images_after' => 'array',
-        'cost_impact' => 'decimal:2',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];
@@ -44,10 +40,7 @@ class Snag extends Model
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
-    public function category()
-    {
-        return $this->belongsTo(SnagCategory::class, 'category_id');
-    }
+
 
     public function comments()
     {

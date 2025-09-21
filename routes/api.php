@@ -100,7 +100,9 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('create', [InspectionController::class, 'create']);
         Route::post('list', [InspectionController::class, 'list']);
         Route::post('details', [InspectionController::class, 'details']);
+        Route::post('update', [InspectionController::class, 'update']);
         Route::post('templates', [InspectionController::class, 'templates']);
+        Route::post('phases', [InspectionController::class, 'phases']);
         Route::post('start_inspection', [InspectionController::class, 'startInspection']);
         Route::post('save_checklist_item', [InspectionController::class, 'saveChecklistItem']);
         Route::post('complete', [InspectionController::class, 'complete']);

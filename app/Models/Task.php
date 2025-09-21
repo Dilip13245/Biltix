@@ -47,4 +47,24 @@ class Task extends Model
     {
         return $this->hasMany(TaskImage::class)->where('is_active', true)->where('is_deleted', false);
     }
+
+    // Automatically set status to in_progress if current date >= due_date
+    public function getStatusAttribute($value)
+    {
+        if ($value !== 'completed' && $this->due_date && now()->format('Y-m-d') >= $this->due_date->format('Y-m-d')) {
+            return 'in_progress';
+        }
+        return $value;
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($task) {
+            if (!$task->status) {
+                $task->status = 'in_progress';
+            }
+        });
+    }
 }
