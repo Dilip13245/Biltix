@@ -161,6 +161,9 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('share', [FileController::class, 'share']);
         Route::post('search', [FileController::class, 'search']);
         Route::post('categories', [FileController::class, 'categories']);
+        Route::post('create_folder', [FileController::class, 'createFolder']);
+        Route::post('get_folders', [FileController::class, 'getFolders']);
+        Route::post('delete_folder', [FileController::class, 'deleteFolder']);
     });
 
     Route::prefix('photos')->group(function () {

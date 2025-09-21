@@ -12,7 +12,7 @@ class File extends Model
     protected $table = 'files';
 
     protected $fillable = [
-        'project_id', 'category_id', 'name', 'original_name', 'file_path',
+        'project_id', 'category_id', 'folder_id', 'name', 'original_name', 'file_path',
         'file_size', 'file_type', 'description', 'uploaded_by', 'is_public', 
         'shared_with', 'is_active', 'is_deleted'
     ];
@@ -32,5 +32,10 @@ class File extends Model
     public function category()
     {
         return $this->belongsTo(FileCategory::class, 'category_id');
+    }
+
+    public function folder()
+    {
+        return $this->belongsTo(FileFolder::class, 'folder_id');
     }
 }

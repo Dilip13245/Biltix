@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\File;
 use App\Models\FileCategory;
+use App\Models\FileFolder;
 use App\Helpers\FileHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
@@ -19,6 +20,7 @@ class FileController extends Controller
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
                 'category_id' => 'required|integer',
+                'folder_id' => 'nullable|integer',
                 'files' => 'required|array',
                 'files.*' => 'file|max:10240', // 10MB max
             ]);
@@ -35,6 +37,7 @@ class FileController extends Controller
                 $fileRecord = File::create([
                     'project_id' => $request->project_id,
                     'category_id' => $request->category_id,
+                    'folder_id' => $request->folder_id,
                     'name' => $fileData['filename'],
                     'original_name' => $fileData['original_name'],
                     'file_path' => $fileData['path'],
@@ -66,6 +69,10 @@ class FileController extends Controller
 
             if ($request->category_id) {
                 $query->where('category_id', $request->category_id);
+            }
+
+            if ($request->folder_id) {
+                $query->where('folder_id', $request->folder_id);
             }
 
             $files = $query->paginate($limit, ['*'], 'page', $page);
@@ -254,6 +261,67 @@ class FileController extends Controller
             $file->file_url = asset('storage/' . $file->file_path);
 
             return $this->toJsonEnc($file, trans('api.files.replaced_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function createFolder(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer',
+                'project_id' => 'required|integer',
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $folder = FileFolder::create([
+                'project_id' => $request->project_id,
+                'name' => $request->name,
+                'description' => $request->description,
+                'created_by' => $request->user_id,
+            ]);
+
+            return $this->toJsonEnc($folder, trans('api.folders.created_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function getFolders(Request $request)
+    {
+        try {
+            $query = FileFolder::active();
+
+            if ($request->project_id) {
+                $query->where('project_id', $request->project_id);
+            }
+
+            $folders = $query->with('files')->get();
+
+            return $this->toJsonEnc($folders, trans('api.folders.list_retrieved'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function deleteFolder(Request $request)
+    {
+        try {
+            $folder = FileFolder::active()->find($request->folder_id);
+
+            if (!$folder) {
+                return $this->toJsonEnc([], trans('api.folders.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            $folder->update(['is_deleted' => true]);
+
+            return $this->toJsonEnc([], trans('api.folders.deleted_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
