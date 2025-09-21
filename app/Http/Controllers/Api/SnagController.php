@@ -23,7 +23,9 @@ class SnagController extends Controller
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'location' => 'required|string',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
+                'assigned_to' => 'nullable|integer',
+                'images' => 'nullable|array',
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240'
             ], [
                 'user_id.required' => trans('api.snags.user_id_required'),
                 'project_id.required' => trans('api.snags.project_id_required'),
@@ -43,18 +45,31 @@ class SnagController extends Controller
             $snagDetails->description = $request->description ?? '';
             $snagDetails->location = $request->location;
             $snagDetails->reported_by = $request->user_id;
-            $snagDetails->status = 'open';
+            $snagDetails->assigned_to = $request->assigned_to;
+            $snagDetails->status = 'in_progress';
             $snagDetails->is_active = true;
             
-            // Handle single image upload
-            if ($request->hasFile('image')) {
-                $uploadResult = \App\Helpers\FileHelper::uploadFile($request->file('image'), 'snags');
-                $snagDetails->image = $uploadResult['path'];
+            // Handle multiple image uploads
+            $imagePaths = [];
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $uploadResult = \App\Helpers\FileHelper::uploadFile($image, 'snags');
+                    $imagePaths[] = $uploadResult['path'];
+                }
+                $snagDetails->image = json_encode($imagePaths);
             }
 
             if ($snagDetails->save()) {
                 // Load relationships for response
-                $snagDetails->load(['reporter:id,name']);
+                $snagDetails->load(['reporter:id,name', 'assignedUser:id,name']);
+                
+                $imageUrls = [];
+                if ($snagDetails->image) {
+                    $images = json_decode($snagDetails->image, true) ?: [$snagDetails->image];
+                    foreach ($images as $image) {
+                        $imageUrls[] = asset('storage/' . $image);
+                    }
+                }
                 
                 $response = [
                     'id' => $snagDetails->id,
@@ -63,7 +78,8 @@ class SnagController extends Controller
                     'description' => $snagDetails->description,
                     'location' => $snagDetails->location,
                     'status' => $snagDetails->status,
-                    'image_url' => $snagDetails->image ? asset('storage/' . $snagDetails->image) : null,
+                    'assigned_to' => $snagDetails->assignedUser ? $snagDetails->assignedUser->name : null,
+                    'image_urls' => $imageUrls,
                     'message' => 'Snag created successfully.'
                 ];
                 
@@ -104,6 +120,14 @@ class SnagController extends Controller
             $snags = $query->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
 
             $snagsData = collect($snags->items())->map(function ($snag) {
+                $imageUrls = [];
+                if ($snag->image) {
+                    $images = json_decode($snag->image, true) ?: [$snag->image];
+                    foreach ($images as $image) {
+                        $imageUrls[] = asset('storage/' . $image);
+                    }
+                }
+                
                 return [
                     'id' => $snag->id,
                     'snag_number' => $snag->snag_number,
@@ -114,7 +138,7 @@ class SnagController extends Controller
                     'reported_by' => $snag->reporter ? $snag->reporter->name : 'Unknown',
                     'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name : null,
                     'date' => $snag->created_at->format('jS M, Y'),
-                    'image_url' => $snag->image ? asset('storage/' . $snag->image) : null
+                    'image_urls' => $imageUrls
                 ];
             });
 
@@ -144,6 +168,14 @@ class SnagController extends Controller
                 return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            $imageUrls = [];
+            if ($snag->image) {
+                $images = json_decode($snag->image, true) ?: [$snag->image];
+                foreach ($images as $image) {
+                    $imageUrls[] = asset('storage/' . $image);
+                }
+            }
+            
             $formattedSnag = [
                 'id' => $snag->id,
                 'snag_number' => $snag->snag_number,
@@ -154,7 +186,7 @@ class SnagController extends Controller
                 'reported_by' => $snag->reporter ? $snag->reporter->name : 'Unknown',
                 'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name : null,
                 'date' => $snag->created_at->format('jS M, Y'),
-                'image_url' => $snag->image ? asset('storage/' . $snag->image) : null,
+                'image_urls' => $imageUrls,
                 'comments' => $snag->comments->map(function($comment) {
                     return [
                         'id' => $comment->id,
@@ -174,10 +206,24 @@ class SnagController extends Controller
     public function update(Request $request)
     {
         try {
-            $snag_id = $request->input('snag_id');
-            $user_id = $request->input('user_id');
+            $validator = Validator::make($request->all(), [
+                'snag_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'title' => 'nullable|string|max:255',
+                'description' => 'nullable|string',
+                'location' => 'nullable|string',
+                'assigned_to' => 'nullable|integer',
+                'status' => 'nullable|in:open,in_progress,resolved,closed',
+                'comment' => 'nullable|string',
+                'images' => 'nullable|array',
+                'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240'
+            ]);
 
-            $snag = Snag::where('id', $snag_id)
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $snag = Snag::where('id', $request->snag_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->first();
@@ -186,13 +232,51 @@ class SnagController extends Controller
                 return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            // Only handle comment update
-            if ($request->filled('comment')) {
-                $snag->comment = $request->comment;
-                $snag->save();
+            // Update fields if provided
+            if ($request->filled('title')) $snag->title = $request->title;
+            if ($request->filled('description')) $snag->description = $request->description;
+            if ($request->filled('location')) $snag->location = $request->location;
+            if ($request->filled('assigned_to')) $snag->assigned_to = $request->assigned_to;
+            if ($request->filled('status')) $snag->status = $request->status;
+            if ($request->filled('comment')) $snag->comment = $request->comment;
+            
+            // Handle image uploads
+            if ($request->hasFile('images')) {
+                $imagePaths = [];
+                foreach ($request->file('images') as $image) {
+                    $uploadResult = \App\Helpers\FileHelper::uploadFile($image, 'snags');
+                    $imagePaths[] = $uploadResult['path'];
+                }
+                $snag->image = json_encode($imagePaths);
             }
 
-            return $this->toJsonEnc($snag, trans('api.snags.updated_success'), Config::get('constant.SUCCESS'));
+            $snag->save();
+            
+            // Load relationships and return updated snag
+            $snag->load(['reporter:id,name', 'assignedUser:id,name']);
+            
+            $imageUrls = [];
+            if ($snag->image) {
+                $images = json_decode($snag->image, true) ?: [$snag->image];
+                foreach ($images as $image) {
+                    $imageUrls[] = asset('storage/' . $image);
+                }
+            }
+            
+            $response = [
+                'id' => $snag->id,
+                'snag_number' => $snag->snag_number,
+                'title' => $snag->title,
+                'description' => $snag->description,
+                'location' => $snag->location,
+                'status' => ucfirst($snag->status),
+                'reported_by' => $snag->reporter ? $snag->reporter->name : 'Unknown',
+                'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name : null,
+                'date' => $snag->created_at->format('jS M, Y'),
+                'image_urls' => $imageUrls
+            ];
+
+            return $this->toJsonEnc($response, trans('api.snags.updated_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -218,7 +302,6 @@ class SnagController extends Controller
             $snag->resolution_notes = $resolution_notes;
             $snag->resolved_by = $user_id;
             $snag->resolved_at = now();
-            $snag->images_after = $request->images_after ?? [];
             $snag->save();
 
             return $this->toJsonEnc($snag, trans('api.snags.resolved_success'), Config::get('constant.SUCCESS'));

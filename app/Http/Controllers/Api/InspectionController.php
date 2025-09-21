@@ -250,9 +250,6 @@ class InspectionController extends Controller
     {
         try {
             $inspection_id = $request->input('inspection_id');
-            $overall_result = $request->input('overall_result');
-            $score_percentage = $request->input('score_percentage');
-            $notes = $request->input('notes');
             $user_id = $request->input('user_id');
 
             $inspection = Inspection::where('id', $inspection_id)
@@ -265,10 +262,6 @@ class InspectionController extends Controller
             }
 
             $inspection->status = 'completed';
-            $inspection->overall_result = $overall_result;
-            $inspection->score_percentage = $score_percentage;
-            $inspection->notes = $notes ?? '';
-            $inspection->completed_at = now();
             $inspection->save();
 
             return $this->toJsonEnc($inspection, trans('api.inspections.completed_success'), Config::get('constant.SUCCESS'));
