@@ -73,10 +73,6 @@ Route::middleware('web.auth')->prefix('website')->group(function () {
     // Dashboard route removed - using main dashboard route instead
     
     // Phase-specific pages (require view permissions)
-    Route::middleware('web.permission:inspections,view')->get('/phase-inspections', [HomeController::class, 'phaseInspections'])->name('website.phase.inspections');
-    Route::middleware('web.permission:tasks,view')->get('/phase-tasks', [HomeController::class, 'phaseTasks'])->name('website.phase.tasks');
-    Route::middleware('web.permission:snags,view')->get('/phase-snags', [HomeController::class, 'phaseSnags'])->name('website.phase.snags');
-    Route::middleware('web.permission:timeline,view')->get('/phase-timeline', [HomeController::class, 'phaseTimeline'])->name('website.phase.timeline');
     
     // General pages
     Route::middleware('web.permission:inspections,view')->get('/safety-checklist', [HomeController::class, 'safetyChecklist'])->name('website.safety-checklist');
@@ -93,6 +89,10 @@ Route::middleware('web.auth')->prefix('website')->group(function () {
         Route::middleware('web.permission:team,view')->get('/team-members', [HomeController::class, 'teamMembers'])->name('website.project.team-members');
         Route::middleware('web.permission:snags,view')->get('/snag-list', [HomeController::class, 'snagList'])->name('website.project.snag-list');
         Route::middleware('web.permission:inspections,view')->get('/safety-checklist', [HomeController::class, 'safetyChecklist'])->name('website.project.safety-checklist');
+        Route::middleware('web.permission:inspections,view')->get('/phase-inspections', [HomeController::class, 'phaseInspections'])->name('website.phase.inspections');
+        Route::middleware('web.permission:tasks,view')->get('/phase-tasks', [HomeController::class, 'phaseTasks'])->name('website.phase.tasks');
+        Route::middleware('web.permission:snags,view')->get('/phase-snags', [HomeController::class, 'phaseSnags'])->name('website.phase.snags');
+        Route::middleware('web.permission:progress,view')->get('/phase-timeline', [HomeController::class, 'phaseTimeline'])->name('website.phase.timeline');
         Route::get('/notifications', [HomeController::class, 'notifications'])->name('website.project.notifications');
         Route::get('/help-support', [HomeController::class, 'helpSupport'])->name('website.project.help-support');
     });

@@ -378,7 +378,7 @@ class ProjectController extends Controller
                 ->where('project_id', $project_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
-                ->orderBy('created_at')
+                ->orderBy('created_at', 'desc')
                 ->get();
 
             return $this->toJsonEnc($phases, trans('api.projects.phases_retrieved'), Config::get('constant.SUCCESS'));

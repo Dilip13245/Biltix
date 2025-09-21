@@ -197,22 +197,23 @@ class HomeController extends Controller
     }
     
     // Phase-specific cloned pages
-    public function phaseInspections()
+    public function phaseInspections($project_id)
     {
-        return view('website.phase-inspections');
+        $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];
+        return view('website.phase-inspections', compact('project'));
     }
     
-    public function phaseTasks()
+    public function phaseTasks($project_id)
     {
         return view('website.phase-tasks');
     }
     
-    public function phaseSnags()
+    public function phaseSnags($project_id)
     {
         return view('website.phase-snags');
     }
     
-    public function phaseTimeline()
+    public function phaseTimeline($project_id)
     {
         return view('website.phase-timeline');
     }

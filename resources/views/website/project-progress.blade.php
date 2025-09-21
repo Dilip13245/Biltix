@@ -14,6 +14,9 @@
                 {{ __('messages.create_phase') }}
             </button>
         @endcan
+        <button class="btn btn-info py-2" onclick="openPhaseModal('Test Phase')">
+            Test Modal
+        </button>
     </div>
     <div class="px-md-4">
         <div class="container-fluid">
@@ -401,6 +404,29 @@
 
         // Get project ID from controller
         let currentProjectId = {{ $project->id ?? 1 }};
+        
+        // Global function for opening phase modal
+        function openPhaseModal(phaseName) {
+            document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
+            const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
+            modal.show();
+        }
+        
+        function redirectToInspections() {
+            window.location.href = `/website/project/${currentProjectId}/phase-inspections`;
+        }
+
+        function redirectToTasks() {
+            window.location.href = `/website/project/${currentProjectId}/phase-tasks`;
+        }
+
+        function redirectToSnags() {
+            window.location.href = `/website/project/${currentProjectId}/phase-snags`;
+        }
+
+        function redirectToTimeline() {
+            window.location.href = `/website/project/${currentProjectId}/phase-timeline`;
+        }
         
         // Load project data and make edit buttons functional
         document.addEventListener('DOMContentLoaded', function() {
@@ -952,29 +978,7 @@
         </div>
     </div>
 
-    <script>
-        function openPhaseModal(phaseName) {
-            document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
-            const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
-            modal.show();
-        }
 
-        function redirectToInspections() {
-            window.location.href = '/website/phase-inspections';
-        }
-
-        function redirectToTasks() {
-            window.location.href = '/website/phase-tasks';
-        }
-
-        function redirectToSnags() {
-            window.location.href = '/website/phase-snags';
-        }
-
-        function redirectToTimeline() {
-            window.location.href = '/website/phase-timeline';
-        }
-    </script>
 
 @include('website.modals.add-safety-checklist-modal')
 
