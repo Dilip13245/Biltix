@@ -105,7 +105,7 @@ class InspectionController extends Controller
                 $query->where('status', $status);
             }
 
-            $inspections = $query->paginate($limit, ['*'], 'page', $page);
+            $inspections = $query->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
 
             $inspectionsData = collect($inspections->items())->map(function ($inspection) {
                 $inspection->images = $inspection->images->map(function ($image) {

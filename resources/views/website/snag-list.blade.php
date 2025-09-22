@@ -52,10 +52,17 @@
                                 <div class="col-lg-3 col-md-4 col-sm-6 col-12 mt-3 mt-md-0">
                                     <label class="fw-medium mb-2">{{ __('messages.search') }}</label>
                                     <form class="serchBar position-relative serchBar2">
-                                        <input class="form-control" type="search" id="searchInput"
-                                            placeholder="{{ __('messages.search_snags') }}" aria-label="Search">
-                                        <span class="search_icon"><img src="{{ asset('website/images/icons/search.svg') }}"
-                                                alt="search"></span>
+                                        @if (app()->getLocale() == 'ar')
+                                            <input class="form-control" type="search" id="searchInput"
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-left: 45px; padding-right: 15px;">
+                                            <span class="search_icon" style="left: 15px; right: auto; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
+                                                    alt="search"></span>
+                                        @else
+                                            <input class="form-control" type="search" id="searchInput"
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-right: 45px;">
+                                            <span class="search_icon" style="right: 15px; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
+                                                    alt="search"></span>
+                                        @endif
                                     </form>
                                 </div>
                             </div>

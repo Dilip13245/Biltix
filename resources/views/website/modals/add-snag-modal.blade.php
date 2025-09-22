@@ -32,23 +32,14 @@
         <form id="addSnagForm" enctype="multipart/form-data">
           @csrf
           <div class="mb-3">
-            <label for="issueType" class="form-label fw-medium">{{ __("messages.type_of_issue") }}</label>
-            <select class="form-select Input_control" id="issueType" name="issue_type" required>
-              <option value="">{{ __("messages.select_issue_type") }}</option>
-              <option value="electrical">{{ __("messages.electrical") }}</option>
-              <option value="mechanical">{{ __("messages.mechanical") }}</option>
-              <option value="plumbing">{{ __("messages.plumbing") }}</option>
-              <option value="structural">{{ __("messages.structural") }}</option>
-              <option value="finishing">{{ __("messages.finishing") }}</option>
-              <option value="safety">{{ __("messages.safety") }}</option>
-              <option value="hvac">{{ __("messages.hvac") }}</option>
-              <option value="other">{{ __("messages.other") }}</option>
-            </select>
+            <label for="snagTitle" class="form-label fw-medium">{{ __("messages.snag_title") }}</label>
+            <input type="text" class="form-control Input_control" id="snagTitle" name="title" required
+              placeholder="Enter snag title">
           </div>
 
           <div class="mb-3">
-            <label for="description" class="form-label fw-medium">{{ __("messages.add_description") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
-            <textarea class="form-control Input_control" id="description" name="description" rows="4"
+            <label for="description" class="form-label fw-medium">{{ __("messages.add_description") }}</label>
+            <textarea class="form-control Input_control" id="description" name="description" rows="3"
               placeholder="{{ __("messages.provide_detailed_description") }}"></textarea>
           </div>
           
@@ -56,6 +47,13 @@
             <label for="location" class="form-label fw-medium">{{ __("messages.add_location") }}</label>
             <input type="text" class="form-control Input_control" id="location" name="location" required
               placeholder="{{ __("messages.location_example") }}">
+          </div>
+
+          <div class="mb-3">
+            <label for="assignedTo" class="form-label fw-medium">{{ __("messages.assign_to") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
+            <select class="form-select Input_control" id="assignedTo" name="assigned_to">
+              <option value="">{{ __("messages.select_user") }}</option>
+            </select>
           </div>
 
           <div class="mb-3">
@@ -68,8 +66,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="addSnagForm" class="btn orange_btn">
-          {{ __("messages.next") }} →
+        <button type="submit" form="addSnagForm" class="btn orange_btn" id="createSnagBtn">
+          <i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}
         </button>
       </div>
     </div>

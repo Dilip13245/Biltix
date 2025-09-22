@@ -169,9 +169,17 @@ class ApiClient {
     async getUsersByRole(role) {
         return this.makeRequest(`users/by-role?role=${role}`, {}, 'GET');
     }
+    
+    async getAllUsers() {
+        return this.makeRequest('users/by-role', {}, 'GET');
+    }
 
     async getProjectDetails(data) {
         return this.makeRequest(API_CONFIG.ENDPOINTS.PROJECTS.DETAILS, data);
+    }
+
+    async getProjectPhases(data) {
+        return this.makeRequest('projects/list_phases', data);
     }
 
     async updateProject(data) {
@@ -180,15 +188,41 @@ class ApiClient {
 
     // Task methods
     async getTasks(data) {
-        return this.makeRequest(API_CONFIG.ENDPOINTS.TASKS.LIST, data);
+        return this.makeRequest('tasks/list', data);
     }
 
     async createTask(data) {
-        return this.makeRequest(API_CONFIG.ENDPOINTS.TASKS.CREATE, data);
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('tasks/create', data);
+        }
+        return this.makeRequest('tasks/create', data);
+    }
+
+    async getTaskDetails(data) {
+        return this.makeRequest('tasks/details', data);
+    }
+
+    async updateTask(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('tasks/update', data);
+        }
+        return this.makeRequest('tasks/update', data);
     }
 
     async updateTaskStatus(data) {
-        return this.makeRequest(API_CONFIG.ENDPOINTS.TASKS.UPDATE_STATUS, data);
+        return this.makeRequest('tasks/change_status', data);
+    }
+
+    async addTaskComment(data) {
+        return this.makeRequest('tasks/add_comment', data);
+    }
+
+    async updateTaskProgress(data) {
+        return this.makeRequest('tasks/update_progress', data);
+    }
+
+    async uploadTaskAttachment(data) {
+        return this.makeFormDataRequest('tasks/upload_attachment', data);
     }
 
     // Notification methods
@@ -260,7 +294,26 @@ class ApiClient {
     }
 
     async updateSnag(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('snags/update', data);
+        }
         return this.makeRequest('snags/update', data);
+    }
+
+    async getSnagDetails(data) {
+        return this.makeRequest('snags/details', data);
+    }
+
+    async resolveSnag(data) {
+        return this.makeRequest('snags/resolve', data);
+    }
+
+    async assignSnag(data) {
+        return this.makeRequest('snags/assign', data);
+    }
+
+    async addSnagComment(data) {
+        return this.makeRequest('snags/add_comment', data);
     }
 
     async getSnagCategories() {
@@ -304,7 +357,49 @@ class ApiClient {
     }
 
     async createInspection(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('inspections/create', data);
+        }
         return this.makeRequest('inspections/create', data);
+    }
+
+    async getInspectionDetails(data) {
+        return this.makeRequest('inspections/details', data);
+    }
+
+    async updateInspection(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('inspections/update', data);
+        }
+        return this.makeRequest('inspections/update', data);
+    }
+
+    async getInspectionTemplates(data = {}) {
+        return this.makeRequest('inspections/templates', data);
+    }
+
+    async startInspection(data) {
+        return this.makeRequest('inspections/start_inspection', data);
+    }
+
+    async saveChecklistItem(data) {
+        return this.makeRequest('inspections/save_checklist_item', data);
+    }
+
+    async completeInspection(data) {
+        return this.makeRequest('inspections/complete', data);
+    }
+
+    async approveInspection(data) {
+        return this.makeRequest('inspections/approve', data);
+    }
+
+    async getInspectionResults(data) {
+        return this.makeRequest('inspections/results', data);
+    }
+
+    async generateInspectionReport(data) {
+        return this.makeRequest('inspections/generate_report', data);
     }
 
     // Daily Log methods

@@ -14,9 +14,6 @@
                 {{ __('messages.create_phase') }}
             </button>
         @endcan
-        <button class="btn btn-info py-2" onclick="openPhaseModal('Test Phase')">
-            Test Modal
-        </button>
     </div>
     <div class="px-md-4">
         <div class="container-fluid">
@@ -405,27 +402,31 @@
         // Get project ID from controller
         let currentProjectId = {{ $project->id ?? 1 }};
         
+        // Global variables for phase management
+        let currentPhaseId = null;
+        
         // Global function for opening phase modal
-        function openPhaseModal(phaseName) {
+        function openPhaseModal(phaseName, phaseId) {
+            currentPhaseId = phaseId;
             document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
             const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
             modal.show();
         }
         
         function redirectToInspections() {
-            window.location.href = `/website/project/${currentProjectId}/phase-inspections`;
+            window.location.href = `/website/project/${currentProjectId}/phase-inspections?phase_id=${currentPhaseId}`;
         }
 
         function redirectToTasks() {
-            window.location.href = `/website/project/${currentProjectId}/phase-tasks`;
+            window.location.href = `/website/project/${currentProjectId}/phase-tasks?phase_id=${currentPhaseId}`;
         }
 
         function redirectToSnags() {
-            window.location.href = `/website/project/${currentProjectId}/phase-snags`;
+            window.location.href = `/website/project/${currentProjectId}/phase-snags?phase_id=${currentPhaseId}`;
         }
 
         function redirectToTimeline() {
-            window.location.href = `/website/project/${currentProjectId}/phase-timeline`;
+            window.location.href = `/website/project/${currentProjectId}/phase-timeline?phase_id=${currentPhaseId}`;
         }
         
         // Load project data and make edit buttons functional
@@ -497,7 +498,7 @@
                 
                 return `
                     <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay="${index * 0.4}s">
-                        <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('${phase.title}')">
+                        <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('${phase.title}', ${phase.id})">
                             <div class="card-body p-md-4">
                                 <div class="d-flex justify-content-between align-items-start mb-3">
                                     <h5 class="fw-semibold black_color mb-0">${phase.title}</h5>

@@ -8,11 +8,13 @@
     <link rel="icon" href="{{ asset('website/images/icons/logo.svg') }}" type="image/x-icon" />
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <link rel="stylesheet" href="{{ asset('website/css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
 </head>
 
-<body>
+<body data-phase-id="{{ request()->get('phase_id', 1) }}">
     <div class="content_wraper F_poppins">
         <header class="project-header">
             <div class="container-fluid">
@@ -107,9 +109,9 @@
                                     <option>{{ __('messages.all_categories') }}</option>
                                 </select>
                             </div>
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="height: 400px; overflow-y: auto;">
                                 <table class="table align-middle mb-0">
-                                    <thead>
+                                    <thead class="sticky-top bg-white">
                                         <tr>
                                             <th class="small text-muted">{{ __('messages.title') }}</th>
                                             <th class="small text-muted">{{ __('messages.date') }}</th>
@@ -117,54 +119,10 @@
                                             <th class="small text-muted">{{ __('messages.actions') }}</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="border-0">
-                                                <div class="fw-semibold">{{ __('messages.foundation_check') }}</div>
-                                                <div class="small text-muted">{{ __('messages.structural') }}</div>
-                                            </td>
-                                            <td class="border-0">{{ __('messages.jan_15_2024') }}</td>
-                                            <td class="border-0">
-                                                <span class="badge badge1 d-inline-flex align-items-center gap-1">
-                                                    <i class="fas fa-check-circle"></i> {{ __('messages.passed') }}
-                                                </span>
-                                            </td>
-                                            <td class="border-0">
-                                                <a href="#"
-                                                    class="text-primary  small">{{ __('messages.view') }}</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="border-0">
-                                                <div class="fw-semibold">{{ __('messages.electrical_wiring') }}</div>
-                                                <div class="small text-muted">{{ __('messages.electrical') }}</div>
-                                            </td>
-                                            <td class="border-0">{{ __('messages.jan_12_2024') }}</td>
-                                            <td class="border-0">
-                                                <span
-                                                    class="badge badge2 text-danger d-inline-flex align-items-center gap-1">
-                                                    <i class="fas fa-times-circle"></i> {{ __('messages.failed') }}
-                                                </span>
-                                            </td>
-                                            <td class="border-0">
-                                                <a href="#"
-                                                    class="text-primary  small">{{ __('messages.view') }}</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="border-0">
-                                                <div class="fw-semibold">{{ __('messages.plumbing_system') }}</div>
-                                                <div class="small text-muted">{{ __('messages.plumbing') }}</div>
-                                            </td>
-                                            <td class="border-0">{{ __('messages.jan_10_2024') }}</td>
-                                            <td class="border-0">
-                                                <span class="badge badge3  d-inline-flex align-items-center gap-1">
-                                                    <i class="fas fa-hourglass-half"></i> {{ __('messages.pending') }}
-                                                </span>
-                                            </td>
-                                            <td class="border-0">
-                                                <a href="#"
-                                                    class="text-primary  small">{{ __('messages.view') }}</a>
+                                    <tbody id="inspectionsTableBody">
+                                        <tr id="loadingRow">
+                                            <td colspan="4" class="text-center py-4">
+                                                <i class="fas fa-spinner fa-spin"></i> {{ __('messages.loading') }}...
                                             </td>
                                         </tr>
                                     </tbody>
@@ -176,47 +134,181 @@
             </div>
         </div>
         @include('website.modals.create-inspection-modal')
+        @include('website.modals.inspection-details-modal')
         @include('website.modals.drawing-modal')
 
         <script>
-            // Removed duplicate form handler - it's in the modal file
+            let allInspections = [];
+
             document.addEventListener('DOMContentLoaded', function() {
+                loadInspections();
+
+                // Set phase_id for modal when create button is clicked
+                const createBtn = document.querySelector('[data-bs-target="#createInspectionModal"]');
+                if (createBtn) {
+                    createBtn.addEventListener('click', function() {
+                        const phaseId = getCurrentPhaseId();
+                        document.getElementById('modalPhaseId').value = phaseId;
+                    });
+                }
 
                 // Filter functionality
                 const categoryFilter = document.querySelector('select.form-select');
                 if (categoryFilter) {
                     categoryFilter.addEventListener('change', function() {
-                        const filterValue = this.value.toLowerCase();
-                        const inspectionRows = document.querySelectorAll('tbody tr');
-
-                        inspectionRows.forEach(row => {
-                            const categoryCell = row.querySelector('td:nth-child(1) .small');
-                            if (categoryCell) {
-                                const category = categoryCell.textContent.toLowerCase();
-                                if (filterValue === 'all categories' || category.includes(
-                                        filterValue)) {
-                                    row.style.display = 'table-row';
-                                } else {
-                                    row.style.display = 'none';
-                                }
-                            }
-                        });
+                        filterInspections(this.value);
                     });
                 }
             });
 
-            function viewInspection(title, type, date, status) {
-                alert(
-                    `Inspection Details:\n\nTitle: ${title}\nType: ${type}\nDate: ${date}\nStatus: ${status}\n\nDetailed inspection view would open here.`
-                );
+            function getCurrentPhaseId() {
+                // Get phase_id from URL params, data attribute, or default to 1
+                const urlParams = new URLSearchParams(window.location.search);
+                const pagePhaseId = document.body.getAttribute('data-phase-id');
+                return urlParams.get('phase_id') || pagePhaseId || sessionStorage.getItem('current_phase_id') || '1';
+            }
+
+            async function loadInspections() {
+                try {
+                    const projectId = {{ request()->route('project') ?? 1 }};
+                    const phaseId = getCurrentPhaseId();
+
+                    const requestData = {
+                        project_id: projectId,
+                        phase_id: phaseId
+                    };
+
+                    const response = await api.getInspections(requestData);
+
+                    if (response.code === 200) {
+                        allInspections = response.data.data || [];
+                        displayInspections(allInspections);
+                        updateCategoryFilter();
+                    } else {
+                        showError('Failed to load inspections: ' + response.message);
+                    }
+                } catch (error) {
+                    console.error('Error loading inspections:', error);
+                    showError('Failed to load inspections');
+                }
+            }
+
+            function displayInspections(inspections) {
+                const tbody = document.getElementById('inspectionsTableBody');
+
+                if (inspections.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                <i class="fas fa-clipboard-list"></i><br>
+                                {{ __('messages.no_inspections_found') }}
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = inspections.map(inspection => {
+                    const statusBadge = getStatusBadge(inspection.status);
+                    const date = new Date(inspection.created_at).toLocaleDateString();
+
+                    return `
+                        <tr>
+                            <td class="border-0">
+                                <div class="fw-semibold">${inspection.description || 'Inspection'}</div>
+                                <div class="small text-muted">${inspection.category}</div>
+                            </td>
+                            <td class="border-0">${date}</td>
+                            <td class="border-0">${statusBadge}</td>
+                            <td class="border-0">
+                                <a href="#" onclick="viewInspection(${inspection.id})" class="text-primary small">{{ __('messages.view') }}</a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            function getStatusBadge(status) {
+                const statusMap = {
+                    'open': {
+                        class: 'badge3',
+                        icon: 'hourglass-half',
+                        text: '{{ __('messages.pending') }}'
+                    },
+                    'in_progress': {
+                        class: 'badge3',
+                        icon: 'hourglass-half',
+                        text: '{{ __('messages.in_progress') }}'
+                    },
+                    'completed': {
+                        class: 'badge1',
+                        icon: 'check-circle',
+                        text: '{{ __('messages.completed') }}'
+                    },
+                    'failed': {
+                        class: 'badge2 text-danger',
+                        icon: 'times-circle',
+                        text: '{{ __('messages.failed') }}'
+                    }
+                };
+
+                const statusInfo = statusMap[status] || statusMap['open'];
+                return `<span class="badge ${statusInfo.class} d-inline-flex align-items-center gap-1">
+                    <i class="fas fa-${statusInfo.icon}"></i> ${statusInfo.text}
+                </span>`;
+            }
+
+            function updateCategoryFilter() {
+                const categoryFilter = document.querySelector('select.form-select');
+                if (!categoryFilter) return;
+
+                const categories = [...new Set(allInspections.map(i => i.category))];
+
+                categoryFilter.innerHTML = `
+                    <option value="all">{{ __('messages.all_categories') }}</option>
+                    ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+                `;
+            }
+
+            function filterInspections(filterValue) {
+                if (filterValue === 'all') {
+                    displayInspections(allInspections);
+                } else {
+                    const filtered = allInspections.filter(inspection =>
+                        inspection.category.toLowerCase().includes(filterValue.toLowerCase())
+                    );
+                    displayInspections(filtered);
+                }
+            }
+
+            function viewInspection(inspectionId) {
+                // Open the inspection details modal
+                openInspectionDetails(inspectionId);
+            }
+
+            function showError(message) {
+                const tbody = document.getElementById('inspectionsTableBody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-danger">
+                            <i class="fas fa-exclamation-triangle"></i> ${message}
+                        </td>
+                    </tr>
+                `;
             }
         </script>
+        <script src="{{ asset('website/js/api-config.js') }}"></script>
+        <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+        <script src="{{ asset('website/js/universal-auth.js') }}"></script>
+        <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+        <script src="{{ asset('website/js/api-client.js') }}"></script>
         <script src="{{ asset('website/js/drawing.js') }}"></script>
 
     </div>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('website/js/drawing.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('website/js/toastr-config.js') }}"></script>
 </body>
 
 </html>

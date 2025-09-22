@@ -48,11 +48,11 @@ class Task extends Model
         return $this->hasMany(TaskImage::class)->where('is_active', true)->where('is_deleted', false);
     }
 
-    // Automatically set status to in_progress if current date >= due_date
+    // Automatically set status to pending if current date >= due_date
     public function getStatusAttribute($value)
     {
         if ($value !== 'completed' && $this->due_date && now()->format('Y-m-d') >= $this->due_date->format('Y-m-d')) {
-            return 'in_progress';
+            return 'pending';
         }
         return $value;
     }

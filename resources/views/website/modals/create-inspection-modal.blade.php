@@ -32,7 +32,8 @@
         <form id="createInspectionForm">
           @csrf
           <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-          <input type="hidden" name="project_id" value="{{ request()->get('project_id') ?? 1 }}">
+          <input type="hidden" name="project_id" value="{{ request()->route('project') ?? 1 }}">
+          <input type="hidden" name="phase_id" id="modalPhaseId" value="">
           
           <div class="mb-3">
             <label for="category" class="form-label fw-medium">{{ __("messages.category") }}</label>
@@ -110,12 +111,17 @@ function removeChecklistItem(button) {
   }
 }
 
-// Form submission - copy exact task pattern
+// Form submission with API integration
 document.addEventListener('DOMContentLoaded', function() {
   const createInspectionForm = document.getElementById('createInspectionForm');
   if (createInspectionForm) {
     createInspectionForm.addEventListener('submit', function(e) {
       e.preventDefault();
+      
+      // Validate form
+      if (!validateInspectionForm()) {
+        return;
+      }
       
       const fileInput = document.getElementById('images');
       
@@ -129,16 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
           saveButtonText: 'Submit Inspection',
           mode: 'image',
           onSave: function(imageData) {
-            // Close drawing modal
-            const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
-            if (drawingModal) drawingModal.hide();
-            
-            // Close inspection modal
-            const inspectionModal = bootstrap.Modal.getInstance(document.getElementById('createInspectionModal'));
-            if (inspectionModal) inspectionModal.hide();
-            
-            alert('Inspection created successfully!');
-            location.reload();
+            submitInspectionWithImages(imageData);
           }
         });
         
@@ -152,26 +149,240 @@ document.addEventListener('DOMContentLoaded', function() {
         }, { once: true });
         
       } else {
-        // Open drawing modal with blank canvas config
-        openDrawingModal({
-          title: 'Inspection Drawing',
-          saveButtonText: 'Submit Inspection',
-          mode: 'blank',
-          onSave: function(imageData) {
-            // Close drawing modal
-            const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
-            if (drawingModal) drawingModal.hide();
-            
-            // Close inspection modal
-            const inspectionModal = bootstrap.Modal.getInstance(document.getElementById('createInspectionModal'));
-            if (inspectionModal) inspectionModal.hide();
-            
-            alert('Inspection created successfully!');
-            location.reload();
-          }
-        });
+        // No images selected - call API directly
+        submitInspectionWithoutImages();
       }
     });
   }
 });
+
+// Submit inspection with images
+async function submitInspectionWithImages(imageDataArray) {
+  try {
+    const formData = new FormData();
+    const form = document.getElementById('createInspectionForm');
+    
+    // Add form fields
+    formData.append('category', form.category.value);
+    formData.append('description', form.description.value);
+    formData.append('project_id', form.project_id.value);
+    const phaseId = document.getElementById('modalPhaseId').value;
+    if (phaseId) {
+      formData.append('phase_id', phaseId);
+    }
+    console.log('Phase ID being sent:', phaseId);
+    
+    // Add checklist items
+    const checklistItems = Array.from(form.querySelectorAll('input[name="checklist_items[]"]'))
+      .map(input => input.value.trim())
+      .filter(value => value);
+    
+    checklistItems.forEach(item => {
+      formData.append('checklist_items[]', item);
+    });
+    
+    // Convert image data to blobs and add to FormData
+    if (Array.isArray(imageDataArray)) {
+      for (let i = 0; i < imageDataArray.length; i++) {
+        const blob = dataURLToBlob(imageDataArray[i]);
+        formData.append('images[]', blob, `inspection_image_${i + 1}.png`);
+      }
+    } else {
+      const blob = dataURLToBlob(imageDataArray);
+      formData.append('images[]', blob, 'inspection_image.png');
+    }
+    
+    const response = await api.createInspection(formData);
+    
+    if (response.code === 200) {
+      closeModalsAndReload();
+      showToast('success', 'Inspection created successfully!');
+    } else {
+      showToast('error', response.message || 'Failed to create inspection');
+    }
+  } catch (error) {
+    console.error('Error creating inspection:', error);
+    showToast('error', 'Failed to create inspection. Please try again.');
+  }
+}
+
+// Submit inspection without images
+async function submitInspectionWithoutImages() {
+  try {
+    const formData = new FormData();
+    const form = document.getElementById('createInspectionForm');
+    
+    // Add form fields
+    formData.append('category', form.category.value);
+    formData.append('description', form.description.value);
+    formData.append('project_id', form.project_id.value);
+    const phaseId = document.getElementById('modalPhaseId').value;
+    if (phaseId) {
+      formData.append('phase_id', phaseId);
+    }
+    
+    // Add checklist items
+    const checklistItems = Array.from(form.querySelectorAll('input[name="checklist_items[]"]'))
+      .map(input => input.value.trim())
+      .filter(value => value);
+    
+    checklistItems.forEach(item => {
+      formData.append('checklist_items[]', item);
+    });
+    
+    const response = await api.createInspection(formData);
+    
+    if (response.code === 200) {
+      const inspectionModal = bootstrap.Modal.getInstance(document.getElementById('createInspectionModal'));
+      if (inspectionModal) inspectionModal.hide();
+      
+      showToast('success', response.message);
+      location.reload();
+    } else {
+      showToast('error', response.message || 'Failed to create inspection');
+    }
+  } catch (error) {
+    console.error('Error creating inspection:', error);
+    showToast('error', 'Failed to create inspection. Please try again.');
+  }
+}
+
+// Submit inspection with drawing
+async function submitInspectionWithDrawing(imageData) {
+  try {
+    const formData = new FormData();
+    const form = document.getElementById('createInspectionForm');
+    
+    // Add form fields
+    formData.append('category', form.category.value);
+    formData.append('description', form.description.value);
+    formData.append('project_id', form.project_id.value);
+    const phaseId = document.getElementById('modalPhaseId').value;
+    if (phaseId) {
+      formData.append('phase_id', phaseId);
+    }
+    console.log('Phase ID being sent:', phaseId);
+    
+    // Add checklist items
+    const checklistItems = Array.from(form.querySelectorAll('input[name="checklist_items[]"]'))
+      .map(input => input.value.trim())
+      .filter(value => value);
+    
+    checklistItems.forEach(item => {
+      formData.append('checklist_items[]', item);
+    });
+    
+    // Add drawing as image
+    const blob = dataURLToBlob(imageData);
+    formData.append('images[]', blob, 'inspection_drawing.png');
+    
+    const response = await api.createInspection(formData);
+    
+    if (response.code === 200) {
+      closeModalsAndReload();
+      showToast('success', 'Inspection created successfully!');
+    } else {
+      showToast('error', response.message || 'Failed to create inspection');
+    }
+  } catch (error) {
+    console.error('Error creating inspection:', error);
+    showToast('error', 'Failed to create inspection. Please try again.');
+  }
+}
+
+// Helper functions
+function dataURLToBlob(dataURL) {
+  const arr = dataURL.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
+function closeModalsAndReload() {
+  const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+  if (drawingModal) drawingModal.hide();
+  
+  const inspectionModal = bootstrap.Modal.getInstance(document.getElementById('createInspectionModal'));
+  if (inspectionModal) inspectionModal.hide();
+  
+  setTimeout(() => location.reload(), 1000);
+}
+
+function validateInspectionForm() {
+  const form = document.getElementById('createInspectionForm');
+  const category = form.category.value.trim();
+  const description = form.description.value.trim();
+  const checklistItems = Array.from(form.querySelectorAll('input[name="checklist_items[]"]'))
+    .map(input => input.value.trim())
+    .filter(value => value);
+  
+  // Clear previous errors
+  clearValidationErrors();
+  
+  let isValid = true;
+  
+  if (!category) {
+    showFieldError('category', getValidationMessage('category_required'));
+    isValid = false;
+  }
+  
+  if (!description) {
+    showFieldError('description', getValidationMessage('description_required'));
+    isValid = false;
+  }
+  
+  if (checklistItems.length === 0) {
+    showFieldError('checklist_items', getValidationMessage('checklist_required'));
+    isValid = false;
+  }
+  
+  return isValid;
+}
+
+function clearValidationErrors() {
+  document.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+  document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+}
+
+function showFieldError(fieldName, message) {
+  const field = document.getElementById(fieldName) || document.querySelector(`[name="${fieldName}[]"]`);
+  if (field) {
+    field.classList.add('is-invalid');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'invalid-feedback';
+    errorDiv.textContent = message;
+    field.parentNode.appendChild(errorDiv);
+  }
+}
+
+function getValidationMessage(key) {
+  const messages = {
+    category_required: '{{ __('messages.please_select_category') }}',
+    description_required: '{{ __('messages.please_enter_description') }}',
+    checklist_required: '{{ __('messages.please_add_checklist_item') }}'
+  };
+  return messages[key] || 'Validation error';
+}
+
+function showToast(type, message) {
+  if (typeof toastr !== 'undefined') {
+    toastr[type](message);
+  } else if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      icon: type === 'success' ? 'success' : 'error',
+      title: message,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  } else {
+    alert(message);
+  }
+}
 </script>

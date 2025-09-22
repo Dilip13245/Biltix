@@ -44,6 +44,13 @@
           </div>
 
           <div class="mb-3">
+            <label for="assignedTo" class="form-label fw-medium">{{ __("messages.assign_to") }}</label>
+            <select class="form-select Input_control" id="assignedTo" name="assigned_to" required>
+              <option value="">{{ __("messages.select_user") }}</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
             <label for="dueDate" class="form-label fw-medium">{{ __("messages.due_date") }}</label>
             @include('website.includes.date-picker', [
               'id' => 'dueDate',

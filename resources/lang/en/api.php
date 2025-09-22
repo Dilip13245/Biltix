@@ -100,6 +100,7 @@ return [
     'inspections' => [
         'created_success' => 'Inspection created successfully',
         'creation_failed' => 'Inspection creation failed',
+        'updated_success' => 'Inspection updated successfully',
         'list_retrieved' => 'Inspections list retrieved successfully',
         'details_retrieved' => 'Inspection details retrieved successfully',
         'templates_retrieved' => 'Templates retrieved successfully',
@@ -112,6 +113,10 @@ return [
         'submitted_success' => 'Inspection submitted successfully',
     ],
     'snags' => [
+        'user_id_required' => 'User ID is required',
+        'project_id_required' => 'Project ID is required',
+        'title_required' => 'Snag title is required',
+        'location_required' => 'Location is required',
         'created_success' => 'Snag created successfully',
         'creation_failed' => 'Snag creation failed',
         'list_retrieved' => 'Snags list retrieved successfully',

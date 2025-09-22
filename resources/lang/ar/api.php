@@ -99,6 +99,7 @@ return [
     'inspections' => [
         'created_success' => 'تم إنشاء التفتيش بنجاح',
         'creation_failed' => 'فشل في إنشاء التفتيش',
+        'updated_success' => 'تم تحديث التفتيش بنجاح',
         'list_retrieved' => 'تم استرداد قائمة التفتيشات بنجاح',
         'details_retrieved' => 'تم استرداد تفاصيل التفتيش بنجاح',
         'templates_retrieved' => 'تم استرداد القوالب بنجاح',
@@ -111,6 +112,10 @@ return [
         'submitted_success' => 'تم تقديم التفتيش بنجاح',
     ],
     'snags' => [
+        'user_id_required' => 'معرف المستخدم مطلوب',
+        'project_id_required' => 'معرف المشروع مطلوب',
+        'title_required' => 'عنوان العقبة مطلوب',
+        'location_required' => 'الموقع مطلوب',
         'created_success' => 'تم إنشاء العقبة بنجاح',
         'creation_failed' => 'فشل في إنشاء العقبة',
         'list_retrieved' => 'تم استرداد قائمة العقبات بنجاح',

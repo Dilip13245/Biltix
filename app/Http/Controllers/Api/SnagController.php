@@ -158,7 +158,7 @@ class SnagController extends Controller
             $snag_id = $request->input('snag_id');
             $user_id = $request->input('user_id');
 
-            $snag = Snag::with(['reporter:id,name', 'assignedUser:id,name', 'comments.user:id,name'])
+            $snag = Snag::with(['reporter:id,name', 'assignedUser:id,name'])
                 ->where('id', $snag_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
@@ -187,14 +187,8 @@ class SnagController extends Controller
                 'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name : null,
                 'date' => $snag->created_at->format('jS M, Y'),
                 'image_urls' => $imageUrls,
-                'comments' => $snag->comments->map(function($comment) {
-                    return [
-                        'id' => $comment->id,
-                        'comment' => $comment->comment,
-                        'user' => $comment->user ? $comment->user->name : 'Unknown',
-                        'date' => $comment->created_at->format('jS M, Y')
-                    ];
-                })
+                'comment' => $snag->comment,
+                'has_comment' => !empty($snag->comment)
             ];
 
             return $this->toJsonEnc($formattedSnag, trans('api.snags.details_retrieved'), Config::get('constant.SUCCESS'));

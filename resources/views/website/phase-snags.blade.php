@@ -7,10 +7,12 @@
     <link rel="icon" href="{{ asset('website/images/icons/logo.svg') }}" type="image/x-icon" />
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <link rel="stylesheet" href="{{ asset('website/css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
 </head>
-<body>
+<body data-phase-id="{{ request()->get('phase_id', 1) }}">
     <div class="content_wraper F_poppins">
         <header class="project-header">
             <div class="container-fluid">
@@ -43,27 +45,28 @@
                     <div class="card B_shadow">
                         <div class="card-body px-md-3 py-md-4">
                             <div class="row">
-                                <div class="col-lg-3 col-md-4 col-sm-6 col-6">
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                                     <label class="fw-medium mb-2">{{ __('messages.status') }}</label>
-                                    <select class="form-select w-100">
-                                        <option>{{ __('messages.all_status') }}</option>
-                                        <option>{{ __('messages.active') }}</option>
-                                        <option>{{ __('messages.completed') }}</option>
+                                    <select class="form-select w-100" id="statusFilter">
+                                        <option value="all">{{ __('messages.all_status') }}</option>
+                                        <option value="in_progress">{{ __('messages.in_progress') }}</option>
+                                        <option value="resolved">{{ __('messages.resolved') }}</option>
                                     </select>
                                 </div>
-                                <div class="col-lg-3 col-md-4 col-sm-6 col-6">
-                                    <label class="fw-medium mb-2">{{ __('messages.category') }}</label>
-                                    <select class="form-select w-100">
-                                        <option>{{ __('messages.all_categories') }}</option>
-                                    </select>
-                                </div>
-                                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mt-3 mt-md-0">
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-12 mt-3 mt-md-0">
                                     <label class="fw-medium mb-2">{{ __('messages.search') }}</label>
-                                    <form class="serchBar position-relative serchBar2 ">
-                                        <input class="form-control " type="search"
-                                            placeholder="{{ __('messages.search_snags') }}" aria-label="Search">
-                                        <span class="search_icon"><img src="{{ asset('website/images/icons/search.svg') }}"
-                                                alt="search"></span>
+                                    <form class="serchBar position-relative serchBar2">
+                                        @if (app()->getLocale() == 'ar')
+                                            <input class="form-control" type="search" id="searchInput"
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-left: 45px; padding-right: 15px;">
+                                            <span class="search_icon" style="left: 15px; right: auto; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
+                                                    alt="search"></span>
+                                        @else
+                                            <input class="form-control" type="search" id="searchInput"
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-right: 45px;">
+                                            <span class="search_icon" style="right: 15px; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
+                                                    alt="search"></span>
+                                        @endif
                                     </form>
                                 </div>
                             </div>
@@ -71,156 +74,224 @@
                     </div>
                 </div>
                 <div class="col-12 mt-4">
-                    <div class="CarDs-grid">
-                        <!-- Snag Card 1 -->
-                        <div class="CustOm_Card wow fadeInUp" data-wow-delay="0s">
-                            <div class="carD-details p-4">
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div class="d-flex align-items-start gap-3">
-                                        <span class="stat-icon bg2 ms-0">
-                                            <svg width="14" height="19" viewBox="0 0 14 19" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M11.4091 1.81829C11.6165 1.33665 11.4618 0.774146 11.0364 0.464771C10.611 0.155396 10.0309 0.183521 9.63368 0.528052L0.633684 8.40305C0.282121 8.71243 0.155559 9.20813 0.320793 9.64407C0.486028 10.08 0.907903 10.3753 1.37548 10.3753H5.2954L2.59189 16.6823C2.38446 17.164 2.53915 17.7265 2.96454 18.0359C3.38993 18.3452 3.97001 18.3171 4.36728 17.9726L13.3673 10.0976C13.7188 9.78821 13.8454 9.29251 13.6802 8.85657C13.5149 8.42063 13.0966 8.12883 12.6255 8.12883H8.70556L11.4091 1.81829Z"
-                                                    fill="#F58D2E" />
-                                            </svg>
-                                        </span>
-                                        <div>
-                                            <h5 class="mb-2 fw-semibold">Electrical outlet not working in Room 205</h5>
-                                            <div class="d-flex gap-2 mb-2">
-                                                <span class="badge badge2">{{ __('messages.high') }}
-                                                    {{ __('messages.priority') }}</span>
-                                                <span class="badge badge4">{{ __('messages.in_progress') }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a href="#" class="text-secondary" title="Edit"><i
-                                            class="fas fa-pen-to-square fa-lg"></i></a>
-                                </div>
-                                <p class="mb-3 text-muted">Power outlet on the north wall is not functioning. Tested with
-                                    multiple devices.</p>
-                                <div class="d-flex flex-wrap gap-3 text-muted small">
-                                    <span><i class="fas fa-user me-1"></i> John Smith</span>
-                                    <span><i class="fas fa-calendar-alt me-1"></i> Jan 15, 2024</span>
-                                    <span><i class="fas fa-building me-1"></i> Building A, Floor 2</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Snag Card 2 -->
-                        <div class="CustOm_Card wow fadeInUp" data-wow-delay="0.2s">
-                            <div class="carD-details p-4">
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div class="d-flex align-items-start gap-3">
-                                        <span class="stat-icon bg2 ms-0">
-                                            <svg width="22" height="19" viewBox="0 0 22 19" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M15.4121 8.59961C14.4207 8.76836 13.366 8.47305 12.5996 7.70664L11.2602 6.36719C10.7328 5.83984 10.4375 5.12969 10.4375 4.38438V3.95898L7.63555 2.42969C7.44922 2.32773 7.3332 2.12734 7.34375 1.91289C7.3543 1.69844 7.48086 1.50859 7.67773 1.4207L9.33711 0.682422C9.98398 0.397656 10.6836 0.25 11.3938 0.25H12.0301C13.3203 0.25 14.5613 0.742187 15.5 1.62461L17.068 3.10117C17.9188 3.90273 18.2352 5.05938 18.0031 6.12461L18.5586 6.68359L18.8398 6.40234C19.1703 6.07188 19.7047 6.07188 20.0316 6.40234L20.8754 7.24609C21.2059 7.57656 21.2059 8.11094 20.8754 8.43789L17.7816 11.5316C17.4512 11.8621 16.9168 11.8621 16.5898 11.5316L15.7461 10.6879C15.4156 10.3574 15.4156 9.82305 15.7461 9.49609L16.0273 9.21484L15.4121 8.59961ZM1.83828 13.5074L10.0473 6.66953C10.1703 6.8418 10.3109 7.00703 10.4621 7.16172L11.8016 8.50117C12.0125 8.71211 12.2375 8.89492 12.4766 9.05312L5.61758 17.2867C5.10781 17.8984 4.35195 18.25 3.55742 18.25C2.07383 18.25 0.875 17.0477 0.875 15.5676C0.875 14.773 1.23008 14.0172 1.83828 13.5074Z"
-                                                    fill="#F58D2E" />
-                                            </svg>
-                                        </span>
-                                        <div>
-                                            <h5 class="mb-2 fw-semibold">Concrete crack in main lobby wall</h5>
-                                            <div class="d-flex gap-2 mb-2">
-                                                <span class="badge badge3">{{ __('messages.medium') }}
-                                                    {{ __('messages.priority') }}</span>
-                                                <span class="badge badge5">{{ __('messages.open') }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a href="#" class="text-secondary" title="Edit"><i
-                                            class="fas fa-pen-to-square fa-lg"></i></a>
-                                </div>
-                                <p class="mb-3 text-muted">Visible crack approximately 2 feet long on the east wall of the
-                                    main lobby.</p>
-                                <div class="d-flex flex-wrap gap-3 text-muted small">
-                                    <span><i class="fas fa-user me-1"></i> Sarah Johnson</span>
-                                    <span><i class="fas fa-calendar-alt me-1"></i> Jan 14, 2024</span>
-                                    <span><i class="fas fa-building me-1"></i> Building A, Ground Floor</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Snag Card 3 -->
-                        <div class="CustOm_Card wow fadeInUp" data-wow-delay="0.4s">
-                            <div class="carD-details p-4">
-                                <div class="d-flex align-items-start justify-content-between mb-3">
-                                    <div class="d-flex align-items-start gap-3">
-                                        <span class="stat-icon bg2 ms-0">
-                                            <svg width="14" height="19" viewBox="0 0 14 19" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M7 18.25C3.27344 18.25 0.25 15.2266 0.25 11.5C0.25 8.29375 4.82734 2.27852 6.10703 0.661328C6.31797 0.397656 6.63086 0.25 6.96836 0.25H7.03164C7.36914 0.25 7.68203 0.397656 7.89297 0.661328C9.17266 2.27852 13.75 8.29375 13.75 11.5C13.75 15.2266 10.7266 18.25 7 18.25ZM3.625 12.0625C3.625 11.7531 3.37188 11.5 3.0625 11.5C2.75312 11.5 2.5 11.7531 2.5 12.0625C2.5 14.2387 4.26133 16 6.4375 16C6.74687 16 7 15.7469 7 15.4375C7 15.1281 6.74687 14.875 6.4375 14.875C4.88359 14.875 3.625 13.6164 3.625 12.0625Z"
-                                                    fill="#F58D2E" />
-                                            </svg>
-                                        </span>
-                                        <div>
-                                            <h5 class="mb-2 fw-semibold">Water leak under bathroom sink</h5>
-                                            <div class="d-flex gap-2 mb-2">
-                                                <span class="badge badge1">{{ __('messages.low') }}
-                                                    {{ __('messages.priority') }}</span>
-                                                <span class="badge badge1">Approved</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <a href="#" class="text-secondary" title="Edit"><i
-                                            class="fas fa-pen-to-square fa-lg"></i></a>
-                                </div>
-                                <p class="mb-3 text-muted">{{ __('messages.minor') }} water drip detected under the sink
-                                    in the executive bathroom.</p>
-                                <div class="d-flex flex-wrap gap-3 text-muted small">
-                                    <span><i class="fas fa-user me-1"></i> Mike Wilson</span>
-                                    <span><i class="fas fa-calendar-alt me-1"></i> Jan 12, 2024</span>
-                                    <span><i class="fas fa-building me-1"></i> Building B, Floor 3</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="CarDs-grid" id="snagsContainer">
                     </div>
                 </div>
             </div>
         </div>
     </section>
     @include('website.modals.add-snag-modal')
+    @include('website.modals.snag-details-modal')
     @include('website.modals.drawing-modal')
 
     <script>
+        let allSnags = [];
+        let allUsers = [];
+        
+        function getCurrentPhaseId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pagePhaseId = document.body.getAttribute('data-phase-id');
+            return urlParams.get('phase_id') || pagePhaseId || sessionStorage.getItem('current_phase_id') || '1';
+        }
 
-
-        // Add Snag Form Handler
         document.addEventListener('DOMContentLoaded', function() {
+            loadSnags();
+            setupFilters();
+            setupAddSnagForm();
+            setupModalUserLoading();
+        });
+
+        async function loadSnags() {
+            try {
+                showLoading();
+                const projectId = {{ request()->route('project') ?? 1 }};
+                const phaseId = {{ request()->get('phase_id') ?? 'null' }};
+
+                const requestData = {
+                    project_id: projectId,
+                    phase_id: phaseId || getCurrentPhaseId()
+                };
+
+                const response = await api.getSnags(requestData);
+
+                if (response.code === 200) {
+                    allSnags = response.data.data || [];
+                    displaySnags(allSnags);
+                } else {
+                    showError('Failed to load snags: ' + response.message);
+                }
+            } catch (error) {
+                console.error('Error loading snags:', error);
+                showError('Failed to load snags');
+            }
+        }
+
+        function showLoading() {
+            const container = document.getElementById('snagsContainer');
+            container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.minHeight = '400px';
+            container.innerHTML = `
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                    <p class="mt-2 text-muted">{{ __('messages.loading') }}...</p>
+                </div>
+            `;
+        }
+
+        function setupModalUserLoading() {
+            const addSnagModal = document.getElementById('addSnagModal');
+            if (addSnagModal) {
+                addSnagModal.addEventListener('show.bs.modal', async function() {
+                    try {
+                        const response = await api.getAllUsers();
+                        const assignedSelect = document.getElementById('assignedTo');
+                        
+                        if (response.code === 200 && assignedSelect) {
+                            assignedSelect.innerHTML = '<option value="">{{ __("messages.select_user") }}</option>';
+                            response.data.forEach(user => {
+                                assignedSelect.innerHTML += `<option value="${user.id}">${user.name}</option>`;
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error loading users:', error);
+                    }
+                });
+            }
+        }
+
+        function displaySnags(snags) {
+            const container = document.getElementById('snagsContainer');
+            
+            if (snags.length === 0) {
+                container.style.display = 'flex';
+                container.style.justifyContent = 'center';
+                container.style.alignItems = 'center';
+                container.style.minHeight = '400px';
+                container.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                        <h5>{{ __('messages.no_snags_found') }}</h5>
+                        <p>{{ __('messages.create_first_snag') }}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Reset container styles for grid layout
+            container.style.display = '';
+            container.style.justifyContent = '';
+            container.style.alignItems = '';
+            container.style.minHeight = '';
+
+            container.innerHTML = snags.map(snag => {
+                const statusBadge = getStatusBadge(snag.status);
+                const imageDisplay = snag.image_urls && snag.image_urls.length > 0 
+                    ? `<img src="${snag.image_urls[0]}" alt="Snag" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">` 
+                    : `<span class="stat-icon bg2 ms-0"><i class="fas fa-exclamation-triangle" style="color: #F58D2E;"></i></span>`;
+                
+                return `
+                    <div class="CustOm_Card wow fadeInUp">
+                        <div class="carD-details p-4">
+                            <div class="d-flex align-items-start justify-content-between mb-3">
+                                <div class="d-flex align-items-start gap-3 flex-grow-1" style="min-width: 0;">
+                                    ${imageDisplay}
+                                    <div class="flex-grow-1" style="min-width: 0;">
+                                        <h5 class="mb-2 fw-semibold" style="word-wrap: break-word; overflow-wrap: break-word; margin-right: 10px;">${snag.snag_number} - ${snag.title}</h5>
+                                        <div class="d-flex gap-2 mb-0">
+                                            ${statusBadge}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0 ms-2">
+                                    <a href="#" class="text-secondary" title="View Details" onclick="viewSnagDetails(${snag.id})">
+                                        <i class="fas fa-eye fa-lg"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <p class="mb-3 text-muted">${snag.description || 'No description provided'}</p>
+                            <div class="d-flex flex-wrap gap-3 text-muted small">
+                                <span><i class="fas fa-user me-1"></i> ${snag.reported_by}</span>
+                                <span><i class="fas fa-calendar-alt me-1"></i> ${snag.date}</span>
+                                <span><i class="fas fa-map-marker-alt me-1"></i> ${snag.location}</span>
+                                ${snag.assigned_to ? `<span><i class="fas fa-user-check me-1"></i> ${snag.assigned_to}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'Open': { class: 'badge5' },
+                'In_progress': { class: 'badge4' },
+                'Resolved': { class: 'badge1' },
+                'Closed': { class: 'badge1' }
+            };
+            
+            const statusInfo = statusMap[status] || statusMap['Open'];
+            return `<span class="badge ${statusInfo.class}">${status}</span>`;
+        }
+
+        function getPriorityBadge(priority) {
+            const priorityMap = {
+                'low': { class: 'badge1', text: '{{ __('messages.low') }}' },
+                'medium': { class: 'badge3', text: '{{ __('messages.medium') }}' },
+                'high': { class: 'badge2', text: '{{ __('messages.high') }}' },
+                'critical': { class: 'badge2', text: '{{ __('messages.critical') }}' }
+            };
+            
+            const priorityInfo = priorityMap[priority] || priorityMap['medium'];
+            return `<span class="badge ${priorityInfo.class}">${priorityInfo.text}</span>`;
+        }
+
+
+
+        function setupFilters() {
+            const statusFilter = document.getElementById('statusFilter');
+            const searchInput = document.getElementById('searchInput');
+
+            if (statusFilter) statusFilter.addEventListener('change', filterSnags);
+            if (searchInput) searchInput.addEventListener('input', filterSnags);
+        }
+
+        function filterSnags() {
+            const statusValue = document.getElementById('statusFilter').value;
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = allSnags.filter(snag => {
+                const matchesStatus = statusValue === 'all' || snag.status.toLowerCase() === statusValue;
+                const matchesSearch = !searchValue || 
+                    snag.title.toLowerCase().includes(searchValue) ||
+                    snag.description.toLowerCase().includes(searchValue) ||
+                    snag.location.toLowerCase().includes(searchValue);
+
+                return matchesStatus && matchesSearch;
+            });
+
+            displaySnags(filtered);
+        }
+
+        function setupAddSnagForm() {
             const addSnagForm = document.getElementById('addSnagForm');
             if (addSnagForm) {
                 addSnagForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
                     const fileInput = document.getElementById('snagPhotos');
-                    console.log('Form submitted, files:', fileInput.files);
                     
                     if (fileInput.files && fileInput.files.length > 0) {
-                        console.log('Files found, opening drawing modal');
-                        
-                        // Store all files
+                        // Store files and open drawing modal
                         window.selectedFiles = fileInput.files;
                         
-                        // Open drawing modal with image markup config
                         openDrawingModal({
                             title: 'Image Markup',
                             saveButtonText: 'Save Snag',
                             mode: 'image',
                             onSave: function(imageData) {
-                                console.log('Saving snag markup:', imageData);
-                                
-                                // Close drawing modal
-                                const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
-                                if (drawingModal) drawingModal.hide();
-                                
-                                // Close add snag modal
-                                const addSnagModal = bootstrap.Modal.getInstance(document.getElementById('addSnagModal'));
-                                if (addSnagModal) addSnagModal.hide();
-                                
-                                alert('Snag with markup saved successfully!');
-                                location.reload();
+                                saveSnagWithMarkup(imageData);
                             }
                         });
                         
@@ -232,74 +303,373 @@
                                 loadMultipleFiles(window.selectedFiles);
                             }
                         }, { once: true });
-                        
                     } else {
-                        console.log('No files, saving without markup');
+                        // No images, direct API call
                         saveSnagWithoutMarkup();
                     }
                 });
             }
+        }
+
+        async function saveSnagWithMarkup(imageData) {
+            try {
+                const formData = new FormData();
+                
+                formData.append('user_id', {{ auth()->id() ?? 1 }});
+                formData.append('project_id', {{ request()->route('project') ?? 1 }});
+                formData.append('phase_id', getCurrentPhaseId());
+                formData.append('title', document.getElementById('snagTitle').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('location', document.getElementById('location').value);
+                
+                const assignedTo = document.getElementById('assignedTo').value;
+                if (assignedTo) {
+                    formData.append('assigned_to', assignedTo);
+                }
+                
+                // Convert markup to blob and append
+                if (Array.isArray(imageData)) {
+                    imageData.forEach((data, index) => {
+                        const blob = dataURLtoBlob(data);
+                        formData.append('images[]', blob, `markup_${index}.png`);
+                    });
+                } else {
+                    const blob = dataURLtoBlob(imageData);
+                    formData.append('images[]', blob, 'markup.png');
+                }
+
+                const response = await api.createSnag(formData);
+
+                if (response.code === 200) {
+                    // Close modals
+                    const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+                    if (drawingModal) drawingModal.hide();
+                    
+                    const addSnagModal = bootstrap.Modal.getInstance(document.getElementById('addSnagModal'));
+                    if (addSnagModal) addSnagModal.hide();
+                    
+                    toastr.success('Snag with markup saved successfully!');
+                    document.getElementById('addSnagForm').reset();
+                    loadSnags();
+                } else {
+                    toastr.error('Failed to create snag: ' + response.message);
+                }
+            } catch (error) {
+                console.error('Error creating snag:', error);
+                toastr.error('Failed to create snag');
+            }
+        }
+
+        async function saveSnagWithoutMarkup() {
+            try {
+                const createBtn = document.getElementById('createSnagBtn');
+                const originalText = createBtn.innerHTML;
+                createBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+                createBtn.disabled = true;
+                
+                const formData = new FormData();
+                
+                formData.append('user_id', {{ auth()->id() ?? 1 }});
+                formData.append('project_id', {{ request()->route('project') ?? 1 }});
+                formData.append('phase_id', getCurrentPhaseId());
+                formData.append('title', document.getElementById('snagTitle').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('location', document.getElementById('location').value);
+                
+                const assignedTo = document.getElementById('assignedTo').value;
+                if (assignedTo) {
+                    formData.append('assigned_to', assignedTo);
+                }
+
+                const response = await api.createSnag(formData);
+
+                if (response.code === 200) {
+                    const addSnagModal = bootstrap.Modal.getInstance(document.getElementById('addSnagModal'));
+                    if (addSnagModal) addSnagModal.hide();
+                    
+                    toastr.success('Snag created successfully!');
+                    document.getElementById('addSnagForm').reset();
+                    loadSnags();
+                } else {
+                    toastr.error('Failed to create snag: ' + response.message);
+                }
+            } catch (error) {
+                console.error('Error creating snag:', error);
+                toastr.error('Failed to create snag');
+            } finally {
+                const createBtn = document.getElementById('createSnagBtn');
+                createBtn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}';
+                createBtn.disabled = false;
+            }
+        }
+
+        function dataURLtoBlob(dataURL) {
+            const arr = dataURL.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+
+
+
+        async function viewSnagDetails(snagId) {
+            try {
+                const modal = new bootstrap.Modal(document.getElementById('snagDetailsModal'));
+                modal.show();
+                
+                const response = await api.getSnagDetails({ snag_id: snagId, user_id: {{ auth()->id() ?? 1 }} });
+                
+                console.log('=== SNAG DETAILS API RESPONSE ===');
+                console.log('Response:', response);
+                console.log('Response Data:', response.data);
+                console.log('Comments in Response:', response.data ? response.data.comments : 'No data');
+                console.log('===============================');
+                
+                if (response.code === 200) {
+                    displaySnagDetails(response.data);
+                } else {
+                    document.getElementById('snagDetailsContent').innerHTML = `
+                        <div class="text-center text-danger py-4">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <p>Failed to load snag details</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading snag details:', error);
+            }
+        }
+        
+        function displaySnagDetails(snag) {
+            const canComment = snag.status.toLowerCase() !== 'resolved' && snag.status.toLowerCase() !== 'closed';
+            const canResolve = snag.status.toLowerCase() !== 'resolved' && snag.status.toLowerCase() !== 'closed';
+            const currentUserId = {{ auth()->id() ?? 1 }};
+            const hasCommented = snag.has_comment || false;
             
-            function saveSnagWithoutMarkup() {
-                bootstrap.Modal.getInstance(document.getElementById('addSnagModal')).hide();
-                alert('Snag added successfully!');
-                location.reload();
+            const imagesHtml = snag.image_urls && snag.image_urls.length > 0 
+                ? `<div class="card B_shadow h-100">
+                     <div class="card-body">
+                         <h6 class="fw-semibold black_color mb-3"><i class="fas fa-images orange_color me-2"></i>{{ __('messages.images') }}</h6>
+                         <div class="row g-2">
+                           ${snag.image_urls.map(url => `
+                             <div class="col-6">
+                               <img src="${url}" alt="Snag" class="img-fluid rounded cursor-pointer" style="height: 120px; width: 100%; object-fit: cover;" onclick="window.open('${url}', '_blank')">
+                             </div>
+                           `).join('')}
+                         </div>
+                     </div>
+                   </div>` 
+                : `<div class="card B_shadow h-100">
+                     <div class="card-body text-center">
+                         <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                         <p class="text-muted mb-0">{{ __('messages.no_images_uploaded') }}</p>
+                     </div>
+                   </div>`;
+            
+            // Comments are now handled in the main template
+            
+            console.log('=== SNAG DETAILS DEBUG ===');
+            console.log('Current User ID:', currentUserId);
+            console.log('Snag Comment:', snag.comment);
+            console.log('Has Comment:', snag.has_comment);
+            console.log('Has Commented:', hasCommented);
+            console.log('Can Comment:', canComment);
+            console.log('========================');
+            
+            document.getElementById('snagDetailsContent').innerHTML = `
+                <!-- Snag Header -->
+                <div class="card B_shadow mb-4">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h5 class="fw-semibold black_color mb-2">${snag.snag_number} - ${snag.title}</h5>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    <span class="badge ${getStatusBadgeClass(snag.status)}">${snag.status}</span>
+                                    <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i>${snag.date}</small>
+                                    <small class="text-muted"><i class="fas fa-user me-1"></i>${snag.reported_by}</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                ${canResolve ? `
+                                    <button class="btn btn-success" onclick="resolveSnag(${snag.id})">
+                                        <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Snag Details -->
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card B_shadow h-100">
+                            <div class="card-body">
+                                <h6 class="fw-semibold black_color mb-3"><i class="fas fa-info-circle orange_color me-2"></i>{{ __('messages.details') }}</h6>
+                                <div class="mb-3">
+                                    <label class="small_tXt fw-medium">{{ __('messages.location') }}</label>
+                                    <p class="mb-0">${snag.location}</p>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="small_tXt fw-medium">{{ __('messages.description') }}</label>
+                                    <p class="mb-0">${snag.description || 'No description provided'}</p>
+                                </div>
+                                ${snag.assigned_to ? `
+                                    <div class="mb-0">
+                                        <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
+                                        <p class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>${snag.assigned_to}</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        ${imagesHtml}
+                    </div>
+                </div>
+                
+                <!-- Comments Section -->
+                <div class="card B_shadow mt-4">
+                    <div class="card-body">
+                        <h6 class="fw-semibold black_color mb-3">
+                            <i class="fas fa-comments orange_color me-2"></i>{{ __('messages.comments') }}
+                            ${snag.comment ? `<span class="badge bg-light text-dark ms-2">1</span>` : ''}
+                        </h6>
+                        
+                        ${snag.comment ? `
+                            <div class="comment-item border rounded p-3 mb-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 12px;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <small class="fw-medium black_color">{{ __('messages.comment') }}</small>
+                                            <br>
+                                            <small class="text-muted">${snag.date}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mb-0 ms-5">${snag.comment}</p>
+                            </div>
+                        ` : `
+                            <div class="text-center py-4">
+                                <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
+                                <p class="text-muted mb-0">{{ __('messages.no_comments_yet') }}</p>
+                            </div>
+                        `}
+                        
+                        ${canComment && !hasCommented ? `
+                            <div class="mt-4 pt-3 border-top" id="commentSection">
+                                <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
+                                <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
+                                <button class="btn orange_btn" onclick="addComment(${snag.id})">
+                                    <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function getStatusBadgeClass(status) {
+            const statusMap = {
+                'open': 'badge5',
+                'in_progress': 'badge4', 
+                'resolved': 'badge1',
+                'closed': 'badge1'
+            };
+            return statusMap[status.toLowerCase()] || 'badge5';
+        }
+        
+        async function addComment(snagId) {
+            const commentText = document.getElementById('commentText').value.trim();
+            if (!commentText) {
+                toastr.warning('{{ __('messages.please_enter_comment') }}');
+                return;
             }
             
-            // Filter functionality
-            const statusFilter = document.querySelector('select.form-select');
-            const categoryFilter = document.querySelectorAll('select.form-select')[1];
-            const searchInput = document.querySelector('input[type="search"]');
-
-            function filterSnags() {
-                const statusValue = statusFilter ? statusFilter.value.toLowerCase() : '';
-                const categoryValue = categoryFilter ? categoryFilter.value.toLowerCase() : '';
-                const searchValue = searchInput ? searchInput.value.toLowerCase() : '';
-                const snagCards = document.querySelectorAll('.CustOm_Card');
-
-                snagCards.forEach(card => {
-                    const title = card.querySelector('h5') ? card.querySelector('h5').textContent.toLowerCase() : '';
-                    const description = card.querySelector('p') ? card.querySelector('p').textContent.toLowerCase() : '';
-                    const badges = card.querySelectorAll('.badge');
-                    const statusBadge = badges.length > 1 ? badges[badges.length - 1].textContent.toLowerCase() : '';
-
-                    const matchesStatus = !statusValue || statusValue === 'all status' || statusBadge.includes(statusValue);
-                    const matchesSearch = !searchValue || title.includes(searchValue) || description.includes(searchValue);
-
-                    if (matchesStatus && matchesSearch) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
+            try {
+                const response = await api.updateSnag({
+                    snag_id: snagId,
+                    user_id: {{ auth()->id() ?? 1 }},
+                    comment: commentText
+                });
+                
+                if (response.code === 200) {
+                    toastr.success('{{ __('messages.comment_added_success') }}');
+                    
+                    // Refresh snag details to show new comment
+                    const detailsResponse = await api.getSnagDetails({ snag_id: snagId, user_id: {{ auth()->id() ?? 1 }} });
+                    if (detailsResponse.code === 200) {
+                        displaySnagDetails(detailsResponse.data);
                     }
-                });
+                    
+                    loadSnags();
+                } else {
+                    toastr.error('{{ __('messages.failed_add_comment') }}');
+                }
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                toastr.error('{{ __('messages.failed_add_comment') }}');
             }
-
-            if (statusFilter) statusFilter.addEventListener('change', filterSnags);
-            if (categoryFilter) categoryFilter.addEventListener('change', filterSnags);
-            if (searchInput) searchInput.addEventListener('input', filterSnags);
-
-            // Edit snag functionality
-            const editButtons = document.querySelectorAll('.fa-pen-to-square');
-            editButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const snagCard = this.closest('.CustOm_Card');
-                    const title = snagCard.querySelector('h5').textContent;
-                    const description = snagCard.querySelector('p').textContent;
-                    const badges = snagCard.querySelectorAll('.badge');
-                    const priority = badges[0] ? badges[0].textContent : '';
-                    const status = badges[1] ? badges[1].textContent : '';
-
-                    alert(`Edit Snag: ${title}\n\nPriority: ${priority}\nStatus: ${status}\nDescription: ${description}`);
+        }
+        
+        async function resolveSnag(snagId) {
+            try {
+                const response = await api.resolveSnag({
+                    snag_id: snagId,
+                    user_id: {{ auth()->id() ?? 1 }}
                 });
-            });
-        });
+                
+                if (response.code === 200) {
+                    toastr.success('{{ __('messages.snag_resolved_success') }}');
+                    bootstrap.Modal.getInstance(document.getElementById('snagDetailsModal')).hide();
+                    loadSnags();
+                } else {
+                    toastr.error('{{ __('messages.failed_resolve_snag') }}');
+                }
+            } catch (error) {
+                console.error('Error resolving snag:', error);
+                toastr.error('{{ __('messages.failed_resolve_snag') }}');
+            }
+        }
+
+        function showError(message) {
+            const container = document.getElementById('snagsContainer');
+            container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.minHeight = '400px';
+            container.innerHTML = `
+                <div class="text-center text-danger">
+                    <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                    <h5>Error</h5>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
     </script>
+    
+    <!-- Load API scripts first -->
+    <script src="{{ asset('website/js/api-config.js') }}"></script>
+    <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+    <script src="{{ asset('website/js/universal-auth.js') }}"></script>
+    <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+    <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>
 
     </div>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('website/js/drawing.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('website/js/toastr-config.js') }}"></script>
 </body>
 </html>
