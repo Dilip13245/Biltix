@@ -148,7 +148,26 @@
                 if (createBtn) {
                     createBtn.addEventListener('click', function() {
                         const phaseId = getCurrentPhaseId();
-                        document.getElementById('modalPhaseId').value = phaseId;
+                        const projectId = getProjectIdFromUrl();
+                        document.getElementById('modalProjectId').value = projectId;
+                        
+                        // Store phase_id for form submission
+                        window.currentPhaseId = phaseId;
+                    });
+                }
+                
+                // Hide phase dropdown in modal since this is a phase page
+                const createInspectionModal = document.getElementById('createInspectionModal');
+                if (createInspectionModal) {
+                    createInspectionModal.addEventListener('show.bs.modal', function() {
+                        const phaseContainer = document.getElementById('phaseSelectContainer');
+                        const phaseSelect = document.getElementById('phaseSelect');
+                        if (phaseContainer) {
+                            phaseContainer.style.display = 'none';
+                        }
+                        if (phaseSelect) {
+                            phaseSelect.removeAttribute('required');
+                        }
                     });
                 }
 
@@ -168,9 +187,17 @@
                 return urlParams.get('phase_id') || pagePhaseId || sessionStorage.getItem('current_phase_id') || '1';
             }
 
+            function getProjectIdFromUrl() {
+                const pathParts = window.location.pathname.split('/');
+                const projectIndex = pathParts.indexOf('project');
+                return projectIndex !== -1 && pathParts[projectIndex + 1] ? pathParts[projectIndex + 1] : 1;
+            }
+
             async function loadInspections() {
                 try {
-                    const projectId = {{ request()->route('project') ?? 1 }};
+                    const projectId = getProjectIdFromUrl();
+                    
+
                     const phaseId = getCurrentPhaseId();
 
                     const requestData = {

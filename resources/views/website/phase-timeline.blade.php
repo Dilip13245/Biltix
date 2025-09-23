@@ -7,10 +7,12 @@
     <link rel="icon" href="{{ asset('website/images/icons/logo.svg') }}" type="image/x-icon" />
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <link rel="stylesheet" href="{{ asset('website/css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
 </head>
-<body>
+<body data-phase-id="{{ request()->get('phase_id', 1) }}">
     <div class="content_wraper F_poppins">
         <header class="project-header">
             <div class="container-fluid">
@@ -31,10 +33,12 @@
     <h2>{{ __('messages.project_progress') }}</h2>
     <p>{{ __('messages.track_project_phases') }}</p>
   </div>
-  <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
-    <i class="fas fa-plus"></i>
-    {{ __("messages.create_phase") }}
-  </button>
+  @can('phases', 'create')
+      <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
+        <i class="fas fa-plus"></i>
+        {{ __("messages.create_phase") }}
+      </button>
+  @endcan
 </div>
 <div class="px-md-4">
   <div class="container-fluid">
@@ -229,9 +233,11 @@
                                     </div>
                                 </div>
                                 <div class="ms-auto mt-3 mt-md-0">
-                                    <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2" onclick="deleteProject()">
-                                        <i class="fas fa-trash"></i> {{ __("messages.delete_project") }}
-                                    </button>
+                                    @can('projects', 'delete')
+                                        <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2" onclick="deleteProject()">
+                                            <i class="fas fa-trash"></i> {{ __("messages.delete_project") }}
+                                        </button>
+                                    @endcan
                                 </div>
                             </div>
                         </div>
@@ -307,28 +313,18 @@
                     <div class="card h-100 B_shadow">
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="fw-semibold black_color mb-0 ">{{ __("messages.ongoing_activities") }}</h5>
-                                <a href="#" class="text-primary" title="Edit"><img
-                                        src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.ongoing_activities") }}</h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="openActivitiesModal()">
+                                    <i class="fas fa-plus"></i> {{ __("messages.add_new") }}
+                                </button>
                             </div>
-                            <ul class="list-unstyled mb-0">
-                                <li class="d-flex align-items-center mb-2">
-                                    <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                    Concrete pouring on Basement Level 2
-                                </li>
-                                <li class="d-flex align-items-center mb-2">
-                                    <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                    Formwork preparation for Ground Floor columns
-                                </li>
-                                <li class="d-flex align-items-center mb-2">
-                                    <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                    Electrical conduit layout in progress on Level 1
-                                </li>
-                                <li class="d-flex align-items-center">
-                                    <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                    QA/QC inspection for rebar placement
-                                </li>
-                            </ul>
+                            <div id="activitiesContainer">
+                                <div class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">{{ __("messages.loading") }}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -336,54 +332,17 @@
                     <div class="card h-100 B_shadow">
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="fw-semibold black_color mb-0 ">{{ __("messages.manpower_equipment") }}</h5>
-                                <a href="#" class="text-primary" title="Edit"><img
-                                        src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a>
+                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.manpower_equipment") }}</h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="openManpowerModal()">
+                                    <i class="fas fa-plus"></i> {{ __("messages.add_new") }}
+                                </button>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-borderless mb-0">
-                                    <tbody>
-                                        <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.engineers") }}</td>
-                                            <td class="text-end"><a href="#"
-                                                    class="text-primary fw-semibold text-decoration-none">3</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.foremen") }}</td>
-                                            <td class="text-end"><a href="#"
-                                                    class="text-primary fw-semibold text-decoration-none">2</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.laborers") }}</td>
-                                            <td class="text-end"><a href="#"
-                                                    class="text-primary fw-semibold text-decoration-none">25</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.excavators") }}</td>
-                                            <td class="text-end"><a href="#"
-                                                    class="text-primary fw-semibold text-decoration-none">2
-                                                    {{ __("messages.units") }}</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.concrete_mixers") }}</td>
-                                            <td class="text-end"><a href="#"
-                                                    class="text-primary fw-semibold text-decoration-none">1
-                                                    {{ __("messages.unit") }}</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-muted fw-medium">{{ __("messages.cranes") }}</td>
-                                            <td class="text-end"><a href="#"
-                                                    class="text-primary fw-semibold text-decoration-none">1
-                                                    {{ __("messages.unit") }}</a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div id="manpowerContainer">
+                                <div class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">{{ __("messages.loading") }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -394,59 +353,24 @@
                     <div class="card B_shadow">
                         <div class="card-body p-md-4">
                             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                                <h5 class="fw-semibold black_color mb-0 ">{{ __("messages.safety_category") }}</h5>
+                                <h5 class="fw-semibold black_color mb-0">{{ __("messages.safety_category") }}</h5>
                                 <div class="d-flex align-items-center gap-2">
                                     <a href="{{ route('website.safety-checklist') }}"
-                                        class="btn btn-primary  d-flex align-items-center gap-2 btnsm">
+                                        class="btn btn-primary d-flex align-items-center gap-2 btnsm">
                                         <i class="fas fa-eye"></i> {{ __("messages.view_checklist") }}
                                     </a>
-                                    <a href="#" class="btn btn-primary d-flex align-items-center gap-2 btnsm">
-                                        <i class="fas fa-plus"></i> {{ __("messages.new_checklist") }}
-                                    </a>
+                                    <button class="btn btn-primary d-flex align-items-center gap-2 btnsm" onclick="openSafetyModal()">
+                                        <i class="fas fa-plus"></i> {{ __("messages.add_new") }}
+                                    </button>
                                 </div>
                             </div>
-                            <ul class="list-unstyled mb-0">
-                                <li class="mb-2">
-                                    <div class="d-flex align-items-center p-3 rounded bg4">
-                                        <span class="me-3 text-success" style="font-size:1.3em;">
-                                            <i class="fas fa-check-circle"></i>
-                                        </span>
-                                        {{ __("messages.ppe_check") }} Completed
+                            <div id="safetyContainer">
+                                <div class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">{{ __("messages.loading") }}</span>
                                     </div>
-                                </li>
-                                <li class="mb-2">
-                                    <div class="d-flex align-items-center p-3 rounded bg5">
-                                        <span class="me-3 text-warning" style="font-size:1.3em;">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                        </span>
-                                        One unsafe scaffolding identified and corrected
-                                    </div>
-                                </li>
-                                <li class="mb-2">
-                                    <div class="d-flex align-items-center p-3 rounded bg4">
-                                        <span class="me-3 text-success" style="font-size:1.3em;">
-                                            <i class="fas fa-check-circle"></i>
-                                        </span>
-                                        Fire extinguisher checks completed
-                                    </div>
-                                </li>
-                                <li class="mb-2">
-                                    <div class="d-flex align-items-center p-3 rounded bg4">
-                                        <span class="me-3 text-success" style="font-size:1.3em;">
-                                            <i class="fas fa-check-circle"></i>
-                                        </span>
-                                        Toolbox Talk Conducted (Topic: Working at Heights)
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="d-flex align-items-center p-3 rounded bg4">
-                                        <span class="me-3 text-success" style="font-size:1.3em;">
-                                            <i class="fas fa-check-circle"></i>
-                                        </span>
-                                        No incidents reported
-                                    </div>
-                                </li>
-                            </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -454,38 +378,175 @@
   </div>
 </div>
 <script>
+let currentProjectId = getProjectIdFromUrl();
+let currentUserId = {{ auth()->id() ?? 1 }};
+
+function getProjectIdFromUrl() {
+    const pathParts = window.location.pathname.split('/');
+    const projectIndex = pathParts.indexOf('project');
+    return projectIndex !== -1 && pathParts[projectIndex + 1] ? pathParts[projectIndex + 1] : 1;
+}
+
+function getCurrentPhaseId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const pagePhaseId = document.body.getAttribute('data-phase-id');
+    return urlParams.get('phase_id') || pagePhaseId || sessionStorage.getItem('current_phase_id') || '1';
+}
+
 function deleteProject() {
-  if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-    alert('Project deletion functionality would be implemented here.');
+  if (confirm('{{ __("messages.confirm_delete_project") }}')) {
+    alert('{{ __("messages.project_deletion_functionality") }}');
   }
 }
 
-// Make edit buttons functional
+// Load all data on page load
 document.addEventListener('DOMContentLoaded', function() {
-  const editButtons = document.querySelectorAll('a[title="Edit"]');
-  editButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-      e.preventDefault();
-      const field = this.previousElementSibling.textContent.trim();
-      const newValue = prompt(`Edit ${field.split(' ')[0]}:`, field);
-      if (newValue && newValue !== field) {
-        this.previousElementSibling.textContent = newValue;
-        alert('Field updated successfully!');
-      }
-    });
-  });
-  
-  // Make manpower links functional
-  const manpowerLinks = document.querySelectorAll('.table a');
-  manpowerLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      const role = this.closest('tr').querySelector('td').textContent;
-      const count = this.textContent;
-      alert(`${role}: ${count}\n\nDetailed view would show:\n- Individual assignments\n- Work schedules\n- Performance metrics`);
-    });
-  });
+  loadActivities();
+  loadManpowerEquipment();
+  loadSafetyItems();
 });
+
+// Activities Functions
+async function loadActivities() {
+  try {
+    const response = await api.listActivities({ project_id: currentProjectId });
+    if (response.code === 200) {
+      renderActivities(response.data || []);
+    } else {
+      showError('activitiesContainer', '{{ __("messages.failed_to_load_activities") }}');
+    }
+  } catch (error) {
+    showError('activitiesContainer', '{{ __("messages.error_loading_activities") }}');
+  }
+}
+
+function renderActivities(activities) {
+  const container = document.getElementById('activitiesContainer');
+  if (activities.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-3 text-muted">
+        <i class="fas fa-tasks fa-2x mb-2"></i>
+        <p>{{ __("messages.no_activities_found") }}</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = `
+    <ul class="list-unstyled mb-0">
+      ${activities.map(activity => `
+        <li class="d-flex align-items-center mb-2">
+          <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+          <span class="flex-grow-1">${activity.description}</span>
+          <button class="btn btn-sm btn-outline-secondary {{ margin_start(2) }}" onclick="editActivity(${activity.id}, '${activity.description}')">
+            <i class="fas fa-edit"></i>
+          </button>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+// Manpower Equipment Functions
+async function loadManpowerEquipment() {
+  try {
+    const response = await api.listManpowerEquipment({ project_id: currentProjectId });
+    if (response.code === 200) {
+      renderManpowerEquipment(response.data || []);
+    } else {
+      showError('manpowerContainer', '{{ __("messages.failed_to_load_manpower") }}');
+    }
+  } catch (error) {
+    showError('manpowerContainer', '{{ __("messages.error_loading_manpower") }}');
+  }
+}
+
+function renderManpowerEquipment(items) {
+  const container = document.getElementById('manpowerContainer');
+  if (items.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-3 text-muted">
+        <i class="fas fa-users fa-2x mb-2"></i>
+        <p>{{ __("messages.no_manpower_found") }}</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = `
+    <div class="table-responsive">
+      <table class="table table-borderless mb-0">
+        <tbody>
+          ${items.map(item => `
+            <tr>
+              <td class="text-muted fw-medium">${item.category}</td>
+              <td class="text-end">
+                <span class="text-primary fw-semibold">${item.count}</span>
+                <button class="btn btn-sm btn-outline-secondary {{ margin_start(2) }}" onclick="editManpower(${item.id}, '${item.category}', ${item.count})">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// Safety Items Functions
+async function loadSafetyItems() {
+  try {
+    const response = await api.listSafetyItems({ project_id: currentProjectId });
+    if (response.code === 200) {
+      renderSafetyItems(response.data || []);
+    } else {
+      showError('safetyContainer', '{{ __("messages.failed_to_load_safety") }}');
+    }
+  } catch (error) {
+    showError('safetyContainer', '{{ __("messages.error_loading_safety") }}');
+  }
+}
+
+function renderSafetyItems(items) {
+  const container = document.getElementById('safetyContainer');
+  if (items.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-3 text-muted">
+        <i class="fas fa-shield-alt fa-2x mb-2"></i>
+        <p>{{ __("messages.no_safety_items_found") }}</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = `
+    <ul class="list-unstyled mb-0">
+      ${items.map(item => `
+        <li class="mb-2">
+          <div class="d-flex align-items-center p-3 rounded bg4">
+            <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
+              <i class="fas fa-check-circle"></i>
+            </span>
+            <span class="flex-grow-1">${item.checklist_item}</span>
+            <button class="btn btn-sm btn-outline-secondary {{ margin_start(2) }}" onclick="editSafetyItem(${item.id}, '${item.checklist_item}')">
+              <i class="fas fa-edit"></i>
+            </button>
+          </div>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+function showError(containerId, message) {
+  document.getElementById(containerId).innerHTML = `
+    <div class="text-center py-3 text-danger">
+      <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+      <p>${message}</p>
+    </div>
+  `;
+}
 </script>
 
 <!-- Create Phase Modal -->
@@ -711,8 +772,427 @@ function redirectToTimeline() {
 }
 </script>
 
+@include('website.modals.project-progress-modals')
+
+<script>
+// Modal Functions
+function openActivitiesModal() {
+    document.getElementById('activitiesModalTitle').textContent = '{{ __("messages.add_activity") }}';
+    document.getElementById('activitiesSaveBtn').textContent = '{{ __("messages.save") }}';
+    document.getElementById('activitiesForm').reset();
+    document.getElementById('activityId').value = '';
+    // Reset to single field
+    const container = document.getElementById('modalActivitiesContainer');
+    container.innerHTML = `
+        <div class="activity-field mb-2">
+            <label class="form-label small fw-medium mb-1">{{ __('messages.description') }}</label>
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control form-control-sm" name="description[]" 
+                    placeholder="{{ __('messages.enter_activity_description') }}" required>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    document.getElementById('addMoreActivityBtn').style.display = 'inline-block';
+    new bootstrap.Modal(document.getElementById('activitiesModal')).show();
+}
+
+function openManpowerModal() {
+    document.getElementById('manpowerModalTitle').textContent = '{{ __("messages.add_manpower_equipment") }}';
+    document.getElementById('manpowerSaveBtn').textContent = '{{ __("messages.save") }}';
+    document.getElementById('manpowerForm').reset();
+    document.getElementById('manpowerId').value = '';
+    // Reset to single field
+    const container = document.getElementById('modalManpowerContainer');
+    container.innerHTML = `
+        <div class="manpower-field mb-2">
+            <div class="row g-2">
+                <div class="col-7">
+                    <label class="form-label small fw-medium mb-1">{{ __('messages.category') }}</label>
+                    <input type="text" class="form-control form-control-sm" name="category[]" 
+                        placeholder="{{ __('messages.enter_category') }}" required>
+                </div>
+                <div class="col-3">
+                    <label class="form-label small fw-medium mb-1">{{ __('messages.count') }}</label>
+                    <input type="number" class="form-control form-control-sm" name="count[]" 
+                        placeholder="0" min="0" required>
+                </div>
+                <div class="col-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)" style="display:none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('addMoreManpowerBtn').style.display = 'inline-block';
+    new bootstrap.Modal(document.getElementById('manpowerModal')).show();
+}
+
+function openSafetyModal() {
+    document.getElementById('safetyModalTitle').textContent = '{{ __("messages.add_safety_item") }}';
+    document.getElementById('safetySaveBtn').textContent = '{{ __("messages.save") }}';
+    document.getElementById('safetyForm').reset();
+    document.getElementById('safetyId').value = '';
+    // Reset to single field
+    const container = document.getElementById('modalSafetyContainer');
+    container.innerHTML = `
+        <div class="safety-field mb-2">
+            <label class="form-label small fw-medium mb-1">{{ __('messages.checklist_item') }}</label>
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
+                    placeholder="{{ __('messages.enter_safety_item') }}" required>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    document.getElementById('addMoreSafetyBtn').style.display = 'inline-block';
+    new bootstrap.Modal(document.getElementById('safetyModal')).show();
+}
+
+// Dynamic Field Functions
+function addActivityField() {
+    const container = document.getElementById('modalActivitiesContainer');
+    const fieldDiv = document.createElement('div');
+    fieldDiv.className = 'activity-field mb-3';
+    fieldDiv.innerHTML = `
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control form-control-sm" name="description[]" 
+                placeholder="{{ __('messages.enter_activity_description') }}" required>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    container.appendChild(fieldDiv);
+    updateRemoveButtons('modalActivitiesContainer');
+}
+
+function addManpowerField() {
+    const container = document.getElementById('modalManpowerContainer');
+    const fieldDiv = document.createElement('div');
+    fieldDiv.className = 'manpower-field mb-3';
+    fieldDiv.innerHTML = `
+        <div class="row g-2">
+            <div class="col-7">
+                <input type="text" class="form-control form-control-sm" name="category[]" 
+                    placeholder="{{ __('messages.enter_category') }}" required>
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control form-control-sm" name="count[]" 
+                    placeholder="0" min="0" required>
+            </div>
+            <div class="col-2 d-flex align-items-end">
+                <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(fieldDiv);
+    updateRemoveButtons('modalManpowerContainer');
+}
+
+function addSafetyField() {
+    const container = document.getElementById('modalSafetyContainer');
+    const fieldDiv = document.createElement('div');
+    fieldDiv.className = 'safety-field mb-3';
+    fieldDiv.innerHTML = `
+        <div class="input-group input-group-sm">
+            <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
+                placeholder="{{ __('messages.enter_safety_item') }}" required>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    container.appendChild(fieldDiv);
+    updateRemoveButtons('modalSafetyContainer');
+}
+
+function removeField(button) {
+    const fieldDiv = button.closest('.activity-field, .manpower-field, .safety-field');
+    const container = fieldDiv.parentNode;
+    fieldDiv.remove();
+    updateRemoveButtons(container.id);
+}
+
+function updateRemoveButtons(containerId) {
+    const container = document.getElementById(containerId);
+    const fields = container.children;
+    for (let i = 0; i < fields.length; i++) {
+        const removeBtn = fields[i].querySelector('.remove-field');
+        if (removeBtn) {
+            removeBtn.style.display = fields.length > 1 ? 'block' : 'none';
+        }
+    }
+}
+
+// Save Functions
+async function saveActivity() {
+    const form = document.getElementById('activitiesForm');
+    const activityId = document.getElementById('activityId').value;
+    const descriptions = Array.from(form.querySelectorAll('input[name="description[]"]'))
+        .map(input => input.value.trim())
+        .filter(desc => desc);
+    
+    if (descriptions.length === 0) {
+        toastr.error('{{ __("messages.please_enter_description") }}');
+        return;
+    }
+    
+    const saveBtn = document.getElementById('activitiesSaveBtn');
+    const originalText = saveBtn.textContent;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+    
+    try {
+        let successCount = 0;
+        let lastResponse = null;
+        for (const description of descriptions) {
+            let response;
+            if (activityId && descriptions.length === 1) {
+                response = await api.updateActivity({
+                    activity_id: activityId,
+                    description: description
+                });
+            } else {
+                response = await api.addActivity({
+                    project_id: currentProjectId,
+                    user_id: currentUserId,
+                    description: description
+                });
+            }
+            lastResponse = response;
+            if (response.code === 200) successCount++;
+        }
+        
+        if (successCount > 0) {
+            bootstrap.Modal.getInstance(document.getElementById('activitiesModal')).hide();
+            loadActivities();
+            const message = lastResponse?.message || `${successCount} {{ __("messages.activities_saved_successfully") }}`;
+            toastr.success(message);
+        } else {
+            const errorMessage = lastResponse?.message || '{{ __("messages.failed_to_save_activity") }}';
+            toastr.error(errorMessage);
+        }
+    } catch (error) {
+        toastr.error('{{ __("messages.error_saving_activity") }}');
+    } finally {
+        saveBtn.textContent = originalText;
+    }
+}
+
+async function saveManpower() {
+    const form = document.getElementById('manpowerForm');
+    const itemId = document.getElementById('manpowerId').value;
+    const categories = Array.from(form.querySelectorAll('input[name="category[]"]')).map(input => input.value.trim());
+    const counts = Array.from(form.querySelectorAll('input[name="count[]"]')).map(input => parseInt(input.value));
+    
+    const validItems = [];
+    for (let i = 0; i < categories.length; i++) {
+        if (categories[i] && !isNaN(counts[i]) && counts[i] >= 0) {
+            validItems.push({ category: categories[i], count: counts[i] });
+        }
+    }
+    
+    if (validItems.length === 0) {
+        toastr.error('{{ __("messages.please_enter_valid_data") }}');
+        return;
+    }
+    
+    const saveBtn = document.getElementById('manpowerSaveBtn');
+    const originalText = saveBtn.textContent;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+    
+    try {
+        let successCount = 0;
+        let lastResponse = null;
+        for (const item of validItems) {
+            let response;
+            if (itemId && validItems.length === 1) {
+                response = await api.updateManpowerEquipment({
+                    item_id: itemId,
+                    category: item.category,
+                    count: item.count
+                });
+            } else {
+                response = await api.addManpowerEquipment({
+                    project_id: currentProjectId,
+                    user_id: currentUserId,
+                    category: item.category,
+                    count: item.count
+                });
+            }
+            lastResponse = response;
+            if (response.code === 200) successCount++;
+        }
+        
+        if (successCount > 0) {
+            bootstrap.Modal.getInstance(document.getElementById('manpowerModal')).hide();
+            loadManpowerEquipment();
+            const message = lastResponse?.message || `${successCount} {{ __("messages.manpower_items_saved_successfully") }}`;
+            toastr.success(message);
+        } else {
+            const errorMessage = lastResponse?.message || '{{ __("messages.failed_to_save_manpower") }}';
+            toastr.error(errorMessage);
+        }
+    } catch (error) {
+        toastr.error('{{ __("messages.error_saving_manpower") }}');
+    } finally {
+        saveBtn.textContent = originalText;
+    }
+}
+
+async function saveSafetyItem() {
+    const form = document.getElementById('safetyForm');
+    const itemId = document.getElementById('safetyId').value;
+    const checklistItems = Array.from(form.querySelectorAll('input[name="checklist_item[]"]'))
+        .map(input => input.value.trim())
+        .filter(item => item);
+    
+    if (checklistItems.length === 0) {
+        toastr.error('{{ __("messages.please_enter_safety_item") }}');
+        return;
+    }
+    
+    const saveBtn = document.getElementById('safetySaveBtn');
+    const originalText = saveBtn.textContent;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+    
+    try {
+        let successCount = 0;
+        let lastResponse = null;
+        for (const checklistItem of checklistItems) {
+            let response;
+            if (itemId && checklistItems.length === 1) {
+                response = await api.updateSafetyItem({
+                    item_id: itemId,
+                    checklist_item: checklistItem
+                });
+            } else {
+                response = await api.addSafetyItem({
+                    project_id: currentProjectId,
+                    user_id: currentUserId,
+                    checklist_item: checklistItem
+                });
+            }
+            lastResponse = response;
+            if (response.code === 200) successCount++;
+        }
+        
+        if (successCount > 0) {
+            bootstrap.Modal.getInstance(document.getElementById('safetyModal')).hide();
+            loadSafetyItems();
+            const message = lastResponse?.message || `${successCount} {{ __("messages.safety_items_saved_successfully") }}`;
+            toastr.success(message);
+        } else {
+            const errorMessage = lastResponse?.message || '{{ __("messages.failed_to_save_safety_item") }}';
+            toastr.error(errorMessage);
+        }
+    } catch (error) {
+        toastr.error('{{ __("messages.error_saving_safety_item") }}');
+    } finally {
+        saveBtn.textContent = originalText;
+    }
+}
+
+// Edit Functions
+function editActivity(id, description) {
+    document.getElementById('activitiesModalTitle').textContent = '{{ __("messages.edit_activity") }}';
+    document.getElementById('activitiesSaveBtn').textContent = '{{ __("messages.update") }}';
+    document.getElementById('activityId').value = id;
+    
+    // Set the first input field value
+    const container = document.getElementById('modalActivitiesContainer');
+    container.innerHTML = `
+        <div class="activity-field mb-3">
+            <label class="form-label small fw-medium mb-1">{{ __('messages.description') }}</label>
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control form-control-sm" name="description[]" 
+                    value="${description}" placeholder="{{ __('messages.enter_activity_description') }}" required>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('addMoreActivityBtn').style.display = 'none';
+    new bootstrap.Modal(document.getElementById('activitiesModal')).show();
+}
+
+function editManpower(id, category, count) {
+    document.getElementById('manpowerModalTitle').textContent = '{{ __("messages.edit_manpower_equipment") }}';
+    document.getElementById('manpowerSaveBtn').textContent = '{{ __("messages.update") }}';
+    document.getElementById('manpowerId').value = id;
+    
+    // Set the first input field values
+    const container = document.getElementById('modalManpowerContainer');
+    container.innerHTML = `
+        <div class="manpower-field mb-3">
+            <div class="row g-2">
+                <div class="col-7">
+                    <label class="form-label small fw-medium mb-1">{{ __('messages.category') }}</label>
+                    <input type="text" class="form-control form-control-sm" name="category[]" 
+                        value="${category}" placeholder="{{ __('messages.enter_category') }}" required>
+                </div>
+                <div class="col-3">
+                    <label class="form-label small fw-medium mb-1">{{ __('messages.count') }}</label>
+                    <input type="number" class="form-control form-control-sm" name="count[]" 
+                        value="${count}" placeholder="0" min="0" required>
+                </div>
+                <div class="col-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)" style="display:none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('addMoreManpowerBtn').style.display = 'none';
+    new bootstrap.Modal(document.getElementById('manpowerModal')).show();
+}
+
+function editSafetyItem(id, item) {
+    document.getElementById('safetyModalTitle').textContent = '{{ __("messages.edit_safety_item") }}';
+    document.getElementById('safetySaveBtn').textContent = '{{ __("messages.update") }}';
+    document.getElementById('safetyId').value = id;
+    
+    // Set the first input field value
+    const container = document.getElementById('modalSafetyContainer');
+    container.innerHTML = `
+        <div class="safety-field mb-3">
+            <label class="form-label small fw-medium mb-1">{{ __('messages.checklist_item') }}</label>
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
+                    value="${item}" placeholder="{{ __('messages.enter_safety_item') }}" required>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('addMoreSafetyBtn').style.display = 'none';
+    new bootstrap.Modal(document.getElementById('safetyModal')).show();
+}
+</script>
+
     </div>
+    <script src="{{ asset('website/js/api-config.js') }}"></script>
+    <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+    <script src="{{ asset('website/js/universal-auth.js') }}"></script>
+    <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+    <script src="{{ asset('website/js/api-client.js') }}"></script>
+    
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{ asset('website/js/toastr-config.js') }}"></script>
 </body>
 </html>

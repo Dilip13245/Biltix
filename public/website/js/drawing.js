@@ -62,8 +62,16 @@ function initializeDrawing(config = {}) {
                 // Save current file first
                 saveCurrentFile();
                 
-                // Return all marked up images
-                const allImageData = currentFiles.map(fileData => fileData.imageData || canvas.toDataURL('image/png'));
+                // Return mixed data: drawings for modified files, original files for unmodified
+                const allImageData = currentFiles.map((fileData, index) => {
+                    if (fileData.imageData) {
+                        // File has drawing, return the drawing
+                        return fileData.imageData;
+                    } else {
+                        // File has no drawing, return original file
+                        return fileData.file;
+                    }
+                });
                 drawingConfig.onSave(allImageData);
             } else {
                 // Single file
@@ -181,7 +189,28 @@ function nextFile() {
 
 function saveCurrentFile() {
     if (currentFiles.length > 0) {
-        currentFiles[currentFileIndex].imageData = canvas.toDataURL();
+        // Only save if there are actual drawings on the canvas
+        const currentBackground = fileBackgrounds[currentFileIndex];
+        if (currentBackground) {
+            // Check if canvas has been modified from original background
+            const currentCanvasData = canvas.toDataURL();
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.putImageData(currentBackground, 0, 0);
+            const originalData = tempCanvas.toDataURL();
+            
+            // Only save if canvas is different from original
+            if (currentCanvasData !== originalData) {
+                currentFiles[currentFileIndex].imageData = currentCanvasData;
+            } else {
+                // No drawing, keep original file
+                currentFiles[currentFileIndex].imageData = null;
+            }
+        } else {
+            currentFiles[currentFileIndex].imageData = canvas.toDataURL();
+        }
     }
 }
 

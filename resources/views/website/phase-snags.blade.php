@@ -33,10 +33,12 @@
             <h2>{{ __('messages.snag_list') }}</h2>
             <p>{{ __('messages.view_manage_snags') }}</p>
         </div>
-        <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal">
-            <i class="fas fa-plus"></i>
-            {{ __('messages.add_new_snag') }}
-        </button>
+        @can('snags', 'create')
+            <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal">
+                <i class="fas fa-plus"></i>
+                {{ __('messages.add_new_snag') }}
+            </button>
+        @endcan
     </div>
     <section class="px-md-4">
         <div class="container-fluid ">
@@ -101,15 +103,22 @@
             setupModalUserLoading();
         });
 
+        function getProjectIdFromUrl() {
+            const pathParts = window.location.pathname.split('/');
+            const projectIndex = pathParts.indexOf('project');
+            return projectIndex !== -1 && pathParts[projectIndex + 1] ? pathParts[projectIndex + 1] : 1;
+        }
+
         async function loadSnags() {
             try {
                 showLoading();
-                const projectId = {{ request()->route('project') ?? 1 }};
-                const phaseId = {{ request()->get('phase_id') ?? 'null' }};
+                const projectId = getProjectIdFromUrl();
+                const phaseId = getCurrentPhaseId();
+                // console.log('Loading snags for project:', projectId, 'phase:', phaseId);
 
                 const requestData = {
                     project_id: projectId,
-                    phase_id: phaseId || getCurrentPhaseId()
+                    phase_id: phaseId
                 };
 
                 const response = await api.getSnags(requestData);
@@ -144,6 +153,16 @@
             const addSnagModal = document.getElementById('addSnagModal');
             if (addSnagModal) {
                 addSnagModal.addEventListener('show.bs.modal', async function() {
+                    // Hide phase dropdown since this is a phase page
+                    const phaseContainer = document.getElementById('phaseSelectContainer');
+                    const phaseSelect = document.getElementById('phaseSelect');
+                    if (phaseContainer) {
+                        phaseContainer.style.display = 'none';
+                    }
+                    if (phaseSelect) {
+                        phaseSelect.removeAttribute('required');
+                    }
+                    
                     try {
                         const response = await api.getAllUsers();
                         const assignedSelect = document.getElementById('assignedTo');
@@ -316,7 +335,7 @@
                 const formData = new FormData();
                 
                 formData.append('user_id', {{ auth()->id() ?? 1 }});
-                formData.append('project_id', {{ request()->route('project') ?? 1 }});
+                formData.append('project_id', getProjectIdFromUrl());
                 formData.append('phase_id', getCurrentPhaseId());
                 formData.append('title', document.getElementById('snagTitle').value);
                 formData.append('description', document.getElementById('description').value);
@@ -330,8 +349,12 @@
                 // Convert markup to blob and append
                 if (Array.isArray(imageData)) {
                     imageData.forEach((data, index) => {
-                        const blob = dataURLtoBlob(data);
-                        formData.append('images[]', blob, `markup_${index}.png`);
+                        if (typeof data === 'string') {
+                            const blob = dataURLtoBlob(data);
+                            formData.append('images[]', blob, `markup_${index}.png`);
+                        } else if (data instanceof File) {
+                            formData.append('images[]', data, data.name);
+                        }
                     });
                 } else {
                     const blob = dataURLtoBlob(imageData);
@@ -370,7 +393,7 @@
                 const formData = new FormData();
                 
                 formData.append('user_id', {{ auth()->id() ?? 1 }});
-                formData.append('project_id', {{ request()->route('project') ?? 1 }});
+                formData.append('project_id', getProjectIdFromUrl());
                 formData.append('phase_id', getCurrentPhaseId());
                 formData.append('title', document.getElementById('snagTitle').value);
                 formData.append('description', document.getElementById('description').value);
@@ -404,6 +427,11 @@
         }
 
         function dataURLtoBlob(dataURL) {
+            // If it's already a File object, return it as is
+            if (dataURL instanceof File) {
+                return dataURL;
+            }
+            
             const arr = dataURL.split(',');
             const mime = arr[0].match(/:(.*?);/)[1];
             const bstr = atob(arr[1]);

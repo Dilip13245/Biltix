@@ -8,10 +8,12 @@
         <h2>{{ __('messages.safety_checklist') }}</h2>
         <p>{{ __('messages.ensure_safety_compliance') }}</p>
       </div>
-      <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#addSafetyChecklistModal">
-        <i class="fas fa-plus {{ margin_end(2) }}"></i>
-        {{ __('messages.add_checklist') }}
-      </button>
+      @can('safety_checklists', 'create')
+          <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#addSafetyChecklistModal">
+            <i class="fas fa-plus {{ margin_end(2) }}"></i>
+            {{ __('messages.add_checklist') }}
+          </button>
+      @endcan
     </div>
 
     <div class="CarDs-grid">

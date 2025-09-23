@@ -8,30 +8,6 @@
         <p>{{ __('messages.manage_track_inspections') }}</p>
     </div>
     <div class="container-fluid ">
-        {{-- <div class="row  px-md-4 wow fadeInUp" data-wow-delay="0.9s">
-    <!-- Quick Stats -->
-    <div class=" col-12 col-lg-6 mb-4">
-      <div class="card h-100 B_shadow border-0 bglight">
-        <div class="card-body p-md-4">
-          <h5 class="mb-3 mb-md-4 text-muted fw-medium">{{ __('messages.quick_stats') }}</h5>
-          <div class="d-flex  gap-4 flex-wrap justify-content-between  mx-md-4">
-            <div class="text-center">
-              <div class="fs-2 fw-bold text-success">12</div>
-              <div class="small text-muted">{{ __('messages.passed') }}</div>
-            </div>
-            <div class="text-center">
-              <div class="fs-2 fw-bold text-danger">3</div>
-              <div class="small text-muted">{{ __('messages.failed') }}</div>
-            </div>
-            <div class="text-center">
-              <div class="fs-2 fw-bold text-warning">5</div>
-              <div class="small text-muted">{{ __('messages.pending') }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> --}}
         <div class="row g-4 px-md-4 wow fadeInUp" data-wow-delay="1.2s">
             <!-- Create New Inspection -->
             <div class="col-lg-6">
@@ -82,9 +58,9 @@
                                 <option>{{ __('messages.all_categories') }}</option>
                             </select>
                         </div>
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="height: 400px; overflow-y: auto;">
                             <table class="table align-middle mb-0">
-                                <thead>
+                                <thead class="sticky-top bg-white">
                                     <tr>
                                         <th class="small text-muted">{{ __('messages.title') }}</th>
                                         <th class="small text-muted">{{ __('messages.date') }}</th>
@@ -92,50 +68,10 @@
                                         <th class="small text-muted">{{ __('messages.actions') }}</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="border-0">
-                                            <div class="fw-semibold">{{ __('messages.foundation_check') }}</div>
-                                            <div class="small text-muted">{{ __('messages.structural') }}</div>
-                                        </td>
-                                        <td class="border-0">{{ __('messages.jan_15_2024') }}</td>
-                                        <td class="border-0">
-                                            <span class="badge badge1 d-inline-flex align-items-center gap-1">
-                                                <i class="fas fa-check-circle"></i> {{ __('messages.passed') }}
-                                            </span>
-                                        </td>
-                                        <td class="border-0">
-                                            <a href="#" class="text-primary  small">{{ __('messages.view') }}</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border-0">
-                                            <div class="fw-semibold">{{ __('messages.electrical_wiring') }}</div>
-                                            <div class="small text-muted">{{ __('messages.electrical') }}</div>
-                                        </td>
-                                        <td class="border-0">{{ __('messages.jan_12_2024') }}</td>
-                                        <td class="border-0">
-                                            <span class="badge badge2 text-danger d-inline-flex align-items-center gap-1">
-                                                <i class="fas fa-times-circle"></i> {{ __('messages.failed') }}
-                                            </span>
-                                        </td>
-                                        <td class="border-0">
-                                            <a href="#" class="text-primary  small">{{ __('messages.view') }}</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="border-0">
-                                            <div class="fw-semibold">{{ __('messages.plumbing_system') }}</div>
-                                            <div class="small text-muted">{{ __('messages.plumbing') }}</div>
-                                        </td>
-                                        <td class="border-0">{{ __('messages.jan_10_2024') }}</td>
-                                        <td class="border-0">
-                                            <span class="badge badge3  d-inline-flex align-items-center gap-1">
-                                                <i class="fas fa-hourglass-half"></i> {{ __('messages.pending') }}
-                                            </span>
-                                        </td>
-                                        <td class="border-0">
-                                            <a href="#" class="text-primary  small">{{ __('messages.view') }}</a>
+                                <tbody id="inspectionsTableBody">
+                                    <tr id="loadingRow">
+                                        <td colspan="4" class="text-center py-4">
+                                            <i class="fas fa-spinner fa-spin"></i> {{ __('messages.loading') }}...
                                         </td>
                                     </tr>
                                 </tbody>
@@ -147,39 +83,218 @@
         </div>
     </div>
     @include('website.modals.create-inspection-modal')
+    @include('website.modals.inspection-details-modal')
     @include('website.modals.drawing-modal')
 
     <script>
-        // Removed duplicate form handler - it's in the modal file
+        let allInspections = [];
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if API is available before loading
+            if (typeof api !== 'undefined' && api.getInspections) {
+                loadInspections();
+            } else {
+                console.warn('API not available, using fallback');
+                showError('{{ __('messages.api_not_available') }}');
+            }
+
+            // Set project_id and load phases for modal when create button is clicked
+            const createBtn = document.querySelector('[data-bs-target="#createInspectionModal"]');
+            if (createBtn) {
+                createBtn.addEventListener('click', async function() {
+                    const projectId = getCurrentProjectId();
+                    const modalProjectId = document.getElementById('modalProjectId');
+                    if (modalProjectId) {
+                        modalProjectId.value = projectId;
+                    }
+
+                    // Load phases
+                    try {
+                        const response = await api.listPhases({ project_id: projectId });
+                        const phaseSelect = document.getElementById('phaseSelect');
+                        
+                        if (response.code === 200 && phaseSelect) {
+                            phaseSelect.innerHTML = '<option value="">{{ __("messages.select_phase") }}</option>';
+                            response.data.forEach(phase => {
+                                phaseSelect.innerHTML += `<option value="${phase.id}">${phase.title || phase.name}</option>`;
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error loading phases:', error);
+                    }
+                });
+            }
 
             // Filter functionality
             const categoryFilter = document.querySelector('select.form-select');
             if (categoryFilter) {
                 categoryFilter.addEventListener('change', function() {
-                    const filterValue = this.value.toLowerCase();
-                    const inspectionRows = document.querySelectorAll('tbody tr');
-
-                    inspectionRows.forEach(row => {
-                        const categoryCell = row.querySelector('td:nth-child(1) .small');
-                        if (categoryCell) {
-                            const category = categoryCell.textContent.toLowerCase();
-                            if (filterValue === 'all categories' || category.includes(
-                                    filterValue)) {
-                                row.style.display = 'table-row';
-                            } else {
-                                row.style.display = 'none';
-                            }
-                        }
-                    });
+                    filterInspections(this.value);
                 });
             }
         });
 
-        function viewInspection(title, type, date, status) {
-            alert(
-                `Inspection Details:\n\nTitle: ${title}\nType: ${type}\nDate: ${date}\nStatus: ${status}\n\nDetailed inspection view would open here.`
-            );
+        function getCurrentProjectId() {
+            const pathParts = window.location.pathname.split('/');
+            const projectIndex = pathParts.indexOf('project');
+            return projectIndex !== -1 && pathParts[projectIndex + 1] ? pathParts[projectIndex + 1] : 1;
+        }
+
+        async function loadInspections() {
+            try {
+                const projectId = getCurrentProjectId();
+
+                const requestData = {
+                    project_id: projectId
+                };
+
+                const response = await api.getInspections(requestData);
+
+                if (response.code === 200) {
+                    allInspections = response.data.data || [];
+                    displayInspections(allInspections);
+                    updateCategoryFilter();
+                } else {
+                    showError('Failed to load inspections: ' + response.message);
+                }
+            } catch (error) {
+                console.error('Error loading inspections:', error);
+                showError('Failed to load inspections');
+            }
+        }
+
+        function displayInspections(inspections) {
+            const tbody = document.getElementById('inspectionsTableBody');
+
+            if (inspections.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">
+                            <i class="fas fa-clipboard-list"></i><br>
+                            {{ __('messages.no_inspections_found') }}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = inspections.map(inspection => {
+                const statusBadge = getStatusBadge(inspection.status);
+                const date = new Date(inspection.created_at).toLocaleDateString();
+
+                return `
+                    <tr>
+                        <td class="border-0">
+                            <div class="fw-semibold">${inspection.description || 'Inspection'}</div>
+                            <div class="small text-muted">${inspection.category}</div>
+                        </td>
+                        <td class="border-0">${date}</td>
+                        <td class="border-0">${statusBadge}</td>
+                        <td class="border-0">
+                            <a href="#" onclick="viewInspection(${inspection.id})" class="text-primary small">{{ __('messages.view') }}</a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getStatusBadge(status) {
+            const statusMap = {
+                'open': {
+                    class: 'badge3',
+                    icon: 'hourglass-half',
+                    text: '{{ __('messages.pending') }}'
+                },
+                'in_progress': {
+                    class: 'badge3',
+                    icon: 'hourglass-half',
+                    text: '{{ __('messages.in_progress') }}'
+                },
+                'completed': {
+                    class: 'badge1',
+                    icon: 'check-circle',
+                    text: '{{ __('messages.completed') }}'
+                },
+                'failed': {
+                    class: 'badge2 text-danger',
+                    icon: 'times-circle',
+                    text: '{{ __('messages.failed') }}'
+                }
+            };
+
+            const statusInfo = statusMap[status] || statusMap['open'];
+            return `<span class="badge ${statusInfo.class} d-inline-flex align-items-center gap-1">
+                <i class="fas fa-${statusInfo.icon}"></i> ${statusInfo.text}
+            </span>`;
+        }
+
+        function updateCategoryFilter() {
+            const categoryFilter = document.querySelector('select.form-select');
+            if (!categoryFilter) return;
+
+            const categories = [...new Set(allInspections.map(i => i.category))];
+
+            categoryFilter.innerHTML = `
+                <option value="all">{{ __('messages.all_categories') }}</option>
+                ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+            `;
+        }
+
+        function filterInspections(filterValue) {
+            if (filterValue === 'all') {
+                displayInspections(allInspections);
+            } else {
+                const filtered = allInspections.filter(inspection =>
+                    inspection.category.toLowerCase().includes(filterValue.toLowerCase())
+                );
+                displayInspections(filtered);
+            }
+        }
+
+        function viewInspection(inspectionId) {
+            // Open the inspection details modal
+            if (typeof openInspectionDetails === 'function') {
+                openInspectionDetails(inspectionId);
+            } else {
+                console.warn('openInspectionDetails function not found');
+                // Fallback - show basic alert
+                alert('Inspection details functionality not implemented yet');
+            }
+        }
+
+        function showError(message) {
+            const tbody = document.getElementById('inspectionsTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-danger">
+                        <i class="fas fa-exclamation-triangle"></i> ${message}
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Fix dataURLtoBlob function for drawing functionality
+        function dataURLtoBlob(dataURL) {
+            // Handle File objects
+            if (dataURL instanceof File) {
+                return dataURL;
+            }
+            
+            // Handle base64 strings
+            if (typeof dataURL === 'string' && dataURL.includes(',')) {
+                const arr = dataURL.split(',');
+                const mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new Blob([u8arr], { type: mime });
+            }
+            
+            // Return as-is if not a recognized format
+            return dataURL;
         }
     </script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>

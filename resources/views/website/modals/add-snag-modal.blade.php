@@ -49,6 +49,13 @@
               placeholder="{{ __("messages.location_example") }}">
           </div>
 
+          <div class="mb-3" id="phaseSelectContainer">
+            <label for="phaseSelect" class="form-label fw-medium">{{ __("messages.phase") }}</label>
+            <select class="form-select Input_control" id="phaseSelect" name="phase_id" required>
+              <option value="">{{ __("messages.select_phase") }}</option>
+            </select>
+          </div>
+
           <div class="mb-3">
             <label for="assignedTo" class="form-label fw-medium">{{ __("messages.assign_to") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
             <select class="form-select Input_control" id="assignedTo" name="assigned_to">

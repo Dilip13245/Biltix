@@ -189,4 +189,16 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::get('technical-engineers', [\App\Http\Controllers\Api\UserController::class, 'getTechnicalEngineers']);
         Route::get('by-role', [\App\Http\Controllers\Api\UserController::class, 'getUsersByRole']);
     });
+    
+    Route::prefix('project-progress')->group(function () {
+        Route::post('list_activities', [\App\Http\Controllers\Api\ProjectProgressController::class, 'listActivities']);
+        Route::post('add_activity', [\App\Http\Controllers\Api\ProjectProgressController::class, 'addActivity']);
+        Route::post('update_activity', [\App\Http\Controllers\Api\ProjectProgressController::class, 'updateActivity']);
+        Route::post('list_manpower_equipment', [\App\Http\Controllers\Api\ProjectProgressController::class, 'listManpowerEquipment']);
+        Route::post('add_manpower_equipment', [\App\Http\Controllers\Api\ProjectProgressController::class, 'addManpowerEquipment']);
+        Route::post('update_manpower_equipment', [\App\Http\Controllers\Api\ProjectProgressController::class, 'updateManpowerEquipment']);
+        Route::post('list_safety_items', [\App\Http\Controllers\Api\ProjectProgressController::class, 'listSafetyItems']);
+        Route::post('add_safety_item', [\App\Http\Controllers\Api\ProjectProgressController::class, 'addSafetyItem']);
+        Route::post('update_safety_item', [\App\Http\Controllers\Api\ProjectProgressController::class, 'updateSafetyItem']);
+    });
 });

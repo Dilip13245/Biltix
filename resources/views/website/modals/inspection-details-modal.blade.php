@@ -613,8 +613,15 @@
             // Convert image data to blobs and add to FormData
             if (Array.isArray(imageDataArray)) {
                 for (let i = 0; i < imageDataArray.length; i++) {
-                    const blob = dataURLToBlob(imageDataArray[i]);
-                    formData.append('images[]', blob, `inspection_image_${i + 1}.png`);
+                    const data = imageDataArray[i];
+                    if (typeof data === 'string') {
+                        // This is a drawing (base64 string)
+                        const blob = dataURLToBlob(data);
+                        formData.append('images[]', blob, `inspection_image_${i + 1}.png`);
+                    } else if (data instanceof File) {
+                        // This is an original file
+                        formData.append('images[]', data, data.name);
+                    }
                 }
             } else {
                 const blob = dataURLToBlob(imageDataArray);
@@ -647,6 +654,11 @@
 
     // Helper function to convert dataURL to blob
     function dataURLToBlob(dataURL) {
+        // If it's already a File object, return it as is
+        if (dataURL instanceof File) {
+            return dataURL;
+        }
+        
         const arr = dataURL.split(',');
         const mime = arr[0].match(/:(.*?);/)[1];
         const bstr = atob(arr[1]);

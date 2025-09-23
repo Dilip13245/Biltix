@@ -251,6 +251,54 @@ class ApiClient {
         return this.makeRequest('team/list_members', data);
     }
 
+    async addMember(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('team/add_member', data);
+        }
+        return this.makeRequest('team/add_member', data);
+    }
+
+    async listMembers(data) {
+        return this.makeRequest('team/list_members', data);
+    }
+
+    // Project Progress methods
+    async listActivities(data) {
+        return this.makeRequest('project-progress/list_activities', data);
+    }
+
+    async addActivity(data) {
+        return this.makeRequest('project-progress/add_activity', data);
+    }
+
+    async updateActivity(data) {
+        return this.makeRequest('project-progress/update_activity', data);
+    }
+
+    async listManpowerEquipment(data) {
+        return this.makeRequest('project-progress/list_manpower_equipment', data);
+    }
+
+    async addManpowerEquipment(data) {
+        return this.makeRequest('project-progress/add_manpower_equipment', data);
+    }
+
+    async updateManpowerEquipment(data) {
+        return this.makeRequest('project-progress/update_manpower_equipment', data);
+    }
+
+    async listSafetyItems(data) {
+        return this.makeRequest('project-progress/list_safety_items', data);
+    }
+
+    async addSafetyItem(data) {
+        return this.makeRequest('project-progress/add_safety_item', data);
+    }
+
+    async updateSafetyItem(data) {
+        return this.makeRequest('project-progress/update_safety_item', data);
+    }
+
     // File methods
     async getFiles(data) {
         return this.makeRequest('files/list', data);

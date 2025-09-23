@@ -44,10 +44,12 @@
       <option value="in_progress">{{ __('messages.in_progress') }}</option>
       <option value="completed">{{ __('messages.completed') }}</option>
     </select>
-    <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-      <i class="fas fa-plus"></i>
-      {{ __('messages.add_new_task') }}
-    </button>
+    @can('tasks', 'create')
+        <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+            <i class="fas fa-plus"></i>
+            {{ __('messages.add_new_task') }}
+        </button>
+    @endcan
   </div>
 </div>
 <section class="px-md-4">
@@ -137,6 +139,21 @@ function setupEventListeners() {
     const addTaskForm = document.getElementById('addTaskForm');
     if (addTaskForm) {
         addTaskForm.addEventListener('submit', handleTaskSubmit);
+    }
+    
+    // Hide phase dropdown in modal since this is a phase page
+    const addTaskModal = document.getElementById('addTaskModal');
+    if (addTaskModal) {
+        addTaskModal.addEventListener('show.bs.modal', function() {
+            const phaseContainer = document.getElementById('phaseSelectContainer');
+            const phaseSelect = document.getElementById('phaseSelect');
+            if (phaseContainer) {
+                phaseContainer.style.display = 'none';
+            }
+            if (phaseSelect) {
+                phaseSelect.removeAttribute('required');
+            }
+        });
     }
 }
 
@@ -480,8 +497,12 @@ async function saveTaskWithMarkup(imageData) {
         // Convert markup to blob and append
         if (Array.isArray(imageData)) {
             imageData.forEach((data, index) => {
-                const blob = dataURLtoBlob(data);
-                formData.append('images[]', blob, `markup_${index}.png`);
+                if (typeof data === 'string') {
+                    const blob = dataURLtoBlob(data);
+                    formData.append('images[]', blob, `markup_${index}.png`);
+                } else if (data instanceof File) {
+                    formData.append('images[]', data, data.name);
+                }
             });
         } else {
             const blob = dataURLtoBlob(imageData);
@@ -545,6 +566,11 @@ async function saveTaskWithoutMarkup() {
 }
 
 function dataURLtoBlob(dataURL) {
+    // If it's already a File object, return it as is
+    if (dataURL instanceof File) {
+        return dataURL;
+    }
+    
     const arr = dataURL.split(',');
     const mime = arr[0].match(/:(.*?);/)[1];
     const bstr = atob(arr[1]);
@@ -730,9 +756,13 @@ async function submitAdditionalImages(imageData) {
         
         if (imageData) {
             if (Array.isArray(imageData)) {
-                imageData.forEach((dataUrl, index) => {
-                    const blob = dataURLtoBlob(dataUrl);
-                    formData.append('images[]', blob, `additional_image_${index}.png`);
+                imageData.forEach((data, index) => {
+                    if (typeof data === 'string') {
+                        const blob = dataURLtoBlob(data);
+                        formData.append('images[]', blob, `additional_image_${index}.png`);
+                    } else if (data instanceof File) {
+                        formData.append('images[]', data, data.name);
+                    }
                 });
             } else {
                 const blob = dataURLtoBlob(imageData);

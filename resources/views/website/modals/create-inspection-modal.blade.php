@@ -32,8 +32,14 @@
         <form id="createInspectionForm">
           @csrf
           <input type="hidden" name="user_id" value="{{ auth()->id() }}">
-          <input type="hidden" name="project_id" value="{{ request()->route('project') ?? 1 }}">
-          <input type="hidden" name="phase_id" id="modalPhaseId" value="">
+          <input type="hidden" id="modalProjectId" name="project_id" value="1">
+          
+          <div class="mb-3" id="phaseSelectContainer">
+            <label for="phaseSelect" class="form-label fw-medium">{{ __("messages.phase") }}</label>
+            <select class="form-select Input_control" id="phaseSelect" name="phase_id" required>
+              <option value="">{{ __("messages.select_phase") }}</option>
+            </select>
+          </div>
           
           <div class="mb-3">
             <label for="category" class="form-label fw-medium">{{ __("messages.category") }}</label>
@@ -166,7 +172,11 @@ async function submitInspectionWithImages(imageDataArray) {
     formData.append('category', form.category.value);
     formData.append('description', form.description.value);
     formData.append('project_id', form.project_id.value);
-    const phaseId = document.getElementById('modalPhaseId').value;
+    // Get phase_id from dropdown or stored value for phase pages
+    let phaseId = document.getElementById('phaseSelect').value;
+    if (!phaseId && window.currentPhaseId) {
+      phaseId = window.currentPhaseId;
+    }
     if (phaseId) {
       formData.append('phase_id', phaseId);
     }
@@ -184,8 +194,15 @@ async function submitInspectionWithImages(imageDataArray) {
     // Convert image data to blobs and add to FormData
     if (Array.isArray(imageDataArray)) {
       for (let i = 0; i < imageDataArray.length; i++) {
-        const blob = dataURLToBlob(imageDataArray[i]);
-        formData.append('images[]', blob, `inspection_image_${i + 1}.png`);
+        const data = imageDataArray[i];
+        if (typeof data === 'string') {
+          // This is a drawing (base64 string)
+          const blob = dataURLToBlob(data);
+          formData.append('images[]', blob, `inspection_image_${i + 1}.png`);
+        } else if (data instanceof File) {
+          // This is an original file
+          formData.append('images[]', data, data.name);
+        }
       }
     } else {
       const blob = dataURLToBlob(imageDataArray);
@@ -216,7 +233,11 @@ async function submitInspectionWithoutImages() {
     formData.append('category', form.category.value);
     formData.append('description', form.description.value);
     formData.append('project_id', form.project_id.value);
-    const phaseId = document.getElementById('modalPhaseId').value;
+    // Get phase_id from dropdown or stored value for phase pages
+    let phaseId = document.getElementById('phaseSelect').value;
+    if (!phaseId && window.currentPhaseId) {
+      phaseId = window.currentPhaseId;
+    }
     if (phaseId) {
       formData.append('phase_id', phaseId);
     }
@@ -257,7 +278,11 @@ async function submitInspectionWithDrawing(imageData) {
     formData.append('category', form.category.value);
     formData.append('description', form.description.value);
     formData.append('project_id', form.project_id.value);
-    const phaseId = document.getElementById('modalPhaseId').value;
+    // Get phase_id from dropdown or stored value for phase pages
+    let phaseId = document.getElementById('phaseSelect').value;
+    if (!phaseId && window.currentPhaseId) {
+      phaseId = window.currentPhaseId;
+    }
     if (phaseId) {
       formData.append('phase_id', phaseId);
     }
@@ -292,6 +317,11 @@ async function submitInspectionWithDrawing(imageData) {
 
 // Helper functions
 function dataURLToBlob(dataURL) {
+  // If it's already a File object, return it as is
+  if (dataURL instanceof File) {
+    return dataURL;
+  }
+  
   const arr = dataURL.split(',');
   const mime = arr[0].match(/:(.*?);/)[1];
   const bstr = atob(arr[1]);

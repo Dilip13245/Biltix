@@ -31,11 +31,14 @@ class TeamController extends Controller
             // Add user details with role_name
             $teamMembers = collect($teamMembers)->map(function ($member) {
                 $user = User::where('id', $member->user_id)
-                    ->select('id', 'name', 'role')
+                    ->select('id', 'name', 'role', 'email', 'company_name', 'is_active')
                     ->first();
                 
                 if ($user) {
                     $user->role_name = str_replace('_', ' ', ucwords($user->role, '_'));
+                    // Get company name from user's company_name field or default
+                    $user->company = $user->company_name ?? 'BuildCorp Construction';
+                    $user->status = $user->is_active ? 'Active' : 'Inactive';
                     $member->user = $user;
                 }
                 

@@ -8,10 +8,12 @@
     <h2>{{ __('messages.project_dashboard') }}</h2>
     <p>{{ __('messages.welcome') }} to the project dashboard.</p>
   </div>
-  <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createProjectModal">
-    <i class="fas fa-plus"></i>
-    {{ __('messages.new_project') }}
-  </button>
+  @can('projects', 'create')
+      <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createProjectModal">
+        <i class="fas fa-plus"></i>
+        {{ __('messages.new_project') }}
+      </button>
+  @endcan
 </div>
 <div class="container-fluid">
     <!-- Dashboard content here -->
