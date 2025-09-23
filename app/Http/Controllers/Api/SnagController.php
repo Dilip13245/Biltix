@@ -138,7 +138,8 @@ class SnagController extends Controller
                     'reported_by' => $snag->reporter ? $snag->reporter->name : 'Unknown',
                     'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name : null,
                     'date' => $snag->created_at->format('jS M, Y'),
-                    'image_urls' => $imageUrls
+                    'image_urls' => $imageUrls,
+                    'comment' => $snag->comment,
                 ];
             });
 
