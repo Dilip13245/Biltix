@@ -20,7 +20,7 @@ class GeneralController extends Controller
                 ['id' => 'renovation', 'name' => 'Renovation'],
             ];
 
-            return $this->toJsonEnc($types, 'Project types retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($types, trans('api.general.project_types_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -37,7 +37,7 @@ class GeneralController extends Controller
                 ['id' => 'stakeholder', 'name' => 'Stakeholder'],
             ];
 
-            return $this->toJsonEnc($roles, 'User roles retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($roles, trans('api.general.user_roles_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -59,7 +59,7 @@ class GeneralController extends Controller
                 'content' => $content[$type] ?? 'Content not found'
             ];
 
-            return $this->toJsonEnc($data, 'Static content retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($data, trans('api.general.static_content_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -97,7 +97,7 @@ class GeneralController extends Controller
             return $this->toJsonEnc([
                 'id' => $helpSupport->id,
                 'status' => $helpSupport->status
-            ], 'Help support request submitted successfully', Config::get('constant.SUCCESS'));
+            ], trans('api.general.help_support_submitted'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

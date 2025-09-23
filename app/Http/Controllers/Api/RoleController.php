@@ -57,7 +57,7 @@ class RoleController extends Controller
                 ];
             }
 
-            return $this->toJsonEnc($formattedRoles, 'Role permissions retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($formattedRoles, trans('api.roles.permissions_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -70,7 +70,7 @@ class RoleController extends Controller
             $role_name = $request->input('role');
 
             if (!$role_name) {
-                return $this->toJsonEnc([], 'Role is required', Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.roles.role_required'), Config::get('constant.ERROR'));
             }
 
             $role = Role::where('name', $role_name)
@@ -81,7 +81,7 @@ class RoleController extends Controller
                 ->first();
 
             if (!$role) {
-                return $this->toJsonEnc([], 'Role not found', Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.roles.role_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
             $permissions = [];
@@ -118,7 +118,7 @@ class RoleController extends Controller
                 'permissions' => $permissions
             ];
 
-            return $this->toJsonEnc($userPermissions, 'User permissions retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($userPermissions, trans('api.roles.user_permissions_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

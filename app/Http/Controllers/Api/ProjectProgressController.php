@@ -19,7 +19,7 @@ class ProjectProgressController extends Controller
             $project_id = $request->input('project_id');
             
             if (!$project_id) {
-                return $this->toJsonEnc([], 'Project ID is required', Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.project_progress.project_id_required'), Config::get('constant.ERROR'));
             }
 
             $activities = ProjectActivity::where('project_id', $project_id)
@@ -28,7 +28,7 @@ class ProjectProgressController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            return $this->toJsonEnc($activities, 'Activities retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($activities, trans('api.project_progress.activities_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -53,7 +53,7 @@ class ProjectProgressController extends Controller
                 'created_by' => $request->user_id,
             ]);
 
-            return $this->toJsonEnc($activity, 'Activity added successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($activity, trans('api.project_progress.activity_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -77,12 +77,12 @@ class ProjectProgressController extends Controller
                 ->first();
 
             if (!$activity) {
-                return $this->toJsonEnc([], 'Activity not found', Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.project_progress.activity_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
             $activity->update(['description' => $request->description]);
 
-            return $this->toJsonEnc($activity, 'Activity updated successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($activity, trans('api.project_progress.activity_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -95,7 +95,7 @@ class ProjectProgressController extends Controller
             $project_id = $request->input('project_id');
             
             if (!$project_id) {
-                return $this->toJsonEnc([], 'Project ID is required', Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.project_progress.project_id_required'), Config::get('constant.ERROR'));
             }
 
             $items = ProjectManpowerEquipment::where('project_id', $project_id)
@@ -104,7 +104,7 @@ class ProjectProgressController extends Controller
                 ->orderBy('category')
                 ->get();
 
-            return $this->toJsonEnc($items, 'Manpower & Equipment retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($items, trans('api.project_progress.manpower_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -131,7 +131,7 @@ class ProjectProgressController extends Controller
                 'created_by' => $request->user_id,
             ]);
 
-            return $this->toJsonEnc($item, 'Manpower/Equipment added successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($item, trans('api.project_progress.manpower_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -156,7 +156,7 @@ class ProjectProgressController extends Controller
                 ->first();
 
             if (!$item) {
-                return $this->toJsonEnc([], 'Item not found', Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.project_progress.item_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
             $item->update([
@@ -164,7 +164,7 @@ class ProjectProgressController extends Controller
                 'count' => $request->count,
             ]);
 
-            return $this->toJsonEnc($item, 'Manpower/Equipment updated successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($item, trans('api.project_progress.manpower_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -177,7 +177,7 @@ class ProjectProgressController extends Controller
             $project_id = $request->input('project_id');
             
             if (!$project_id) {
-                return $this->toJsonEnc([], 'Project ID is required', Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.project_progress.project_id_required'), Config::get('constant.ERROR'));
             }
 
             $items = ProjectSafetyItem::where('project_id', $project_id)
@@ -186,7 +186,7 @@ class ProjectProgressController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            return $this->toJsonEnc($items, 'Safety items retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($items, trans('api.project_progress.safety_items_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -211,7 +211,7 @@ class ProjectProgressController extends Controller
                 'created_by' => $request->user_id,
             ]);
 
-            return $this->toJsonEnc($item, 'Safety item added successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($item, trans('api.project_progress.safety_item_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -235,12 +235,12 @@ class ProjectProgressController extends Controller
                 ->first();
 
             if (!$item) {
-                return $this->toJsonEnc([], 'Safety item not found', Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.project_progress.safety_item_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
             $item->update(['checklist_item' => $request->checklist_item]);
 
-            return $this->toJsonEnc($item, 'Safety item updated successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($item, trans('api.project_progress.safety_item_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

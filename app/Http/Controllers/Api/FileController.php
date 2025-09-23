@@ -75,8 +75,7 @@ class FileController extends Controller
                 $query->where('folder_id', $request->folder_id);
             }
 
-            $files = $query->paginate($limit, ['*'], 'page', $page);
-            
+            $files = $query->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
             // Add full URLs to file paths
             $files->getCollection()->transform(function ($file) {
                 $file->file_url = asset('storage/' . $file->file_path);

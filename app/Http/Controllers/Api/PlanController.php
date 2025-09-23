@@ -79,7 +79,7 @@ class PlanController extends Controller
                 $query->where('plan_type', $plan_type);
             }
 
-            $plans = $query->paginate($limit, ['*'], 'page', $page);
+            $plans = $query->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
             
             // Add full URLs to file paths
             $plans->getCollection()->transform(function ($plan) {

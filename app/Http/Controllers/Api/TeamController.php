@@ -26,7 +26,7 @@ class TeamController extends Controller
                 $query->where('project_id', $project_id);
             }
 
-            $teamMembers = $query->paginate($limit, ['*'], 'page', $page)->items();
+            $teamMembers = $query->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page)->items();
 
             // Add user details with role_name
             $teamMembers = collect($teamMembers)->map(function ($member) {
