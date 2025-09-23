@@ -96,6 +96,7 @@ return [
         'phase_deleted' => 'تم حذف المرحلة بنجاح',
         'phase_not_found' => 'المرحلة غير موجودة',
         'timeline_retrieved' => 'تم استرداد الجدول الزمني بنجاح',
+        'phase_progress_updated' => 'تم تحديث تقدم المرحلة بنجاح',
     ],
     'inspections' => [
         'created_success' => 'تم إنشاء التفتيش بنجاح',

@@ -12,10 +12,11 @@ class ProjectPhase extends Model
     protected $table = 'project_phases';
 
     protected $fillable = [
-        'project_id', 'title', 'created_by', 'is_active', 'is_deleted'
+        'project_id', 'title', 'progress_percentage', 'created_by', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
+        'progress_percentage' => 'decimal:2',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];

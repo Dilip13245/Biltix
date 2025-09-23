@@ -498,4 +498,35 @@ class ProjectController extends Controller
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
     }
+
+    public function updatePhaseProgress(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'phase_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'progress_percentage' => 'required|numeric|min:0|max:100',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $phase = ProjectPhase::where('id', $request->phase_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$phase) {
+                return $this->toJsonEnc([], trans('api.projects.phase_not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            $phase->progress_percentage = $request->progress_percentage;
+            $phase->save();
+
+            return $this->toJsonEnc($phase, trans('api.projects.phase_progress_updated'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
 }

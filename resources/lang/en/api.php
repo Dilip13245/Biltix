@@ -97,6 +97,7 @@ return [
         'phase_deleted' => 'Phase deleted successfully',
         'phase_not_found' => 'Phase not found',
         'timeline_retrieved' => 'Timeline retrieved successfully',
+        'phase_progress_updated' => 'Phase progress updated successfully',
     ],
     'inspections' => [
         'created_success' => 'Inspection created successfully',

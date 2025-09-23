@@ -80,6 +80,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('update_phase', [ProjectController::class, 'updatePhase']);
         Route::post('delete_phase', [ProjectController::class, 'deletePhase']);
         Route::post('timeline', [ProjectController::class, 'timeline']);
+        Route::post('update_phase_progress', [ProjectController::class, 'updatePhaseProgress']);
     });
 
     Route::prefix('tasks')->group(function () {
