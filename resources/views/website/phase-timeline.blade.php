@@ -248,60 +248,13 @@
                 <div class="col-12">
                     <div class="card B_shadow">
                         <div class="card-body p-md-4">
-                            <h5 class="fw-semibold  mb-3 mb-md-4 black_color">{{ __("messages.project_overview") }}</h5>
-                            <div class="mb-2 mb-md-3">
-                                <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.foundation") }}</h6>
-                                    <h6 class="text-muted fw-medium">100%</h6>
-                                </div>
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" role="progressbar"
-                                        style="width: 100%; background: linear-gradient(90deg, #4477C4 0%, #f59e42 100%);"
-                                        aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-2 mb-md-3">
-                                <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.structure") }}</h6>
-                                    <h6 class="text-muted fw-medium">85%</h6>
-                                </div>
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" role="progressbar"
-                                        style="width: 85%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%); "
-                                        aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-2 mb-md-3">
-                                <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.roofing") }}</h6>
-                                    <h6 class="text-muted fw-medium">60%</h6>
-                                </div>
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" role="progressbar"
-                                        style="width: 60%; background: linear-gradient(90deg, #4477C4 0%, #f59e42 100%);"
-                                        aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-2 mb-md-3">
-                                <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.interior") }}</h6>
-                                    <h6 class="text-muted fw-medium">25%</h6>
-                                </div>
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" role="progressbar"
-                                        style="width: 25%; background: linear-gradient(90deg, #4477C4 0%, #f59e42 100%);"
-                                        aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-2 mb-md-3">
-                                <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
-                                    <h6 class="text-muted fw-medium">{{ __("messages.finishing") }}</h6>
-                                    <h6 class="text-muted fw-medium">5%</h6>
-                                </div>
-                                <div class="progress" style="height:8px;">
-                                    <div class="progress-bar" role="progressbar"
-                                        style="width: 5%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
-                                        aria-valuenow="5" aria-valuemin="0" aria-valuemax="100"></div>
+                            <h5 class="fw-semibold black_color mb-3 mb-md-4">{{ __("messages.project_overview") }}</h5>
+                            <div id="phaseProgressContainer">
+                                <!-- Dynamic phase progress will be loaded here -->
+                                <div class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">{{ __("messages.loading") }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -404,6 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadActivities();
   loadManpowerEquipment();
   loadSafetyItems();
+  loadPhaseProgress();
 });
 
 // Activities Functions
@@ -546,6 +500,113 @@ function showError(containerId, message) {
       <p>${message}</p>
     </div>
   `;
+}
+
+// Phase Progress Functions
+async function loadPhaseProgress() {
+  try {
+    const response = await api.makeRequest('projects/list_phases', {
+      project_id: currentProjectId,
+      user_id: currentUserId
+    });
+    
+    if (response.code === 200) {
+      renderPhaseProgress(response.data || []);
+    } else {
+      showError('phaseProgressContainer', '{{ __("messages.failed_to_load_phases") }}');
+    }
+  } catch (error) {
+    showError('phaseProgressContainer', '{{ __("messages.error_loading_phases") }}');
+  }
+}
+
+function renderPhaseProgress(phases) {
+  const container = document.getElementById('phaseProgressContainer');
+  
+  if (phases.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-3 text-muted">
+        <i class="fas fa-layer-group fa-2x mb-2"></i>
+        <p>{{ __("messages.no_phases_found") }}</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = phases.map(phase => {
+    const progress = Math.round(phase.progress_percentage || 0);
+    return `
+      <div class="mb-3 phase-progress-item" data-phase-id="${phase.id}">
+        <div class="mb-2 d-flex justify-content-between align-items-center gap-2">
+          <h6 class="text-muted fw-medium mb-0">${phase.title}</h6>
+          <span class="progress-value text-primary fw-semibold">${progress}%</span>
+        </div>
+        <div class="position-relative">
+          <div class="progress" style="height:12px; border-radius: 6px;">
+            <div class="progress-bar" role="progressbar" 
+              style="width: ${progress}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%); border-radius: 6px;" 
+              aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <input type="range" class="form-range progress-slider position-absolute" 
+            min="0" max="100" value="${progress}" 
+            data-phase-id="${phase.id}" 
+            style="top: 0; left: 0; width: 100%; height: 12px; opacity: 0; cursor: pointer;" 
+            oninput="updateProgressLive(this)" 
+            onchange="saveProgress(this)">
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateProgressLive(slider) {
+  const phaseItem = slider.closest('.phase-progress-item');
+  const progressBar = phaseItem.querySelector('.progress-bar');
+  const progressValue = phaseItem.querySelector('.progress-value');
+  const value = Math.round(slider.value);
+  
+  progressBar.style.width = value + '%';
+  progressBar.setAttribute('aria-valuenow', value);
+  progressValue.textContent = value + '%';
+}
+
+async function saveProgress(slider) {
+  const phaseId = slider.getAttribute('data-phase-id');
+  const progress = Math.round(slider.value);
+  const phaseItem = slider.closest('.phase-progress-item');
+  const progressValue = phaseItem.querySelector('.progress-value');
+  
+  // Show saving indicator
+  const originalText = progressValue.textContent;
+  progressValue.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  
+  try {
+    const response = await api.makeRequest('projects/update_phase_progress', {
+      phase_id: phaseId,
+      user_id: currentUserId,
+      progress_percentage: progress
+    });
+    
+    if (response.code === 200) {
+      progressValue.textContent = progress + '%';
+      // Show brief success indicator
+      progressValue.innerHTML = `<i class="fas fa-check text-success"></i> ${progress}%`;
+      setTimeout(() => {
+        progressValue.textContent = progress + '%';
+      }, 1000);
+      
+      // Reload phases in project-progress page if available
+      if (window.loadPhases) {
+        setTimeout(() => window.loadPhases(), 500);
+      }
+    } else {
+      progressValue.textContent = originalText;
+      toastr.error(response.message || '{{ __("messages.failed_to_update_progress") }}');
+    }
+  } catch (error) {
+    progressValue.textContent = originalText;
+    toastr.error('{{ __("messages.error_updating_progress") }}');
+  }
 }
 </script>
 

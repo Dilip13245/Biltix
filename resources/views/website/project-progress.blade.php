@@ -490,7 +490,7 @@
             }
             
             container.innerHTML = phases.map((phase, index) => {
-                const progress = Math.floor(Math.random() * 101); // Random progress
+                const progress = Math.round(phase.progress_percentage || 0); // Use actual progress from database
                 const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) : 0;
                 const badgeClass = progress === 100 ? 'badge1' : progress > 0 ? 'badge4' : 'badge2';
                 const badgeText = progress === 100 ? 'Completed' : progress > 0 ? 'In Progress' : 'Pending';
