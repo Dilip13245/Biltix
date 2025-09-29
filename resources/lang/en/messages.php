@@ -999,6 +999,10 @@ return [
     'manpower_items_saved_successfully' => 'manpower items saved successfully',
     'safety_items_saved_successfully' => 'safety items saved successfully',
     'count' => 'Count',
+    
+    // Permission messages
+    'permission_denied_for_module' => 'You do not have permission to access :module. Please contact your administrator.',
+    'contact_admin_for_access' => 'Please contact your administrator to request access.',
 ];
 
 

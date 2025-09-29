@@ -197,6 +197,7 @@
   
   @include('website.layout.auth-check')
   @include('website.layout.user-info')
+  @include('website.includes.permission-error-handler')
   
   @stack('scripts')
 

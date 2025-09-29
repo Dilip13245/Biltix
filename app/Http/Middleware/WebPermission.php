@@ -29,7 +29,20 @@ class WebPermission
                 ], 403);
             }
             
-            return redirect()->route('dashboard')->with('error', 'Access denied. You do not have permission to perform this action.');
+            // Get module display name from language file
+            $moduleName = __('messages.' . $module, [], null, app()->getLocale());
+            
+            // If translation doesn't exist, use capitalized module name
+            if ($moduleName === 'messages.' . $module) {
+                $moduleName = ucfirst(str_replace('_', ' ', $module));
+            }
+            
+            $errorMessage = __('messages.permission_denied_for_module', ['module' => $moduleName]);
+            
+            return redirect()->back()
+                ->with('error', $errorMessage)
+                ->with('permission_denied', true)
+                ->with('denied_module', $moduleName);
         }
 
         return $next($request);

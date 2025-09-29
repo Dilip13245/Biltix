@@ -561,5 +561,7 @@
             });
         }
     </script>
+    
+    @include('website.includes.permission-error-handler')
 </body>
 </html>

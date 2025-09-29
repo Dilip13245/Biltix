@@ -982,6 +982,10 @@ return [
     'manpower_items_saved_successfully' => 'تم حفظ عناصر القوى العاملة بنجاح',
     'safety_items_saved_successfully' => 'تم حفظ عناصر السلامة بنجاح',
     'count' => 'العدد',
+    
+    // Permission messages
+    'permission_denied_for_module' => 'ليس لديك صلاحية للوصول إلى :module. يرجى التواصل مع المدير.',
+    'contact_admin_for_access' => 'يرجى التواصل مع المدير لطلب الوصول.',
 
 ];
 

@@ -600,10 +600,12 @@
                             data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
                         <button type="button" class="btn btn-outline-primary d-none" id="prevBtn"
                             onclick="changeStep(-1)">
-                            <i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }} {{ is_rtl() ? 'ms-2' : 'me-2' }}"></i>{{ __('messages.previous') }}
+                            <i
+                                class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }} {{ is_rtl() ? 'ms-2' : 'me-2' }}"></i>{{ __('messages.previous') }}
                         </button>
                         <button type="button" class="btn orange_btn" id="nextBtn" onclick="changeStep(1)">
-                            {{ __('messages.next') }}<i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-right' }} {{ is_rtl() ? 'me-2' : 'ms-2' }}"></i>
+                            {{ __('messages.next') }}<i
+                                class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-right' }} {{ is_rtl() ? 'me-2' : 'ms-2' }}"></i>
                         </button>
                         <button type="submit" form="createProjectForm" class="btn orange_btn d-none" id="submitBtn">
                             <i class="fas fa-plus me-2"></i>{{ __('messages.create') }}
@@ -778,18 +780,19 @@
         // Load projects from API with pagination
         async function loadProjects(filter = 'all', reset = true) {
             if (isLoading) return;
-            
+
             try {
                 isLoading = true;
-                
+
                 if (reset) {
                     currentPage = 1;
                     allProjects = [];
                     hasMoreProjects = true;
                     currentFilter = filter;
-                    document.getElementById('projectsContainer').innerHTML = '<div class="col-12 text-center py-4"><div class="spinner-border" role="status"></div><div class="mt-2">Loading projects...</div></div>';
+                    document.getElementById('projectsContainer').innerHTML =
+                        '<div class="col-12 text-center py-4"><div class="spinner-border" role="status"></div><div class="mt-2">Loading projects...</div></div>';
                 }
-                
+
                 const type = filter === 'all' ? '' : (filter === 'active' ? 'ongoing' : 'completed');
                 const response = await api.getProjects({
                     type: type,
@@ -798,8 +801,9 @@
                 });
 
                 if (response.code === 200 && response.data) {
-                    const newProjects = Array.isArray(response.data.data) ? response.data.data : (Array.isArray(response.data) ? response.data : []);
-                    
+                    const newProjects = Array.isArray(response.data.data) ? response.data.data : (Array.isArray(response
+                        .data) ? response.data : []);
+
                     if (newProjects.length === 0) {
                         hasMoreProjects = false;
                         if (reset && allProjects.length === 0) {
@@ -807,15 +811,24 @@
                         }
                         return;
                     }
-                    
+
                     allProjects = reset ? newProjects : [...allProjects, ...newProjects];
                     displayProjects(allProjects, reset);
-                    
+
                     if (newProjects.length < 10) {
                         hasMoreProjects = false;
                     }
-                    
+
                     currentPage++;
+                } else if (response.code === 403) {
+                    // Permission denied
+                    if (reset) {
+                        displayPermissionDenied();
+                        showToast(
+                            '{{ __('messages.permission_denied_for_module', ['module' => __('messages.projects')]) }}',
+                            'error');
+                    }
+                    hasMoreProjects = false;
                 } else {
                     if (reset) {
                         displayNoProjects();
@@ -835,7 +848,7 @@
 
         function displayProjects(projects, reset = true) {
             const container = document.getElementById('projectsContainer');
-            
+
             if (reset) {
                 container.innerHTML = '';
             }
@@ -848,21 +861,21 @@
             }
 
             const newProjects = reset ? projects : projects.slice(-10);
-            
+
             newProjects.forEach((project, index) => {
                 if (!reset && container.querySelector(`[data-project-id="${project.id}"]`)) {
                     return;
                 }
-                
+
                 const statusClass = getStatusClass(project.status);
                 const statusText = getStatusText(project.status);
                 const progressPercent = getRandomProgress(project.status);
-                
+
                 const projectCard = document.createElement('div');
                 projectCard.className = 'col-12 col-md-6 col-lg-4 wow fadeInUp';
                 projectCard.setAttribute('data-project-id', project.id);
                 projectCard.setAttribute('data-wow-delay', `${index * 0.1}s`);
-                
+
                 projectCard.innerHTML = `
                     <a href="/website/project/${project.id}/plans">
                         <div class="card project-card h-100">
@@ -888,7 +901,7 @@
                         </div>
                     </a>
                 `;
-                
+
                 container.appendChild(projectCard);
             });
         }
@@ -897,6 +910,12 @@
             const container = document.getElementById('projectsContainer');
             container.innerHTML =
                 '<div class="col-12 text-center py-5"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_projects_found') }}</h5></div>';
+        }
+
+        function displayPermissionDenied() {
+            const container = document.getElementById('projectsContainer');
+            container.innerHTML =
+                '<div class="col-12 text-center py-5"><i class="fas fa-lock fa-3x text-warning mb-3"></i><h5 class="text-muted">{{ __('messages.permission_denied_for_module', ['module' => __('messages.projects')]) }}</h5><p class="text-muted">{{ __('messages.contact_admin_for_access') }}</p></div>';
         }
 
         function getStatusClass(status) {
@@ -953,7 +972,7 @@
             loadDashboardStats();
             loadNotifications();
             loadProjects('all', true);
-            
+
             // Setup date picker listeners for vanilla calendar
             setTimeout(() => {
                 const startDateInput = document.getElementById('project_start_date');
@@ -965,16 +984,17 @@
                             const year = parseInt(dateParts[0]);
                             const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed
                             const day = parseInt(dateParts[2]);
-                            
+
                             const startDate = new Date(year, month, day);
                             const nextDay = new Date(year, month, day + 1);
-                            
+
                             // Update due date minimum and starting month
                             const dueDateInput = document.getElementById('project_due_date');
                             if (dueDateInput) {
                                 dueDateInput.value = '';
                                 window.dueDateMinDate = nextDay;
-                                window.dueDateStartMonth = nextDay; // Set calendar to open at this month
+                                window.dueDateStartMonth =
+                                nextDay; // Set calendar to open at this month
                             }
                         }
                     });
@@ -987,7 +1007,7 @@
                     loadProjects(this.value, true);
                 });
             }
-            
+
             // Infinite scroll implementation
             let scrollTimeout;
             window.addEventListener('scroll', function() {
@@ -996,7 +1016,7 @@
                     if (hasMoreProjects && !isLoading) {
                         const scrollPosition = window.innerHeight + window.scrollY;
                         const documentHeight = document.documentElement.offsetHeight;
-                        
+
                         if (scrollPosition >= documentHeight - 200) {
                             loadProjects(currentFilter, false);
                         }
@@ -1424,6 +1444,7 @@
         }
     </script>
 
+    @include('website.includes.permission-error-handler')
 
 </body>
 
