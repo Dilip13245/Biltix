@@ -1011,34 +1011,26 @@ async function saveActivity() {
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
     
     try {
-        let successCount = 0;
-        let lastResponse = null;
-        for (const description of descriptions) {
-            let response;
-            if (activityId && descriptions.length === 1) {
-                response = await api.updateActivity({
-                    activity_id: activityId,
-                    description: description
-                });
-            } else {
-                response = await api.addActivity({
-                    project_id: currentProjectId,
-                    user_id: currentUserId,
-                    description: description
-                });
-            }
-            lastResponse = response;
-            if (response.code === 200) successCount++;
+        let response;
+        if (activityId && descriptions.length === 1) {
+            response = await api.updateActivity({
+                activity_id: activityId,
+                description: descriptions[0]
+            });
+        } else {
+            response = await api.addActivity({
+                project_id: currentProjectId,
+                user_id: currentUserId,
+                descriptions: descriptions
+            });
         }
         
-        if (successCount > 0) {
+        if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('activitiesModal')).hide();
             loadActivities();
-            const message = lastResponse?.message || `${successCount} {{ __("messages.activities_saved_successfully") }}`;
-            toastr.success(message);
+            toastr.success(response.message || '{{ __("messages.activities_saved_successfully") }}');
         } else {
-            const errorMessage = lastResponse?.message || '{{ __("messages.failed_to_save_activity") }}';
-            toastr.error(errorMessage);
+            toastr.error(response.message || '{{ __("messages.failed_to_save_activity") }}');
         }
     } catch (error) {
         toastr.error('{{ __("messages.error_saving_activity") }}');
@@ -1070,36 +1062,27 @@ async function saveManpower() {
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
     
     try {
-        let successCount = 0;
-        let lastResponse = null;
-        for (const item of validItems) {
-            let response;
-            if (itemId && validItems.length === 1) {
-                response = await api.updateManpowerEquipment({
-                    item_id: itemId,
-                    category: item.category,
-                    count: item.count
-                });
-            } else {
-                response = await api.addManpowerEquipment({
-                    project_id: currentProjectId,
-                    user_id: currentUserId,
-                    category: item.category,
-                    count: item.count
-                });
-            }
-            lastResponse = response;
-            if (response.code === 200) successCount++;
+        let response;
+        if (itemId && validItems.length === 1) {
+            response = await api.updateManpowerEquipment({
+                item_id: itemId,
+                category: validItems[0].category,
+                count: validItems[0].count
+            });
+        } else {
+            response = await api.addManpowerEquipment({
+                project_id: currentProjectId,
+                user_id: currentUserId,
+                items: validItems
+            });
         }
         
-        if (successCount > 0) {
+        if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('manpowerModal')).hide();
             loadManpowerEquipment();
-            const message = lastResponse?.message || `${successCount} {{ __("messages.manpower_items_saved_successfully") }}`;
-            toastr.success(message);
+            toastr.success(response.message || '{{ __("messages.manpower_items_saved_successfully") }}');
         } else {
-            const errorMessage = lastResponse?.message || '{{ __("messages.failed_to_save_manpower") }}';
-            toastr.error(errorMessage);
+            toastr.error(response.message || '{{ __("messages.failed_to_save_manpower") }}');
         }
     } catch (error) {
         toastr.error('{{ __("messages.error_saving_manpower") }}');
@@ -1125,34 +1108,26 @@ async function saveSafetyItem() {
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
     
     try {
-        let successCount = 0;
-        let lastResponse = null;
-        for (const checklistItem of checklistItems) {
-            let response;
-            if (itemId && checklistItems.length === 1) {
-                response = await api.updateSafetyItem({
-                    item_id: itemId,
-                    checklist_item: checklistItem
-                });
-            } else {
-                response = await api.addSafetyItem({
-                    project_id: currentProjectId,
-                    user_id: currentUserId,
-                    checklist_item: checklistItem
-                });
-            }
-            lastResponse = response;
-            if (response.code === 200) successCount++;
+        let response;
+        if (itemId && checklistItems.length === 1) {
+            response = await api.updateSafetyItem({
+                item_id: itemId,
+                checklist_item: checklistItems[0]
+            });
+        } else {
+            response = await api.addSafetyItem({
+                project_id: currentProjectId,
+                user_id: currentUserId,
+                checklist_items: checklistItems
+            });
         }
         
-        if (successCount > 0) {
+        if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('safetyModal')).hide();
             loadSafetyItems();
-            const message = lastResponse?.message || `${successCount} {{ __("messages.safety_items_saved_successfully") }}`;
-            toastr.success(message);
+            toastr.success(response.message || '{{ __("messages.safety_items_saved_successfully") }}');
         } else {
-            const errorMessage = lastResponse?.message || '{{ __("messages.failed_to_save_safety_item") }}';
-            toastr.error(errorMessage);
+            toastr.error(response.message || '{{ __("messages.failed_to_save_safety_item") }}');
         }
     } catch (error) {
         toastr.error('{{ __("messages.error_saving_safety_item") }}');

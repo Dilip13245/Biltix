@@ -40,20 +40,24 @@ class ProjectProgressController extends Controller
             $validator = Validator::make($request->all(), [
                 'project_id' => 'required|integer',
                 'user_id' => 'required|integer',
-                'description' => 'required|string|max:255',
+                'descriptions' => 'required|array|min:1',
+                'descriptions.*' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $activity = ProjectActivity::create([
-                'project_id' => $request->project_id,
-                'description' => $request->description,
-                'created_by' => $request->user_id,
-            ]);
+            $activities = [];
+            foreach ($request->descriptions as $description) {
+                $activities[] = ProjectActivity::create([
+                    'project_id' => $request->project_id,
+                    'description' => $description,
+                    'created_by' => $request->user_id,
+                ]);
+            }
 
-            return $this->toJsonEnc($activity, trans('api.project_progress.activity_added'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($activities, trans('api.project_progress.activities_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -116,22 +120,26 @@ class ProjectProgressController extends Controller
             $validator = Validator::make($request->all(), [
                 'project_id' => 'required|integer',
                 'user_id' => 'required|integer',
-                'category' => 'required|string|max:100',
-                'count' => 'required|integer|min:0',
+                'items' => 'required|array|min:1',
+                'items.*.category' => 'required|string|max:100',
+                'items.*.count' => 'required|integer|min:0',
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $item = ProjectManpowerEquipment::create([
-                'project_id' => $request->project_id,
-                'category' => $request->category,
-                'count' => $request->count,
-                'created_by' => $request->user_id,
-            ]);
+            $items = [];
+            foreach ($request->items as $itemData) {
+                $items[] = ProjectManpowerEquipment::create([
+                    'project_id' => $request->project_id,
+                    'category' => $itemData['category'],
+                    'count' => $itemData['count'],
+                    'created_by' => $request->user_id,
+                ]);
+            }
 
-            return $this->toJsonEnc($item, trans('api.project_progress.manpower_added'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($items, trans('api.project_progress.manpower_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -198,20 +206,24 @@ class ProjectProgressController extends Controller
             $validator = Validator::make($request->all(), [
                 'project_id' => 'required|integer',
                 'user_id' => 'required|integer',
-                'checklist_item' => 'required|string|max:255',
+                'checklist_items' => 'required|array|min:1',
+                'checklist_items.*' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $item = ProjectSafetyItem::create([
-                'project_id' => $request->project_id,
-                'checklist_item' => $request->checklist_item,
-                'created_by' => $request->user_id,
-            ]);
+            $items = [];
+            foreach ($request->checklist_items as $checklistItem) {
+                $items[] = ProjectSafetyItem::create([
+                    'project_id' => $request->project_id,
+                    'checklist_item' => $checklistItem,
+                    'created_by' => $request->user_id,
+                ]);
+            }
 
-            return $this->toJsonEnc($item, trans('api.project_progress.safety_item_added'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($items, trans('api.project_progress.safety_items_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -245,4 +257,6 @@ class ProjectProgressController extends Controller
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
     }
+
+
 }

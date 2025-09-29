@@ -321,8 +321,8 @@ function updateRemoveButtons(containerId) {
 async function saveActivity() {
     const form = document.getElementById('activitiesForm');
     const activityId = document.getElementById('activityId').value;
-    const descriptions = Array.from(form.querySelectorAll('textarea[name="description[]"]'))
-        .map(textarea => textarea.value.trim())
+    const descriptions = Array.from(form.querySelectorAll('input[name="description[]"]'))
+        .map(input => input.value.trim())
         .filter(desc => desc);
     
     if (descriptions.length === 0) {
@@ -335,30 +335,26 @@ async function saveActivity() {
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
     
     try {
-        let successCount = 0;
-        for (const description of descriptions) {
-            let response;
-            if (activityId && descriptions.length === 1) {
-                response = await api.updateActivity({
-                    activity_id: activityId,
-                    description: description
-                });
-            } else {
-                response = await api.addActivity({
-                    project_id: currentProjectId,
-                    user_id: currentUserId,
-                    description: description
-                });
-            }
-            if (response.code === 200) successCount++;
+        let response;
+        if (activityId && descriptions.length === 1) {
+            response = await api.updateActivity({
+                activity_id: activityId,
+                description: descriptions[0]
+            });
+        } else {
+            response = await api.addActivity({
+                project_id: currentProjectId,
+                user_id: currentUserId,
+                descriptions: descriptions
+            });
         }
         
-        if (successCount > 0) {
+        if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('activitiesModal')).hide();
             loadActivities();
-            alert(`${successCount} {{ __("messages.activities_saved_successfully") }}`);
+            alert(response.message || '{{ __("messages.activities_saved_successfully") }}');
         } else {
-            alert('{{ __("messages.failed_to_save_activity") }}');
+            alert(response.message || '{{ __("messages.failed_to_save_activity") }}');
         }
     } catch (error) {
         alert('{{ __("messages.error_saving_activity") }}');
@@ -390,32 +386,27 @@ async function saveManpower() {
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
     
     try {
-        let successCount = 0;
-        for (const item of validItems) {
-            let response;
-            if (itemId && validItems.length === 1) {
-                response = await api.updateManpowerEquipment({
-                    item_id: itemId,
-                    category: item.category,
-                    count: item.count
-                });
-            } else {
-                response = await api.addManpowerEquipment({
-                    project_id: currentProjectId,
-                    user_id: currentUserId,
-                    category: item.category,
-                    count: item.count
-                });
-            }
-            if (response.code === 200) successCount++;
+        let response;
+        if (itemId && validItems.length === 1) {
+            response = await api.updateManpowerEquipment({
+                item_id: itemId,
+                category: validItems[0].category,
+                count: validItems[0].count
+            });
+        } else {
+            response = await api.addManpowerEquipment({
+                project_id: currentProjectId,
+                user_id: currentUserId,
+                items: validItems
+            });
         }
         
-        if (successCount > 0) {
+        if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('manpowerModal')).hide();
             loadManpowerEquipment();
-            alert(`${successCount} {{ __("messages.manpower_items_saved_successfully") }}`);
+            alert(response.message || '{{ __("messages.manpower_items_saved_successfully") }}');
         } else {
-            alert('{{ __("messages.failed_to_save_manpower") }}');
+            alert(response.message || '{{ __("messages.failed_to_save_manpower") }}');
         }
     } catch (error) {
         alert('{{ __("messages.error_saving_manpower") }}');
@@ -427,8 +418,8 @@ async function saveManpower() {
 async function saveSafetyItem() {
     const form = document.getElementById('safetyForm');
     const itemId = document.getElementById('safetyId').value;
-    const checklistItems = Array.from(form.querySelectorAll('textarea[name="checklist_item[]"]'))
-        .map(textarea => textarea.value.trim())
+    const checklistItems = Array.from(form.querySelectorAll('input[name="checklist_item[]"]'))
+        .map(input => input.value.trim())
         .filter(item => item);
     
     if (checklistItems.length === 0) {
@@ -441,30 +432,26 @@ async function saveSafetyItem() {
     saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
     
     try {
-        let successCount = 0;
-        for (const checklistItem of checklistItems) {
-            let response;
-            if (itemId && checklistItems.length === 1) {
-                response = await api.updateSafetyItem({
-                    item_id: itemId,
-                    checklist_item: checklistItem
-                });
-            } else {
-                response = await api.addSafetyItem({
-                    project_id: currentProjectId,
-                    user_id: currentUserId,
-                    checklist_item: checklistItem
-                });
-            }
-            if (response.code === 200) successCount++;
+        let response;
+        if (itemId && checklistItems.length === 1) {
+            response = await api.updateSafetyItem({
+                item_id: itemId,
+                checklist_item: checklistItems[0]
+            });
+        } else {
+            response = await api.addSafetyItem({
+                project_id: currentProjectId,
+                user_id: currentUserId,
+                checklist_items: checklistItems
+            });
         }
         
-        if (successCount > 0) {
+        if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('safetyModal')).hide();
             loadSafetyItems();
-            alert(`${successCount} {{ __("messages.safety_items_saved_successfully") }}`);
+            alert(response.message || '{{ __("messages.safety_items_saved_successfully") }}');
         } else {
-            alert('{{ __("messages.failed_to_save_safety_item") }}');
+            alert(response.message || '{{ __("messages.failed_to_save_safety_item") }}');
         }
     } catch (error) {
         alert('{{ __("messages.error_saving_safety_item") }}');
