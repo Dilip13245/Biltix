@@ -267,9 +267,14 @@
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-semibold black_color mb-0">{{ __("messages.ongoing_activities") }}</h5>
-                                <button class="btn btn-sm btn-outline-primary" onclick="openActivitiesModal()">
-                                    <i class="fas fa-plus"></i> {{ __("messages.add_new") }}
-                                </button>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="openActivitiesModal()">
+                                        <i class="fas fa-plus"></i> {{ __("messages.add_new") }}
+                                    </button>
+                                    <button class="btn btn-sm orange_btn" onclick="openActivitiesUpdateModal()">
+                                        <i class="fas fa-edit"></i> {{ __("messages.update") }}
+                                    </button>
+                                </div>
                             </div>
                             <div id="activitiesContainer">
                                 <div class="text-center py-3">
@@ -286,9 +291,14 @@
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-semibold black_color mb-0">{{ __("messages.manpower_equipment") }}</h5>
-                                <button class="btn btn-sm btn-outline-primary" onclick="openManpowerModal()">
-                                    <i class="fas fa-plus"></i> {{ __("messages.add_new") }}
-                                </button>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="openManpowerModal()">
+                                        <i class="fas fa-plus"></i> {{ __("messages.add_new") }}
+                                    </button>
+                                    <button class="btn btn-sm orange_btn" onclick="openManpowerUpdateModal()">
+                                        <i class="fas fa-edit"></i> {{ __("messages.update") }}
+                                    </button>
+                                </div>
                             </div>
                             <div id="manpowerContainer">
                                 <div class="text-center py-3">
@@ -314,6 +324,9 @@
                                     </a>
                                     <button class="btn btn-primary d-flex align-items-center gap-2 btnsm" onclick="openSafetyModal()">
                                         <i class="fas fa-plus"></i> {{ __("messages.add_new") }}
+                                    </button>
+                                    <button class="btn orange_btn d-flex align-items-center gap-2 btnsm" onclick="openSafetyUpdateModal()">
+                                        <i class="fas fa-edit"></i> {{ __("messages.update") }}
                                     </button>
                                 </div>
                             </div>
@@ -386,15 +399,15 @@ function renderActivities(activities) {
     return;
   }
   
+  // Store activities globally for bulk update
+  window.currentActivities = activities;
+  
   container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${activities.map(activity => `
         <li class="d-flex align-items-center mb-2">
           <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
           <span class="flex-grow-1">${activity.description}</span>
-          <button class="btn btn-sm btn-outline-secondary {{ margin_start(2) }}" onclick="editActivity(${activity.id}, '${activity.description}')">
-            <i class="fas fa-edit"></i>
-          </button>
         </li>
       `).join('')}
     </ul>
@@ -427,6 +440,9 @@ function renderManpowerEquipment(items) {
     return;
   }
   
+  // Store manpower globally for bulk update
+  window.currentManpower = items;
+  
   container.innerHTML = `
     <div class="table-responsive">
       <table class="table table-borderless mb-0">
@@ -436,9 +452,6 @@ function renderManpowerEquipment(items) {
               <td class="text-muted fw-medium">${item.category}</td>
               <td class="text-end">
                 <span class="text-primary fw-semibold">${item.count}</span>
-                <button class="btn btn-sm btn-outline-secondary {{ margin_start(2) }}" onclick="editManpower(${item.id}, '${item.category}', ${item.count})">
-                  <i class="fas fa-edit"></i>
-                </button>
               </td>
             </tr>
           `).join('')}
@@ -474,6 +487,9 @@ function renderSafetyItems(items) {
     return;
   }
   
+  // Store safety items globally for bulk update
+  window.currentSafetyItems = items;
+  
   container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${items.map(item => `
@@ -483,9 +499,6 @@ function renderSafetyItems(items) {
               <i class="fas fa-check-circle"></i>
             </span>
             <span class="flex-grow-1">${item.checklist_item}</span>
-            <button class="btn btn-sm btn-outline-secondary {{ margin_start(2) }}" onclick="editSafetyItem(${item.id}, '${item.checklist_item}')">
-              <i class="fas fa-edit"></i>
-            </button>
           </div>
         </li>
       `).join('')}
@@ -834,6 +847,69 @@ function redirectToTimeline() {
 </script>
 
 @include('website.modals.project-progress-modals')
+
+<!-- Activities Update Modal -->
+<div class="modal fade" id="activitiesUpdateModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ __("messages.update") }} {{ __("messages.ongoing_activities") }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="activitiesUpdateContainer"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn orange_btn" onclick="saveActivitiesUpdate()">
+          <i class="fas fa-save me-2"></i>{{ __("messages.update") }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Manpower Update Modal -->
+<div class="modal fade" id="manpowerUpdateModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ __("messages.update") }} {{ __("messages.manpower_equipment") }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="manpowerUpdateContainer"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn orange_btn" onclick="saveManpowerUpdate()">
+          <i class="fas fa-save me-2"></i>{{ __("messages.update") }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Safety Update Modal -->
+<div class="modal fade" id="safetyUpdateModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ __("messages.update") }} {{ __("messages.safety_category") }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="safetyUpdateContainer"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn orange_btn" onclick="saveSafetyUpdate()">
+          <i class="fas fa-save me-2"></i>{{ __("messages.update") }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // Modal Functions
@@ -1194,28 +1270,129 @@ function editManpower(id, category, count) {
     new bootstrap.Modal(document.getElementById('manpowerModal')).show();
 }
 
-function editSafetyItem(id, item) {
-    document.getElementById('safetyModalTitle').textContent = '{{ __("messages.edit_safety_item") }}';
-    document.getElementById('safetySaveBtn').textContent = '{{ __("messages.update") }}';
-    document.getElementById('safetyId').value = id;
+// Activities Update Modal
+function openActivitiesUpdateModal() {
+    if (!window.currentActivities || window.currentActivities.length === 0) {
+        toastr.warning('No activities to update');
+        return;
+    }
     
-    // Set the first input field value
-    const container = document.getElementById('modalSafetyContainer');
-    container.innerHTML = `
-        <div class="safety-field mb-3">
-            <label class="form-label small fw-medium mb-1">{{ __('messages.checklist_item') }}</label>
-            <div class="input-group input-group-sm">
-                <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
-                    value="${item}" placeholder="{{ __('messages.enter_safety_item') }}" required>
-                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
-                    <i class="fas fa-times"></i>
-                </button>
+    const modal = new bootstrap.Modal(document.getElementById('activitiesUpdateModal'));
+    const container = document.getElementById('activitiesUpdateContainer');
+    
+    container.innerHTML = window.currentActivities.map(activity => `
+        <div class="mb-2">
+            <input type="hidden" name="activity_id[]" value="${activity.id}">
+            <input type="text" class="form-control" name="activity_description[]" 
+                value="${activity.description}" placeholder="Activity description">
+        </div>
+    `).join('');
+    
+    modal.show();
+}
+
+// Manpower Update Modal
+function openManpowerUpdateModal() {
+    if (!window.currentManpower || window.currentManpower.length === 0) {
+        toastr.warning('No manpower items to update');
+        return;
+    }
+    
+    const modal = new bootstrap.Modal(document.getElementById('manpowerUpdateModal'));
+    const container = document.getElementById('manpowerUpdateContainer');
+    
+    container.innerHTML = window.currentManpower.map(item => `
+        <div class="row mb-2">
+            <div class="col-6">
+                <input type="hidden" name="manpower_id[]" value="${item.id}">
+                <input type="text" class="form-control" name="manpower_category[]" 
+                    value="${item.category}" placeholder="Category">
+            </div>
+            <div class="col-6">
+                <input type="number" class="form-control" name="manpower_count[]" 
+                    value="${item.count}" placeholder="Count" min="0">
             </div>
         </div>
-    `;
+    `).join('');
     
-    document.getElementById('addMoreSafetyBtn').style.display = 'none';
-    new bootstrap.Modal(document.getElementById('safetyModal')).show();
+    modal.show();
+}
+
+// Safety Update Modal
+function openSafetyUpdateModal() {
+    if (!window.currentSafetyItems || window.currentSafetyItems.length === 0) {
+        toastr.warning('No safety items to update');
+        return;
+    }
+    
+    const modal = new bootstrap.Modal(document.getElementById('safetyUpdateModal'));
+    const container = document.getElementById('safetyUpdateContainer');
+    
+    container.innerHTML = window.currentSafetyItems.map(item => `
+        <div class="mb-2">
+            <input type="hidden" name="safety_id[]" value="${item.id}">
+            <input type="text" class="form-control" name="safety_item[]" 
+                value="${item.checklist_item}" placeholder="Safety item">
+        </div>
+    `).join('');
+    
+    modal.show();
+}
+
+// Save Functions
+async function saveActivitiesUpdate() {
+    const ids = Array.from(document.querySelectorAll('input[name="activity_id[]"]')).map(input => parseInt(input.value));
+    const descriptions = Array.from(document.querySelectorAll('input[name="activity_description[]"]')).map(input => input.value);
+    
+    const activities = ids.map((id, index) => ({ id, description: descriptions[index] }));
+    
+    try {
+        const response = await api.updateActivity({ activities });
+        if (response.code === 200) {
+            bootstrap.Modal.getInstance(document.getElementById('activitiesUpdateModal')).hide();
+            loadActivities();
+            toastr.success('Activities updated successfully!');
+        }
+    } catch (error) {
+        toastr.error('Failed to update activities');
+    }
+}
+
+async function saveManpowerUpdate() {
+    const ids = Array.from(document.querySelectorAll('input[name="manpower_id[]"]')).map(input => parseInt(input.value));
+    const categories = Array.from(document.querySelectorAll('input[name="manpower_category[]"]')).map(input => input.value);
+    const counts = Array.from(document.querySelectorAll('input[name="manpower_count[]"]')).map(input => parseInt(input.value));
+    
+    const manpower = ids.map((id, index) => ({ id, category: categories[index], count: counts[index] }));
+    
+    try {
+        const response = await api.updateManpowerEquipment({ manpower });
+        if (response.code === 200) {
+            bootstrap.Modal.getInstance(document.getElementById('manpowerUpdateModal')).hide();
+            loadManpowerEquipment();
+            toastr.success('Manpower updated successfully!');
+        }
+    } catch (error) {
+        toastr.error('Failed to update manpower');
+    }
+}
+
+async function saveSafetyUpdate() {
+    const ids = Array.from(document.querySelectorAll('input[name="safety_id[]"]')).map(input => parseInt(input.value));
+    const items = Array.from(document.querySelectorAll('input[name="safety_item[]"]')).map(input => input.value);
+    
+    const safety_items = ids.map((id, index) => ({ id, checklist_item: items[index] }));
+    
+    try {
+        const response = await api.updateSafetyItem({ safety_items });
+        if (response.code === 200) {
+            bootstrap.Modal.getInstance(document.getElementById('safetyUpdateModal')).hide();
+            loadSafetyItems();
+            toastr.success('Safety items updated successfully!');
+        }
+    } catch (error) {
+        toastr.error('Failed to update safety items');
+    }
 }
 </script>
 

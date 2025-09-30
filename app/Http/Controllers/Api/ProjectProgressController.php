@@ -67,26 +67,29 @@ class ProjectProgressController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'activity_id' => 'required|integer',
-                'description' => 'required|string|max:255',
+                'activities' => 'required|array|min:1',
+                'activities.*.id' => 'required|integer',
+                'activities.*.description' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $activity = ProjectActivity::where('id', $request->activity_id)
-                ->where('is_active', 1)
-                ->where('is_deleted', 0)
-                ->first();
-
-            if (!$activity) {
-                return $this->toJsonEnc([], trans('api.project_progress.activity_not_found'), Config::get('constant.NOT_FOUND'));
+            $updatedActivities = [];
+            foreach ($request->activities as $activityData) {
+                $activity = ProjectActivity::where('id', $activityData['id'])
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->first();
+                
+                if ($activity) {
+                    $activity->update(['description' => $activityData['description']]);
+                    $updatedActivities[] = $activity;
+                }
             }
 
-            $activity->update(['description' => $request->description]);
-
-            return $this->toJsonEnc($activity, trans('api.project_progress.activity_updated'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($updatedActivities, 'Activities updated successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -149,30 +152,33 @@ class ProjectProgressController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'item_id' => 'required|integer',
-                'category' => 'required|string|max:100',
-                'count' => 'required|integer|min:0',
+                'manpower' => 'required|array|min:1',
+                'manpower.*.id' => 'required|integer',
+                'manpower.*.category' => 'required|string|max:100',
+                'manpower.*.count' => 'required|integer|min:0',
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $item = ProjectManpowerEquipment::where('id', $request->item_id)
-                ->where('is_active', 1)
-                ->where('is_deleted', 0)
-                ->first();
-
-            if (!$item) {
-                return $this->toJsonEnc([], trans('api.project_progress.item_not_found'), Config::get('constant.NOT_FOUND'));
+            $updatedItems = [];
+            foreach ($request->manpower as $manpowerData) {
+                $item = ProjectManpowerEquipment::where('id', $manpowerData['id'])
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->first();
+                
+                if ($item) {
+                    $item->update([
+                        'category' => $manpowerData['category'],
+                        'count' => $manpowerData['count'],
+                    ]);
+                    $updatedItems[] = $item;
+                }
             }
 
-            $item->update([
-                'category' => $request->category,
-                'count' => $request->count,
-            ]);
-
-            return $this->toJsonEnc($item, trans('api.project_progress.manpower_updated'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($updatedItems, 'Manpower equipment updated successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -233,30 +239,34 @@ class ProjectProgressController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'item_id' => 'required|integer',
-                'checklist_item' => 'required|string|max:255',
+                'safety_items' => 'required|array|min:1',
+                'safety_items.*.id' => 'required|integer',
+                'safety_items.*.checklist_item' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $item = ProjectSafetyItem::where('id', $request->item_id)
-                ->where('is_active', 1)
-                ->where('is_deleted', 0)
-                ->first();
-
-            if (!$item) {
-                return $this->toJsonEnc([], trans('api.project_progress.safety_item_not_found'), Config::get('constant.NOT_FOUND'));
+            $updatedItems = [];
+            foreach ($request->safety_items as $safetyData) {
+                $item = ProjectSafetyItem::where('id', $safetyData['id'])
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->first();
+                
+                if ($item) {
+                    $item->update(['checklist_item' => $safetyData['checklist_item']]);
+                    $updatedItems[] = $item;
+                }
             }
 
-            $item->update(['checklist_item' => $request->checklist_item]);
-
-            return $this->toJsonEnc($item, trans('api.project_progress.safety_item_updated'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($updatedItems, 'Safety items updated successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
     }
+
 
 
 }
