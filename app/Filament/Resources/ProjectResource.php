@@ -93,8 +93,7 @@ class ProjectResource extends Resource
                     ->required()
                     ->minLength(2)
                     ->maxLength(200)
-                    ->regex('/^[a-zA-Z0-9\s\-\&\.\_\,\(\)\']+$/')
-                    ->placeholder('Riverside Commercial Complex'),
+                    ->regex('/^[a-zA-Z0-9\s\-\&\.\_\,\(\)\']+$/'),
                 Forms\Components\TextInput::make('contractor_name')
                     ->label(__('filament.fields.contractor_name'))
                     ->required()

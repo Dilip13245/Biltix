@@ -104,6 +104,12 @@
                       // Update header elements
                       document.getElementById('headerProjectTitle').textContent = project.project_title || 'Project';
                       
+                      // Update page title dynamically
+                      const currentTitle = document.title;
+                      if (currentTitle && !currentTitle.includes(project.project_title)) {
+                          document.title = (project.project_title || 'Project') + ' - ' + currentTitle;
+                      }
+                      
                       if (project.project_start_date) {
                           document.getElementById('headerStartDate').textContent = formatHeaderDate(project.project_start_date);
                       }

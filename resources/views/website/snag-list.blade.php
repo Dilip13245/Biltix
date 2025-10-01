@@ -1,6 +1,6 @@
 @extends('website.layout.app')
 
-@section('title', 'Riverside Commercial Complex - Snag List')
+@section('title', 'Snag List')
 
 @section('content')
     <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">

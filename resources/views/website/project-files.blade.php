@@ -1,6 +1,6 @@
 @extends('website.layout.app')
 
-@section('title', 'Riverside Commercial Complex - Project Files')
+@section('title', 'Project Files')
 
 @section('content')
     <div class="content-header border-0 shadow-none mb-4 d-flex align-items-center justify-content-between gap-2 flex-wrap">

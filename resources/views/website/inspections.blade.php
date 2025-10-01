@@ -1,6 +1,6 @@
 @extends('website.layout.app')
 
-@section('title', 'Riverside Commercial Complex - Inspections')
+@section('title', 'Inspections')
 
 @section('content')
     <div class="content-header">
