@@ -41,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('website/images/icons/logo.svg'))
             ->brandLogoHeight('3rem')
             ->brandName('Biltix Admin')
+            ->favicon(asset('website/images/icons/logo.svg'))
             ->sidebarCollapsibleOnDesktop()
             ->sidebarFullyCollapsibleOnDesktop()
             ->maxContentWidth('full')
