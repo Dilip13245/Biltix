@@ -16,6 +16,11 @@ class ProjectActivity extends Model
         'is_deleted',
         'created_by'
     ];
+    
+    protected $attributes = [
+        'is_active' => true,
+        'is_deleted' => false,
+    ];
 
     protected $casts = [
         'is_active' => 'boolean',
@@ -28,6 +33,11 @@ class ProjectActivity extends Model
     }
 
     public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
     }

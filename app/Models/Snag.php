@@ -51,4 +51,23 @@ class Snag extends Model
     {
         return $this->belongsTo(Project::class, 'project_id');
     }
+
+    public function phase()
+    {
+        return $this->belongsTo(ProjectPhase::class, 'phase_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($snag) {
+            if (!$snag->snag_number) {
+                $snag->snag_number = 'SNG-' . str_pad(Snag::count() + 1, 4, '0', STR_PAD_LEFT);
+            }
+            if (!$snag->status) {
+                $snag->status = 'open';
+            }
+        });
+    }
 }

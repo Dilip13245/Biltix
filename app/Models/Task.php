@@ -48,6 +48,16 @@ class Task extends Model
         return $this->hasMany(TaskImage::class)->where('is_active', true)->where('is_deleted', false);
     }
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function phase()
+    {
+        return $this->belongsTo(ProjectPhase::class, 'phase_id');
+    }
+
     // Automatically set status to pending if current date >= due_date
     public function getStatusAttribute($value)
     {
@@ -64,6 +74,9 @@ class Task extends Model
         static::creating(function ($task) {
             if (!$task->status) {
                 $task->status = 'in_progress';
+            }
+            if (!$task->task_number) {
+                $task->task_number = 'TSK-' . str_pad(Task::count() + 1, 4, '0', STR_PAD_LEFT);
             }
         });
     }

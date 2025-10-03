@@ -31,6 +31,16 @@ class Photo extends Model
     
     public function uploader()
     {
-        return $this->belongsTo(\App\Models\User::class, 'taken_by');
+        return $this->belongsTo(User::class, 'taken_by');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
+
+    public function phase()
+    {
+        return $this->belongsTo(ProjectPhase::class, 'phase_id');
     }
 }

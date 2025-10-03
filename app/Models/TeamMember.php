@@ -15,6 +15,11 @@ class TeamMember extends Model
         'user_id', 'project_id', 'role_in_project', 'assigned_at',
         'assigned_by', 'is_active', 'is_deleted'
     ];
+    
+    protected $attributes = [
+        'is_active' => true,
+        'is_deleted' => false,
+    ];
 
     protected $casts = [
         'assigned_at' => 'datetime',
@@ -30,5 +35,15 @@ class TeamMember extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
+
+    public function assignedBy()
+    {
+        return $this->belongsTo(User::class, 'assigned_by');
     }
 }
