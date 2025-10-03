@@ -124,16 +124,12 @@ class ProjectResource extends Resource
                 Forms\Components\DatePicker::make('project_start_date')
                     ->label(__('filament.fields.start_date'))
                     ->required()
-                    ->native(false)
-                    ->minDate(now())
-                    ->maxDate(now()->addYears(5)),
+                    ->native(false),
                 Forms\Components\DatePicker::make('project_due_date')
                     ->label(__('filament.fields.due_date'))
                     ->required()
                     ->native(false)
-                    ->after('project_start_date')
-                    ->minDate(now())
-                    ->maxDate(now()->addYears(10)),
+                    ->after('project_start_date'),
 
             ])->columns(2),
             
