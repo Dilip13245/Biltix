@@ -702,9 +702,6 @@
                 } else if (!['consultant', 'contractor', 'site_engineer', 'project_manager', 'stakeholder'].includes(designation.value)) {
                     showError('designation', 'designationError', '{{ __('auth.designation_invalid') }}');
                     isValid = false;
-                } else if (!['consultant', 'contractor'].includes(designation.value)) {
-                    showError('designation', 'designationError', '{{ __('auth.designation_restricted') }}');
-                    isValid = false;
                 }
             } else if (step === 3) {
                 // Team members validation

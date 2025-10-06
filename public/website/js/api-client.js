@@ -121,6 +121,9 @@ class ApiClient {
     }
 
     async updateProfile(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('auth/update_profile', data);
+        }
         return this.makeRequest('auth/update_profile', data);
     }
 

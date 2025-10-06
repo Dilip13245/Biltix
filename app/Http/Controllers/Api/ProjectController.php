@@ -135,8 +135,21 @@ class ProjectController extends Controller
             $type = $request->input('type'); // ongoing or completed
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
+            $user_id = $request->input('user_id');
 
             $query = Project::where('is_active', 1)->where('is_deleted', 0);
+
+            // Filter projects based on user access
+            $query->where(function ($q) use ($user_id) {
+                $q->where('created_by', $user_id) // Projects created by user
+                  ->orWhere('project_manager_id', $user_id) // User is project manager
+                  ->orWhere('technical_engineer_id', $user_id) // User is technical engineer
+                  ->orWhereHas('teamMembers', function ($teamQuery) use ($user_id) {
+                      $teamQuery->where('user_id', $user_id)
+                                ->where('is_active', 1)
+                                ->where('is_deleted', 0);
+                  }); // User is team member
+            });
 
             if ($type) {
                 if ($type === 'ongoing') {
@@ -155,7 +168,7 @@ class ProjectController extends Controller
                 });
             }
 
-            $projects = $query->paginate($limit, ['*'], 'page', $page);
+            $projects = $query->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
 
             $data = [
                 'data' => $projects->items()
