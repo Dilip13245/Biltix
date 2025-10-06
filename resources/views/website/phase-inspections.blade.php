@@ -67,7 +67,7 @@
                             <h5 class="mb-3 mb-md-4 fw-semibold black_color">{{ __('messages.create_new_inspection') }}
                             </h5>
                             <button class="btn  orange_btn w-100 mb-3 mb-md-4 justify-content-center py-3"
-                                data-bs-toggle="modal" data-bs-target="#createInspectionModal">
+                                data-bs-toggle="modal" data-bs-target="#createInspectionModal" onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
                                 <i class="fas fa-plus"></i>
                                 {{ __('messages.create_inspection') }}
                             </button>
@@ -330,6 +330,7 @@
         <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
         <script src="{{ asset('website/js/api-client.js') }}"></script>
         <script src="{{ asset('website/js/drawing.js') }}"></script>
+
 
     </div>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>

@@ -4,7 +4,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="taskDrawingModalLabel">
-          <i class="fas fa-pencil-alt me-2"></i>Task Drawing
+          <i class="fas fa-pencil-alt {{ margin_end(2) }}"></i>{{ __('messages.drawing') }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -12,36 +12,36 @@
         <div class="d-flex h-100">
           <!-- Drawing Tools Sidebar -->
           <div class="drawing-tools-sidebar bg-light p-3" style="width: 250px; border-right: 1px solid #dee2e6;">
-            <h6 class="fw-bold mb-3">Drawing Tools</h6>
+            <h6 class="fw-bold mb-3">{{ __('messages.drawing_tools') }}</h6>
             
             <!-- Tool Selection -->
             <div class="mb-3">
-              <label class="form-label fw-medium">Tools</label>
+              <label class="form-label fw-medium">{{ __('messages.tools') }}</label>
               <div class="btn-group-vertical w-100" role="group">
                 <button type="button" class="btn btn-outline-primary active" id="penTool" onclick="setDrawingTool('pen')">
-                  <i class="fas fa-pen me-2"></i>Pen
+                  <i class="fas fa-pen {{ margin_end(2) }}"></i>{{ __('messages.pen') }}
                 </button>
                 <button type="button" class="btn btn-outline-primary" id="circleTool" onclick="setDrawingTool('circle')">
-                  <i class="fas fa-circle me-2"></i>Circle
+                  <i class="fas fa-circle {{ margin_end(2) }}"></i>{{ __('messages.circle') }}
                 </button>
                 <button type="button" class="btn btn-outline-primary" id="arrowTool" onclick="setDrawingTool('arrow')">
-                  <i class="fas fa-arrow-right me-2"></i>Arrow
+                  <i class="fas fa-arrow-right {{ margin_end(2) }}"></i>{{ __('messages.arrow') }}
                 </button>
                 <button type="button" class="btn btn-outline-primary" id="textTool" onclick="setDrawingTool('text')">
-                  <i class="fas fa-font me-2"></i>Text
+                  <i class="fas fa-font {{ margin_end(2) }}"></i>{{ __('messages.text') }}
                 </button>
               </div>
             </div>
 
             <!-- Color Picker -->
             <div class="mb-3">
-              <label for="drawingColorPicker" class="form-label fw-medium">Color</label>
+              <label for="drawingColorPicker" class="form-label fw-medium">{{ __('messages.color') }}</label>
               <input type="color" class="form-control form-control-color" id="drawingColorPicker" value="#ff0000">
             </div>
 
             <!-- Brush Size -->
             <div class="mb-3">
-              <label for="drawingBrushSize" class="form-label fw-medium">Brush Size</label>
+              <label for="drawingBrushSize" class="form-label fw-medium">{{ __('messages.brush_size') }}</label>
               <input type="range" class="form-range" id="drawingBrushSize" min="1" max="10" value="3">
               <div class="d-flex justify-content-between">
                 <small>1</small>
@@ -52,7 +52,7 @@
             <!-- Actions -->
             <div class="mb-3">
               <button type="button" class="btn btn-warning w-100 mb-2" onclick="clearDrawingCanvas()">
-                <i class="fas fa-eraser me-2"></i>Clear All
+                <i class="fas fa-eraser {{ margin_end(2) }}"></i>{{ __('messages.clear_all') }}
               </button>
             </div>
           </div>
@@ -64,9 +64,9 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
         <button type="button" class="btn orange_btn" onclick="saveTaskDrawing()">
-          <i class="fas fa-save me-2"></i>Save Task
+          <i class="fas fa-save {{ margin_end(2) }}"></i>{{ __('messages.save') }}
         </button>
       </div>
     </div>

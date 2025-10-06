@@ -61,12 +61,33 @@
             <div class="modal-footer" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
                 @if(app()->getLocale() == 'ar')
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
-                    <button type="submit" form="editSnagForm" class="btn orange_btn">{{ __('messages.update_snag') }}</button>
+                    <button type="submit" form="editSnagForm" class="btn orange_btn" id="editSnagBtn">{{ __('messages.update_snag') }}</button>
                 @else
-                    <button type="submit" form="editSnagForm" class="btn orange_btn">{{ __('messages.update_snag') }}</button>
+                    <button type="submit" form="editSnagForm" class="btn orange_btn" id="editSnagBtn">{{ __('messages.update_snag') }}</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
                 @endif
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function protectEditSnagButton() {
+  var btn = document.getElementById('editSnagBtn');
+  if (btn && !btn.disabled) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = '{{ __('messages.update_snag') }}';
+    }, 5000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('editSnagBtn');
+  if (btn) {
+    btn.addEventListener('click', protectEditSnagButton);
+  }
+});
+</script>

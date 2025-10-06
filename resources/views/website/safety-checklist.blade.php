@@ -84,12 +84,18 @@
           </div>
           <p class="text-muted mb-2">{{ __('messages.march_27_2025') }} - 9:00 AM</p>
           <div class="mb-3">
-            <p class="text-muted">{{ __('messages.topics_to_cover') }}:</p>
-            <ul class="text-muted" style="{{ is_rtl() ? 'text-align: right; padding-right: 1.5rem; padding-left: 0;' : '' }}">
-              <li>{{ __('messages.new_safety_protocols') }}</li>
-              <li>{{ __('messages.incident_reporting') }}</li>
-              <li>{{ __('messages.equipment_updates') }}</li>
-            </ul>
+            <div class="form-check" style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+              <input class="form-check-input" type="checkbox" disabled style="{{ is_rtl() ? 'float: right; margin-left: 0.5rem; margin-right: 0;' : '' }}">
+              <label class="form-check-label">{{ __('messages.new_safety_protocols') }}</label>
+            </div>
+            <div class="form-check" style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+              <input class="form-check-input" type="checkbox" disabled style="{{ is_rtl() ? 'float: right; margin-left: 0.5rem; margin-right: 0;' : '' }}">
+              <label class="form-check-label">{{ __('messages.incident_reporting') }}</label>
+            </div>
+            <div class="form-check" style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+              <input class="form-check-input" type="checkbox" disabled style="{{ is_rtl() ? 'float: right; margin-left: 0.5rem; margin-right: 0;' : '' }}">
+              <label class="form-check-label">{{ __('messages.equipment_updates') }}</label>
+            </div>
           </div>
           <div class="d-flex justify-content-between align-items-center" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
             <span class="small text-muted">{{ __('messages.conference_room_a') }}</span>

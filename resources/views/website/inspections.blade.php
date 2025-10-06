@@ -54,8 +54,8 @@
                     <div class="card-body p-md-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="fw-semibold black_color mb-0">{{ __('messages.previous_inspections') }}</h5>
-                            <select class="form-select w-auto small" style="min-width: 140px;">
-                                <option>{{ __('messages.all_categories') }}</option>
+                            <select class="form-select w-auto small" id="categoryFilter" style="min-width: 140px;">
+                                <option value="all">{{ __('messages.all_categories') }}</option>
                             </select>
                         </div>
                         <div class="table-responsive" style="height: 400px; overflow-y: auto;">
@@ -126,7 +126,7 @@
             }
 
             // Filter functionality
-            const categoryFilter = document.querySelector('select.form-select');
+            const categoryFilter = document.getElementById('categoryFilter');
             if (categoryFilter) {
                 categoryFilter.addEventListener('change', function() {
                     filterInspections(this.value);
@@ -229,10 +229,10 @@
         }
 
         function updateCategoryFilter() {
-            const categoryFilter = document.querySelector('select.form-select');
+            const categoryFilter = document.getElementById('categoryFilter');
             if (!categoryFilter) return;
 
-            const categories = [...new Set(allInspections.map(i => i.category))];
+            const categories = [...new Set(allInspections.map(i => i.category).filter(cat => cat))];
 
             categoryFilter.innerHTML = `
                 <option value="all">{{ __('messages.all_categories') }}</option>

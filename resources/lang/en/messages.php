@@ -1003,6 +1003,9 @@ return [
     // Permission messages
     'permission_denied_for_module' => 'You do not have permission to access :module. Please contact your administrator.',
     'contact_admin_for_access' => 'Please contact your administrator to request access.',
+    
+    // Daily Logs
+    'add_daily_log' => 'Add Daily Log',
 ];
 
 

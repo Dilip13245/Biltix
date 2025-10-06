@@ -52,11 +52,11 @@
       <div class="modal-footer" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
         @if(app()->getLocale() == 'ar')
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
-          <button type="submit" form="uploadPlanForm" class="btn orange_btn">
+          <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanBtn">
             {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
           </button>
         @else
-          <button type="submit" form="uploadPlanForm" class="btn orange_btn">
+          <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanBtn">
             {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
           </button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
@@ -65,3 +65,7 @@
     </div>
   </div>
 </div>
+
+<script>
+// Button protection is handled in the form submission handler
+</script>

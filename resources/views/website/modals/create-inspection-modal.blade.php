@@ -29,14 +29,14 @@
         @endif
       </div>
       <div class="modal-body">
-        <form id="createInspectionForm">
+        <form id="createInspectionForm" class="protected-form">
           @csrf
           <input type="hidden" name="user_id" value="{{ auth()->id() }}">
           <input type="hidden" id="modalProjectId" name="project_id" value="1">
           
           <div class="mb-3" id="phaseSelectContainer">
             <label for="phaseSelect" class="form-label fw-medium">{{ __("messages.phase") }}</label>
-            <select class="form-select Input_control" id="phaseSelect" name="phase_id" required>
+            <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id" required>
               <option value="">{{ __("messages.select_phase") }}</option>
             </select>
           </div>
@@ -87,7 +87,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="createInspectionForm" class="btn orange_btn">
+        <button type="submit" form="createInspectionForm" class="btn orange_btn" id="inspectionSubmitBtn">
           <i class="fas fa-plus me-2"></i>{{ __("messages.create_inspection") }}
         </button>
       </div>
@@ -117,15 +117,32 @@ function removeChecklistItem(button) {
   }
 }
 
+// Simple button protection
+function protectButton(btn) {
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+  setTimeout(function() {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-plus me-2"></i>{{ __("messages.create_inspection") }}';
+  }, 5000);
+}
+
 // Form submission with API integration
 document.addEventListener('DOMContentLoaded', function() {
   const createInspectionForm = document.getElementById('createInspectionForm');
+  const submitBtn = document.getElementById('inspectionSubmitBtn');
+  
   if (createInspectionForm) {
     createInspectionForm.addEventListener('submit', function(e) {
       e.preventDefault();
       
+      // Protect button
+      if (submitBtn) protectButton(submitBtn);
+      
       // Validate form
       if (!validateInspectionForm()) {
+        resetFormSubmission('createInspectionForm');
         return;
       }
       
@@ -215,10 +232,12 @@ async function submitInspectionWithImages(imageDataArray) {
       closeModalsAndReload();
       showToast('success', 'Inspection created successfully!');
     } else {
+      resetFormSubmission('createInspectionForm');
       showToast('error', response.message || 'Failed to create inspection');
     }
   } catch (error) {
     console.error('Error creating inspection:', error);
+    resetFormSubmission('createInspectionForm');
     showToast('error', 'Failed to create inspection. Please try again.');
   }
 }
@@ -260,10 +279,12 @@ async function submitInspectionWithoutImages() {
       showToast('success', response.message);
       location.reload();
     } else {
+      resetFormSubmission('createInspectionForm');
       showToast('error', response.message || 'Failed to create inspection');
     }
   } catch (error) {
     console.error('Error creating inspection:', error);
+    resetFormSubmission('createInspectionForm');
     showToast('error', 'Failed to create inspection. Please try again.');
   }
 }
@@ -397,6 +418,10 @@ function getValidationMessage(key) {
     checklist_required: '{{ __('messages.please_add_checklist_item') }}'
   };
   return messages[key] || 'Validation error';
+}
+
+function resetSubmitButton() {
+  resetFormSubmission('createInspectionForm');
 }
 
 function showToast(type, message) {

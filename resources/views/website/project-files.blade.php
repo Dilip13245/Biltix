@@ -687,6 +687,13 @@
             } catch (error) {
                 console.error('Upload error:', error);
                 toastr.error('{{ __('messages.upload_failed') }}: ' + error.message);
+            } finally {
+                // Reset button state
+                const btn = document.getElementById('saveDrawingBtn');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save me-2"></i><span id="saveButtonText">{{ __('messages.save') }}</span>';
+                }
             }
         }
 
@@ -916,6 +923,13 @@
             // Save drawing button
             document.addEventListener('click', function(e) {
                 if (e.target && e.target.id === 'saveDrawingBtn') {
+                    const btn = e.target;
+                    if (btn.disabled) return;
+                    
+                    btn.disabled = true;
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                    
                     const canvas = document.getElementById('canvas');
                     if (canvas) {
                         const imageData = canvas.toDataURL();
@@ -924,6 +938,12 @@
                             window.drawingConfig.onSave(imageData);
                         }
                     }
+                    
+                    // Reset button after 5 seconds as fallback
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }, 5000);
                 }
             });
 

@@ -45,7 +45,7 @@
                   placeholder="{{ __('messages.describe_issue_detail') }}" style="{{ is_rtl() ? 'text-align: right;' : '' }}"></textarea>
               </div>
 
-              <button type="submit" class="btn orange_btn w-100">
+              <button type="submit" class="btn orange_btn w-100" id="supportBtn">
                 <i class="fas fa-paper-plane {{ margin_end(2) }}"></i>{{ __('messages.submit_request') }}
               </button>
             </form>
@@ -113,7 +113,8 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       
       // Show loading state
-      const submitBtn = this.querySelector('.btn.orange_btn');
+      const submitBtn = document.getElementById('supportBtn');
+      if (submitBtn.disabled) return;
       const originalText = submitBtn.innerHTML;
       const loadingIcon = '{{ is_rtl() ? "margin_start(2)" : "margin_end(2)" }}';
       submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin ${loadingIcon}"></i>{{ __('messages.sending') }}...`;

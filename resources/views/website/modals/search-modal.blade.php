@@ -80,6 +80,17 @@
         const searchStatus = document.getElementById('searchStatus').value;
         const searchProgress = document.getElementById('searchProgress').value;
         
+        // Prevent search if no criteria provided
+        if (!searchTerm && !searchType && !searchStatus && !searchProgress) {
+            document.getElementById('resultsContainer').innerHTML = `
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-search fa-3x mb-3"></i>
+                    <p>{{ __('messages.enter_search_terms') }}</p>
+                </div>
+            `;
+            return;
+        }
+        
         // Show loading
         document.getElementById('resultsContainer').innerHTML = `
             <div class="text-center py-4">
@@ -106,8 +117,9 @@
             const response = await api.getProjects(searchParams);
             
             if (response.code === 200 && response.data) {
-                // Apply client-side filtering for type and progress
-                let filteredProjects = response.data;
+                // Ensure we have an array to work with
+                let filteredProjects = Array.isArray(response.data) ? response.data : 
+                                     (Array.isArray(response.data.data) ? response.data.data : []);
                 
                 // Filter by project type if selected
                 if (searchType) {

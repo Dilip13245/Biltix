@@ -45,7 +45,7 @@
       <option value="completed">{{ __('messages.completed') }}</option>
     </select>
     @can('tasks', 'create')
-        <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+        <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal" onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
             <i class="fas fa-plus"></i>
             {{ __('messages.add_new_task') }}
         </button>
@@ -174,6 +174,17 @@ async function loadUsers() {
                 option.textContent = user.name;
                 assignedToSelect.appendChild(option);
             });
+            
+            // Initialize searchable dropdown after loading options
+            setTimeout(() => {
+                if (typeof SearchableDropdown !== 'undefined') {
+                    if (!assignedToSelect.searchableDropdown) {
+                        assignedToSelect.searchableDropdown = new SearchableDropdown(assignedToSelect);
+                    } else {
+                        assignedToSelect.searchableDropdown.updateOptions();
+                    }
+                }
+            }, 100);
         }
     } catch (error) {
         console.error('Error loading users:', error);
@@ -446,8 +457,23 @@ function loadTaskImages(images) {
     console.log('Images loaded into container:', imagesContainer);
 }
 
+// Simple button protection
+function protectTaskButton(btn) {
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+  setTimeout(function() {
+    btn.disabled = false;
+    btn.innerHTML = '{{ __("messages.next") }} <i class="fas fa-arrow-right ms-2"></i>';
+  }, 5000);
+}
+
 async function handleTaskSubmit(e) {
     e.preventDefault();
+    
+    // Protect button
+    const submitBtn = document.querySelector('#addTaskModal button[type="submit"]');
+    if (submitBtn) protectTaskButton(submitBtn);
     
     const fileInput = document.getElementById('taskImages');
     
@@ -523,10 +549,12 @@ async function saveTaskWithMarkup(imageData) {
             document.getElementById('addTaskForm').reset();
             loadTasks();
         } else {
+            resetFormSubmission('addTaskForm');
             toastr.error('{{ __('messages.failed_to_create_task') }}: ' + response.message);
         }
     } catch (error) {
         console.error('Error creating task:', error);
+        resetFormSubmission('addTaskForm');
         toastr.error('{{ __('messages.failed_to_create_task') }}');
     }
 }
@@ -557,10 +585,12 @@ async function saveTaskWithoutMarkup() {
             document.getElementById('addTaskForm').reset();
             loadTasks();
         } else {
+            resetFormSubmission('addTaskForm');
             toastr.error('{{ __('messages.failed_to_create_task') }}: ' + response.message);
         }
     } catch (error) {
         console.error('Error creating task:', error);
+        resetFormSubmission('addTaskForm');
         toastr.error('{{ __('messages.failed_to_create_task') }}');
     }
 }
@@ -805,6 +835,7 @@ async function submitAdditionalImages(imageData) {
     <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>
+    <script src="{{ asset('website/js/searchable-dropdown.js') }}"></script>
     <script src="{{ asset('website/js/api-client.js') }}"></script>
 </body>
 </html>

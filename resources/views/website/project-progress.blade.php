@@ -172,6 +172,7 @@
                     </div>
                 </div>
             </div>
+            {{-- Project Overview Section - Commented Out
             <div class="row mt-4 wow fadeInUp" data-wow-delay="1.2s">
                 <div class="col-12">
                     <div class="card B_shadow">
@@ -236,14 +237,14 @@
                     </div>
                 </div>
             </div>
+            --}}
+            {{-- Ongoing Activities and Manpower & Equipment Sections - Commented Out
             <div class="row mt-4 wow fadeInUp" data-wow-delay="1.3s">
                 <div class="col-12 col-lg-6 mb-4 mb-lg-0">
                     <div class="card h-100 B_shadow">
                         <div class="card-body p-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-semibold black_color mb-0 ">{{ __('messages.ongoing_activities') }}</h5>
-                                {{-- <a href="#" class="text-primary" title="Edit"><img
-                                        src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a> --}}
                             </div>
                             <ul class="list-unstyled mb-0">
                                 <li class="d-flex align-items-center mb-2">
@@ -275,8 +276,6 @@
                         <div class="card-body p-md-4 fs-5">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-semibold black_color mb-0 fs-5">{{ __('messages.manpower_equipment') }}</h5>
-                                {{-- <a href="#" class="text-primary" title="Edit"><img
-                                        src="{{ asset('website/images/icons/edit.svg') }}" alt="edit"></a> --}}
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-borderless mb-0">
@@ -327,6 +326,8 @@
                     </div>
                 </div>
             </div>
+            --}}
+            {{-- Safety Category Section - Commented Out
             <div class="row mt-4 wow fadeInUp" data-wow-delay="1.4s">
                 <div class="col-12">
                     <div class="card B_shadow">
@@ -390,6 +391,7 @@
                     </div>
                 </div>
             </div>
+            --}}
         </div>
     </div>
     <script>
@@ -586,17 +588,32 @@
             
             // Check if this field needs a dropdown
             if (fieldLabel === 'Project Manager' || fieldLabel === 'Site Engineer') {
-                // Create dropdown for user selection
-                inputElement = document.createElement('select');
-                inputElement.className = 'form-select form-select-sm d-inline-block';
-                inputElement.style.width = 'auto';
-                inputElement.style.minWidth = '200px';
+                // Create simple dropdown wrapper
+                const dropdownWrapper = document.createElement('div');
+                dropdownWrapper.className = 'dropdown d-inline-block';
+                dropdownWrapper.style.minWidth = '200px';
                 
-                // Add loading option
-                inputElement.innerHTML = '<option>Loading users...</option>';
+                // Create dropdown button
+                const dropdownButton = document.createElement('button');
+                dropdownButton.className = 'btn btn-outline-secondary dropdown-toggle';
+                dropdownButton.type = 'button';
+                dropdownButton.setAttribute('data-bs-toggle', 'dropdown');
+                dropdownButton.textContent = 'Loading users...';
+                
+                // Create dropdown menu
+                const dropdownMenu = document.createElement('ul');
+                dropdownMenu.className = 'dropdown-menu';
+                dropdownMenu.style.maxHeight = '200px';
+                dropdownMenu.style.overflowY = 'auto';
+                dropdownMenu.innerHTML = '<li><span class="dropdown-item-text">Loading users...</span></li>';
+                
+                dropdownWrapper.appendChild(dropdownButton);
+                dropdownWrapper.appendChild(dropdownMenu);
+                
+                inputElement = dropdownWrapper;
                 
                 // Load users for dropdown
-                loadUsersForDropdown(inputElement, fieldLabel, currentValue);
+                loadUsersForSimpleDropdown(dropdownButton, dropdownMenu, fieldLabel, currentValue);
             } else {
                 // Create regular input field
                 inputElement = document.createElement('input');
@@ -638,11 +655,11 @@
             const saveEdit = async () => {
                 let newValue, newId;
                 
-                if (inputElement.tagName === 'SELECT') {
-                    // For dropdown, get selected option text and value
-                    const selectedOption = inputElement.options[inputElement.selectedIndex];
-                    newValue = selectedOption.text;
-                    newId = selectedOption.value;
+                if (inputElement.classList.contains('dropdown')) {
+                    // For modern dropdown, get selected data from button
+                    const button = inputElement.querySelector('button');
+                    newId = button.dataset.selectedId;
+                    newValue = button.dataset.selectedName;
                     
                     if (!newId || newValue === currentValue) {
                         cancelEdit();
@@ -679,7 +696,7 @@
                 try {
                     const updateData = {
                         project_id: currentProjectId,
-                        [apiField]: inputElement.tagName === 'SELECT' ? newId : newValue
+                        [apiField]: inputElement.classList.contains('dropdown') ? newId : newValue
                     };
                     
                     const response = await api.updateProject(updateData);
@@ -705,7 +722,7 @@
             });
         }
         
-        async function loadUsersForDropdown(selectElement, fieldLabel, currentValue) {
+        async function loadUsersForSimpleDropdown(buttonElement, menuElement, fieldLabel, currentValue) {
             try {
                 let response;
                 if (fieldLabel === 'Project Manager') {
@@ -715,26 +732,54 @@
                 }
                 
                 if (response.code === 200 && response.data) {
-                    selectElement.innerHTML = '<option value="">Select ' + fieldLabel + '</option>';
+                    buttonElement.textContent = `Select ${fieldLabel}`;
+                    menuElement.innerHTML = '';
                     
                     response.data.forEach(user => {
-                        const option = document.createElement('option');
-                        option.value = user.id;
-                        option.textContent = user.name;
+                        const listItem = document.createElement('li');
+                        const link = document.createElement('a');
+                        link.className = 'dropdown-item';
+                        link.href = '#';
+                        link.textContent = user.name;
+                        link.dataset.userId = user.id;
+                        link.dataset.userName = user.name;
                         
-                        // Select current user if matches
                         if (user.name === currentValue) {
-                            option.selected = true;
+                            link.classList.add('active');
+                            buttonElement.textContent = user.name;
                         }
                         
-                        selectElement.appendChild(option);
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            // Remove active class from all items
+                            menuElement.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
+                            
+                            // Add active class to clicked item
+                            link.classList.add('active');
+                            
+                            // Update button text and data
+                            buttonElement.textContent = user.name;
+                            buttonElement.dataset.selectedId = user.id;
+                            buttonElement.dataset.selectedName = user.name;
+                            
+                            // Close dropdown
+                            const dropdown = bootstrap.Dropdown.getInstance(buttonElement);
+                            if (dropdown) dropdown.hide();
+                        });
+                        
+                        listItem.appendChild(link);
+                        menuElement.appendChild(listItem);
                     });
                 } else {
-                    selectElement.innerHTML = '<option>No users found</option>';
+                    buttonElement.textContent = 'No users found';
+                    menuElement.innerHTML = '<li><span class="dropdown-item-text">No users found</span></li>';
                 }
             } catch (error) {
                 console.error('Failed to load users:', error);
-                selectElement.innerHTML = '<option>Error loading users</option>';
+                buttonElement.textContent = 'Error loading users';
+                menuElement.innerHTML = '<li><span class="dropdown-item-text">Error loading users</span></li>';
             }
         }
     </script>
@@ -843,6 +888,14 @@
             if (createPhaseForm) {
                 createPhaseForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
+                    
+                    // Protect button
+                    const btn = document.querySelector('#createPhaseModal .btn.orange_btn');
+                    if (btn && btn.disabled) return;
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+                    }
 
                     const formData = new FormData(createPhaseForm);
                     const title = formData.get('title');
@@ -893,6 +946,12 @@
                         } catch (error) {
                             console.error('Error creating phase:', error);
                             alert('Error creating phase. Please try again.');
+                        } finally {
+                            // Reset button
+                            if (btn) {
+                                btn.disabled = false;
+                                btn.innerHTML = '<i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}';
+                            }
                         }
                     }
                 });

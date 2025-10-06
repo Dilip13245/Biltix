@@ -29,7 +29,7 @@
         @endif
       </div>
       <div class="modal-body">
-        <form id="addSnagForm" enctype="multipart/form-data">
+        <form id="addSnagForm" class="protected-form" enctype="multipart/form-data">
           @csrf
           <div class="mb-3">
             <label for="snagTitle" class="form-label fw-medium">{{ __("messages.snag_title") }}</label>
@@ -51,14 +51,14 @@
 
           <div class="mb-3" id="phaseSelectContainer">
             <label for="phaseSelect" class="form-label fw-medium">{{ __("messages.phase") }}</label>
-            <select class="form-select Input_control" id="phaseSelect" name="phase_id" required>
+            <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id" required>
               <option value="">{{ __("messages.select_phase") }}</option>
             </select>
           </div>
 
           <div class="mb-3">
             <label for="assignedTo" class="form-label fw-medium">{{ __("messages.assign_to") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
-            <select class="form-select Input_control" id="assignedTo" name="assigned_to">
+            <select class="form-select Input_control searchable-select" id="assignedTo" name="assigned_to">
               <option value="">{{ __("messages.select_user") }}</option>
             </select>
           </div>

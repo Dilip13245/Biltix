@@ -34,9 +34,9 @@ class ProjectController extends Controller
                 'project_due_date' => 'required|date|after:project_start_date',
                 'priority' => 'nullable|in:low,medium,high,critical',
                 'construction_plans' => 'nullable|array',
-                'construction_plans.*' => 'nullable|file|mimes:pdf,docx,jpg,jpeg,png|max:25600',
+                'construction_plans.*' => 'nullable|file|max:25600',
                 'gantt_chart' => 'nullable|array', 
-                'gantt_chart.*' => 'nullable|file|mimes:pdf,docx,jpg,jpeg,png|max:25600',
+                'gantt_chart.*' => 'nullable|file|max:25600',
             ], [
                 'project_title.required' => 'Project Title is required',
                 'contractor_name.required' => 'Contractor Name is required',

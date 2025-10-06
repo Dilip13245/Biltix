@@ -201,6 +201,27 @@
   <!-- RTL Icon Spacing Fix -->
   <script src="{{ asset('website/js/rtl-spacing-fix.js') }}"></script>
   
+  <!-- Arabic File Input Localization -->
+  <script src="{{ asset('website/js/arabic-file-input.js') }}"></script>
+  
+
+  
+  <!-- Searchable Dropdown -->
+  <script src="{{ asset('website/js/searchable-dropdown.js') }}"></script>
+  <script>
+    // Initialize searchable dropdowns when modals are shown
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize on modal show events
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('shown.bs.modal', function() {
+        //   setTimeout(() => {
+            initSearchableDropdowns();
+        //   }, 200);
+        });
+      });
+    });
+  </script>
+  
   @include('website.layout.auth-check')
   @include('website.layout.user-info')
   @include('website.includes.permission-error-handler')

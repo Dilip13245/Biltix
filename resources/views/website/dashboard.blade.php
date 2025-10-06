@@ -187,6 +187,35 @@
             background-color: #fff5f0;
             border-left: 3px solid #F58D2E;
         }
+
+        /* Calendar icon positioning for RTL */
+        [dir="rtl"] .vanilla-calendar-wrapper .fa-calendar-alt {
+            left: 2.5rem !important;
+            right: auto !important;
+        }
+        
+        [dir="rtl"] .vanilla-calendar-wrapper input {
+            padding-left: 3.5rem !important;
+            padding-right: 0.75rem !important;
+        }
+        
+        [dir="ltr"] .vanilla-calendar-wrapper input {
+            padding-right: 2.5rem !important;
+            padding-left: 0.75rem !important;
+        }
+        
+        /* Move validation icon to avoid overlap with calendar icon */
+        [dir="rtl"] .vanilla-calendar-wrapper .is-invalid {
+            background-position: left 0.5rem center !important;
+            padding-left: 3.5rem !important;
+            padding-right: 0.75rem !important;
+        }
+        
+        [dir="ltr"] .vanilla-calendar-wrapper .is-invalid {
+            background-position: right 2.5rem center !important;
+            padding-right: 2.25rem !important;
+            padding-left: 0.75rem !important;
+        }
     </style>
 
 
@@ -386,11 +415,17 @@
                                 {{ __('messages.new_project') }}
                             </button>
                         @endcan
-                        <select class="form-select w-auto" id="statusFilter">
-                            <option value="all">{{ __('messages.all_status') }}</option>
-                            <option value="active">{{ __('messages.active') }}</option>
-                            <option value="completed">{{ __('messages.completed') }}</option>
-                        </select>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" id="statusFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-filter"></i>
+                                <span id="statusFilterText">{{ __('messages.all_status') }}</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="statusFilterDropdown">
+                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setStatusFilter('all', '{{ __('messages.all_status') }}')"><i class="fas fa-list text-secondary"></i>{{ __('messages.all_status') }}</a></li>
+                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setStatusFilter('active', '{{ __('messages.active') }}')"><i class="fas fa-play-circle text-success"></i>{{ __('messages.active') }}</a></li>
+                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setStatusFilter('completed', '{{ __('messages.completed') }}')"><i class="fas fa-check-circle text-primary"></i>{{ __('messages.completed') }}</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -1001,12 +1036,13 @@
                 }
             }, 500);
 
-            const statusFilter = document.getElementById('statusFilter');
-            if (statusFilter) {
-                statusFilter.addEventListener('change', function() {
-                    loadProjects(this.value, true);
-                });
-            }
+            // Status filter functionality is now handled by setStatusFilter function
+            
+            // Add setStatusFilter function to global scope
+            window.setStatusFilter = function(value, text) {
+                document.getElementById('statusFilterText').textContent = text;
+                loadProjects(value, true);
+            };
 
             // Infinite scroll implementation
             let scrollTimeout;
@@ -1126,6 +1162,14 @@
             if (createProjectForm) {
                 createProjectForm.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    
+                    // Protect button
+                    const btn = document.querySelector('#createProjectModal .btn.orange_btn');
+                    if (btn && btn.disabled) return;
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+                    }
 
                     const fileInputs = document.querySelectorAll('input[type="file"]');
                     let hasFiles = false;
@@ -1320,6 +1364,18 @@
                 } catch (error) {
                     console.error('Create project with markup error:', error);
                     showToast('Failed to create project. Please try again.', 'error');
+                } finally {
+                    // Reset buttons
+                    const btn = document.querySelector('#createProjectModal .btn.orange_btn');
+                    const drawingBtn = document.getElementById('saveDrawingBtn');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-plus me-2"></i>Create Project';
+                    }
+                    if (drawingBtn) {
+                        drawingBtn.disabled = false;
+                        drawingBtn.innerHTML = '<i class="fas fa-save me-2"></i><span id="saveButtonText">Save</span>';
+                    }
                 }
             }
 
@@ -1343,6 +1399,13 @@
                 } catch (error) {
                     console.error('Create project error:', error);
                     showToast('Failed to create project. Please try again.', 'error');
+                } finally {
+                    // Reset button
+                    const btn = document.querySelector('#createProjectModal .btn.orange_btn');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-plus me-2"></i>Create Project';
+                    }
                 }
             }
         });

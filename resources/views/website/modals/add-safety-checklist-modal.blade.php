@@ -78,7 +78,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="addSafetyChecklistForm" class="btn orange_btn">
+        <button type="submit" form="addSafetyChecklistForm" class="btn orange_btn" id="safetyChecklistBtn">
           <i class="fas fa-plus {{ margin_end(2) }}"></i>{{ __('messages.create_checklist') }}
         </button>
       </div>
@@ -103,4 +103,23 @@ function addSafetyItem() {
 function removeItem(button) {
   button.closest('.input-group').remove();
 }
+
+function protectSafetyChecklistButton() {
+  var btn = document.getElementById('safetyChecklistBtn');
+  if (btn && !btn.disabled) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-plus {{ margin_end(2) }}"></i>{{ __('messages.create_checklist') }}';
+    }, 5000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('safetyChecklistBtn');
+  if (btn) {
+    btn.addEventListener('click', protectSafetyChecklistButton);
+  }
+});
 </script>

@@ -66,10 +66,31 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
-        <button type="submit" form="uploadFileForm" class="btn orange_btn">
+        <button type="submit" form="uploadFileForm" class="btn orange_btn" id="uploadFileBtn">
           {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+function protectUploadFileButton() {
+  var btn = document.getElementById('uploadFileBtn');
+  if (btn && !btn.disabled) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+    }, 5000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var btn = document.getElementById('uploadFileBtn');
+  if (btn) {
+    btn.addEventListener('click', protectUploadFileButton);
+  }
+});
+</script>

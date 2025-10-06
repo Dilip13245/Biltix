@@ -46,12 +46,9 @@ class NumberHelper
     
     public static function generateSnagNumber($projectId)
     {
-        $lastSnag = Snag::where('project_id', $projectId)
-            ->orderBy('id', 'desc')
-            ->first();
+        $lastSnag = Snag::orderBy('id', 'desc')->first();
         
         if ($lastSnag) {
-            // Extract number from "Snag-001" format
             $lastNumber = (int) substr($lastSnag->snag_number, 5);
             $newNumber = $lastNumber + 1;
         } else {

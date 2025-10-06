@@ -42,7 +42,7 @@
                 </ul>
             </div>
             @can('team', 'create')
-                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addMemberModal" onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
                     <i class="fas fa-plus"></i>
                     {{ __('messages.add_member') }}
                 </button>
@@ -255,8 +255,23 @@
             }
         }
 
+        // Simple button protection
+        function protectMemberButton(btn) {
+            if (btn.disabled) return;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+            setTimeout(function() {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-user-plus me-2"></i>{{ __("messages.add_member") }}';
+            }, 5000);
+        }
+
         async function handleMemberSubmit(e) {
             e.preventDefault();
+            
+            // Protect button
+            const submitBtn = document.getElementById('memberSubmitBtn');
+            if (submitBtn) protectMemberButton(submitBtn);
 
             try {
                 const formData = new FormData();
@@ -370,5 +385,7 @@
             }
         }
     </script>
+    
+
 
 @endsection

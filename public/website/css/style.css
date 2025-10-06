@@ -1174,3 +1174,68 @@ table tr:last-child td {
     gap: 0.25rem !important;
   }
 }
+
+/* File Input Arabic Localization */
+[dir="rtl"] input[type="file"] {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+[dir="rtl"] input[type="file"]::-webkit-file-upload-button {
+  display: none;
+}
+
+[dir="rtl"] input[type="file"]::before {
+  content: 'اختر الملفات';
+  display: inline-block;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 6px 12px;
+  outline: none;
+  white-space: nowrap;
+  cursor: pointer;
+  font-weight: 400;
+  color: #495057;
+  margin-left: 8px;
+}
+
+[dir="rtl"] input[type="file"]:hover::before {
+  background: #e9ecef;
+}
+
+[dir="rtl"] input[type="file"]::after {
+  content: 'لم يتم اختيار ملف';
+  color: #6c757d;
+  font-size: 14px;
+}
+
+[dir="rtl"] .form-control[type="file"]::-webkit-file-upload-button {
+  display: none;
+}
+
+[dir="rtl"] .form-control[type="file"]::before {
+  content: 'اختر الملفات';
+  display: inline-block;
+  background: #f8f9fa;
+  border: none;
+  border-left: 1px solid #dee2e6;
+  padding: 8px 12px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #495057;
+}
+
+[dir="rtl"] .form-control[type="file"]:hover::before {
+  background: #e9ecef;
+}
+
+[dir="rtl"] .form-control[type="file"]::after {
+  content: 'لم يتم اختيار ملف';
+  padding: 8px 12px;
+  color: #6c757d;
+  font-size: 14px;
+}
+

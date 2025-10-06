@@ -49,7 +49,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="addMemberForm" class="btn orange_btn">
+        <button type="submit" form="addMemberForm" class="btn orange_btn" id="memberSubmitBtn">
           <i class="fas fa-user-plus me-2"></i>{{ __("messages.add_member") }}
         </button>
       </div>
@@ -72,6 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
           response.data.forEach(user => {
             memberSelect.innerHTML += `<option value="${user.id}" data-role="${user.role}">${user.name}</option>`;
           });
+          
+          // Initialize searchable dropdown after loading options
+          if (typeof SearchableDropdown !== 'undefined' && !memberSelect.searchableDropdown) {
+            memberSelect.searchableDropdown = new SearchableDropdown(memberSelect);
+          }
         }
       } catch (error) {
         console.error('Error loading users:', error);

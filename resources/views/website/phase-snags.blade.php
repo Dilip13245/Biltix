@@ -34,7 +34,7 @@
             <p>{{ __('messages.view_manage_snags') }}</p>
         </div>
         @can('snags', 'create')
-            <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal">
+            <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal" onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
                 <i class="fas fa-plus"></i>
                 {{ __('messages.add_new_snag') }}
             </button>
@@ -172,6 +172,17 @@
                             response.data.forEach(user => {
                                 assignedSelect.innerHTML += `<option value="${user.id}">${user.name}</option>`;
                             });
+                            
+                            // Initialize searchable dropdown after loading options
+                            setTimeout(() => {
+                                if (typeof SearchableDropdown !== 'undefined') {
+                                    if (!assignedSelect.searchableDropdown) {
+                                        assignedSelect.searchableDropdown = new SearchableDropdown(assignedSelect);
+                                    } else {
+                                        assignedSelect.searchableDropdown.updateOptions();
+                                    }
+                                }
+                            }, 100);
                         }
                     } catch (error) {
                         console.error('Error loading users:', error);
@@ -299,6 +310,19 @@
                 addSnagForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     
+                    // Protect button
+                    const submitBtn = document.getElementById('createSnagBtn');
+                    if (submitBtn && !submitBtn.disabled) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                        setTimeout(function() {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}';
+                        }, 5000);
+                    } else {
+                        return;
+                    }
+                    
                     const fileInput = document.getElementById('snagPhotos');
                     
                     if (fileInput.files && fileInput.files.length > 0) {
@@ -375,10 +399,12 @@
                     document.getElementById('addSnagForm').reset();
                     loadSnags();
                 } else {
+                    resetFormSubmission('addSnagForm');
                     toastr.error('Failed to create snag: ' + response.message);
                 }
             } catch (error) {
                 console.error('Error creating snag:', error);
+                resetFormSubmission('addSnagForm');
                 toastr.error('Failed to create snag');
             }
         }
@@ -414,10 +440,12 @@
                     document.getElementById('addSnagForm').reset();
                     loadSnags();
                 } else {
+                    resetFormSubmission('addSnagForm');
                     toastr.error('Failed to create snag: ' + response.message);
                 }
             } catch (error) {
                 console.error('Error creating snag:', error);
+                resetFormSubmission('addSnagForm');
                 toastr.error('Failed to create snag');
             } finally {
                 const createBtn = document.getElementById('createSnagBtn');
@@ -693,6 +721,7 @@
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
     <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>
+    <script src="{{ asset('website/js/searchable-dropdown.js') }}"></script>
 
     </div>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>

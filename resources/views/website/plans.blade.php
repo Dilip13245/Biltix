@@ -168,6 +168,7 @@
         let isLoading = false;
         let hasMorePages = true;
         const plansPerPage = 6;
+        let isUploading = false;
         
         // Load plans from API with server-side pagination
         async function loadPlans(resetPagination = true) {
@@ -689,8 +690,8 @@
                     // Open drawing modal
                     if (typeof openDrawingModal === 'function') {
                         openDrawingModal({
-                            title: 'Plan Replacement Markup',
-                            saveButtonText: 'Replace Plan',
+                            title: '{{ __('messages.drawing') }}',
+                            saveButtonText: '{{ __('messages.replace') }}',
                             mode: 'image',
                             onSave: function(markedUpImageData) {
                                 replaceWithMarkup(planId, markedUpImageData);
@@ -771,7 +772,13 @@
         
         // Upload mixed files (images with markup + documents)
         async function uploadMixedFiles(markedUpImageData) {
+            if (isUploading) {
+                console.log('Upload already in progress');
+                return;
+            }
+            
             try {
+                isUploading = true;
                 const formData = window.planFormData;
                 const { images, documents } = window.allSelectedFiles;
                 
@@ -803,6 +810,19 @@
             } catch (error) {
                 console.error('Upload mixed files error:', error);
                 toastr.error('{{ __('messages.failed_to_upload_plan') }}');
+            } finally {
+                isUploading = false;
+                // Reset both buttons
+                const uploadBtn = document.getElementById('uploadPlanBtn');
+                const drawingBtn = document.getElementById('saveDrawingBtn');
+                if (uploadBtn) {
+                    uploadBtn.disabled = false;
+                    uploadBtn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                }
+                if (drawingBtn) {
+                    drawingBtn.disabled = false;
+                    drawingBtn.innerHTML = '<i class="fas fa-save me-2"></i><span id="saveButtonText">{{ __('messages.save') }}</span>';
+                }
             }
         }
         
@@ -845,11 +865,20 @@
             window.addEventListener('scroll', handlePlansScroll);
             
             const uploadForm = document.getElementById('uploadPlanForm');
-            if (uploadForm) {
+            if (uploadForm && !uploadForm.hasAttribute('data-listener-added')) {
                 console.log('Upload form found, adding event listener');
+                uploadForm.setAttribute('data-listener-added', 'true');
                 uploadForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     console.log('Form submitted');
+                    
+                    // Protect button - early return if already processing
+                    const btn = document.getElementById('uploadPlanBtn');
+                    if (btn && btn.disabled) {
+                        console.log('Button already disabled, preventing duplicate submission');
+                        e.stopImmediatePropagation();
+                        return false;
+                    }
                     
                     const fileInput = document.getElementById('planFiles');
                     const files = fileInput.files;
@@ -857,6 +886,12 @@
                     if (!files || files.length === 0) {
                         toastr.warning('{{ __('messages.please_select_files') }}');
                         return;
+                    }
+                    
+                    // Disable button after validation passes
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
                     }
                     
                     // Store form data
@@ -880,15 +915,28 @@
                         const uploadModal = bootstrap.Modal.getInstance(document.getElementById('uploadPlanModal'));
                         if (uploadModal) uploadModal.hide();
                         
+                        // Reset button when going to drawing modal (user can still cancel)
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                        }
+                        
                         // Open drawing modal for images
                         setTimeout(() => {
                             // Check if drawing modal function exists
                             if (typeof openDrawingModal === 'function') {
                                 openDrawingModal({
-                                    title: 'Plan Markup',
-                                    saveButtonText: 'Save Plan',
+                                    title: '{{ __('messages.drawing') }}',
+                                    saveButtonText: '{{ __('messages.save') }}',
                                     mode: 'image',
                                     onSave: function(markedUpImageData) {
+                                        // Protect drawing save button
+                                        const drawingBtn = document.getElementById('saveDrawingBtn');
+                                        if (drawingBtn && drawingBtn.disabled) return;
+                                        if (drawingBtn) {
+                                            drawingBtn.disabled = true;
+                                            drawingBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                                        }
                                         uploadMixedFiles(markedUpImageData);
                                     }
                                 });
@@ -919,7 +967,13 @@
             }
             
             window.uploadPlanDirectly = async function() {
+                if (isUploading) {
+                    console.log('Upload already in progress');
+                    return;
+                }
+                
                 try {
+                    isUploading = true;
                     const response = await api.uploadPlan(window.planFormData);
                     if (response.code === 200) {
                         bootstrap.Modal.getInstance(document.getElementById('uploadPlanModal')).hide();
@@ -932,6 +986,14 @@
                 } catch (error) {
                     console.error('Upload plan error:', error);
                     toastr.error('{{ __('messages.failed_to_upload_plan') }}');
+                } finally {
+                    isUploading = false;
+                    // Reset button
+                    const btn = document.getElementById('uploadPlanBtn');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                    }
                 }
             }
         });

@@ -29,7 +29,7 @@
         @endif
       </div>
       <div class="modal-body">
-        <form id="addTaskForm">
+        <form id="addTaskForm" class="protected-form">
           @csrf
           <div class="mb-3">
             <label for="taskName" class="form-label fw-medium">{{ __("messages.task_name") }}</label>
@@ -45,14 +45,14 @@
 
           <div class="mb-3" id="phaseSelectContainer">
             <label for="phaseSelect" class="form-label fw-medium">{{ __("messages.phase") }}</label>
-            <select class="form-select Input_control" id="phaseSelect" name="phase_id" required>
+            <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id" required>
               <option value="">{{ __("messages.select_phase") }}</option>
             </select>
           </div>
 
           <div class="mb-3">
             <label for="assignedTo" class="form-label fw-medium">{{ __("messages.assign_to") }}</label>
-            <select class="form-select Input_control" id="assignedTo" name="assigned_to" required>
+            <select class="form-select Input_control searchable-select" id="assignedTo" name="assigned_to" required>
               <option value="">{{ __("messages.select_user") }}</option>
             </select>
           </div>
@@ -85,4 +85,6 @@
     </div>
   </div>
 </div>
+
+
 

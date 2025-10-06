@@ -71,7 +71,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="addPhotoForm" class="btn orange_btn">
+        <button type="submit" form="addPhotoForm" class="btn orange_btn" id="addPhotoBtn">
           <i class="fas fa-upload me-2"></i>{{ __("messages.upload_photo") }}s
         </button>
       </div>
@@ -114,6 +114,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       } else {
         previewArea.style.display = 'none';
+      }
+    });
+  }
+  
+  // Button protection
+  var btn = document.getElementById('addPhotoBtn');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      if (!this.disabled) {
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+        setTimeout(() => {
+          this.disabled = false;
+          this.innerHTML = '<i class="fas fa-upload me-2"></i>{{ __("messages.upload_photo") }}s';
+        }, 5000);
       }
     });
   }
