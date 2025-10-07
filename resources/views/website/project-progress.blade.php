@@ -659,10 +659,11 @@
                                                         value="${milestone.extension_days || 0}" 
                                                         min="0" 
                                                         id="ext_${milestone.id}" 
-                                                        title="Extension days">
+                                                        title="Extension days"
+                                                        onclick="event.stopPropagation()">
                                                     <button class="btn btn-sm btn-outline-primary" 
                                                         style="padding: 1px 4px; font-size: 10px;" 
-                                                        onclick="extendMilestone(${milestone.id})" 
+                                                        onclick="event.stopPropagation(); extendMilestone(${milestone.id})" 
                                                         title="Extend milestone">
                                                         <i class="fas fa-save"></i>
                                                     </button>
@@ -683,11 +684,11 @@
                                     <small class="text-muted me-2">{{ __('messages.quick_extend') }}:</small>
                                     ${phase.milestones && phase.milestones.length === 1 ? `
                                         <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
+                                            onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
                                         <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
+                                            onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
                                         <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
+                                            onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
                                     ` : ''}
                                 </div>
                             </div>
