@@ -867,6 +867,7 @@ return [
     'failed_update_comment' => 'فشل في تحديث التعليق',
     'inspection_marked_complete' => 'تم تعليم التفتيش كمكتمل بنجاح',
     'failed_mark_complete' => 'فشل في تعليم التفتيش كمكتمل',
+    'complete_all_checkpoints_first' => 'يرجى إكمال جميع نقاط التحقق قبل التعليم كمحلول',
     'failed_load_details' => 'فشل في تحميل تفاصيل التفتيش',
     'no_checklist_items' => 'لا توجد عناصر في قائمة التحقق',
     'snag_details' => 'تفاصيل المشكلة',
@@ -989,6 +990,14 @@ return [
     
     // Daily Logs
     'add_daily_log' => 'إضافة سجل يومي',
+    
+    // Task Authorization
+    'only_assigned_user_can_modify' => 'يمكن للمستخدمين المُكلفين فقط تعديل هذه المهمة',
+    'user_not_project_member' => 'المستخدم المحدد ليس عضواً في هذا المشروع',
+    'new' => 'جديد',
+    'status_updated_success' => 'تم تحديث الحالة بنجاح',
+    'status_update_failed' => 'فشل في تحديث الحالة',
+    'snag_not_found' => 'المشكلة غير موجودة',
 
 ];
 

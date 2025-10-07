@@ -26,7 +26,10 @@
                                     <label class="fw-medium mb-2">{{ __('messages.status') }}</label>
                                     <select class="form-select w-100" id="statusFilter">
                                         <option value="all">{{ __('messages.all_status') }}</option>
+                                        <option value="new">{{ __('messages.new') }}</option>
+                                        <option value="pending">{{ __('messages.pending') }}</option>
                                         <option value="in_progress">{{ __('messages.in_progress') }}</option>
+                                        <option value="completed">{{ __('messages.completed') }}</option>
                                         <option value="resolved">{{ __('messages.resolved') }}</option>
                                     </select>
                                 </div>
@@ -225,8 +228,11 @@
 
         function getStatusBadge(status) {
             const statusMap = {
+                'New': { class: 'badge5' },
                 'Open': { class: 'badge5' },
+                'Pending': { class: 'badge2' },
                 'In_progress': { class: 'badge4' },
+                'Completed': { class: 'badge1' },
                 'Resolved': { class: 'badge1' },
                 'Closed': { class: 'badge1' }
             };
@@ -566,8 +572,11 @@
         
         function getStatusBadgeClass(status) {
             const statusMap = {
+                'new': 'badge5',
                 'open': 'badge5',
+                'pending': 'badge2',
                 'in_progress': 'badge4', 
+                'completed': 'badge1',
                 'resolved': 'badge1',
                 'closed': 'badge1'
             };

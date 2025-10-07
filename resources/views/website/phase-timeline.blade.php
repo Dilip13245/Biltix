@@ -250,12 +250,7 @@
                         <div class="card-body p-md-4">
                             <h5 class="fw-semibold black_color mb-3 mb-md-4">{{ __("messages.project_overview") }}</h5>
                             <div id="phaseProgressContainer">
-                                <!-- Dynamic phase progress will be loaded here -->
-                                <div class="text-center py-3">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">{{ __("messages.loading") }}</span>
-                                    </div>
-                                </div>
+                                <!-- Phase progress will be rendered from server data -->
                             </div>
                         </div>
                     </div>
@@ -370,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadActivities();
   loadManpowerEquipment();
   loadSafetyItems();
-  loadPhaseProgress();
+  renderPhaseProgressFromServer();
 });
 
 // Activities Functions
@@ -515,22 +510,10 @@ function showError(containerId, message) {
   `;
 }
 
-// Phase Progress Functions
-async function loadPhaseProgress() {
-  try {
-    const response = await api.makeRequest('projects/list_phases', {
-      project_id: currentProjectId,
-      user_id: currentUserId
-    });
-    
-    if (response.code === 200) {
-      renderPhaseProgress(response.data || []);
-    } else {
-      showError('phaseProgressContainer', '{{ __("messages.failed_to_load_phases") }}');
-    }
-  } catch (error) {
-    showError('phaseProgressContainer', '{{ __("messages.error_loading_phases") }}');
-  }
+// Phase Progress Functions - Using server-side data
+function renderPhaseProgressFromServer() {
+  const phases = @json($phases ?? []);
+  renderPhaseProgress(phases);
 }
 
 function renderPhaseProgress(phases) {
@@ -547,7 +530,7 @@ function renderPhaseProgress(phases) {
   }
   
   container.innerHTML = phases.map(phase => {
-    const progress = Math.round(phase.progress_percentage || 0);
+    const progress = Math.round(phase.time_progress || 0);
     return `
       <div class="mb-3 phase-progress-item" data-phase-id="${phase.id}">
         <div class="mb-2 d-flex justify-content-between align-items-center gap-2">

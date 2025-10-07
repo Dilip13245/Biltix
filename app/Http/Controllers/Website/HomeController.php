@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Website;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\ProjectPhase;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -215,6 +216,21 @@ class HomeController extends Controller
     
     public function phaseTimeline($project_id)
     {
-        return view('website.phase-timeline');
+        // Get phases with their time progress for the project
+        $phases = ProjectPhase::with('milestones')
+            ->where('project_id', $project_id)
+            ->where('is_active', true)
+            ->where('is_deleted', false)
+            ->orderBy('id')
+            ->get();
+            
+        // Add calculated time progress for each phase (same as API)
+        $phases->each(function ($phase) {
+            $phase->time_progress = $phase->time_progress;
+            $phase->has_extensions = $phase->has_extensions;
+            $phase->total_extension_days = $phase->total_extension_days;
+        });
+            
+        return view('website.phase-timeline', compact('phases'));
     }
 }

@@ -40,6 +40,17 @@ class TaskController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
+            // Check if assigned user is a team member of the project
+            $isTeamMember = \App\Models\TeamMember::where('user_id', $request->assigned_to)
+                ->where('project_id', $request->project_id)
+                ->where('is_active', true)
+                ->where('is_deleted', false)
+                ->exists();
+
+            if (!$isTeamMember) {
+                return $this->toJsonEnc([], trans('api.tasks.user_not_in_project'), \Illuminate\Support\Facades\Config::get('constant.ERROR'));
+            }
+
             $taskDetails = new Task();
             $taskDetails->task_number = NumberHelper::generateTaskNumber($request->project_id);
             $taskDetails->project_id = $request->project_id;
@@ -164,6 +175,7 @@ class TaskController extends Controller
     {
         try {
             $task_id = $request->input('task_id');
+            $user_id = $request->input('user_id');
 
             $task = Task::where('id', $task_id)
                 ->where('is_active', 1)
@@ -172,6 +184,11 @@ class TaskController extends Controller
 
             if (!$task) {
                 return $this->toJsonEnc([], trans('api.tasks.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is assigned to this task
+            if ($task->assigned_to != $user_id) {
+                return $this->toJsonEnc([], trans('api.tasks.not_assigned_to_user'), Config::get('constant.FORBIDDEN'));
             }
 
             // Check if images are provided
@@ -243,6 +260,11 @@ class TaskController extends Controller
                 return $this->toJsonEnc([], trans('api.tasks.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            // Check if user is assigned to this task
+            if ($task->assigned_to != $user_id) {
+                return $this->toJsonEnc([], trans('api.tasks.not_assigned_to_user'), Config::get('constant.FORBIDDEN'));
+            }
+
             $task->status = $status;
             if ($status === 'completed') {
                 $task->completed_at = now();
@@ -300,6 +322,11 @@ class TaskController extends Controller
 
             if (!$task) {
                 return $this->toJsonEnc([], trans('api.tasks.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is assigned to this task
+            if ($task->assigned_to != $user_id) {
+                return $this->toJsonEnc([], trans('api.tasks.not_assigned_to_user'), Config::get('constant.FORBIDDEN'));
             }
 
             $task->progress_percentage = $progress_percentage;

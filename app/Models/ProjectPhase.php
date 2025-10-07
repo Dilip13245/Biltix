@@ -26,8 +26,44 @@ class ProjectPhase extends Model
         return $query->where('is_active', true)->where('is_deleted', false);
     }
 
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
+
     public function milestones()
     {
         return $this->hasMany(PhaseMilestone::class, 'phase_id')->where('is_active', true)->where('is_deleted', false);
+    }
+
+    public function getTimeProgressAttribute()
+    {
+        $milestones = $this->milestones;
+        
+        if ($milestones->isEmpty()) {
+            return 0;
+        }
+
+        $totalProgress = 0;
+        $milestoneCount = 0;
+
+        foreach ($milestones as $milestone) {
+            if ($milestone->start_date && $milestone->due_date) {
+                $totalProgress += $milestone->time_progress;
+                $milestoneCount++;
+            }
+        }
+
+        return $milestoneCount > 0 ? round($totalProgress / $milestoneCount, 2) : 0;
+    }
+
+    public function getHasExtensionsAttribute()
+    {
+        return $this->milestones->where('is_extended', true)->isNotEmpty();
+    }
+
+    public function getTotalExtensionDaysAttribute()
+    {
+        return $this->milestones->sum('extension_days');
     }
 }

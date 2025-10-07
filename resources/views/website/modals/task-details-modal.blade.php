@@ -42,9 +42,11 @@
                                 </div>
                             </div>
                             <div class="col-md-4 text-end">
-                                <button class="btn btn-success" onclick="markAsResolved()" id="resolveBtn">
-                                    <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
-                                </button>
+                                <select class="form-select w-auto d-inline-block" id="taskStatusSelect" onchange="changeTaskStatus()">
+                                    <option value="pending">{{ __('messages.pending') }}</option>
+                                    <option value="in_progress">{{ __('messages.in_progress') }}</option>
+                                    <option value="completed">{{ __('messages.completed') }}</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -98,6 +100,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
+                <button class="btn btn-success" onclick="markAsResolved()" id="resolveBtn">
+                    <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
+                </button>
             </div>
         </div>
     </div>

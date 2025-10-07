@@ -10,6 +10,7 @@ return [
     'NOT_FOUND' => 404,
     'INTERNAL_ERROR' => 500,
     'UNAUTHORIZED' => 401,
+    'FORBIDDEN' => 403,
     'INACTIVE' => 403,
     'for_zero_eight' => 408,
     'ENCRYPTION_ENABLED' => 0,

@@ -368,6 +368,20 @@
     }
 
     async function markInspectionComplete() {
+        // Check if all checklist items are completed
+        if (!currentInspectionData || !currentInspectionData.checklists) {
+            toastr.error('{{ __('messages.failed_mark_complete') }}');
+            return;
+        }
+
+        const totalItems = currentInspectionData.checklists.length;
+        const completedItems = currentInspectionData.checklists.filter(item => item.is_checked).length;
+
+        if (completedItems < totalItems) {
+            toastr.warning(`{{ __('messages.complete_all_checkpoints_first') }} (${completedItems}/${totalItems} {{ __('messages.completed') }})`);
+            return;
+        }
+
         try {
             const response = await api.completeInspection({
                 user_id: getUserId(),

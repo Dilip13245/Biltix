@@ -81,6 +81,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('delete_phase', [ProjectController::class, 'deletePhase']);
         Route::post('timeline', [ProjectController::class, 'timeline']);
         Route::post('update_phase_progress', [ProjectController::class, 'updatePhaseProgress']);
+        Route::post('extend_milestone', [ProjectController::class, 'updateMilestoneDueDate']);
     });
 
     Route::prefix('tasks')->group(function () {
@@ -189,6 +190,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::get('project-managers', [\App\Http\Controllers\Api\UserController::class, 'getProjectManagers']);
         Route::get('technical-engineers', [\App\Http\Controllers\Api\UserController::class, 'getTechnicalEngineers']);
         Route::get('by-role', [\App\Http\Controllers\Api\UserController::class, 'getUsersByRole']);
+        Route::post('get_project_team_members', [\App\Http\Controllers\Api\UserController::class, 'getProjectTeamMembers']);
     });
     
     Route::prefix('project-progress')->group(function () {

@@ -345,6 +345,7 @@ class ProjectController extends Controller
                 'milestones' => 'nullable|array',
                 'milestones.*.milestone_name' => 'required_with:milestones|string|max:255',
                 'milestones.*.days' => 'nullable|integer|min:1',
+
             ]);
 
             if ($validator->fails()) {
@@ -365,6 +366,7 @@ class ProjectController extends Controller
                             'phase_id' => $phaseDetails->id,
                             'milestone_name' => $milestone['milestone_name'],
                             'days' => $milestone['days'] ?? null,
+
                             'is_active' => true,
                             'is_deleted' => false
                         ]);
@@ -393,6 +395,19 @@ class ProjectController extends Controller
                 ->where('is_deleted', 0)
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            // Add calculated time progress for each phase
+            $phases->each(function ($phase) {
+                $phase->time_progress = $phase->time_progress;
+                $phase->has_extensions = $phase->has_extensions;
+                $phase->total_extension_days = $phase->total_extension_days;
+                
+                $phase->milestones->each(function ($milestone) {
+                    $milestone->time_progress = $milestone->time_progress;
+                    $milestone->is_overdue = $milestone->is_overdue;
+                    $milestone->extension_days = $milestone->extension_days;
+                });
+            });
 
             return $this->toJsonEnc($phases, trans('api.projects.phases_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -538,6 +553,56 @@ class ProjectController extends Controller
             $phase->save();
 
             return $this->toJsonEnc($phase, trans('api.projects.phase_progress_updated'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function updateMilestoneDueDate(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'milestone_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'extension_days' => 'required|integer|min:0',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $milestone = PhaseMilestone::with('phase.project')->where('id', $request->milestone_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$milestone) {
+                return $this->toJsonEnc([], 'Milestone not found', Config::get('constant.NOT_FOUND'));
+            }
+
+            $extensionDays = $request->extension_days;
+            $isExtension = $extensionDays > 0;
+
+            $milestone->extension_days = $extensionDays;
+            $milestone->is_extended = $isExtension;
+            $milestone->save();
+
+            // Load the milestone with calculated attributes
+            $milestone->load('phase.project');
+            $milestoneData = [
+                'id' => $milestone->id,
+                'milestone_name' => $milestone->milestone_name,
+                'days' => $milestone->days,
+                'extension_days' => $milestone->extension_days,
+                'is_extended' => $milestone->is_extended,
+                'start_date' => $milestone->start_date ? $milestone->start_date->format('Y-m-d') : null,
+                'due_date' => $milestone->due_date ? $milestone->due_date->format('Y-m-d') : null,
+                'original_due_date' => $milestone->original_due_date ? $milestone->original_due_date->format('Y-m-d') : null,
+                'time_progress' => $milestone->time_progress,
+                'is_overdue' => $milestone->is_overdue,
+            ];
+
+            return $this->toJsonEnc($milestoneData, 'Milestone due date updated successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

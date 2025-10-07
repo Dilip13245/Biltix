@@ -100,11 +100,19 @@ document.addEventListener('DOMContentLoaded', function() {
     currentProjectId = pathParts[3]; // /website/project/{id}/phase-tasks
     currentPhaseId = urlParams.get('phase_id');
     
-    // Try multiple sources for user ID
-    currentUserId = localStorage.getItem('user_id') || 
-                   sessionStorage.getItem('user_id') || 
-                   document.querySelector('meta[name="user-id"]')?.content || 
-                   '1'; // Default fallback
+    // Get authenticated user ID
+    currentUserId = window.UniversalAuth ? UniversalAuth.getUserId() : {{ auth()->id() ?? 1 }};
+    
+    console.log('Initialized with:', {
+        currentProjectId: currentProjectId,
+        currentUserId: currentUserId,
+        currentPhaseId: currentPhaseId
+    });
+    
+    if (!currentUserId) {
+        console.error('No authenticated user found');
+        return;
+    }
     
     console.log('Current User ID:', currentUserId);
     console.log('Current Project ID:', currentProjectId);
@@ -159,7 +167,10 @@ function setupEventListeners() {
 
 async function loadUsers() {
     try {
-        const response = await api.getAllUsers();
+        const response = await api.getProjectTeamMembers({
+            project_id: currentProjectId,
+            user_id: currentUserId
+        });
         
         if (response.code === 200) {
             const users = response.data || [];
@@ -171,7 +182,7 @@ async function loadUsers() {
             users.forEach(user => {
                 const option = document.createElement('option');
                 option.value = user.id;
-                option.textContent = user.name;
+                option.textContent = user.name + (user.role_in_project ? ` (${user.role_in_project})` : '');
                 assignedToSelect.appendChild(option);
             });
             
@@ -187,7 +198,7 @@ async function loadUsers() {
             }, 100);
         }
     } catch (error) {
-        console.error('Error loading users:', error);
+        console.error('Error loading project team members:', error);
     }
 }
 
@@ -414,16 +425,51 @@ function populateTaskDetailsModal(task) {
     // Load images
     loadTaskImages(task.images || []);
     
-    // Show/hide add images button based on task status
+    // Check if current user is assigned to this task
+    const isAssignedUser = task.assigned_to && parseInt(task.assigned_to) === parseInt(currentUserId);
+    const isCompleted = task.status === 'completed';
+    
+    console.log('Task assignment check:', {
+        taskAssignedTo: task.assigned_to,
+        currentUserId: currentUserId,
+        isAssignedUser: isAssignedUser,
+        taskStatus: task.status
+    });
+    
+    // Set status select value and enable/disable
+    const statusSelect = document.getElementById('taskStatusSelect');
+    if (statusSelect) {
+        statusSelect.value = task.status;
+        statusSelect.disabled = !isAssignedUser;
+    }
+    
     const addImagesBtn = document.getElementById('addImagesBtn');
     const resolveBtn = document.getElementById('resolveBtn');
     
-    if (task.status === 'completed') {
-        addImagesBtn.style.display = 'none';
-        resolveBtn.style.display = 'none';
+    if (isCompleted || !isAssignedUser) {
+        if (addImagesBtn) addImagesBtn.style.display = 'none';
+        if (resolveBtn) resolveBtn.style.display = 'none';
     } else {
-        addImagesBtn.style.display = 'block';
-        resolveBtn.style.display = 'block';
+        if (addImagesBtn) addImagesBtn.style.display = 'block';
+        if (resolveBtn) resolveBtn.style.display = 'block';
+    }
+    
+    // Show message if user is not assigned
+    if (!isAssignedUser && !isCompleted) {
+        const modalBody = document.querySelector('#taskDetailsModal .modal-body');
+        let restrictionMessage = modalBody.querySelector('.task-restriction-message');
+        
+        if (!restrictionMessage) {
+            restrictionMessage = document.createElement('div');
+            restrictionMessage.className = 'alert alert-info task-restriction-message';
+            restrictionMessage.innerHTML = '<i class="fas fa-info-circle me-2"></i>{{ __("messages.only_assigned_user_can_modify") }}';
+            modalBody.insertBefore(restrictionMessage, modalBody.firstChild);
+        }
+    } else {
+        const restrictionMessage = document.querySelector('.task-restriction-message');
+        if (restrictionMessage) {
+            restrictionMessage.remove();
+        }
     }
     
     // Store current task for actions

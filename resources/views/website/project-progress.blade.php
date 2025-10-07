@@ -430,6 +430,64 @@
         function redirectToTimeline() {
             window.location.href = `/website/project/${currentProjectId}/phase-timeline?phase_id=${currentPhaseId}`;
         }
+
+
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        let extendTimeout = {};
+        
+        async function extendMilestone(milestoneId) {
+            // Clear existing timeout for this milestone
+            if (extendTimeout[milestoneId]) {
+                clearTimeout(extendTimeout[milestoneId]);
+            }
+            
+            // Debounce API calls
+            extendTimeout[milestoneId] = setTimeout(async () => {
+                const extensionInput = document.getElementById(`ext_${milestoneId}`);
+                const extensionDays = parseInt(extensionInput.value) || 0;
+                
+                try {
+                    const response = await api.makeRequest('projects/extend_milestone', {
+                        milestone_id: milestoneId,
+                        user_id: {{ auth()->id() ?? 1 }},
+                        extension_days: extensionDays
+                    });
+                    
+                    if (response.code === 200) {
+                        loadPhases(true); // Force reload after extension
+                        if (extensionDays > 0) {
+                            alert(`{{ __('messages.milestone_extended_successfully') }}\n{{ __('messages.extended_by') }}: ${extensionDays} {{ __('messages.days') }}`);
+                        } else {
+                            alert('{{ __('messages.extension_reset_successfully') }}');
+                        }
+                    } else {
+                        alert('{{ __('messages.failed_to_extend_milestone') }}: ' + response.message);
+                    }
+                } catch (error) {
+                    console.error('Error extending milestone:', error);
+                    alert('{{ __('messages.error_extending_milestone') }}');
+                }
+            }, 500); // 500ms debounce
+        }
+
+        async function quickExtend(milestoneId, days) {
+            const extensionInput = document.getElementById(`ext_${milestoneId}`);
+            const currentExtension = parseInt(extensionInput.value) || 0;
+            const newExtension = currentExtension + days;
+            
+            extensionInput.value = newExtension;
+            await extendMilestone(milestoneId);
+        }
         
         // Load project data and make edit buttons functional
         document.addEventListener('DOMContentLoaded', function() {
@@ -458,7 +516,19 @@
             });
         });
         
-        async function loadPhases() {
+        let phasesCache = null;
+        let lastLoadTime = 0;
+        const CACHE_DURATION = 30000; // 30 seconds
+
+        async function loadPhases(forceReload = false) {
+            const now = Date.now();
+            
+            // Use cache if available and not expired
+            if (!forceReload && phasesCache && (now - lastLoadTime) < CACHE_DURATION) {
+                renderPhases(phasesCache);
+                return;
+            }
+            
             try {
                 const response = await api.makeRequest('projects/list_phases', {
                     project_id: currentProjectId,
@@ -466,6 +536,8 @@
                 });
                 
                 if (response.code === 200 && response.data) {
+                    phasesCache = response.data;
+                    lastLoadTime = now;
                     renderPhases(response.data);
                 } else {
                     console.error('Failed to load phases:', response.message);
@@ -492,11 +564,38 @@
             }
             
             container.innerHTML = phases.map((phase, index) => {
-                const progress = Math.round(phase.progress_percentage || 0); // Use actual progress from database
+                // Use time-based progress
+                const progress = phase.time_progress || 0;
+                
                 const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) : 0;
-                const badgeClass = progress === 100 ? 'badge1' : progress > 0 ? 'badge4' : 'badge2';
-                const badgeText = progress === 100 ? 'Completed' : progress > 0 ? 'In Progress' : 'Pending';
-                const progressColor = progress === 100 ? 'bg-success' : 'linear-gradient(90deg, #4477C4 0%, #F58D2E 100%)';
+                const hasExtensions = phase.has_extensions || false;
+                const extensionDays = phase.total_extension_days || 0;
+                
+                // Determine badge based on time progress and extensions
+                let badgeClass, badgeText;
+                if (progress >= 100) {
+                    badgeClass = 'badge1';
+                    badgeText = 'Completed';
+                } else if (hasExtensions) {
+                    badgeClass = 'badge3'; // Warning for extensions
+                    badgeText = 'Extended';
+                } else if (progress > 0) {
+                    badgeClass = 'badge4';
+                    badgeText = 'In Progress';
+                } else {
+                    badgeClass = 'badge2';
+                    badgeText = 'Pending';
+                }
+                
+                // Progress bar color based on status
+                let progressColor;
+                if (progress >= 100) {
+                    progressColor = 'bg-success';
+                } else if (hasExtensions) {
+                    progressColor = 'linear-gradient(90deg, #ff6b35 0%, #f7931e 100%)';
+                } else {
+                    progressColor = 'linear-gradient(90deg, #4477C4 0%, #F58D2E 100%)';
+                }
                 
                 return `
                     <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay="${index * 0.4}s">
@@ -507,20 +606,89 @@
                                     <span class="badge ${badgeClass}">${badgeText}</span>
                                 </div>
                                 <div class="mb-3">
-                                    <div class="progress" style="height:8px;">
-                                        <div class="progress-bar" role="progressbar" 
-                                            style="width: ${progress}%; background: ${progressColor};"
-                                            aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress position-relative" style="height:12px;">
+                                        ${hasExtensions ? `
+                                            <!-- Original timeline progress -->
+                                            <div class="progress-bar" role="progressbar" 
+                                                style="width: ${Math.min(progress, 100)}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
+                                                aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <!-- Extension area (lighter color) -->
+                                            <div class="progress-bar" role="progressbar" 
+                                                style="width: ${Math.max(0, Math.min(100 - progress, extensionDays / (totalDays / 100)))}%; background: rgba(255, 193, 7, 0.3); border-left: 2px solid #ffc107;"
+                                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            <!-- Extension indicator -->
+                                            <div class="position-absolute top-0 h-100 d-flex align-items-center" style="left: ${Math.min(progress, 100)}%; transform: translateX(-50%);">
+                                                <div style="width: 2px; height: 100%; background: #ffc107;"></div>
+                                            </div>
+                                            <div class="position-absolute top-0 end-0 h-100 d-flex align-items-center" style="padding-right: 4px;">
+                                                <i class="fas fa-clock text-warning" title="Extended by ${extensionDays} days" style="font-size: 10px;"></i>
+                                            </div>
+                                        ` : `
+                                            <!-- Normal progress bar -->
+                                            <div class="progress-bar" role="progressbar" 
+                                                style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
+                                                aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        `}
                                     </div>
                                     <div class="d-flex justify-content-between mt-1">
-                                        <small class="text-muted">${progress}% Complete</small>
-                                        <small class="text-muted">${totalDays} days</small>
+                                        <small class="text-muted">${Math.round(progress)}% Time Progress</small>
+                                        <small class="text-muted">${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</small>
                                     </div>
+                                    ${hasExtensions ? `
+                                        <div class="mt-1">
+                                            <small class="text-warning">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                            </small>
+                                        </div>
+                                    ` : ''}
                                 </div>
                                 <div class="small text-muted">
-                                    ${phase.milestones ? phase.milestones.map(milestone => 
-                                        `<div>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</div>`
-                                    ).join('') : '<div>No milestones defined</div>'}
+                                    ${phase.milestones ? phase.milestones.map(milestone => {
+                                        const isOverdue = milestone.is_overdue;
+                                        const isExtended = milestone.is_extended;
+                                        const overdueClass = isOverdue ? 'text-danger' : '';
+                                        const extendedIcon = isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : '';
+                                        
+                                        return `
+                                            <div class="d-flex justify-content-between align-items-center ${overdueClass} mb-1">
+                                                <span>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}${extendedIcon}</span>
+                                                <div class="d-flex align-items-center gap-1">
+                                                    <input type="number" class="form-control form-control-sm" 
+                                                        style="width: 50px; height: 20px; font-size: 11px;" 
+                                                        value="${milestone.extension_days || 0}" 
+                                                        min="0" 
+                                                        id="ext_${milestone.id}" 
+                                                        title="Extension days">
+                                                    <button class="btn btn-sm btn-outline-primary" 
+                                                        style="padding: 1px 4px; font-size: 10px;" 
+                                                        onclick="extendMilestone(${milestone.id})" 
+                                                        title="Extend milestone">
+                                                        <i class="fas fa-save"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('') : '<div>No milestones defined</div>'}
+                                </div>
+                                ${hasExtensions ? `
+                                    <div class="mt-2">
+                                        <small class="text-warning">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
+                                        </small>
+                                    </div>
+                                ` : ''}
+                                <div class="mt-2 d-flex gap-1 flex-wrap">
+                                    <small class="text-muted me-2">{{ __('messages.quick_extend') }}:</small>
+                                    ${phase.milestones && phase.milestones.length === 1 ? `
+                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                            onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
+                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                            onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
+                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                            onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
+                                    ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -811,7 +979,7 @@
                             <label class="form-label fw-medium">{{ __('messages.milestones') }}</label>
                             <div id="milestonesContainer">
                                 <div class="milestone-item mb-2">
-                                    <div class="row">
+                                    <div class="row g-2">
                                         <div class="col-8">
                                             <input type="text" class="form-control Input_control"
                                                 name="milestones[0][milestone_name]"
@@ -820,7 +988,7 @@
                                         <div class="col-3">
                                             <input type="number" class="form-control Input_control"
                                                 name="milestones[0][days]" placeholder="{{ __('messages.days') }}"
-                                                min="1">
+                                                min="1" required>
                                         </div>
                                         <div class="col-1">
                                             <button type="button" class="btn btn-outline-danger btn-sm"
@@ -831,6 +999,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <small class="text-muted">{{ __('messages.dates_calculated_automatically') }}</small>
                             <button type="button" class="btn btn-outline-primary btn-sm" onclick="addMilestone()">
                                 <i class="fas fa-plus me-1"></i>{{ __('messages.add_milestone') }}
                             </button>
@@ -855,22 +1024,22 @@
             const newMilestone = document.createElement('div');
             newMilestone.className = 'milestone-item mb-2';
             newMilestone.innerHTML = `
-    <div class="row">
-      <div class="col-8">
-        <input type="text" class="form-control Input_control" name="milestones[${milestoneIndex}][milestone_name]" 
-          placeholder="Milestone name" required>
-      </div>
-      <div class="col-3">
-        <input type="number" class="form-control Input_control" name="milestones[${milestoneIndex}][days]" 
-          placeholder="Days" min="1">
-      </div>
-      <div class="col-1">
-        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    </div>
-  `;
+                <div class="row g-2">
+                    <div class="col-8">
+                        <input type="text" class="form-control Input_control" name="milestones[${milestoneIndex}][milestone_name]" 
+                            placeholder="{{ __('messages.milestone_name') }}" required>
+                    </div>
+                    <div class="col-3">
+                        <input type="number" class="form-control Input_control" name="milestones[${milestoneIndex}][days]" 
+                            placeholder="{{ __('messages.days') }}" min="1" required>
+                    </div>
+                    <div class="col-1">
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
             container.appendChild(newMilestone);
             milestoneIndex++;
         }
@@ -962,14 +1131,14 @@
             const container = document.getElementById('milestonesContainer');
             container.innerHTML = `
                 <div class="milestone-item mb-2">
-                    <div class="row">
+                    <div class="row g-2">
                         <div class="col-8">
                             <input type="text" class="form-control Input_control" name="milestones[0][milestone_name]" 
-                                placeholder="Milestone name" required>
+                                placeholder="{{ __('messages.milestone_name') }}" required>
                         </div>
                         <div class="col-3">
                             <input type="number" class="form-control Input_control" name="milestones[0][days]" 
-                                placeholder="Days" min="1">
+                                placeholder="{{ __('messages.days') }}" min="1" required>
                         </div>
                         <div class="col-1">
                             <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
@@ -1037,6 +1206,8 @@
             </div>
         </div>
     </div>
+
+
 
 
 

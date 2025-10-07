@@ -80,7 +80,7 @@
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             currentProjectId = getProjectIdFromUrl();
-            currentUserId = {{ auth()->id() ?? 1 }};
+            currentUserId = window.UniversalAuth ? UniversalAuth.getUserId() : {{ auth()->id() ?? 1 }};
 
             // Load tasks, users and phases
             loadTasks();
@@ -119,7 +119,10 @@
 
         async function loadUsers() {
             try {
-                const response = await api.getAllUsers();
+                const response = await api.getProjectTeamMembers({
+                    project_id: currentProjectId,
+                    user_id: currentUserId
+                });
 
                 if (response.code === 200) {
                     const users = response.data || [];
@@ -131,13 +134,13 @@
                         users.forEach(user => {
                             const option = document.createElement('option');
                             option.value = user.id;
-                            option.textContent = user.name;
+                            option.textContent = user.name + (user.role_in_project ? ` (${user.role_in_project})` : '');
                             assignedToSelect.appendChild(option);
                         });
                     }
                 }
             } catch (error) {
-                console.error('Error loading users:', error);
+                console.error('Error loading project team members:', error);
             }
         }
 
@@ -359,12 +362,48 @@
             const addImagesBtn = document.getElementById('addImagesBtn');
             const resolveBtn = document.getElementById('resolveBtn');
 
-            if (task.status === 'completed') {
+            // Check if current user is assigned to this task
+            const isAssignedUser = task.assigned_to && parseInt(task.assigned_to) === parseInt(currentUserId);
+            const isCompleted = task.status === 'completed';
+            
+            console.log('Task assignment check:', {
+                taskAssignedTo: task.assigned_to,
+                currentUserId: currentUserId,
+                isAssignedUser: isAssignedUser,
+                taskStatus: task.status
+            });
+
+            // Set status select value and enable/disable
+            const statusSelect = document.getElementById('taskStatusSelect');
+            if (statusSelect) {
+                statusSelect.value = task.status;
+                statusSelect.disabled = !isAssignedUser;
+            }
+
+            if (isCompleted || !isAssignedUser) {
                 if (addImagesBtn) addImagesBtn.style.display = 'none';
                 if (resolveBtn) resolveBtn.style.display = 'none';
             } else {
                 if (addImagesBtn) addImagesBtn.style.display = 'block';
                 if (resolveBtn) resolveBtn.style.display = 'block';
+            }
+
+            // Show message if user is not assigned
+            if (!isAssignedUser && !isCompleted) {
+                const modalBody = document.querySelector('#taskDetailsModal .modal-body');
+                let restrictionMessage = modalBody.querySelector('.task-restriction-message');
+                
+                if (!restrictionMessage) {
+                    restrictionMessage = document.createElement('div');
+                    restrictionMessage.className = 'alert alert-info task-restriction-message';
+                    restrictionMessage.innerHTML = '<i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}';
+                    modalBody.insertBefore(restrictionMessage, modalBody.firstChild);
+                }
+            } else {
+                const restrictionMessage = document.querySelector('.task-restriction-message');
+                if (restrictionMessage) {
+                    restrictionMessage.remove();
+                }
             }
 
             window.currentTaskDetails = task;
@@ -537,6 +576,34 @@
             return new Blob([u8arr], {
                 type: mime
             });
+        }
+
+        async function changeTaskStatus() {
+            if (!window.currentTaskDetails) return;
+            
+            const newStatus = document.getElementById('taskStatusSelect').value;
+            
+            try {
+                const response = await api.updateTaskStatus({
+                    task_id: window.currentTaskDetails.id,
+                    user_id: currentUserId,
+                    status: newStatus
+                });
+
+                if (response.code === 200) {
+                    document.getElementById('taskDetailStatus').textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace('_', ' ');
+                    window.currentTaskDetails.status = newStatus;
+                    loadTasks();
+                    toastr.success(response.message || '{{ __('messages.task_updated_successfully') }}');
+                } else {
+                    toastr.error(response.message || '{{ __('messages.failed_to_update_task') }}');
+                    document.getElementById('taskStatusSelect').value = window.currentTaskDetails.status;
+                }
+            } catch (error) {
+                console.error('Error updating task status:', error);
+                toastr.error('{{ __('messages.error_updating_task') }}');
+                document.getElementById('taskStatusSelect').value = window.currentTaskDetails.status;
+            }
         }
 
         async function markAsResolved() {

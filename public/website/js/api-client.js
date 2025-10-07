@@ -228,6 +228,10 @@ class ApiClient {
         return this.makeFormDataRequest('tasks/upload_attachment', data);
     }
 
+    async getProjectTeamMembers(data) {
+        return this.makeRequest('users/get_project_team_members', data);
+    }
+
     // Notification methods
     async getNotifications(data = {}) {
         return this.makeRequest('notifications/list', data);

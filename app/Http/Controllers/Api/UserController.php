@@ -80,4 +80,33 @@ class UserController extends Controller
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
     }
+
+    public function getProjectTeamMembers(Request $request)
+    {
+        try {
+            $project_id = $request->input('project_id');
+
+            if (!$project_id) {
+                return $this->toJsonEnc([], trans('api.tasks.project_id_required'), Config::get('constant.ERROR'));
+            }
+
+            $teamMembers = \App\Models\TeamMember::with('user')
+                ->where('project_id', $project_id)
+                ->where('is_active', true)
+                ->where('is_deleted', false)
+                ->get()
+                ->map(function ($member) {
+                    return [
+                        'id' => $member->user->id,
+                        'name' => $member->user->name,
+                        'email' => $member->user->email,
+                        'role_in_project' => $member->role_in_project
+                    ];
+                });
+
+            return $this->toJsonEnc($teamMembers, trans('api.tasks.team_members_retrieved'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
 }
