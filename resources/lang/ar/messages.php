@@ -998,7 +998,17 @@ return [
     'status_updated_success' => 'تم تحديث الحالة بنجاح',
     'status_update_failed' => 'فشل في تحديث الحالة',
     'snag_not_found' => 'المشكلة غير موجودة',
-
+    
+    // File management translations
+    'folders' => 'المجلدات',
+    'create_folder' => 'إنشاء مجلد',
+    'folder_name' => 'اسم المجلد',
+    'enter_folder_name' => 'أدخل اسم المجلد',
+    'enter_description' => 'أدخل الوصف',
+    'folder_created_successfully' => 'تم إنشاء المجلد بنجاح',
+    'folder_creation_failed' => 'فشل في إنشاء المجلد',
+    'folder_name_required' => 'اسم المجلد مطلوب',
+    'no_folders_found' => 'لم يتم العثور على مجلدات',
 ];
 
 

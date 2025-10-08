@@ -13,6 +13,7 @@ use App\Models\ProjectPhase;
 use App\Models\PhaseMilestone;
 use App\Models\File;
 use App\Models\FileCategory;
+use App\Models\FileFolder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -74,6 +75,21 @@ class ProjectController extends Controller
                 // Get or create file categories
                 $constructionPlansCategory = FileCategory::firstOrCreate(['name' => 'Construction Plans']);
                 $ganttChartCategory = FileCategory::firstOrCreate(['name' => 'Gantt Charts']);
+                
+                // Create folders for project files
+                $constructionPlansFolder = \App\Models\FileFolder::create([
+                    'project_id' => $projectDetails->id,
+                    'name' => 'Construction Plans',
+                    'description' => 'Project construction plans and documents',
+                    'created_by' => $request->user_id
+                ]);
+                
+                $ganttChartFolder = \App\Models\FileFolder::create([
+                    'project_id' => $projectDetails->id,
+                    'name' => 'Gantt Chart',
+                    'description' => 'Project timeline and Gantt charts',
+                    'created_by' => $request->user_id
+                ]);
 
                 // Handle construction plans upload
                 if ($request->hasFile('construction_plans')) {
@@ -87,6 +103,7 @@ class ProjectController extends Controller
                         File::create([
                             'project_id' => $projectDetails->id,
                             'category_id' => $constructionPlansCategory->id,
+                            'folder_id' => $constructionPlansFolder->id,
                             'name' => $fileData['filename'],
                             'original_name' => $fileData['original_name'],
                             'file_path' => $fileData['path'],
@@ -97,24 +114,28 @@ class ProjectController extends Controller
                     }
                 }
 
-                // Handle gantt chart upload
+                // Handle gantt chart upload - separate images and documents
                 if ($request->hasFile('gantt_chart')) {
                     $ganttFiles = $request->file('gantt_chart');
-                    // Handle both single file and array of files
                     if (!is_array($ganttFiles)) {
                         $ganttFiles = [$ganttFiles];
                     }
                     foreach ($ganttFiles as $file) {
-                        $fileData = FileHelper::uploadFile($file, 'projects/documents');
+                        $isImage = strpos($file->getMimeType(), 'image/') === 0;
+                        $storagePath = $isImage ? 'projects/gantt_images' : 'projects/gantt_documents';
+                        $fileData = FileHelper::uploadFile($file, $storagePath);
+                        
                         File::create([
                             'project_id' => $projectDetails->id,
                             'category_id' => $ganttChartCategory->id,
+                            'folder_id' => $ganttChartFolder->id,
                             'name' => $fileData['filename'],
                             'original_name' => $fileData['original_name'],
                             'file_path' => $fileData['path'],
                             'file_size' => $fileData['size'],
                             'file_type' => $fileData['mime_type'],
-                            'uploaded_by' => $request->user_id
+                            'uploaded_by' => $request->user_id,
+                            'is_drawing' => $isImage
                         ]);
                     }
                 }

@@ -10,7 +10,7 @@
         </div>
         <div class="gallery-filters d-flex align-items-center gap-3 flex-wrap">
             <!-- Filter Button -->
-            <button class="filter-btn d-flex align-items-center border rounded-3 px-3 py-2 bg-light">
+            <button class="filter-btn d-flex align-items-center border rounded-3 px-3 py-2 bg-light" id="filterButton" style="display: none !important;">
                 <svg width="17" height="14" class="{{ margin_end(2) }}" viewBox="0 0 17 14" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -20,7 +20,7 @@
                 <span class="text-black">{{ __('messages.filter') }}</span>
             </button>
             <!-- Sort Button -->
-            <button class="sort-btn d-flex align-items-center border rounded-3 px-3 py-2 bg-light">
+            <button class="sort-btn d-flex align-items-center border rounded-3 px-3 py-2 bg-light" id="sortButton" style="display: none !important;">
                 <svg width="11" height="14" class="{{ margin_end(2) }}" viewBox="0 0 11 14" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -29,14 +29,11 @@
                 </svg>
                 <span class="text-black">{{ __('messages.sort') }}</span>
             </button>
-            <!-- Upload Button -->
-            @can('files', 'upload')
-                <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png,.gif,.txt"
-                    style="display: none;" onchange="handleFileUpload(this)">
-                <button class="btn orange_btn" onclick="document.getElementById('fileUploadInput').click()"
-                    data-permission="files:upload">
-                    <i class="fas fa-arrow-up me-2"></i>
-                    {{ __('messages.upload_file') }}
+            <!-- Create Folder Button -->
+            @can('files', 'create')
+                <button class="btn orange_btn" onclick="showCreateFolderModal()">
+                    <i class="fas fa-folder-plus me-2"></i>
+                    {{ __('messages.create_folder') }}
                 </button>
             @endcan
         </div>
@@ -130,26 +127,45 @@
                 <div class="col-lg-12 mb-4 mt-4">
                     <div class="card B_shadow">
                         <div class="card-body card-body py-md-4 px-0">
-                            <h5 class="fw-semibold  black_color px-md-4 px-2 mb-4">{{ __('messages.recent_files') }}</h5>
-                            <div class="table-responsive" id="filesTableContainer" style="height: 400px; overflow-y: auto;">
-                                <table class="table table-hover mb-0">
-                                    <thead class="table-light sticky-top">
-                                        <tr>
-                                            <th>{{ __('messages.file_name') }}</th>
-                                            <th>{{ __('messages.type') }}</th>
-                                            <th>{{ __('messages.upload_date') }}</th>
-                                            <th>{{ __('messages.size') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="filesTableBody">
-                                        <tr>
-                                            <td colspan="4" class="text-center py-4">
-                                                <div class="spinner-border" role="status"></div>
-                                                <div class="mt-2">{{ __('messages.loading_files') }}...</div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="d-flex justify-content-between align-items-center px-md-4 px-2 mb-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn btn-sm btn-outline-secondary" id="backBtn" onclick="goBack()" style="display: none;">
+                                        <i class="fas fa-arrow-left"></i>
+                                    </button>
+                                    <h5 class="fw-semibold black_color mb-0" id="currentPath">{{ __('messages.folders') }}</h5>
+                                </div>
+                                <div id="folderActions" style="display: none;">
+                                    @can('files', 'upload')
+                                        <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png,.gif,.txt"
+                                            style="display: none;" onchange="handleFileUpload(this)">
+                                        <button class="btn btn-sm orange_btn" onclick="document.getElementById('fileUploadInput').click()">
+                                            <i class="fas fa-arrow-up me-2"></i>
+                                            {{ __('messages.upload_file') }}
+                                        </button>
+                                    @endcan
+                                </div>
+                            </div>
+                            <div class="" id="contentContainer" style="height: 400px; overflow-y: auto; padding: 0 1rem;">
+                                <div id="foldersGrid" class="row g-3">
+                                    <div class="col-12 text-center py-4">
+                                        <div class="spinner-border" role="status"></div>
+                                        <div class="mt-2">{{ __('messages.loading') }}...</div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive" id="filesTableContainer" style="display: none;">
+                                    <table class="table table-hover mb-0">
+                                        <thead class="table-light sticky-top">
+                                            <tr>
+                                                <th>{{ __('messages.file_name') }}</th>
+                                                <th>{{ __('messages.type') }}</th>
+                                                <th>{{ __('messages.upload_date') }}</th>
+                                                <th>{{ __('messages.size') }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="filesTableBody">
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -294,16 +310,60 @@
         let hasMorePages = true;
         const filesPerPage = 10;
 
-        // Load project files from API
-        async function loadProjectFiles(resetPagination = true) {
+        // Load folders from API
+        async function loadFolders() {
             try {
                 const projectId = getProjectIdFromUrl();
-                const response = await api.getFiles({
+                const response = await api.getFolders({
                     project_id: projectId
                 });
 
+                if (response.code === 200 && response.data) {
+                    displayFolders(response.data);
+                    loadAllFilesForCounts(projectId);
+                } else {
+                    displayNoFolders();
+                    updateFileCounts([], []);
+                }
+            } catch (error) {
+                console.error('Failed to load folders:', error);
+                displayNoFolders();
+                updateFileCounts([], []);
+            }
+        }
+
+        // Load all files for count statistics
+        async function loadAllFilesForCounts(projectId) {
+            try {
+                const response = await api.getFiles({
+                    project_id: projectId
+                });
+                
                 if (response.code === 200 && response.data && response.data.data) {
-                    allFiles = response.data.data; // Store all files
+                    updateFileCounts(response.data.data, []);
+                } else {
+                    updateFileCounts([], []);
+                }
+            } catch (error) {
+                console.error('Failed to load files for counts:', error);
+                updateFileCounts([], []);
+            }
+        }
+
+        // Load project files from API
+        async function loadProjectFiles(folderId = null, resetPagination = true) {
+            try {
+                const projectId = getProjectIdFromUrl();
+                const params = {
+                    project_id: projectId
+                };
+                if (folderId) {
+                    params.folder_id = folderId;
+                }
+                const response = await api.getFiles(params);
+
+                if (response.code === 200 && response.data && response.data.data) {
+                    allFiles = response.data.data;
                     
                     if (resetPagination) {
                         currentPage = 1;
@@ -311,14 +371,10 @@
                         hasMorePages = true;
                     }
                     
-                    // Apply filters and sorting to all files
                     let filteredFiles = applyClientSideFilters(allFiles);
                     filteredFiles = applyClientSideSorting(filteredFiles);
                     
-                    // Load first page
                     loadFilesPage(filteredFiles, resetPagination);
-                    
-                    // Update counts with total vs filtered
                     updateFileCounts(allFiles, filteredFiles);
                 } else {
                     displayNoFiles();
@@ -421,13 +477,52 @@
             });
         }
 
+        function displayFolders(folders) {
+            const container = document.getElementById('foldersGrid');
+            container.className = 'row g-3';
+            
+            if (!folders || folders.length === 0) {
+                container.innerHTML = `
+                    <div class="col-12 text-center py-4">
+                        <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">{{ __('messages.no_folders_found') }}</h5>
+                    </div>
+                `;
+                return;
+            }
+
+            const foldersHtml = folders.map(folder => `
+                <div class="col-md-3 col-sm-4 col-6">
+                    <div class="card h-100 folder-card" style="cursor: pointer; border: 2px solid #4477C4;" onclick="openFolder(${folder.id}, '${folder.name}')">
+                        <div class="card-body text-center p-3">
+                            <i class="fas fa-folder fa-3x text-primary mb-2"></i>
+                            <h6 class="card-title mb-1 text-truncate">${folder.name}</h6>
+                            <small class="text-muted">${folder.files_count || 0} {{ __('messages.files') }}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = foldersHtml;
+        }
+
+        function displayNoFolders() {
+            const container = document.getElementById('foldersGrid');
+            container.innerHTML = `
+                <div class="col-12 text-center py-4">
+                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">{{ __('messages.no_folders_found') }}</h5>
+                </div>
+            `;
+        }
+
         function displayFiles(files, append = false) {
             const tbody = document.getElementById('filesTableBody');
 
             if (!files || files.length === 0) {
                 if (!append) {
                     tbody.innerHTML =
-                        '<tr><td colspan="4" class="text-center py-4"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
+                        '<tr><td colspan="4" class="text-center py-4"><i class="fas fa-file fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
                 }
                 return;
             }
@@ -640,6 +735,132 @@
             console.log('Undo action');
         }
 
+        function openFolder(folderId, folderName) {
+            currentFolderId = folderId;
+            currentFolderName = folderName;
+            
+            // Update UI
+            document.getElementById('currentPath').textContent = folderName;
+            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('folderActions').style.display = 'block';
+            const filterBtn = document.getElementById('filterButton');
+            const sortBtn = document.getElementById('sortButton');
+            if (filterBtn) filterBtn.style.setProperty('display', 'block', 'important');
+            if (sortBtn) sortBtn.style.setProperty('display', 'block', 'important');
+            document.getElementById('foldersGrid').style.display = 'none';
+            document.getElementById('filesTableContainer').style.display = 'block';
+            
+            // Load files for this folder
+            loadProjectFiles(folderId);
+        }
+
+        function goBack() {
+            currentFolderId = null;
+            currentFolderName = '';
+            
+            // Update UI
+            document.getElementById('currentPath').textContent = '{{ __('messages.folders') }}';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('folderActions').style.display = 'none';
+            const filterBtn = document.getElementById('filterButton');
+            const sortBtn = document.getElementById('sortButton');
+            if (filterBtn) filterBtn.style.setProperty('display', 'none', 'important');
+            if (sortBtn) sortBtn.style.setProperty('display', 'none', 'important');
+            document.getElementById('filesTableContainer').style.display = 'none';
+            
+            // Force complete reset of folders grid
+            const contentContainer = document.getElementById('contentContainer');
+            contentContainer.innerHTML = `
+                <div id="foldersGrid" class="row g-3">
+                    <div class="col-12 text-center py-4">
+                        <div class="spinner-border" role="status"></div>
+                        <div class="mt-2">{{ __('messages.loading') }}...</div>
+                    </div>
+                </div>
+                <div class="table-responsive" id="filesTableContainer" style="display: none;">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>{{ __('messages.file_name') }}</th>
+                                <th>{{ __('messages.type') }}</th>
+                                <th>{{ __('messages.upload_date') }}</th>
+                                <th>{{ __('messages.size') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filesTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            // Load folders
+            loadFolders();
+        }
+
+        function showCreateFolderModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{ __('messages.create_folder') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">{{ __('messages.folder_name') }}</label>
+                                <input type="text" class="form-control" id="folderName" placeholder="{{ __('messages.enter_folder_name') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">{{ __('messages.description') }} ({{ __('messages.optional') }})</label>
+                                <textarea class="form-control" id="folderDescription" rows="3" placeholder="{{ __('messages.enter_description') }}"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                            <button type="button" class="btn orange_btn" onclick="createFolder()">{{ __('messages.create') }}</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            modal.addEventListener('hidden.bs.modal', () => modal.remove());
+        }
+
+        async function createFolder() {
+            const name = document.getElementById('folderName').value.trim();
+            const description = document.getElementById('folderDescription').value.trim();
+            
+            if (!name) {
+                toastr.error('{{ __('messages.folder_name_required') }}');
+                return;
+            }
+            
+            try {
+                const projectId = getProjectIdFromUrl();
+                const response = await api.createFolder({
+                    project_id: projectId,
+                    name: name,
+                    description: description
+                });
+                
+                if (response.code === 200) {
+                    bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
+                    toastr.success('{{ __('messages.folder_created_successfully') }}');
+                    loadFolders();
+                } else {
+                    toastr.error('{{ __('messages.folder_creation_failed') }}: ' + (response.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Create folder error:', error);
+                toastr.error('{{ __('messages.folder_creation_failed') }}: ' + error.message);
+            }
+        }
+
         async function uploadFile() {
             try {
                 const projectId = getProjectIdFromUrl();
@@ -647,13 +868,20 @@
 
                 formData.append('project_id', projectId);
                 formData.append('category_id', window.selectedCategoryId || 1);
+                if (currentFolderId) {
+                    formData.append('folder_id', currentFolderId);
+                }
                 formData.append('files[]', window.selectedFile);
 
                 const response = await api.uploadFile(formData);
 
                 if (response.code === 200) {
                     toastr.success('{{ __('messages.file_uploaded_successfully') }}');
-                    loadProjectFiles();
+                    if (currentFolderId) {
+                        loadProjectFiles(currentFolderId);
+                    } else {
+                        loadFolders();
+                    }
                 } else {
                     toastr.error('{{ __('messages.upload_failed') }}: ' + (response.message || 'Unknown error'));
                 }
@@ -670,6 +898,9 @@
 
                 formData.append('project_id', projectId);
                 formData.append('category_id', window.selectedCategoryId || 1);
+                if (currentFolderId) {
+                    formData.append('folder_id', currentFolderId);
+                }
                 formData.append('files[]', window.selectedFile);
                 formData.append('markup_data', imageData);
 
@@ -680,7 +911,11 @@
                     if (drawingModal) drawingModal.hide();
 
                     toastr.success('{{ __('messages.file_uploaded_successfully') }}');
-                    loadProjectFiles();
+                    if (currentFolderId) {
+                        loadProjectFiles(currentFolderId);
+                    } else {
+                        loadFolders();
+                    }
                 } else {
                     toastr.error('{{ __('messages.upload_failed') }}: ' + (response.message || 'Unknown error'));
                 }
@@ -688,7 +923,6 @@
                 console.error('Upload error:', error);
                 toastr.error('{{ __('messages.upload_failed') }}: ' + error.message);
             } finally {
-                // Reset button state
                 const btn = document.getElementById('saveDrawingBtn');
                 if (btn) {
                     btn.disabled = false;
@@ -710,10 +944,12 @@
 
         // Initialize drawing tool
         window.currentTool = 'pen';
+        let currentFolderId = null;
+        let currentFolderName = '';
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Load files on page load
-            loadProjectFiles();
+            // Load folders on page load
+            loadFolders();
             
             // Add scroll event listener for infinite scroll
             const tableContainer = document.getElementById('filesTableContainer');

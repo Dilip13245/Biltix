@@ -301,7 +301,9 @@ class FileController extends Controller
                 $query->where('project_id', $request->project_id);
             }
 
-            $folders = $query->with('files')->get();
+            $folders = $query->withCount(['files' => function($query) {
+                $query->where('is_active', true)->where('is_deleted', false);
+            }])->get();
 
             return $this->toJsonEnc($folders, trans('api.folders.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

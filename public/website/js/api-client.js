@@ -319,6 +319,14 @@ class ApiClient {
         return this.makeRequest('files/categories', {});
     }
 
+    async getFolders(data) {
+        return this.makeRequest('files/get_folders', data);
+    }
+
+    async createFolder(data) {
+        return this.makeRequest('files/create_folder', data);
+    }
+
     // Photo/Gallery methods
     async getPhotos(data) {
         return this.makeRequest('photos/list', data);

@@ -1053,6 +1053,17 @@ return [
     'phase_details' => 'Phase Details',
     'extension_controls_available_on_cards' => 'Extension controls are available directly on phase cards',
     'use_inline_controls_to_extend_milestones' => 'Use the inline controls next to each milestone to extend due dates',
+    
+    // File management translations
+    'folders' => 'Folders',
+    'create_folder' => 'Create Folder',
+    'folder_name' => 'Folder Name',
+    'enter_folder_name' => 'Enter folder name',
+    'enter_description' => 'Enter description',
+    'folder_created_successfully' => 'Folder created successfully',
+    'folder_creation_failed' => 'Folder creation failed',
+    'folder_name_required' => 'Folder name is required',
+    'no_folders_found' => 'No folders found',
 ];
 
 
