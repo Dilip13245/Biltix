@@ -70,7 +70,7 @@
                     <div class="card h-100 B_shadow">
                         <div class="card-body d-flex align-items-center p-md-4 justify-content-between">
                             <div>
-                                <div class="small_tXt">{{ __('messages.drawings') }}</div>
+                                <div class="small_tXt">{{ __('messages.images') }}</div>
                                 <div class="stat-value" id="drawingsCount">...</div>
                             </div>
                             <span class="{{ margin_start() }}-auto stat-icon bg2">
@@ -563,8 +563,14 @@
         function updateFileCounts(allFiles, filteredFiles = null) {
             // Always show total counts from all files (not filtered)
             const totalFiles = allFiles.length;
-            const drawings = allFiles.filter(f => ['dwg', 'dxf', 'dwf'].includes(getFileExtension(f.file_type))).length;
-            const documents = allFiles.filter(f => ['doc', 'docx', 'txt', 'rtf'].includes(getFileExtension(f.file_type))).length;
+            const drawings = allFiles.filter(f => {
+                const ext = getFileExtension(f.file_type);
+                return ['dwg', 'dxf', 'dwf', 'jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext);
+            }).length;
+            const documents = allFiles.filter(f => {
+                const ext = getFileExtension(f.file_type);
+                return ['doc', 'docx', 'txt', 'rtf', 'xls', 'xlsx'].includes(ext);
+            }).length;
             const pdfs = allFiles.filter(f => getFileExtension(f.file_type) === 'pdf').length;
 
             document.getElementById('totalFilesCount').textContent = totalFiles;
@@ -745,8 +751,14 @@
             document.getElementById('folderActions').style.display = 'block';
             const filterBtn = document.getElementById('filterButton');
             const sortBtn = document.getElementById('sortButton');
-            if (filterBtn) filterBtn.style.setProperty('display', 'block', 'important');
-            if (sortBtn) sortBtn.style.setProperty('display', 'block', 'important');
+            if (filterBtn) {
+                filterBtn.style.cssText = 'display: block !important';
+                filterBtn.addEventListener('click', window.showFilterModal);
+            }
+            if (sortBtn) {
+                sortBtn.style.cssText = 'display: block !important';
+                sortBtn.addEventListener('click', window.showSortModal);
+            }
             document.getElementById('foldersGrid').style.display = 'none';
             document.getElementById('filesTableContainer').style.display = 'block';
             
@@ -764,8 +776,8 @@
             document.getElementById('folderActions').style.display = 'none';
             const filterBtn = document.getElementById('filterButton');
             const sortBtn = document.getElementById('sortButton');
-            if (filterBtn) filterBtn.style.setProperty('display', 'none', 'important');
-            if (sortBtn) sortBtn.style.setProperty('display', 'none', 'important');
+            if (filterBtn) filterBtn.style.cssText = 'display: none !important';
+            if (sortBtn) sortBtn.style.cssText = 'display: none !important';
             document.getElementById('filesTableContainer').style.display = 'none';
             
             // Force complete reset of folders grid
@@ -960,16 +972,16 @@
             // Filter button functionality
             const filterBtn = document.querySelector('.filter-btn');
             if (filterBtn) {
-                filterBtn.addEventListener('click', showFilterModal);
+                filterBtn.addEventListener('click', window.showFilterModal);
             }
 
             // Sort button functionality
             const sortBtn = document.querySelector('.sort-btn');
             if (sortBtn) {
-                sortBtn.addEventListener('click', showSortModal);
+                sortBtn.addEventListener('click', window.showSortModal);
             }
 
-            function showFilterModal() {
+            window.showFilterModal = function() {
                 const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
                 const modal = document.createElement('div');
                 modal.className = 'modal fade';
@@ -1037,7 +1049,7 @@
                 modal.addEventListener('hidden.bs.modal', () => modal.remove());
             }
 
-            function showSortModal() {
+            window.showSortModal = function() {
                 const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
                 const modal = document.createElement('div');
                 modal.className = 'modal fade';
@@ -1103,7 +1115,7 @@
                 currentFilters.dateRange = document.getElementById('filterDate').value;
                 currentFilters.sizeRange = document.getElementById('filterSize').value;
                 bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
-                loadProjectFiles(true); // Reset pagination
+                loadProjectFiles(currentFolderId, true); // Reset pagination
             };
 
             window.clearFilters = function() {
@@ -1113,14 +1125,14 @@
                     sizeRange: ''
                 };
                 bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
-                loadProjectFiles(true); // Reset pagination
+                loadProjectFiles(currentFolderId, true); // Reset pagination
             };
 
             window.applySorting = function(field, direction) {
                 currentSort.field = field;
                 currentSort.direction = direction;
                 bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
-                loadProjectFiles(true); // Reset pagination
+                loadProjectFiles(currentFolderId, true); // Reset pagination
             };
 
 

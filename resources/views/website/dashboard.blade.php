@@ -1201,11 +1201,13 @@
                                 }
                             });
 
-                            // Collect all files for drawing modal
+                            // Collect only image files for drawing modal
                             let allFiles = [];
                             fileInputs.forEach(input => {
                                 if (input.files && input.files.length > 0) {
-                                    allFiles = allFiles.concat(Array.from(input.files));
+                                    const imageFiles = Array.from(input.files).filter(file => 
+                                        file.type.startsWith('image/'));
+                                    allFiles = allFiles.concat(imageFiles);
                                 }
                             });
 
@@ -1223,6 +1225,9 @@
                                     }, {
                                         once: true
                                     });
+                            } else {
+                                // No images to markup, create project directly
+                                createProjectDirectly();
                             }
                         }, 300);
                     } else {
@@ -1327,23 +1332,92 @@
                     // Get the stored form data
                     const formData = window.projectFormData;
 
+                    // Store original files (both image and non-image) before clearing
+                    const originalFiles = {
+                        construction_plans: [],
+                        gantt_chart: []
+                    };
+                    
+                    const fileInputs = document.querySelectorAll('input[type="file"]');
+                    fileInputs.forEach(input => {
+                        if (input.files && input.files.length > 0) {
+                            Array.from(input.files).forEach(file => {
+                                if (input.name === 'construction_plans[]') {
+                                    originalFiles.construction_plans.push(file);
+                                } else if (input.name === 'gantt_chart[]') {
+                                    originalFiles.gantt_chart.push(file);
+                                }
+                            });
+                        }
+                    });
+
                     // Remove original files from FormData
                     formData.delete('construction_plans[]');
                     formData.delete('gantt_chart[]');
 
-                    // Handle multiple marked up images
+                    // Add back non-image files
+                    originalFiles.construction_plans.forEach(file => {
+                        if (!file.type.startsWith('image/')) {
+                            formData.append('construction_plans[]', file);
+                        }
+                    });
+                    originalFiles.gantt_chart.forEach(file => {
+                        if (!file.type.startsWith('image/')) {
+                            formData.append('gantt_chart[]', file);
+                        }
+                    });
+
+                    // Handle marked up images and original images
                     if (Array.isArray(markedUpImageData)) {
-                        // Multiple files
+                        // Multiple files - need to match with original files
+                        const imageFiles = [];
+                        fileInputs.forEach(input => {
+                            if (input.files && input.files.length > 0) {
+                                Array.from(input.files).forEach(file => {
+                                    if (file.type.startsWith('image/')) {
+                                        imageFiles.push({ file, inputName: input.name });
+                                    }
+                                });
+                            }
+                        });
+                        
                         for (let i = 0; i < markedUpImageData.length; i++) {
-                            const response = await fetch(markedUpImageData[i]);
-                            const blob = await response.blob();
-                            formData.append('construction_plans[]', blob, `marked_up_plan_${i + 1}.png`);
+                            if (markedUpImageData[i] && imageFiles[i]) {
+                                const targetInput = imageFiles[i].inputName;
+                                
+                                if (typeof markedUpImageData[i] === 'string' && markedUpImageData[i].startsWith('data:')) {
+                                    // This is a canvas data URL (marked up image)
+                                    const response = await fetch(markedUpImageData[i]);
+                                    const blob = await response.blob();
+                                    formData.append(targetInput, blob, `marked_up_${i + 1}.png`);
+                                } else if (markedUpImageData[i] instanceof File) {
+                                    // This is an original file (no drawing)
+                                    formData.append(targetInput, markedUpImageData[i]);
+                                }
+                            }
                         }
                     } else if (markedUpImageData) {
-                        // Single file
-                        const response = await fetch(markedUpImageData);
-                        const blob = await response.blob();
-                        formData.append('construction_plans[]', blob, 'marked_up_plan.png');
+                        // Single file - find which input it came from
+                        let targetInput = 'construction_plans[]';
+                        fileInputs.forEach(input => {
+                            if (input.files && input.files.length > 0) {
+                                Array.from(input.files).forEach(file => {
+                                    if (file.type.startsWith('image/')) {
+                                        targetInput = input.name;
+                                    }
+                                });
+                            }
+                        });
+                        
+                        if (typeof markedUpImageData === 'string' && markedUpImageData.startsWith('data:')) {
+                            // Single marked up image
+                            const response = await fetch(markedUpImageData);
+                            const blob = await response.blob();
+                            formData.append(targetInput, blob, 'marked_up_image.png');
+                        } else if (markedUpImageData instanceof File) {
+                            // Single original file
+                            formData.append(targetInput, markedUpImageData);
+                        }
                     }
 
                     // Call create project API
