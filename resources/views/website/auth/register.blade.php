@@ -401,10 +401,12 @@
                             <div class="step-label" id="step2-label">{{ __('auth.company') }}</div>
                         </div>
                         <div class="step-line inactive" id="line2"></div>
+                        <!-- Step 3 - Team Members (Commented Out)
                         <div class="step-item">
                             <div class="step inactive" id="step3">3</div>
                             <div class="step-label" id="step3-label">{{ __('auth.team') }}</div>
                         </div>
+                        -->
                     </div>
 
                     <!-- Registration Form -->
@@ -500,7 +502,7 @@
                             </div>
                         </div>
 
-                        <!-- Step 3: Team Members -->
+                        <!-- Step 3: Team Members (Commented Out - Feature Disabled)
                         <div class="form-step d-none" id="form-step-3">
                             <div id="membersContainer">
                                 <div class="member-row">
@@ -531,6 +533,7 @@
                                 </button>
                             </div>
                         </div>
+                        -->
 
                         <!-- Button Container -->
                         <div class="button-container">
@@ -555,7 +558,6 @@
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="{{ asset('website/js/toastr-config.js') }}"></script>
-    </script>
     <script src="{{ asset('website/js/api-config.js') }}"></script>
     <script src="{{ asset('website/js/api-encryption.js') }}"></script>
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
@@ -703,6 +705,9 @@
                     showError('designation', 'designationError', '{{ __('auth.designation_invalid') }}');
                     isValid = false;
                 }
+            }
+            // Step 3 validation commented out - feature disabled
+            /*
             } else if (step === 3) {
                 // Team members validation
                 const memberRows = document.querySelectorAll('.member-row');
@@ -756,6 +761,7 @@
                     isValid = false;
                 }
             }
+            */
 
             return isValid;
         }
@@ -915,14 +921,12 @@
                 return;
             }
 
-            // Only do backend validation for steps 1 and 2
-            if (currentStep <= 2) {
-                if (!(await validateStepWithBackend(currentStep))) {
-                    return;
-                }
+            // Backend validation for current step
+            if (!(await validateStepWithBackend(currentStep))) {
+                return;
             }
 
-            if (currentStep < 3) {
+            if (currentStep < 2) {
                 // Hide current step
                 document.getElementById(`form-step-${currentStep}`).classList.remove('active');
                 document.getElementById(`form-step-${currentStep}`).classList.add('d-none');
@@ -940,13 +944,15 @@
                 document.getElementById(`form-step-${currentStep}`).classList.remove('d-none');
 
                 // Update button text
-                if (currentStep === 3) {
+                if (currentStep === 2) {
                     document.getElementById('nextBtn').textContent = '{{ __('auth.register') }}';
                     document.getElementById('nextBtn').onclick = submitForm;
                 }
             }
         }
 
+        // Add member row function commented out - feature disabled
+        /*
         function addMemberRow() {
             const container = document.getElementById('membersContainer');
             const newRow = document.createElement('div');
@@ -972,6 +978,7 @@
             container.appendChild(newRow);
             memberCount++;
         }
+        */
 
         let isSubmitting = false; // Prevent duplicate submissions
         
@@ -981,10 +988,7 @@
                 return;
             }
             
-            // Validate Step 3 before submitting
-            if (!validateStep(3)) {
-                return;
-            }
+            // Step 3 validation removed - only 2 steps now
             
             isSubmitting = true;
             
@@ -1004,6 +1008,8 @@
                 device_type: 'W'
             };
 
+            // Team members collection commented out - feature disabled
+            /*
             // Collect and validate members before sending to API
             const members = [];
             const phoneNumbers = new Set([data.phone]);
@@ -1030,6 +1036,7 @@
             if (members.length > 0) {
                 data.members = members;
             }
+            */
 
             // Disable register button
             const registerBtn = document.getElementById('nextBtn');
