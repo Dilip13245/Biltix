@@ -38,6 +38,7 @@ class ProjectController extends Controller
                 'construction_plans.*' => 'nullable|file|max:25600',
                 'gantt_chart' => 'nullable|array', 
                 'gantt_chart.*' => 'nullable|file|max:25600',
+                'file_notes' => 'nullable|string',
             ], [
                 'project_title.required' => 'Project Title is required',
                 'contractor_name.required' => 'Contractor Name is required',
@@ -91,6 +92,12 @@ class ProjectController extends Controller
                     'created_by' => $request->user_id
                 ]);
 
+                // Parse file notes if provided
+                $fileNotes = [];
+                if ($request->has('file_notes') && $request->file_notes) {
+                    $fileNotes = json_decode($request->file_notes, true) ?? [];
+                }
+
                 // Handle construction plans upload
                 if ($request->hasFile('construction_plans')) {
                     $constructionFiles = $request->file('construction_plans');
@@ -98,8 +105,13 @@ class ProjectController extends Controller
                     if (!is_array($constructionFiles)) {
                         $constructionFiles = [$constructionFiles];
                     }
-                    foreach ($constructionFiles as $file) {
+                    foreach ($constructionFiles as $index => $file) {
                         $fileData = FileHelper::uploadFile($file, 'projects/documents');
+                        
+                        // Get note for this file
+                        $noteKey = "file_notes_construction-files_{$index}";
+                        $description = $fileNotes[$noteKey] ?? null;
+                        
                         File::create([
                             'project_id' => $projectDetails->id,
                             'category_id' => $constructionPlansCategory->id,
@@ -109,6 +121,7 @@ class ProjectController extends Controller
                             'file_path' => $fileData['path'],
                             'file_size' => $fileData['size'],
                             'file_type' => $fileData['mime_type'],
+                            'description' => $description,
                             'uploaded_by' => $request->user_id
                         ]);
                     }
@@ -120,10 +133,14 @@ class ProjectController extends Controller
                     if (!is_array($ganttFiles)) {
                         $ganttFiles = [$ganttFiles];
                     }
-                    foreach ($ganttFiles as $file) {
+                    foreach ($ganttFiles as $index => $file) {
                         $isImage = strpos($file->getMimeType(), 'image/') === 0;
                         $storagePath = $isImage ? 'projects/gantt_images' : 'projects/gantt_documents';
                         $fileData = FileHelper::uploadFile($file, $storagePath);
+                        
+                        // Get note for this file
+                        $noteKey = "file_notes_gantt-files_{$index}";
+                        $description = $fileNotes[$noteKey] ?? null;
                         
                         File::create([
                             'project_id' => $projectDetails->id,
@@ -134,6 +151,7 @@ class ProjectController extends Controller
                             'file_path' => $fileData['path'],
                             'file_size' => $fileData['size'],
                             'file_type' => $fileData['mime_type'],
+                            'description' => $description,
                             'uploaded_by' => $request->user_id,
                             'is_drawing' => $isImage
                         ]);

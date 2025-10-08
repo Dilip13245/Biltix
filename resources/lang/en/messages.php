@@ -1064,7 +1064,27 @@ return [
     'folder_creation_failed' => 'Folder creation failed',
     'folder_name_required' => 'Folder name is required',
     'no_folders_found' => 'No folders found',
+    
+    // File notes functionality
+    'add_notes_for_images' => 'Add Notes for Images',
+    'add_notes_for_files' => 'Add Notes for Files',
+    'add_note_for_this_image' => 'Add a note or description for this file...',
+    'selected_files' => 'Selected Files',
+    'select_files_for_description' => 'Check the files you want to add descriptions to',
+    'files_uploaded_successfully' => 'files uploaded successfully',
 ];
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

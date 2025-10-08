@@ -608,6 +608,10 @@
                                             onchange="showSelectedFiles(this, 'construction-files')">
                                         <div id="construction-files" class="selected-files mt-3"></div>
                                     </div>
+                                    <div id="construction-notes-container" class="mt-3" style="display: none;">
+                                        <label class="form-label fw-medium">{{ __('messages.add_notes_for_files') }}</label>
+                                        <div id="construction-notes-list"></div>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label
@@ -625,6 +629,10 @@
                                             multiple accept=".pdf,.docx,.jpg,.jpeg,.png"
                                             onchange="showSelectedFiles(this, 'gantt-files')">
                                         <div id="gantt-files" class="selected-files mt-3"></div>
+                                    </div>
+                                    <div id="gantt-notes-container" class="mt-3" style="display: none;">
+                                        <label class="form-label fw-medium">{{ __('messages.add_notes_for_files') }}</label>
+                                        <div id="gantt-notes-list"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1260,6 +1268,94 @@
 
                         container.appendChild(fileItem);
                     });
+                    
+                    // Show notes section for all files
+                    showNotesForImages(input, containerId);
+                }
+            };
+            
+            // Show smart notes section - only for selected files
+            function showNotesForImages(input, containerId) {
+                const notesContainerId = containerId.replace('-files', '-notes-container');
+                const notesListId = containerId.replace('-files', '-notes-list');
+                const notesContainer = document.getElementById(notesContainerId);
+                const notesList = document.getElementById(notesListId);
+                
+                if (!notesContainer || !notesList) return;
+                
+                // Clear previous notes
+                notesList.innerHTML = '';
+                
+                // Show smart notes interface for multiple files
+                if (input.files && input.files.length > 0) {
+                    notesContainer.style.display = 'block';
+                    
+                    if (input.files.length > 3) {
+                        // Smart interface for many files
+                        const smartInterface = document.createElement('div');
+                        smartInterface.innerHTML = `
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>${input.files.length} {{ __('messages.selected_files') }}.</strong> {{ __('messages.select_files_for_description') }}:
+                            </div>
+                            <div class="row g-2" style="max-height: 200px; overflow-y: auto;">
+                                ${Array.from(input.files).map((file, index) => {
+                                    const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
+                                    return `
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
+                                                    onchange="toggleFileDescription('${containerId}', ${index})">
+                                                <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
+                                                    <i class="${fileIcon} me-2"></i>
+                                                    <span class="text-truncate">${file.name}</span>
+                                                </label>
+                                            </div>
+                                            <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
+                                                <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
+                                                    placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                        notesList.appendChild(smartInterface);
+                    } else {
+                        // Regular interface for few files
+                        Array.from(input.files).forEach((file, index) => {
+                            const noteItem = document.createElement('div');
+                            noteItem.className = 'mb-3';
+                            const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
+                            noteItem.innerHTML = `
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="${fileIcon} me-2"></i>
+                                    <span class="fw-medium">${file.name}</span>
+                                </div>
+                                <textarea class="form-control" name="file_notes_${containerId}_${index}" 
+                                    placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                            `;
+                            notesList.appendChild(noteItem);
+                        });
+                    }
+                } else {
+                    notesContainer.style.display = 'none';
+                }
+            }
+            
+            // Toggle description input for selected files
+            window.toggleFileDescription = function(containerId, index) {
+                const checkbox = document.getElementById(`file_${containerId}_${index}`);
+                const descContainer = document.getElementById(`desc_${containerId}_${index}`);
+                
+                if (checkbox.checked) {
+                    descContainer.style.display = 'block';
+                    const textarea = descContainer.querySelector('textarea');
+                    if (textarea) textarea.focus();
+                } else {
+                    descContainer.style.display = 'none';
+                    const textarea = descContainer.querySelector('textarea');
+                    if (textarea) textarea.value = '';
                 }
             };
 
@@ -1367,6 +1463,20 @@
                         }
                     });
 
+                    // Collect file notes
+                    const fileNotes = {};
+                    const noteInputs = document.querySelectorAll('textarea[name^="file_notes_"]');
+                    noteInputs.forEach(input => {
+                        if (input.value.trim()) {
+                            fileNotes[input.name] = input.value.trim();
+                        }
+                    });
+                    
+                    // Add file notes to form data
+                    if (Object.keys(fileNotes).length > 0) {
+                        formData.append('file_notes', JSON.stringify(fileNotes));
+                    }
+
                     // Handle marked up images and original images
                     if (Array.isArray(markedUpImageData)) {
                         // Multiple files - need to match with original files
@@ -1457,6 +1567,21 @@
             async function createProjectDirectly() {
                 try {
                     const formData = new FormData(document.getElementById('createProjectForm'));
+                    
+                    // Collect file notes even for direct creation
+                    const fileNotes = {};
+                    const noteInputs = document.querySelectorAll('textarea[name^="file_notes_"]');
+                    noteInputs.forEach(input => {
+                        if (input.value.trim()) {
+                            fileNotes[input.name] = input.value.trim();
+                        }
+                    });
+                    
+                    // Add file notes to form data
+                    if (Object.keys(fileNotes).length > 0) {
+                        formData.append('file_notes', JSON.stringify(fileNotes));
+                    }
+                    
                     const response = await api.createProject(formData);
 
                     if (response.code === 200) {

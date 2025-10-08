@@ -221,6 +221,10 @@
                                     <option value="">{{ __('messages.loading') }}...</option>
                                 </select>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">{{ __('messages.description') }} ({{ __('messages.optional') }})</label>
+                                <textarea class="form-control" id="fileDescription" rows="3" placeholder="{{ __('messages.add_note_for_this_image') }}"></textarea>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
@@ -236,6 +240,8 @@
             
             // Load categories
             loadFileCategories();
+            
+            // Description field is now always visible for all files
             
             modal.addEventListener('hidden.bs.modal', () => modal.remove());
         }
@@ -268,6 +274,7 @@
             }
             
             window.selectedCategoryId = categoryId;
+            window.selectedFileDescription = document.getElementById('fileDescription').value.trim();
             
             // Close category modal
             bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
@@ -537,7 +544,10 @@
                         <td>
                             <div class="d-flex align-items-center gap-2">
                                 ${fileIcon}
-                                <span class="fw-medium text-black">${file.original_name || file.name}</span>
+                                <div>
+                                    <div class="fw-medium text-black">${file.original_name || file.name}</div>
+                                    ${file.description ? `<small class="text-muted"><i class="fas fa-info-circle me-1"></i>${file.description}</small>` : ''}
+                                </div>
                             </div>
                         </td>
                         <td>${getFileTypeDisplay(file.file_type)}</td>
@@ -883,6 +893,9 @@
                 if (currentFolderId) {
                     formData.append('folder_id', currentFolderId);
                 }
+                if (window.selectedFileDescription) {
+                    formData.append('description', window.selectedFileDescription);
+                }
                 formData.append('files[]', window.selectedFile);
 
                 const response = await api.uploadFile(formData);
@@ -912,6 +925,9 @@
                 formData.append('category_id', window.selectedCategoryId || 1);
                 if (currentFolderId) {
                     formData.append('folder_id', currentFolderId);
+                }
+                if (window.selectedFileDescription) {
+                    formData.append('description', window.selectedFileDescription);
                 }
                 formData.append('files[]', window.selectedFile);
                 formData.append('markup_data', imageData);

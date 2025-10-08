@@ -23,6 +23,7 @@ class FileController extends Controller
                 'folder_id' => 'nullable|integer',
                 'files' => 'required|array',
                 'files.*' => 'file|max:10240', // 10MB max
+                'description' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
@@ -43,6 +44,7 @@ class FileController extends Controller
                     'file_path' => $fileData['path'],
                     'file_size' => $fileData['size'],
                     'file_type' => $fileData['mime_type'],
+                    'description' => $request->description,
                     'uploaded_by' => $request->user_id,
                     'is_public' => $request->is_public ?? false,
                 ]);

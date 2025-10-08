@@ -1009,7 +1009,35 @@ return [
     'folder_creation_failed' => 'فشل في إنشاء المجلد',
     'folder_name_required' => 'اسم المجلد مطلوب',
     'no_folders_found' => 'لم يتم العثور على مجلدات',
+    
+    // File notes functionality
+    'add_notes_for_images' => 'إضافة ملاحظات للصور',
+    'add_notes_for_files' => 'إضافة ملاحظات للملفات',
+    'add_note_for_this_image' => 'أضف ملاحظة أو وصف لهذا الملف...',
+    'selected_files' => 'الملفات المحددة',
+    'select_files_for_description' => 'اختر الملفات التي تريد إضافة وصف لها',
+    'files_uploaded_successfully' => 'تم رفع الملفات بنجاح',
 ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
