@@ -486,36 +486,36 @@
                                                 placeholder="{{ __('messages.project_name') }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" style="display: none;">
                                         <div class="mb-3">
                                             <label for="contractor_name"
                                                 class="form-label fw-medium">{{ __('messages.contractor_name') }}
                                                 *</label>
                                             <input type="text" class="form-control Input_control" id="contractor_name"
-                                                name="contractor_name" required
+                                                name="contractor_name"
                                                 placeholder="{{ __('messages.contractor_name') }}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" style="display: none;">
                                         <div class="mb-3">
                                             <label for="project_manager_id"
                                                 class="form-label fw-medium">{{ __('messages.assign_project_manager') }}</label>
                                             <select class="form-select Input_control" id="project_manager_id"
-                                                name="project_manager_id" required>
+                                                name="project_manager_id">
                                                 <option value="">{{ __('messages.select_manager') }}</option>
                                                 <option value="1">John Smith</option>
                                                 <option value="2">Sarah Johnson</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" style="display: none;">
                                         <div class="mb-3">
                                             <label for="technical_engineer_id"
                                                 class="form-label fw-medium">{{ __('messages.assign_technical_engineer') }}</label>
                                             <select class="form-select Input_control" id="technical_engineer_id"
-                                                name="technical_engineer_id" required>
+                                                name="technical_engineer_id">
                                                 <option value="">{{ __('messages.select_engineer') }}</option>
                                                 <option value="1">Mike Wilson</option>
                                                 <option value="2">Lisa Brown</option>

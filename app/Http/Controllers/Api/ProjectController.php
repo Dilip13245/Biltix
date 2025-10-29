@@ -26,9 +26,9 @@ class ProjectController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'project_title' => 'required|string|max:255',
-                'contractor_name' => 'required|string|max:255',
-                'project_manager_id' => 'required|integer|exists:users,id',
-                'technical_engineer_id' => 'required|integer|exists:users,id',
+                'contractor_name' => 'nullable|string|max:255',
+                'project_manager_id' => 'nullable|integer|exists:users,id',
+                'technical_engineer_id' => 'nullable|integer|exists:users,id',
                 'type' => 'required|string|max:255',
                 'project_location' => 'required|string|max:255',
                 'project_start_date' => 'required|date',
@@ -41,11 +41,6 @@ class ProjectController extends Controller
                 'file_notes' => 'nullable|string',
             ], [
                 'project_title.required' => 'Project Title is required',
-                'contractor_name.required' => 'Contractor Name is required',
-                'project_manager_id.required' => 'Project Manager assignment is mandatory',
-                'project_manager_id.exists' => 'Selected Project Manager does not exist',
-                'technical_engineer_id.required' => 'Technical Engineer assignment is mandatory',
-                'technical_engineer_id.exists' => 'Selected Technical Engineer does not exist',
                 'type.required' => 'Project Type is mandatory',
                 'project_location.required' => 'Project Location is mandatory',
                 'project_start_date.required' => 'Project Start Date is required',
