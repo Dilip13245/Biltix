@@ -23,6 +23,7 @@ class TaskController extends Controller
                 'phase_id' => 'nullable|integer',
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
+                'priority' => 'nullable|in:low,medium,high,critical',
                 'assigned_to' => 'required|integer',
                 'due_date' => 'required|date',
                 'location' => 'nullable|string',
@@ -57,12 +58,13 @@ class TaskController extends Controller
             $taskDetails->phase_id = $request->phase_id;
             $taskDetails->title = $request->title;
             $taskDetails->description = $request->description ?? '';
-            // $taskDetails->priority = $request->priority;
+            $taskDetails->priority = $request->priority ?? 'medium';
             $taskDetails->assigned_to = $request->assigned_to;
             $taskDetails->created_by = $request->user_id;
             $taskDetails->due_date = $request->due_date;
             // $taskDetails->estimated_hours = $request->estimated_hours;
             $taskDetails->location = $request->location ?? '';
+            $taskDetails->status = 'todo';
             $taskDetails->is_active = true;
 
             if ($taskDetails->save()) {
@@ -209,7 +211,7 @@ class TaskController extends Controller
                 $task->load('images');
             } else {
                 // No images, just mark as completed
-                $task->status = 'completed';
+                $task->status = 'complete';
             }
 
             $task->save();
@@ -266,7 +268,7 @@ class TaskController extends Controller
             }
 
             $task->status = $status;
-            if ($status === 'completed') {
+            if ($status === 'complete') {
                 $task->completed_at = now();
                 $task->progress_percentage = 100;
             }
@@ -331,7 +333,7 @@ class TaskController extends Controller
 
             $task->progress_percentage = $progress_percentage;
             if ($progress_percentage >= 100) {
-                $task->status = 'completed';
+                $task->status = 'complete';
                 $task->completed_at = now();
             } elseif ($progress_percentage > 0) {
                 $task->status = 'in_progress';

@@ -40,9 +40,17 @@
     </form>
     <select class="form-select w-auto" id="statusFilter">
       <option value="">{{ __('messages.all_status') }}</option>
-      <option value="pending">{{ __('messages.pending') }}</option>
+      <option value="todo">{{ __('messages.todo') }}</option>
       <option value="in_progress">{{ __('messages.in_progress') }}</option>
-      <option value="completed">{{ __('messages.completed') }}</option>
+      <option value="complete">{{ __('messages.complete') }}</option>
+      <option value="approve">{{ __('messages.approve') }}</option>
+    </select>
+    <select class="form-select w-auto" id="priorityFilter">
+      <option value="">{{ __('messages.all_priorities') }}</option>
+      <option value="low">{{ __('messages.low') }}</option>
+      <option value="medium">{{ __('messages.medium') }}</option>
+      <option value="high">{{ __('messages.high') }}</option>
+      <option value="critical">{{ __('messages.critical') }}</option>
     </select>
     @can('tasks', 'create')
         <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal" onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
@@ -139,6 +147,14 @@ function setupEventListeners() {
     const statusFilter = document.getElementById('statusFilter');
     if (statusFilter) {
         statusFilter.addEventListener('change', function() {
+            filterTasks();
+        });
+    }
+    
+    // Priority filter
+    const priorityFilter = document.getElementById('priorityFilter');
+    if (priorityFilter) {
+        priorityFilter.addEventListener('change', function() {
             filterTasks();
         });
     }
@@ -283,6 +299,7 @@ function renderTasks(tasks) {
                             </svg>
                             {{ __('messages.due') }}: ${formatDate(task.due_date)}
                         </p>
+                        <p class="mb-2 text-muted fw-medium">${getPriorityBadge(task.priority)}</p>
                         ${task.assigned_user_name ? `<p class="mb-3 text-muted"><strong>{{ __('messages.assigned_to') }}:</strong> ${task.assigned_user_name}</p>` : '<div class="mb-3"></div>'}
                         <button class="btn btn-primary w-100" onclick="openTaskDetails(${task.id})">
                             <i class="fas fa-eye me-2"></i>{{ __('messages.view_details') }}
@@ -308,15 +325,30 @@ function renderTasks(tasks) {
 
 function getStatusBadge(status) {
     const statusMap = {
-        'pending': 'badge2',
+        'todo': 'badge2',
         'in_progress': 'badge4', 
-        'completed': 'badge1'
+        'complete': 'badge1',
+        'approve': 'badge3'
     };
     
     const badgeClass = statusMap[status] || 'badge2';
     const statusText = status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
     
     return `<span class="badge ${badgeClass} fw-normal" style="font-size: 0.9em;">${statusText}</span>`;
+}
+
+function getPriorityBadge(priority) {
+    const priorityMap = {
+        'low': { class: 'bg-success', icon: 'fas fa-arrow-down' },
+        'medium': { class: 'bg-warning', icon: 'fas fa-minus' },
+        'high': { class: 'bg-danger', icon: 'fas fa-arrow-up' },
+        'critical': { class: 'bg-dark', icon: 'fas fa-exclamation-triangle' }
+    };
+
+    const config = priorityMap[priority] || priorityMap['medium'];
+    const priorityText = priority ? priority.charAt(0).toUpperCase() + priority.slice(1) : 'Medium';
+
+    return `<span class="badge ${config.class} fw-normal" style="font-size: 0.8em;"><i class="${config.icon} me-1"></i>${priorityText}</span>`;
 }
 
 function formatDate(dateString) {
@@ -332,21 +364,24 @@ function formatDate(dateString) {
 function filterTasks() {
     const searchInput = document.querySelector('input[type="search"]');
     const statusFilterElement = document.getElementById('statusFilter');
+    const priorityFilterElement = document.getElementById('priorityFilter');
     
-    if (!searchInput || !statusFilterElement) {
+    if (!searchInput || !statusFilterElement || !priorityFilterElement) {
         console.error('Filter elements not found');
         return;
     }
     
     const searchTerm = searchInput.value.toLowerCase();
     const statusFilter = statusFilterElement.value;
+    const priorityFilter = priorityFilterElement.value;
     
     let filteredTasks = [...currentTasks]; // Create a copy
     
     console.log('Filtering tasks:', {
         totalTasks: currentTasks.length,
         searchTerm,
-        statusFilter
+        statusFilter,
+        priorityFilter
     });
     
     // Apply search filter
@@ -364,6 +399,11 @@ function filterTasks() {
             console.log('Task status:', task.status, 'Filter:', statusFilter);
             return task.status === statusFilter;
         });
+    }
+    
+    // Apply priority filter
+    if (priorityFilter) {
+        filteredTasks = filteredTasks.filter(task => task.priority === priorityFilter);
     }
     
     console.log('Filtered tasks:', filteredTasks.length);
@@ -421,13 +461,15 @@ function populateTaskDetailsModal(task) {
     document.getElementById('taskDetailAssignedTo').textContent = task.assigned_user_name || 'Unassigned';
     document.getElementById('taskDetailNumber').textContent = task.task_number || '-';
     document.getElementById('taskDetailStatus').textContent = task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ');
+    document.getElementById('taskDetailPriority').innerHTML = getPriorityBadge(task.priority);
     
     // Load images
     loadTaskImages(task.images || []);
     
     // Check if current user is assigned to this task
     const isAssignedUser = task.assigned_to && parseInt(task.assigned_to) === parseInt(currentUserId);
-    const isCompleted = task.status === 'completed';
+    const isCompleted = task.status === 'complete' || task.status === 'approve';
+    const isApproved = task.status === 'approve';
     
     console.log('Task assignment check:', {
         taskAssignedTo: task.assigned_to,
@@ -439,8 +481,23 @@ function populateTaskDetailsModal(task) {
     // Set status select value and enable/disable
     const statusSelect = document.getElementById('taskStatusSelect');
     if (statusSelect) {
-        statusSelect.value = task.status;
-        statusSelect.disabled = !isAssignedUser;
+        if (isApproved) {
+            // Add approve option if task is approved
+            if (!statusSelect.querySelector('option[value="approve"]')) {
+                const approveOption = document.createElement('option');
+                approveOption.value = 'approve';
+                approveOption.textContent = '{{ __('messages.approve') }}';
+                statusSelect.appendChild(approveOption);
+            }
+            statusSelect.value = 'approve';
+            statusSelect.disabled = true;
+        } else {
+            // Remove approve option if not approved
+            const approveOption = statusSelect.querySelector('option[value="approve"]');
+            if (approveOption) approveOption.remove();
+            statusSelect.value = task.status;
+            statusSelect.disabled = !isAssignedUser;
+        }
     }
     
     const addImagesBtn = document.getElementById('addImagesBtn');
@@ -559,6 +616,7 @@ async function saveTaskWithMarkup(imageData) {
         formData.append('phase_id', currentPhaseId || '1');
         formData.append('title', document.getElementById('taskName').value);
         formData.append('description', document.getElementById('taskDescription').value);
+        formData.append('priority', document.getElementById('taskPriority').value);
         formData.append('due_date', document.getElementById('dueDate').value);
         
         const assignedTo = document.getElementById('assignedTo').value;
@@ -614,6 +672,7 @@ async function saveTaskWithoutMarkup() {
         formData.append('phase_id', currentPhaseId || '1');
         formData.append('title', document.getElementById('taskName').value);
         formData.append('description', document.getElementById('taskDescription').value);
+        formData.append('priority', document.getElementById('taskPriority').value);
         formData.append('due_date', document.getElementById('dueDate').value);
         
         const assignedTo = document.getElementById('assignedTo').value;

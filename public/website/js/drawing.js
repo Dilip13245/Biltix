@@ -390,21 +390,22 @@ function saveState() {
 function undoLastAction() {
     console.log('Undo called');
     
-    // Use same logic as clear - restore background and remove drawings
-    const currentBackground = fileBackgrounds[currentFileIndex] || backgroundImage;
-    
-    if (currentBackground) {
-        // Restore background image only
-        ctx.putImageData(currentBackground, 0, 0);
-        console.log('Background restored for undo on file', currentFileIndex);
+    if (historyStep > 0) {
+        historyStep--;
+        const previousState = drawingHistory[historyStep];
+        
+        if (previousState) {
+            const img = new Image();
+            img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                console.log('Undo successful - restored previous state');
+            };
+            img.src = previousState;
+        }
     } else {
-        // Clear to white background
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        console.log('Canvas cleared to white for undo');
+        console.log('No more actions to undo');
     }
-    
-    saveState();
 }
 
 function clearCanvas() {
@@ -475,6 +476,7 @@ function openDrawingModal(config) {
 // Make functions globally accessible
 window.clearCanvas = clearCanvas;
 window.undoLastAction = undoLastAction;
+window.undoLast = undoLastAction; // Alias for backward compatibility
 window.setTool = setTool;
 window.previousFile = previousFile;
 window.nextFile = nextFile;

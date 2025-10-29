@@ -1072,6 +1072,20 @@ return [
     'selected_files' => 'Selected Files',
     'select_files_for_description' => 'Check the files you want to add descriptions to',
     'files_uploaded_successfully' => 'files uploaded successfully',
+    
+    // Priority translations
+    'all_priorities' => 'All Priorities',
+    'critical' => 'Critical',
+    'todo' => 'Todo',
+    'approve' => 'Approve',
+    'complete' => 'Complete',
+    'task_updated_successfully' => 'Task updated successfully',
+    'failed_to_update_task' => 'Failed to update task',
+    'error_updating_task' => 'Error updating task',
+    'task_resolved_successfully' => 'Task marked as resolved successfully',
+    'failed_to_resolve_task' => 'Failed to resolve task',
+    'error_resolving_task' => 'Error resolving task',
+    'mark_resolved' => 'Mark as Resolved',
 ];
 
 

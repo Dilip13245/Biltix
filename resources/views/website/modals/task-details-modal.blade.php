@@ -37,15 +37,15 @@
                             <div class="col-md-8">
                                 <h4 id="taskDetailTitle" class="fw-bold black_color mb-2">Task Title</h4>
                                 <div class="d-flex gap-3 flex-wrap mb-2">
-                                    <span id="taskDetailStatus" class="badge badge2">{{ __('messages.pending') }}</span>
+                                    <span id="taskDetailStatus" class="badge badge2">{{ __('messages.todo') }}</span>
                                     <small class="text-muted"><i class="fas fa-hashtag me-1"></i><span id="taskDetailNumber">-</span></small>
                                 </div>
                             </div>
                             <div class="col-md-4 text-end">
                                 <select class="form-select w-auto d-inline-block" id="taskStatusSelect" onchange="changeTaskStatus()">
-                                    <option value="pending">{{ __('messages.pending') }}</option>
+                                    <option value="todo">{{ __('messages.todo') }}</option>
                                     <option value="in_progress">{{ __('messages.in_progress') }}</option>
-                                    <option value="completed">{{ __('messages.completed') }}</option>
+                                    <option value="complete">{{ __('messages.complete') }}</option>
                                 </select>
                             </div>
                         </div>
@@ -72,9 +72,15 @@
                                         <p id="taskDetailDueDate" class="mb-0">-</p>
                                     </div>
                                 </div>
-                                <div class="mt-3">
-                                    <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
-                                    <p id="taskDetailAssignedTo" class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>-</p>
+                                <div class="row mt-3">
+                                    <div class="col-6">
+                                        <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
+                                        <p id="taskDetailAssignedTo" class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>-</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="small_tXt fw-medium">{{ __('messages.priority') }}</label>
+                                        <p id="taskDetailPriority" class="mb-0">-</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

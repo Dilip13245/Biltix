@@ -26,9 +26,17 @@
             </form>
             <select class="form-select w-auto" id="statusFilter">
                 <option value="">{{ __('messages.all_status') }}</option>
-                <option value="pending">{{ __('messages.pending') }}</option>
+                <option value="todo">{{ __('messages.todo') }}</option>
                 <option value="in_progress">{{ __('messages.in_progress') }}</option>
-                <option value="completed">{{ __('messages.completed') }}</option>
+                <option value="complete">{{ __('messages.complete') }}</option>
+                <option value="approve">{{ __('messages.approve') }}</option>
+            </select>
+            <select class="form-select w-auto" id="priorityFilter">
+                <option value="">{{ __('messages.all_priorities') }}</option>
+                <option value="low">{{ __('messages.low') }}</option>
+                <option value="medium">{{ __('messages.medium') }}</option>
+                <option value="high">{{ __('messages.high') }}</option>
+                <option value="critical">{{ __('messages.critical') }}</option>
             </select>
             @can('tasks', 'create')
                 <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
@@ -106,6 +114,14 @@
             const statusFilter = document.getElementById('statusFilter');
             if (statusFilter) {
                 statusFilter.addEventListener('change', function() {
+                    filterTasks();
+                });
+            }
+
+            // Priority filter
+            const priorityFilter = document.getElementById('priorityFilter');
+            if (priorityFilter) {
+                priorityFilter.addEventListener('change', function() {
                     filterTasks();
                 });
             }
@@ -241,6 +257,7 @@
                             </svg>
                             {{ __('messages.due') }}: ${formatDate(task.due_date)}
                         </p>
+                        <p class="mb-2 text-muted fw-medium">${getPriorityBadge(task.priority)}</p>
                         ${task.assigned_user_name ? `<p class="mb-3 text-muted"><strong>{{ __('messages.assigned_to') }}:</strong> ${task.assigned_user_name}</p>` : '<div class="mb-3"></div>'}
                         <button class="btn btn-primary w-100" onclick="openTaskDetails(${task.id})">
                             <i class="fas fa-eye me-2"></i>{{ __('messages.view_details') }}
@@ -264,15 +281,30 @@
 
         function getStatusBadge(status) {
             const statusMap = {
-                'pending': 'badge2',
+                'todo': 'badge2',
                 'in_progress': 'badge4',
-                'completed': 'badge1'
+                'complete': 'badge1',
+                'approve': 'badge3'
             };
 
             const badgeClass = statusMap[status] || 'badge2';
             const statusText = status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
 
             return `<span class="badge ${badgeClass} fw-normal" style="font-size: 0.9em;">${statusText}</span>`;
+        }
+
+        function getPriorityBadge(priority) {
+            const priorityMap = {
+                'low': { class: 'bg-success', icon: 'fas fa-arrow-down' },
+                'medium': { class: 'bg-warning', icon: 'fas fa-minus' },
+                'high': { class: 'bg-danger', icon: 'fas fa-arrow-up' },
+                'critical': { class: 'bg-dark', icon: 'fas fa-exclamation-triangle' }
+            };
+
+            const config = priorityMap[priority] || priorityMap['medium'];
+            const priorityText = priority ? priority.charAt(0).toUpperCase() + priority.slice(1) : 'Medium';
+
+            return `<span class="badge ${config.class} fw-normal" style="font-size: 0.8em;"><i class="${config.icon} me-1"></i>${priorityText}</span>`;
         }
 
         function formatDate(dateString) {
@@ -288,11 +320,13 @@
         function filterTasks() {
             const searchInput = document.getElementById('searchInput');
             const statusFilterElement = document.getElementById('statusFilter');
+            const priorityFilterElement = document.getElementById('priorityFilter');
 
-            if (!searchInput || !statusFilterElement) return;
+            if (!searchInput || !statusFilterElement || !priorityFilterElement) return;
 
             const searchTerm = searchInput.value.toLowerCase();
             const statusFilter = statusFilterElement.value;
+            const priorityFilter = priorityFilterElement.value;
 
             let filteredTasks = [...currentTasks];
 
@@ -306,6 +340,10 @@
 
             if (statusFilter) {
                 filteredTasks = filteredTasks.filter(task => task.status === statusFilter);
+            }
+
+            if (priorityFilter) {
+                filteredTasks = filteredTasks.filter(task => task.priority === priorityFilter);
             }
 
             renderTasks(filteredTasks);
@@ -356,6 +394,7 @@
             document.getElementById('taskDetailNumber').textContent = task.task_number || '-';
             document.getElementById('taskDetailStatus').textContent = task.status.charAt(0).toUpperCase() + task.status
                 .slice(1).replace('_', ' ');
+            document.getElementById('taskDetailPriority').innerHTML = getPriorityBadge(task.priority);
 
             loadTaskImages(task.images || []);
 
@@ -364,7 +403,8 @@
 
             // Check if current user is assigned to this task
             const isAssignedUser = task.assigned_to && parseInt(task.assigned_to) === parseInt(currentUserId);
-            const isCompleted = task.status === 'completed';
+            const isCompleted = task.status === 'complete' || task.status === 'approve';
+            const isApproved = task.status === 'approve';
             
             console.log('Task assignment check:', {
                 taskAssignedTo: task.assigned_to,
@@ -376,16 +416,31 @@
             // Set status select value and enable/disable
             const statusSelect = document.getElementById('taskStatusSelect');
             if (statusSelect) {
-                statusSelect.value = task.status;
-                statusSelect.disabled = !isAssignedUser;
+                if (isApproved) {
+                    // Add approve option if task is approved
+                    if (!statusSelect.querySelector('option[value="approve"]')) {
+                        const approveOption = document.createElement('option');
+                        approveOption.value = 'approve';
+                        approveOption.textContent = '{{ __('messages.approve') }}';
+                        statusSelect.appendChild(approveOption);
+                    }
+                    statusSelect.value = 'approve';
+                    statusSelect.disabled = true;
+                } else {
+                    // Remove approve option if not approved
+                    const approveOption = statusSelect.querySelector('option[value="approve"]');
+                    if (approveOption) approveOption.remove();
+                    statusSelect.value = task.status;
+                    statusSelect.disabled = !isAssignedUser;
+                }
             }
 
-            if (isCompleted || !isAssignedUser) {
+            if (isApproved || !isAssignedUser) {
                 if (addImagesBtn) addImagesBtn.style.display = 'none';
                 if (resolveBtn) resolveBtn.style.display = 'none';
             } else {
                 if (addImagesBtn) addImagesBtn.style.display = 'block';
-                if (resolveBtn) resolveBtn.style.display = 'block';
+                if (resolveBtn) resolveBtn.style.display = task.status === 'complete' ? 'block' : 'none';
             }
 
             // Show message if user is not assigned
@@ -472,6 +527,7 @@
                 formData.append('project_id', currentProjectId);
                 formData.append('title', document.getElementById('taskName').value);
                 formData.append('description', document.getElementById('taskDescription').value);
+                formData.append('priority', document.getElementById('taskPriority').value);
                 formData.append('due_date', document.getElementById('dueDate').value);
 
                 const phaseId = document.getElementById('phaseSelect').value;
@@ -529,6 +585,7 @@
                 formData.append('project_id', currentProjectId);
                 formData.append('title', document.getElementById('taskName').value);
                 formData.append('description', document.getElementById('taskDescription').value);
+                formData.append('priority', document.getElementById('taskPriority').value);
                 formData.append('due_date', document.getElementById('dueDate').value);
 
                 const phaseId = document.getElementById('phaseSelect').value;
@@ -610,29 +667,32 @@
             if (!window.currentTaskDetails) return;
 
             try {
-                const formData = new FormData();
-                formData.append('task_id', window.currentTaskDetails.id);
-                formData.append('user_id', currentUserId);
-
-                const response = await api.updateTask(formData);
+                const response = await api.updateTaskStatus({
+                    task_id: window.currentTaskDetails.id,
+                    user_id: currentUserId,
+                    status: 'approve'
+                });
 
                 if (response.code === 200) {
-                    document.getElementById('taskDetailStatus').textContent = 'Completed';
-                    document.getElementById('taskDetailStatus').className = 'badge badge1';
+                    document.getElementById('taskDetailStatus').textContent = 'Approve';
+                    document.getElementById('taskDetailStatus').className = 'badge badge3';
+                    document.getElementById('taskStatusSelect').value = 'approve';
+                    document.getElementById('taskStatusSelect').disabled = true;
 
                     const addImagesBtn = document.getElementById('addImagesBtn');
                     const resolveBtn = document.getElementById('resolveBtn');
                     if (addImagesBtn) addImagesBtn.style.display = 'none';
                     if (resolveBtn) resolveBtn.style.display = 'none';
 
+                    window.currentTaskDetails.status = 'approve';
                     loadTasks();
-                    toastr.success('{{ __('messages.task_completed_successfully') }}');
+                    toastr.success('{{ __('messages.task_resolved_successfully') }}');
                 } else {
-                    toastr.error('{{ __('messages.failed_to_complete_task') }}');
+                    toastr.error('{{ __('messages.failed_to_resolve_task') }}');
                 }
             } catch (error) {
-                console.error('Error completing task:', error);
-                toastr.error('{{ __('messages.error_completing_task') }}');
+                console.error('Error resolving task:', error);
+                toastr.error('{{ __('messages.error_resolving_task') }}');
             }
         }
 

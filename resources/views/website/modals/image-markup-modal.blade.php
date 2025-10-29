@@ -55,7 +55,7 @@
               <button class="btn btn-warning btn-sm" onclick="clearCanvas()">
                 <i class="fas fa-eraser me-2"></i>Clear
               </button>
-              <button class="btn btn-secondary btn-sm" onclick="undoLast()">
+              <button class="btn btn-secondary btn-sm" onclick="undoLastAction()">
                 <i class="fas fa-undo me-2"></i>Undo
               </button>
             </div>

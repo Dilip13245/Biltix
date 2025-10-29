@@ -58,6 +58,16 @@
           </div>
 
           <div class="mb-3">
+            <label for="taskPriority" class="form-label fw-medium">{{ __("messages.priority") }}</label>
+            <select class="form-select Input_control" id="taskPriority" name="priority">
+              <option value="low">{{ __("messages.low") }}</option>
+              <option value="medium" selected>{{ __("messages.medium") }}</option>
+              <option value="high">{{ __("messages.high") }}</option>
+              <option value="critical">{{ __("messages.critical") }}</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
             <label for="dueDate" class="form-label fw-medium">{{ __("messages.due_date") }}</label>
             @include('website.includes.date-picker', [
               'id' => 'dueDate',

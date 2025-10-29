@@ -608,6 +608,9 @@ return [
     
     // Status badges
     'critical' => 'حرج',
+    'todo' => 'للعمل',
+    'approve' => 'موافق عليه',
+    'complete' => 'مكتمل',
     
     // Project creation
     'create_new_project' => 'إنشاء مشروع جديد',
@@ -1017,6 +1020,15 @@ return [
     'selected_files' => 'الملفات المحددة',
     'select_files_for_description' => 'اختر الملفات التي تريد إضافة وصف لها',
     'files_uploaded_successfully' => 'تم رفع الملفات بنجاح',
+    
+    // Priority translations
+    'task_updated_successfully' => 'تم تحديث المهمة بنجاح',
+    'failed_to_update_task' => 'فشل في تحديث المهمة',
+    'error_updating_task' => 'خطأ في تحديث المهمة',
+    'task_resolved_successfully' => 'تم وضع علامة على المهمة كمحلولة بنجاح',
+    'failed_to_resolve_task' => 'فشل في حل المهمة',
+    'error_resolving_task' => 'خطأ في حل المهمة',
+    'mark_resolved' => 'تحديد كمحلول',
 ];
 
 
