@@ -423,6 +423,28 @@ class AuthController extends Controller
                 ->select('member_name', 'member_phone')
                 ->get();
 
+            // Get project IDs where user is a team member
+            $projectIds = \App\Models\TeamMember::where('user_id', $user->id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->pluck('project_id');
+
+            // Count total projects
+            $totalProjects = $projectIds->count();
+
+            // Count total tasks assigned to user
+            $totalTasks = \App\Models\Task::where('assigned_to', $user->id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->count();
+
+            // Count total pending tasks
+            $totalPendingTasks = \App\Models\Task::where('assigned_to', $user->id)
+                ->where('status', 'pending')
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->count();
+
             // Prepare profile response data
             $profileData = [
                 'id' => $user->id,
@@ -439,7 +461,10 @@ class AuthController extends Controller
                 'created_at' => $user->created_at,
                 'members' => $members,
                 'total_members' => $members->count(),
-                'total_employees' => $user->employee_count ?? 0
+                'total_employees' => $user->employee_count ?? 0,
+                'total_projects' => $totalProjects,
+                'total_tasks' => $totalTasks,
+                'total_pending_tasks' => $totalPendingTasks
             ];
 
             return $this->toJsonEnc($profileData, trans('api.auth.user_profile_retrieved'), Config::get('constant.SUCCESS'));
