@@ -26,6 +26,9 @@
     <!-- TOASTR CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
+    
+    <!-- GOOGLE MAPS -->
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places,marker&language={{ app()->getLocale() }}&callback=Function.prototype"></script>
 
     <style>
         .step-indicator {
@@ -215,6 +218,78 @@
             background-position: right 2.5rem center !important;
             padding-right: 2.25rem !important;
             padding-left: 0.75rem !important;
+        }
+        
+        /* Google Maps Styles */
+        #map {
+            width: 100%;
+            height: 450px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .pac-container {
+            border-radius: 8px;
+            margin-top: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-family: 'Poppins', sans-serif;
+            z-index: 9999 !important;
+        }
+        
+        .pac-item {
+            padding: 10px;
+            cursor: pointer;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .pac-item:hover {
+            background-color: #fff5f0;
+        }
+        
+        .pac-icon {
+            margin-top: 5px;
+        }
+        
+        .map-search-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .map-search-wrapper .form-control {
+            padding-right: 40px;
+        }
+        
+        [dir="rtl"] .map-search-wrapper .form-control {
+            padding-right: 0.75rem;
+            padding-left: 40px;
+        }
+        
+        .map-search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+        }
+        
+        [dir="rtl"] .map-search-icon {
+            right: auto;
+            left: 12px;
+        }
+        
+        .location-info {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        
+        .location-info .badge {
+            font-size: 11px;
+            padding: 4px 8px;
         }
     </style>
 
@@ -529,7 +604,7 @@
                             <div class="step-content d-none" id="step2">
                                 <h6 class="mb-3">{{ __('messages.project_details') }}</h6>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="type"
                                                 class="form-label fw-medium">{{ __('messages.project_type_example') }}</label>
@@ -545,19 +620,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="project_location"
-                                                class="form-label fw-medium">{{ __('messages.project_location') }}
-                                                *</label>
-                                            <input type="text" class="form-control Input_control"
-                                                id="project_location" name="project_location" required
-                                                placeholder="{{ __('messages.location') }}">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="project_start_date"
                                                 class="form-label fw-medium">{{ __('messages.project_start_date') }}
@@ -571,7 +634,7 @@
                                             ])
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="project_due_date"
                                                 class="form-label fw-medium">{{ __('messages.project_due_date') }}
@@ -583,6 +646,36 @@
                                                 'minDate' => date('Y-m-d'),
                                                 'required' => true,
                                             ])
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label for="project_location"
+                                                class="form-label fw-medium">{{ __('messages.project_location') }}
+                                                *</label>
+                                            <div class="map-search-wrapper">
+                                                <input type="text" class="form-control Input_control"
+                                                    id="project_location" name="project_location" required
+                                                    placeholder="{{ __('messages.search_location') }}">
+                                                <i class="fas fa-search map-search-icon"></i>
+                                            </div>
+                                            <input type="hidden" id="latitude" name="latitude">
+                                            <input type="hidden" id="longitude" name="longitude">
+                                            <div id="map" class="mt-2"></div>
+                                            <div class="location-info" id="locationInfo" style="display: none;">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <span class="badge bg-success {{ margin_end(2) }}"><i class="fas fa-map-marker-alt {{ margin_end(1) }}"></i>{{ __('messages.selected') }}</span>
+                                                        <span id="selectedLocation" class="fw-medium"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-2 text-muted" style="font-size: 12px;">
+                                                    <i class="fas fa-info-circle {{ margin_end(1) }}"></i>
+                                                    <span id="coordinatesDisplay"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1073,6 +1166,96 @@
             // Multi-step form variables
             let currentStep = 1;
             const totalSteps = 3;
+            
+            // Initialize Google Maps
+            let map, marker, autocomplete;
+            const saudiArabia = { lat: 23.8859, lng: 45.0792 };
+            
+            function initMap() {
+                try {
+                    map = new google.maps.Map(document.getElementById('map'), {
+                        center: saudiArabia,
+                        zoom: 6,
+                        mapTypeControl: true,
+                        streetViewControl: false,
+                        fullscreenControl: true
+                    });
+                    
+                    const input = document.getElementById('project_location');
+                    autocomplete = new google.maps.places.Autocomplete(input, {
+                        componentRestrictions: { country: 'sa' },
+                        fields: ['formatted_address', 'geometry', 'name']
+                    });
+                    
+                    autocomplete.addListener('place_changed', function() {
+                        const place = autocomplete.getPlace();
+                        if (!place.geometry) {
+                            showToast('{{ __('messages.no_location_found') }}', 'error');
+                            return;
+                        }
+                        updateMapLocation(place.geometry.location, place.formatted_address || place.name);
+                    });
+                    
+                    map.addListener('click', function(event) {
+                        const geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({ location: event.latLng }, function(results, status) {
+                            if (status === 'OK' && results[0]) {
+                                updateMapLocation(event.latLng, results[0].formatted_address);
+                                document.getElementById('project_location').value = results[0].formatted_address;
+                            }
+                        });
+                    });
+                } catch (error) {
+                    console.error('Map initialization error:', error);
+                    document.getElementById('map').innerHTML = '<div class="alert alert-warning m-3"><i class="fas fa-exclamation-triangle me-2"></i>{{ __('messages.map_loading_error') }}</div>';
+                }
+            }
+            
+            function updateMapLocation(location, address) {
+                if (marker) marker.setMap(null);
+                
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    draggable: true
+                });
+                
+                map.setCenter(location);
+                map.setZoom(15);
+                
+                document.getElementById('latitude').value = location.lat();
+                document.getElementById('longitude').value = location.lng();
+                document.getElementById('selectedLocation').textContent = address;
+                document.getElementById('coordinatesDisplay').textContent = 
+                    `{{ __('messages.lat') }}: ${location.lat().toFixed(6)}, {{ __('messages.lng') }}: ${location.lng().toFixed(6)}`;
+                document.getElementById('locationInfo').style.display = 'block';
+                
+                marker.addListener('dragend', function(event) {
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ location: event.latLng }, function(results, status) {
+                        if (status === 'OK' && results[0]) {
+                            document.getElementById('project_location').value = results[0].formatted_address;
+                            document.getElementById('latitude').value = event.latLng.lat();
+                            document.getElementById('longitude').value = event.latLng.lng();
+                            document.getElementById('selectedLocation').textContent = results[0].formatted_address;
+                            document.getElementById('coordinatesDisplay').textContent = 
+                                `{{ __('messages.lat') }}: ${event.latLng.lat().toFixed(6)}, {{ __('messages.lng') }}: ${event.latLng.lng().toFixed(6)}`;
+                        }
+                    });
+                });
+            }
+            
+            const createProjectModal = document.getElementById('createProjectModal');
+            if (createProjectModal) {
+                createProjectModal.addEventListener('shown.bs.modal', function() {
+                    setTimeout(() => {
+                        if (typeof google !== 'undefined' && !map) {
+                            initMap();
+                        }
+                    }, 300);
+                });
+            }
 
             // Step navigation function
             window.changeStep = function(direction) {
@@ -1145,25 +1328,36 @@
             }
 
             // Reset form when modal opens and load dropdown data
-            const createProjectModal = document.getElementById('createProjectModal');
-            if (createProjectModal) {
-                createProjectModal.addEventListener('show.bs.modal', function() {
-                    currentStep = 1;
-                    // Hide all steps except first
-                    for (let i = 2; i <= totalSteps; i++) {
-                        document.getElementById(`step${i}`).classList.add('d-none');
-                        document.getElementById(`step${i}-indicator`).classList.remove('active');
-                    }
-                    // Show first step
-                    document.getElementById('step1').classList.remove('d-none');
-                    document.getElementById('step1-indicator').classList.add('active');
-                    updateButtons();
+            createProjectModal.addEventListener('show.bs.modal', function() {
+                currentStep = 1;
+                // Hide all steps except first
+                for (let i = 2; i <= totalSteps; i++) {
+                    document.getElementById(`step${i}`).classList.add('d-none');
+                    document.getElementById(`step${i}-indicator`).classList.remove('active');
+                }
+                // Show first step
+                document.getElementById('step1').classList.remove('d-none');
+                document.getElementById('step1-indicator').classList.add('active');
+                updateButtons();
 
-                    // Load dropdown data
-                    loadProjectManagers();
-                    loadTechnicalEngineers();
-                });
-            }
+                // Reset map and location
+                document.getElementById('project_location').value = '';
+                document.getElementById('latitude').value = '';
+                document.getElementById('longitude').value = '';
+                document.getElementById('locationInfo').style.display = 'none';
+                if (marker) {
+                    marker.setMap(null);
+                    marker = null;
+                }
+                if (map) {
+                    map.setCenter(saudiArabia);
+                    map.setZoom(6);
+                }
+
+                // Load dropdown data
+                loadProjectManagers();
+                loadTechnicalEngineers();
+            });
 
             // Create Project Form Handler
             const createProjectForm = document.getElementById('createProjectForm');

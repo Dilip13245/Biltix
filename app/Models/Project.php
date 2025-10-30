@@ -13,7 +13,7 @@ class Project extends Model
 
     protected $fillable = [
         'project_code', 'project_title', 'contractor_name', 'project_manager_id', 'technical_engineer_id',
-        'type', 'project_location', 'project_start_date', 'project_due_date',
+        'type', 'project_location', 'latitude', 'longitude', 'project_start_date', 'project_due_date',
         'priority', 'status', 'created_by', 'is_active', 'is_deleted'
     ];
 

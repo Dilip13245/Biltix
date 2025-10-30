@@ -803,7 +803,7 @@ return [
     'word_preview_info' => 'Word documents are best viewed by downloading or opening in a new tab.',
     'excel_document' => 'Excel Spreadsheet',
     'excel_preview_info' => 'Excel files are best viewed by downloading or opening in a new tab.',
-    'loading_projects' => 'Loading Projects',
+
     
     // Status translations for header
     'planning' => 'Planning',
@@ -1086,6 +1086,23 @@ return [
     'failed_to_resolve_task' => 'Failed to resolve task',
     'error_resolving_task' => 'Error resolving task',
     'mark_resolved' => 'Mark as Resolved',
+    
+    // Google Maps translations
+    'search_location' => 'Search for location...',
+    'selected' => 'Selected',
+    'lat' => 'Lat',
+    'lng' => 'Lng',
+    'no_location_found' => 'No location details found for this place',
+    'loading_projects' => 'Loading projects',
+    'edit_location' => 'Edit Location',
+    'please_select_location' => 'Please select a location on the map',
+    'location_updated_successfully' => 'Location updated successfully',
+    'failed_to_update_location' => 'Failed to update location',
+    'error_updating_location' => 'Error updating location',
+    'no_location_set' => 'No location set',
+    'coordinates_not_available' => 'Coordinates not available',
+    'no_coordinates_available' => 'No coordinates available. Please edit to add location.',
+    'map_loading_error' => 'Unable to load map. Please enable billing on Google Maps API key or enter location manually.',
 ];
 
 

@@ -60,6 +60,8 @@ class ProjectController extends Controller
             $projectDetails->technical_engineer_id = $request->technical_engineer_id;
             $projectDetails->type = $request->type;
             $projectDetails->project_location = $request->project_location;
+            $projectDetails->latitude = $request->latitude;
+            $projectDetails->longitude = $request->longitude;
             $projectDetails->project_start_date = $request->project_start_date;
             $projectDetails->project_due_date = $request->project_due_date;
             $projectDetails->priority = $request->priority ?? 'medium';
@@ -263,6 +265,8 @@ class ProjectController extends Controller
             if ($request->filled('technical_engineer_id')) $project->technical_engineer_id = $request->technical_engineer_id;
             if ($request->filled('type')) $project->type = $request->type;
             if ($request->filled('project_location')) $project->project_location = $request->project_location;
+            if ($request->filled('latitude')) $project->latitude = $request->latitude;
+            if ($request->filled('longitude')) $project->longitude = $request->longitude;
             if ($request->filled('project_start_date')) $project->project_start_date = $request->project_start_date;
             if ($request->filled('project_due_date')) $project->project_due_date = $request->project_due_date;
             if ($request->filled('priority')) $project->priority = $request->priority;

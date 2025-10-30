@@ -741,7 +741,7 @@ return [
     'largest_first' => 'الأكبر أولاً',
     'smallest_first' => 'الأصغر أولاً',
     'no_files_found' => 'لم يتم العثور على ملفات',
-    'loading_files' => 'جاري تحميل الملفات',
+
     'no_snags_found' => 'لم يتم العثور على مشاكل',
     'all_priorities' => 'جميع الأولويات',
     'closed' => 'مغلق',
@@ -1029,43 +1029,22 @@ return [
     'failed_to_resolve_task' => 'فشل في حل المهمة',
     'error_resolving_task' => 'خطأ في حل المهمة',
     'mark_resolved' => 'تحديد كمحلول',
+    
+    // Google Maps translations
+    'search_location' => 'ابحث عن موقع...',
+    'selected' => 'محدد',
+    'lat' => 'خط العرض',
+    'lng' => 'خط الطول',
+    'no_location_found' => 'لم يتم العثور على تفاصيل الموقع لهذا المكان',
+    'loading_projects' => 'جاري تحميل المشاريع',
+    'edit_location' => 'تعديل الموقع',
+    'please_select_location' => 'الرجاء تحديد موقع على الخريطة',
+    'location_updated_successfully' => 'تم تحديث الموقع بنجاح',
+    'failed_to_update_location' => 'فشل تحديث الموقع',
+    'error_updating_location' => 'خطأ في تحديث الموقع',
+    'no_location_set' => 'لم يتم تعيين موقع',
+    'coordinates_not_available' => 'الإحداثيات غير متوفرة',
+    'no_coordinates_available' => 'لا توجد إحداثيات متاحة. يرجى التعديل لإضافة الموقع.',
+    'map_loading_error' => 'تعذر تحميل الخريطة. يرجى تفعيل الفوترة على مفتاح Google Maps API أو إدخال الموقع يدوياً.',
+
 ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

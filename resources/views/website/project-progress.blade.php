@@ -3,6 +3,37 @@
 @section('title', 'Project Progress')
 
 @section('content')
+<!-- GOOGLE MAPS -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places,marker&language={{ app()->getLocale() }}&callback=Function.prototype"></script>
+
+<style>
+    #projectLocationMap {
+        width: 100%;
+        height: 350px;
+        border-radius: 12px;
+        border: 2px solid #e9ecef;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .pac-container {
+        border-radius: 8px;
+        margin-top: 5px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-family: 'Poppins', sans-serif;
+        z-index: 9999 !important;
+    }
+    
+    .location-display {
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    
+    #locationEditMode {
+        display: none;
+    }
+</style>
     <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
             <h2>{{ __('messages.project_progress') }}</h2>
@@ -39,6 +70,19 @@
                                     </h5>
                                     <div class="row gy-3 gx-5">
                                         <div class="col-12 col-md-6">
+                                            <div class="mb-2 mb-md-3">
+                                                <span
+                                                    class="text-muted small black_color">{{ __('messages.project_location') }}</span>
+                                                <div class="fw-medium d-flex align-items-center gap-2">
+                                                    <span id="projectLocation">{{ __('messages.loading') }}...</span>
+                                                    @can('projects', 'edit')
+                                                        <a href="#" class="text-primary ms-2 d-flex align-items-center"
+                                                            onclick="toggleLocationEdit(event)" title="Edit"><img
+                                                                src="{{ asset('website/images/icons/edit.svg') }}"
+                                                                alt="edit" style="width: 16px; height: 16px;"></a>
+                                                    @endcan
+                                                </div>
+                                            </div>
                                             <div class="mb-2 mb-md-3">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.project_name') }}</span>
@@ -172,6 +216,65 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Project Location Map Section -->
+            <div class="row mt-4 wow fadeInUp" data-wow-delay="1.0s">
+                <div class="col-12">
+                    <div class="card B_shadow">
+                        <div class="card-body p-md-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-semibold black_color mb-0">{{ __('messages.project_location') }}</h5>
+                                @can('projects', 'edit')
+                                    <button class="btn btn-sm btn-outline-primary" onclick="toggleLocationEdit(event)">
+                                        <i class="fas fa-edit {{ margin_end(1) }}"></i>{{ __('messages.edit_location') }}
+                                    </button>
+                                @endcan
+                            </div>
+                            
+                            <!-- View Mode -->
+                            <div id="locationViewMode">
+                                <div class="location-display">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <i class="fas fa-map-marker-alt text-primary"></i>
+                                        <span class="fw-medium" id="displayLocation">{{ __('messages.loading') }}...</span>
+                                    </div>
+                                    <div class="text-muted" style="font-size: 12px;" id="displayCoordinates"></div>
+                                </div>
+                                <div id="projectLocationMap"></div>
+                            </div>
+                            
+                            <!-- Edit Mode -->
+                            <div id="locationEditMode" class="location-edit-mode">
+                                <div class="mb-3">
+                                    <div class="map-search-wrapper position-relative">
+                                        <input type="text" class="form-control" id="editProjectLocation"
+                                            placeholder="{{ __('messages.search_location') }}">
+                                        <i class="fas fa-search position-absolute" 
+                                            style="{{ is_rtl() ? 'left' : 'right' }}: 12px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none;"></i>
+                                    </div>
+                                    <input type="hidden" id="editLatitude">
+                                    <input type="hidden" id="editLongitude">
+                                </div>
+                                <div id="editLocationMap" style="width: 100%; height: 350px; border-radius: 12px; border: 2px solid #e9ecef;"></div>
+                                <div class="location-info mt-2" id="editLocationInfo" style="display: none;">
+                                    <div class="bg-light p-2 rounded">
+                                        <small class="text-muted" id="editCoordinatesDisplay"></small>
+                                    </div>
+                                </div>
+                                <div class="mt-3 d-flex gap-2">
+                                    <button class="btn btn-success" onclick="saveLocationEdit()">
+                                        <i class="fas fa-save {{ margin_end(1) }}"></i>{{ __('messages.save') }}
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="cancelLocationEdit()">
+                                        <i class="fas fa-times {{ margin_end(1) }}"></i>{{ __('messages.cancel') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             {{-- Project Overview Section - Commented Out
             <div class="row mt-4 wow fadeInUp" data-wow-delay="1.2s">
                 <div class="col-12">
@@ -404,6 +507,13 @@
         // Get project ID from controller
         let currentProjectId = {{ $project->id ?? 1 }};
         
+        // Google Maps variables
+        let projectMap, projectMarker;
+        let editMap, editMarker, editAutocomplete;
+        let currentProjectData = null;
+        const saudiArabia = { lat: 23.8859, lng: 45.0792 };
+        let mapInitialized = false;
+        
         // Global variables for phase management
         let currentPhaseId = null;
         
@@ -487,6 +597,196 @@
             
             extensionInput.value = newExtension;
             await extendMilestone(milestoneId);
+        }
+        
+        // Initialize project location map
+        function initProjectLocationMap(lat, lng, address) {
+            if (!lat || !lng) return;
+            
+            try {
+                const location = { lat: parseFloat(lat), lng: parseFloat(lng) };
+                
+                projectMap = new google.maps.Map(document.getElementById('projectLocationMap'), {
+                    center: location,
+                    zoom: 15,
+                    mapTypeControl: true,
+                    streetViewControl: false,
+                    fullscreenControl: true
+                });
+                
+                projectMarker = new google.maps.Marker({
+                    position: location,
+                    map: projectMap,
+                    title: address
+                });
+                
+                mapInitialized = true;
+            } catch (error) {
+                console.error('Error initializing map:', error);
+            }
+        }
+        
+        // Initialize edit location map
+        function initEditLocationMap() {
+            try {
+                const center = currentProjectData?.latitude && currentProjectData?.longitude 
+                    ? { lat: parseFloat(currentProjectData.latitude), lng: parseFloat(currentProjectData.longitude) }
+                    : saudiArabia;
+                
+                editMap = new google.maps.Map(document.getElementById('editLocationMap'), {
+                    center: center,
+                    zoom: currentProjectData?.latitude ? 15 : 6,
+                    mapTypeControl: true,
+                    streetViewControl: false,
+                    fullscreenControl: true
+                });
+                
+                if (currentProjectData?.latitude && currentProjectData?.longitude) {
+                    editMarker = new google.maps.Marker({
+                        position: center,
+                        map: editMap,
+                        animation: google.maps.Animation.DROP,
+                        draggable: true
+                    });
+                    
+                    editMarker.addListener('dragend', function(event) {
+                        updateEditLocation(event.latLng);
+                    });
+                }
+                
+                const input = document.getElementById('editProjectLocation');
+                editAutocomplete = new google.maps.places.Autocomplete(input, {
+                    componentRestrictions: { country: 'sa' },
+                    fields: ['formatted_address', 'geometry', 'name']
+                });
+                
+                editAutocomplete.addListener('place_changed', function() {
+                    const place = editAutocomplete.getPlace();
+                    if (!place.geometry) {
+                        showToast('{{ __('messages.no_location_found') }}', 'error');
+                        return;
+                    }
+                    updateEditMapLocation(place.geometry.location, place.formatted_address || place.name);
+                });
+                
+                editMap.addListener('click', function(event) {
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ location: event.latLng }, function(results, status) {
+                        if (status === 'OK' && results[0]) {
+                            updateEditMapLocation(event.latLng, results[0].formatted_address);
+                            document.getElementById('editProjectLocation').value = results[0].formatted_address;
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Error initializing edit map:', error);
+            }
+        }
+        
+        function updateEditMapLocation(location, address) {
+            if (editMarker) editMarker.setMap(null);
+            
+            editMarker = new google.maps.Marker({
+                position: location,
+                map: editMap,
+                animation: google.maps.Animation.DROP,
+                draggable: true
+            });
+            
+            editMap.setCenter(location);
+            editMap.setZoom(15);
+            
+            document.getElementById('editLatitude').value = location.lat();
+            document.getElementById('editLongitude').value = location.lng();
+            document.getElementById('editCoordinatesDisplay').textContent = 
+                `{{ __('messages.lat') }}: ${location.lat().toFixed(6)}, {{ __('messages.lng') }}: ${location.lng().toFixed(6)}`;
+            document.getElementById('editLocationInfo').style.display = 'block';
+            
+            editMarker.addListener('dragend', function(event) {
+                updateEditLocation(event.latLng);
+            });
+        }
+        
+        function updateEditLocation(latLng) {
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ location: latLng }, function(results, status) {
+                if (status === 'OK' && results[0]) {
+                    document.getElementById('editProjectLocation').value = results[0].formatted_address;
+                    document.getElementById('editLatitude').value = latLng.lat();
+                    document.getElementById('editLongitude').value = latLng.lng();
+                    document.getElementById('editCoordinatesDisplay').textContent = 
+                        `{{ __('messages.lat') }}: ${latLng.lat().toFixed(6)}, {{ __('messages.lng') }}: ${latLng.lng().toFixed(6)}`;
+                }
+            });
+        }
+        
+        function toggleLocationEdit(event) {
+            event.preventDefault();
+            
+            if (typeof google === 'undefined') {
+                showToast('{{ __('messages.map_loading_error') }}', 'error');
+                return;
+            }
+            
+            const viewMode = document.getElementById('locationViewMode');
+            const editMode = document.getElementById('locationEditMode');
+            
+            viewMode.style.display = 'none';
+            editMode.style.display = 'block';
+            
+            if (currentProjectData) {
+                document.getElementById('editProjectLocation').value = currentProjectData.project_location || '';
+                document.getElementById('editLatitude').value = currentProjectData.latitude || '';
+                document.getElementById('editLongitude').value = currentProjectData.longitude || '';
+            }
+            
+            setTimeout(() => {
+                if (!editMap) {
+                    initEditLocationMap();
+                } else {
+                    google.maps.event.trigger(editMap, 'resize');
+                    if (currentProjectData?.latitude && currentProjectData?.longitude) {
+                        const center = { lat: parseFloat(currentProjectData.latitude), lng: parseFloat(currentProjectData.longitude) };
+                        editMap.setCenter(center);
+                    }
+                }
+            }, 100);
+        }
+        
+        function cancelLocationEdit() {
+            document.getElementById('locationViewMode').style.display = 'block';
+            document.getElementById('locationEditMode').style.display = 'none';
+        }
+        
+        async function saveLocationEdit() {
+            const location = document.getElementById('editProjectLocation').value.trim();
+            const latitude = document.getElementById('editLatitude').value;
+            const longitude = document.getElementById('editLongitude').value;
+            
+            if (!location || !latitude || !longitude) {
+                showToast('{{ __('messages.please_select_location') }}', 'warning');
+                return;
+            }
+            
+            try {
+                const response = await api.updateProject({
+                    project_id: currentProjectId,
+                    project_location: location,
+                    latitude: latitude,
+                    longitude: longitude
+                });
+                
+                if (response.code === 200) {
+                    showToast('{{ __('messages.location_updated_successfully') }}', 'success');
+                    cancelLocationEdit();
+                    loadProjectData();
+                } else {
+                    showToast(response.message || '{{ __('messages.failed_to_update_location') }}', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating location:', error);
+                showToast('{{ __('messages.error_updating_location') }}', 'error');
+            }
         }
         
         // Load project data and make edit buttons functional
@@ -706,6 +1006,7 @@
                 
                 if (response.code === 200 && response.data) {
                     const project = response.data;
+                    currentProjectData = project;
                     
                     // Update project details
                     document.getElementById('projectName').textContent = project.project_title || 'N/A';
@@ -713,6 +1014,7 @@
                     document.getElementById('projectType').textContent = project.type || 'N/A';
                     document.getElementById('projectManager').textContent = project.project_manager_name || 'N/A';
                     document.getElementById('siteEngineer').textContent = project.technical_engineer_name || 'N/A';
+                    document.getElementById('projectLocation').textContent = project.project_location || 'N/A';
                     
                     // Format and update dates
                     if (project.project_start_date) {
@@ -720,6 +1022,24 @@
                     }
                     if (project.project_due_date) {
                         document.getElementById('endDate').textContent = formatDate(project.project_due_date);
+                    }
+                    
+                    // Update location display and map
+                    if (project.latitude && project.longitude) {
+                        document.getElementById('displayLocation').textContent = project.project_location || 'N/A';
+                        document.getElementById('displayCoordinates').textContent = 
+                            `{{ __('messages.lat') }}: ${parseFloat(project.latitude).toFixed(6)}, {{ __('messages.lng') }}: ${parseFloat(project.longitude).toFixed(6)}`;
+                        
+                        // Initialize map after a delay to ensure Google Maps is loaded
+                        setTimeout(() => {
+                            if (typeof google !== 'undefined' && google.maps && !mapInitialized) {
+                                initProjectLocationMap(project.latitude, project.longitude, project.project_location);
+                            }
+                        }, 500);
+                    } else {
+                        document.getElementById('displayLocation').textContent = project.project_location || '{{ __('messages.no_location_set') }}';
+                        document.getElementById('displayCoordinates').textContent = '{{ __('messages.coordinates_not_available') }}';
+                        document.getElementById('projectLocationMap').innerHTML = '<div class="alert alert-info m-3">{{ __('messages.no_coordinates_available') }}</div>';
                     }
                 } else {
                     console.error('Failed to load project data:', response.message);
@@ -949,6 +1269,30 @@
                 console.error('Failed to load users:', error);
                 buttonElement.textContent = 'Error loading users';
                 menuElement.innerHTML = '<li><span class="dropdown-item-text">Error loading users</span></li>';
+            }
+        }
+        
+        // Toast notification function
+        function showToast(message, type = 'success') {
+            if (typeof toastr !== 'undefined') {
+                switch (type) {
+                    case 'success':
+                        toastr.success(message);
+                        break;
+                    case 'error':
+                        toastr.error(message);
+                        break;
+                    case 'warning':
+                        toastr.warning(message);
+                        break;
+                    case 'info':
+                        toastr.info(message);
+                        break;
+                    default:
+                        toastr.success(message);
+                }
+            } else {
+                alert(message);
             }
         }
     </script>
