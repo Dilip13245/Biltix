@@ -423,23 +423,32 @@ class AuthController extends Controller
                 ->select('member_name', 'member_phone')
                 ->get();
 
-            // Get project IDs where user is a team member
-            $projectIds = \App\Models\TeamMember::where('user_id', $user->id)
+            // Get project IDs created by user
+            $createdProjectIds = \App\Models\Project::where('created_by', $user->id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->pluck('id');
+
+            // Get project IDs assigned to user via team_members
+            $assignedProjectIds = \App\Models\TeamMember::where('user_id', $user->id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->pluck('project_id');
 
-            // Count total projects
-            $totalProjects = $projectIds->count();
+            // Merge both project IDs
+            $allProjectIds = $createdProjectIds->merge($assignedProjectIds)->unique();
 
-            // Count total tasks assigned to user
-            $totalTasks = \App\Models\Task::where('assigned_to', $user->id)
+            // Count total projects
+            $totalProjects = $allProjectIds->count();
+
+            // Count tasks from these projects
+            $totalTasks = \App\Models\Task::whereIn('project_id', $allProjectIds)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->count();
 
-            // Count total pending tasks
-            $totalPendingTasks = \App\Models\Task::where('assigned_to', $user->id)
+            // Count pending tasks from these projects
+            $totalPendingTasks = \App\Models\Task::whereIn('project_id', $allProjectIds)
                 ->where('status', 'pending')
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
