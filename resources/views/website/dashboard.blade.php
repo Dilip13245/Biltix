@@ -412,61 +412,39 @@
             <div class="container-fluid">
                 <!-- Top Stats Cards -->
                 <div class="row g-3 mb-4 ">
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3 col-xxl-2 cutom_col wow fadeInUp"
-                        data-wow-delay="0s">
+                    <div class="col-12 col-sm-6 col-md-4 wow fadeInUp" data-wow-delay="0s">
                         <div class="card stat-card h-100">
                             <div class="card-body d-flex align-items-center">
                                 <div>
-                                    <div class="small_tXt">
-                                        @if (isset($currentUser) && $currentUser->getDashboardAccess() === 'assigned_only')
-                                            {{ __('messages.assigned_projects') }}
-                                        @else
-                                            {{ __('messages.active_projects_count') }}
-                                        @endif
-                                    </div>
-                                    <div class="stat-value">...</div>
+                                    <div class="small_tXt">{{ __('messages.total_projects') }}</div>
+                                    <div class="stat-value">{{ $stats['total_projects'] ?? 0 }}</div>
                                 </div>
                                 <span class="ms-auto stat-icon bg1"><img
                                         src="{{ asset('website/images/icons/share.svg') }}" alt="share"></span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3 col-xxl-2 cutom_col wow fadeInUp"
-                        data-wow-delay=".4s">
+                    <div class="col-12 col-sm-6 col-md-4 wow fadeInUp" data-wow-delay=".4s">
                         <div class="card stat-card h-100">
                             <div class="card-body d-flex align-items-center">
                                 <div>
-                                    <div class="small_tXt">{{ __('messages.pending_reviews') }}</div>
-                                    <div class="stat-value">...</div>
+                                    <div class="small_tXt">{{ __('messages.total_tasks') }}</div>
+                                    <div class="stat-value">{{ $stats['total_tasks'] ?? 0 }}</div>
                                 </div>
                                 <span class="ms-auto stat-icon bg2"><img
                                         src="{{ asset('website/images/icons/clock.svg') }}" alt="clock"></span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3 col-xxl-2 cutom_col wow fadeInUp"
-                        data-wow-delay=".8s">
+                    <div class="col-12 col-sm-6 col-md-4 wow fadeInUp" data-wow-delay=".8s">
                         <div class="card stat-card h-100">
                             <div class="card-body d-flex align-items-center">
                                 <div>
-                                    <div class="small_tXt">{{ __('messages.inspections_due') }}</div>
-                                    <div class="stat-value">...</div>
+                                    <div class="small_tXt">{{ __('messages.pending_tasks') }}</div>
+                                    <div class="stat-value">{{ $stats['total_pending_tasks'] ?? 0 }}</div>
                                 </div>
                                 <span class="ms-auto stat-icon"><img
                                         src="{{ asset('website/images/icons/calendar.svg') }}" alt="calendar"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-3 col-xxl-2 cutom_col wow fadeInUp"
-                        data-wow-delay="1.2s">
-                        <div class="card stat-card h-100">
-                            <div class="card-body d-flex align-items-center">
-                                <div>
-                                    <div class="small_tXt">{{ __('messages.completed_this_month') }}</div>
-                                    <div class="stat-value">...</div>
-                                </div>
-                                <span class="ms-auto stat-icon bg4"><img
-                                        src="{{ asset('website/images/icons/suc.svg') }}" alt="suc"></span>
                             </div>
                         </div>
                     </div>
@@ -756,28 +734,7 @@
     @endcan
 
     <script>
-        // Load dashboard stats
-        async function loadDashboardStats() {
-            try {
-                const response = await api.getDashboardStats();
-
-                if (response.code === 200 && response.data) {
-                    const stats = response.data;
-
-                    // Update stat values using more specific selectors
-                    const statCards = document.querySelectorAll('.stat-value');
-                    if (statCards.length >= 4) {
-                        statCards[0].textContent = stats.active_projects || 0;
-                        statCards[1].textContent = stats.pending_tasks || 0;
-                        statCards[2].textContent = stats.inspections_due || 0;
-                        statCards[3].textContent = stats.completed_this_month || 0;
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to load dashboard stats:', error);
-                // Keep default values on error
-            }
-        }
+        // Stats loaded from controller
 
         // Notification functions
         async function loadNotifications() {
@@ -1107,8 +1064,7 @@
 
         // Filter functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Load stats, notifications and projects on page load
-            loadDashboardStats();
+            // Load notifications and projects on page load
             loadNotifications();
             loadProjects('all', true);
 

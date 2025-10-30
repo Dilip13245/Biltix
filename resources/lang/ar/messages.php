@@ -1051,5 +1051,6 @@ return [
     'project_deleted_successfully' => 'تم حذف المشروع بنجاح',
     'failed_to_delete_project' => 'فشل في حذف المشروع',
     'error_deleting_project' => 'خطأ في حذف المشروع',
-
+    'total_tasks' => 'إجمالي المهام',
+    'pending_tasks' => 'المهام المعلقة',
 ];

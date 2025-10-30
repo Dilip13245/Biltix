@@ -1108,6 +1108,8 @@ return [
     'project_deleted_successfully' => 'Project deleted successfully',
     'failed_to_delete_project' => 'Failed to delete project',
     'error_deleting_project' => 'Error deleting project',
+    'total_tasks' => 'Total Tasks',
+    'pending_tasks' => 'Pending Tasks',
 ];
 
 

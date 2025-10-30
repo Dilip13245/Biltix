@@ -31,32 +31,49 @@ class HomeController extends Controller
         $user = request()->attributes->get('user');
         $dashboardAccess = $user ? $user->getDashboardAccess() : 'full';
         
-        // Role-based stats
-        if ($dashboardAccess === 'assigned_only') {
-            // Site Engineer - only assigned projects
-            $stats = [
-                'assigned_projects' => 3,
-                'pending_tasks' => 5,
-                'inspections_due' => 2,
-                'logs_submitted' => 8,
-            ];
-        } elseif ($dashboardAccess === 'view_only') {
-            // Stakeholder - view-only stats
-            $stats = [
-                'total_projects' => 12,
-                'active_projects' => 8,
-                'completed_projects' => 4,
-                'overall_progress' => 65,
-            ];
-        } else {
-            // Full access - Consultant, Contractor, Project Manager
-            $stats = [
-                'active_projects' => 12,
-                'pending_reviews' => 8,
-                'inspections_due' => 5,
-                'completed_this_month' => 3,
-            ];
+        // Get project IDs created by user
+        $createdProjectIds = Project::where('created_by', $user->id)
+            ->where('is_active', 1)
+            ->where('is_deleted', 0)
+            ->pluck('id');
+
+        // Get project IDs assigned to user via team_members
+        $assignedProjectIds = \App\Models\TeamMember::where('user_id', $user->id)
+            ->where('is_active', 1)
+            ->where('is_deleted', 0)
+            ->pluck('project_id');
+
+        // Merge both project IDs
+        $allProjectIds = $createdProjectIds->merge($assignedProjectIds)->unique();
+
+        // Count total projects
+        $totalProjects = $allProjectIds->count();
+
+        // Count tasks from these projects
+        $totalTasks = 0;
+        if ($allProjectIds->isNotEmpty()) {
+            $totalTasks = \App\Models\Task::whereIn('project_id', $allProjectIds)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->count();
         }
+
+        // Count pending and todo tasks from these projects
+        $totalPendingTasks = 0;
+        if ($allProjectIds->isNotEmpty()) {
+            $totalPendingTasks = \App\Models\Task::whereIn('project_id', $allProjectIds)
+                ->whereIn('status', ['in_progress', 'todo'])
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->count();
+        }
+
+        // Prepare stats
+        $stats = [
+            'total_projects' => $totalProjects,
+            'total_tasks' => $totalTasks,
+            'total_pending_tasks' => $totalPendingTasks,
+        ];
 
         // Role-based project data
         $ongoing_projects = $this->getProjectsByRole($dashboardAccess);

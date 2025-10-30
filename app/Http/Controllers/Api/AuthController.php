@@ -449,7 +449,7 @@ class AuthController extends Controller
 
             // Count pending tasks from these projects
             $totalPendingTasks = \App\Models\Task::whereIn('project_id', $allProjectIds)
-                ->where('status', 'pending')
+                ->whereIn('status', ['in_progress', 'todo'])
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->count();
