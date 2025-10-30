@@ -608,16 +608,19 @@
                                         <div class="mb-3">
                                             <label for="type"
                                                 class="form-label fw-medium">{{ __('messages.project_type_example') }}</label>
-                                            <select class="form-select Input_control" id="type" name="type"
-                                                required>
-                                                <option value="">{{ __('messages.select_type') }}</option>
-                                                <option value="villa">{{ __('messages.villa') }}</option>
-                                                <option value="tower">{{ __('messages.tower') }}</option>
-                                                <option value="hospital">{{ __('messages.hospital') }}</option>
-                                                <option value="commercial">{{ __('messages.commercial') }}</option>
-                                                <option value="residential">{{ __('messages.residential') }}</option>
-                                                <option value="industrial">{{ __('messages.industrial') }}</option>
-                                            </select>
+                                            <div class="custom-combo-dropdown position-relative">
+                                                <input type="text" class="form-control Input_control" id="type" name="type"
+                                                    placeholder="{{ __('messages.select_type') }}" required autocomplete="off">
+                                                <i class="fas fa-chevron-down dropdown-arrow"></i>
+                                                <div class="dropdown-options" id="typeDropdown">
+                                                    <div class="dropdown-option" data-value="{{ __('messages.villa') }}">{{ __('messages.villa') }}</div>
+                                                    <div class="dropdown-option" data-value="{{ __('messages.tower') }}">{{ __('messages.tower') }}</div>
+                                                    <div class="dropdown-option" data-value="{{ __('messages.hospital') }}">{{ __('messages.hospital') }}</div>
+                                                    <div class="dropdown-option" data-value="{{ __('messages.commercial') }}">{{ __('messages.commercial') }}</div>
+                                                    <div class="dropdown-option" data-value="{{ __('messages.residential') }}">{{ __('messages.residential') }}</div>
+                                                    <div class="dropdown-option" data-value="{{ __('messages.industrial') }}">{{ __('messages.industrial') }}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">

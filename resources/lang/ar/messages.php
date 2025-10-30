@@ -1046,5 +1046,10 @@ return [
     'coordinates_not_available' => 'الإحداثيات غير متوفرة',
     'no_coordinates_available' => 'لا توجد إحداثيات متاحة. يرجى التعديل لإضافة الموقع.',
     'map_loading_error' => 'تعذر تحميل الخريطة. يرجى تفعيل الفوترة على مفتاح Google Maps API أو إدخال الموقع يدوياً.',
+    'delete_project_warning' => 'لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع بيانات المشروع بما في ذلك المراحل والمهام والفحوصات والملفات بشكل دائم.',
+    'deleting' => 'جاري الحذف',
+    'project_deleted_successfully' => 'تم حذف المشروع بنجاح',
+    'failed_to_delete_project' => 'فشل في حذف المشروع',
+    'error_deleting_project' => 'خطأ في حذف المشروع',
 
 ];

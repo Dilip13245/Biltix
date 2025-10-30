@@ -3,37 +3,39 @@
 @section('title', 'Project Progress')
 
 @section('content')
-<!-- GOOGLE MAPS -->
-<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places,marker&language={{ app()->getLocale() }}&callback=Function.prototype"></script>
+    <!-- GOOGLE MAPS -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places,marker&language={{ app()->getLocale() }}&callback=Function.prototype">
+    </script>
 
-<style>
-    #projectLocationMap {
-        width: 100%;
-        height: 350px;
-        border-radius: 12px;
-        border: 2px solid #e9ecef;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .pac-container {
-        border-radius: 8px;
-        margin-top: 5px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        font-family: 'Poppins', sans-serif;
-        z-index: 9999 !important;
-    }
-    
-    .location-display {
-        background: #f8f9fa;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-    
-    #locationEditMode {
-        display: none;
-    }
-</style>
+    <style>
+        #projectLocationMap {
+            width: 100%;
+            height: 350px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .pac-container {
+            border-radius: 8px;
+            margin-top: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            font-family: 'Poppins', sans-serif;
+            z-index: 9999 !important;
+        }
+
+        .location-display {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        #locationEditMode {
+            display: none;
+        }
+    </style>
     <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
             <h2>{{ __('messages.project_progress') }}</h2>
@@ -49,12 +51,12 @@
     <div class="px-md-4">
         <div class="container-fluid">
             <!-- Commented out original stats cards
-                        <div class="row g-4">
-                            Project Completion Card
-                            Active Workers Card
-                            Days Remaining Card
-                        </div>
-                        -->
+                                <div class="row g-4">
+                                    Project Completion Card
+                                    Active Workers Card
+                                    Days Remaining Card
+                                </div>
+                                -->
 
             <!-- Project Phases Cards -->
             <div class="row g-4" id="phasesContainer">
@@ -163,7 +165,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-4 d-flex flex-wrap gap-2">
-                                        <button
+                                        <button onclick="window.location.href='/website/project/'+currentProjectId+'/plans'"
                                             class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
                                             <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -173,7 +175,7 @@
                                             </svg>
                                             {{ __('messages.view_plan') }}
                                         </button>
-                                        <button
+                                        <button onclick="redirectToTimeline()"
                                             class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
                                             <svg width="21" height="16" viewBox="0 0 21 16" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -190,7 +192,7 @@
                                             </svg>
                                             {{ __('messages.timeline') }}
                                         </button>
-                                        <button
+                                        <button onclick="window.location.href='/website/project/'+currentProjectId+'/daily-logs'"
                                             class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
                                             <svg width="15" height="16" viewBox="0 0 15 16" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
@@ -198,7 +200,7 @@
                                                     d="M3.23438 1V2H1.73438C0.90625 2 0.234375 2.67188 0.234375 3.5V5H14.2344V3.5C14.2344 2.67188 13.5625 2 12.7344 2H11.2344V1C11.2344 0.446875 10.7875 0 10.2344 0C9.68125 0 9.23438 0.446875 9.23438 1V2H5.23438V1C5.23438 0.446875 4.7875 0 4.23438 0C3.68125 0 3.23438 0.446875 3.23438 1ZM14.2344 6H0.234375V14.5C0.234375 15.3281 0.90625 16 1.73438 16H12.7344C13.5625 16 14.2344 15.3281 14.2344 14.5V6Z"
                                                     fill="#4477C4" />
                                             </svg>
-                                            {{ __('messages.may_25_2025') }}
+                                            <span id="currentDateBtn"></span>
                                         </button>
 
                                     </div>
@@ -216,7 +218,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Project Location Map Section -->
             <div class="row mt-4 wow fadeInUp" data-wow-delay="1.0s">
                 <div class="col-12">
@@ -230,32 +232,35 @@
                                     </button>
                                 @endcan
                             </div>
-                            
+
                             <!-- View Mode -->
                             <div id="locationViewMode">
                                 <div class="location-display">
                                     <div class="d-flex align-items-center gap-2 mb-2">
                                         <i class="fas fa-map-marker-alt text-primary"></i>
-                                        <span class="fw-medium" id="displayLocation">{{ __('messages.loading') }}...</span>
+                                        <span class="fw-medium"
+                                            id="displayLocation">{{ __('messages.loading') }}...</span>
                                     </div>
                                     <div class="text-muted" style="font-size: 12px;" id="displayCoordinates"></div>
                                 </div>
                                 <div id="projectLocationMap"></div>
                             </div>
-                            
+
                             <!-- Edit Mode -->
                             <div id="locationEditMode" class="location-edit-mode">
                                 <div class="mb-3">
                                     <div class="map-search-wrapper position-relative">
                                         <input type="text" class="form-control" id="editProjectLocation"
                                             placeholder="{{ __('messages.search_location') }}">
-                                        <i class="fas fa-search position-absolute" 
+                                        <i class="fas fa-search position-absolute"
                                             style="{{ is_rtl() ? 'left' : 'right' }}: 12px; top: 50%; transform: translateY(-50%); color: #6c757d; pointer-events: none;"></i>
                                     </div>
                                     <input type="hidden" id="editLatitude">
                                     <input type="hidden" id="editLongitude">
                                 </div>
-                                <div id="editLocationMap" style="width: 100%; height: 350px; border-radius: 12px; border: 2px solid #e9ecef;"></div>
+                                <div id="editLocationMap"
+                                    style="width: 100%; height: 350px; border-radius: 12px; border: 2px solid #e9ecef;">
+                                </div>
                                 <div class="location-info mt-2" id="editLocationInfo" style="display: none;">
                                     <div class="bg-light p-2 rounded">
                                         <small class="text-muted" id="editCoordinatesDisplay"></small>
@@ -274,7 +279,7 @@
                     </div>
                 </div>
             </div>
-            
+
             {{-- Project Overview Section - Commented Out
             <div class="row mt-4 wow fadeInUp" data-wow-delay="1.2s">
                 <div class="col-12">
@@ -499,24 +504,56 @@
     </div>
     <script>
         function deleteProject() {
-            if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-                alert('Project deletion functionality would be implemented here.');
+            const modal = new bootstrap.Modal(document.getElementById('deleteProjectModal'));
+            modal.show();
+        }
+
+        async function confirmDeleteProject() {
+            const btn = document.getElementById('confirmDeleteBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.deleting') }}...';
+
+            try {
+                const response = await api.makeRequest('projects/delete', {
+                    project_id: currentProjectId,
+                    user_id: {{ auth()->id() ?? 1 }}
+                });
+
+                if (response.code === 200) {
+                    showToast(response.message || '{{ __('messages.project_deleted_successfully') }}', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    showToast(response.message || '{{ __('messages.failed_to_delete_project') }}', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error deleting project:', error);
+                showToast(error.message || '{{ __('messages.error_deleting_project') }}', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         }
 
         // Get project ID from controller
         let currentProjectId = {{ $project->id ?? 1 }};
-        
+
         // Google Maps variables
         let projectMap, projectMarker;
         let editMap, editMarker, editAutocomplete;
         let currentProjectData = null;
-        const saudiArabia = { lat: 23.8859, lng: 45.0792 };
+        const saudiArabia = {
+            lat: 23.8859,
+            lng: 45.0792
+        };
         let mapInitialized = false;
-        
+
         // Global variables for phase management
         let currentPhaseId = null;
-        
+
         // Global function for opening phase modal
         function openPhaseModal(phaseName, phaseId) {
             currentPhaseId = phaseId;
@@ -524,7 +561,7 @@
             const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
             modal.show();
         }
-        
+
         function redirectToInspections() {
             window.location.href = `/website/project/${currentProjectId}/phase-inspections?phase_id=${currentPhaseId}`;
         }
@@ -554,29 +591,31 @@
         }
 
         let extendTimeout = {};
-        
+
         async function extendMilestone(milestoneId) {
             // Clear existing timeout for this milestone
             if (extendTimeout[milestoneId]) {
                 clearTimeout(extendTimeout[milestoneId]);
             }
-            
+
             // Debounce API calls
             extendTimeout[milestoneId] = setTimeout(async () => {
                 const extensionInput = document.getElementById(`ext_${milestoneId}`);
                 const extensionDays = parseInt(extensionInput.value) || 0;
-                
+
                 try {
                     const response = await api.makeRequest('projects/extend_milestone', {
                         milestone_id: milestoneId,
                         user_id: {{ auth()->id() ?? 1 }},
                         extension_days: extensionDays
                     });
-                    
+
                     if (response.code === 200) {
                         loadPhases(true); // Force reload after extension
                         if (extensionDays > 0) {
-                            alert(`{{ __('messages.milestone_extended_successfully') }}\n{{ __('messages.extended_by') }}: ${extensionDays} {{ __('messages.days') }}`);
+                            alert(
+                                `{{ __('messages.milestone_extended_successfully') }}\n{{ __('messages.extended_by') }}: ${extensionDays} {{ __('messages.days') }}`
+                                );
                         } else {
                             alert('{{ __('messages.extension_reset_successfully') }}');
                         }
@@ -594,18 +633,21 @@
             const extensionInput = document.getElementById(`ext_${milestoneId}`);
             const currentExtension = parseInt(extensionInput.value) || 0;
             const newExtension = currentExtension + days;
-            
+
             extensionInput.value = newExtension;
             await extendMilestone(milestoneId);
         }
-        
+
         // Initialize project location map
         function initProjectLocationMap(lat, lng, address) {
             if (!lat || !lng) return;
-            
+
             try {
-                const location = { lat: parseFloat(lat), lng: parseFloat(lng) };
-                
+                const location = {
+                    lat: parseFloat(lat),
+                    lng: parseFloat(lng)
+                };
+
                 projectMap = new google.maps.Map(document.getElementById('projectLocationMap'), {
                     center: location,
                     zoom: 15,
@@ -613,26 +655,28 @@
                     streetViewControl: false,
                     fullscreenControl: true
                 });
-                
+
                 projectMarker = new google.maps.Marker({
                     position: location,
                     map: projectMap,
                     title: address
                 });
-                
+
                 mapInitialized = true;
             } catch (error) {
                 console.error('Error initializing map:', error);
             }
         }
-        
+
         // Initialize edit location map
         function initEditLocationMap() {
             try {
-                const center = currentProjectData?.latitude && currentProjectData?.longitude 
-                    ? { lat: parseFloat(currentProjectData.latitude), lng: parseFloat(currentProjectData.longitude) }
-                    : saudiArabia;
-                
+                const center = currentProjectData?.latitude && currentProjectData?.longitude ? {
+                        lat: parseFloat(currentProjectData.latitude),
+                        lng: parseFloat(currentProjectData.longitude)
+                    } :
+                    saudiArabia;
+
                 editMap = new google.maps.Map(document.getElementById('editLocationMap'), {
                     center: center,
                     zoom: currentProjectData?.latitude ? 15 : 6,
@@ -640,7 +684,7 @@
                     streetViewControl: false,
                     fullscreenControl: true
                 });
-                
+
                 if (currentProjectData?.latitude && currentProjectData?.longitude) {
                     editMarker = new google.maps.Marker({
                         position: center,
@@ -648,18 +692,20 @@
                         animation: google.maps.Animation.DROP,
                         draggable: true
                     });
-                    
+
                     editMarker.addListener('dragend', function(event) {
                         updateEditLocation(event.latLng);
                     });
                 }
-                
+
                 const input = document.getElementById('editProjectLocation');
                 editAutocomplete = new google.maps.places.Autocomplete(input, {
-                    componentRestrictions: { country: 'sa' },
+                    componentRestrictions: {
+                        country: 'sa'
+                    },
                     fields: ['formatted_address', 'geometry', 'name']
                 });
-                
+
                 editAutocomplete.addListener('place_changed', function() {
                     const place = editAutocomplete.getPlace();
                     if (!place.geometry) {
@@ -668,13 +714,16 @@
                     }
                     updateEditMapLocation(place.geometry.location, place.formatted_address || place.name);
                 });
-                
+
                 editMap.addListener('click', function(event) {
                     const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ location: event.latLng }, function(results, status) {
+                    geocoder.geocode({
+                        location: event.latLng
+                    }, function(results, status) {
                         if (status === 'OK' && results[0]) {
                             updateEditMapLocation(event.latLng, results[0].formatted_address);
-                            document.getElementById('editProjectLocation').value = results[0].formatted_address;
+                            document.getElementById('editProjectLocation').value = results[0]
+                                .formatted_address;
                         }
                     });
                 });
@@ -682,92 +731,97 @@
                 console.error('Error initializing edit map:', error);
             }
         }
-        
+
         function updateEditMapLocation(location, address) {
             if (editMarker) editMarker.setMap(null);
-            
+
             editMarker = new google.maps.Marker({
                 position: location,
                 map: editMap,
                 animation: google.maps.Animation.DROP,
                 draggable: true
             });
-            
+
             editMap.setCenter(location);
             editMap.setZoom(15);
-            
+
             document.getElementById('editLatitude').value = location.lat();
             document.getElementById('editLongitude').value = location.lng();
-            document.getElementById('editCoordinatesDisplay').textContent = 
+            document.getElementById('editCoordinatesDisplay').textContent =
                 `{{ __('messages.lat') }}: ${location.lat().toFixed(6)}, {{ __('messages.lng') }}: ${location.lng().toFixed(6)}`;
             document.getElementById('editLocationInfo').style.display = 'block';
-            
+
             editMarker.addListener('dragend', function(event) {
                 updateEditLocation(event.latLng);
             });
         }
-        
+
         function updateEditLocation(latLng) {
             const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ location: latLng }, function(results, status) {
+            geocoder.geocode({
+                location: latLng
+            }, function(results, status) {
                 if (status === 'OK' && results[0]) {
                     document.getElementById('editProjectLocation').value = results[0].formatted_address;
                     document.getElementById('editLatitude').value = latLng.lat();
                     document.getElementById('editLongitude').value = latLng.lng();
-                    document.getElementById('editCoordinatesDisplay').textContent = 
+                    document.getElementById('editCoordinatesDisplay').textContent =
                         `{{ __('messages.lat') }}: ${latLng.lat().toFixed(6)}, {{ __('messages.lng') }}: ${latLng.lng().toFixed(6)}`;
                 }
             });
         }
-        
+
         function toggleLocationEdit(event) {
             event.preventDefault();
-            
+
             if (typeof google === 'undefined') {
                 showToast('{{ __('messages.map_loading_error') }}', 'error');
                 return;
             }
-            
+
             const viewMode = document.getElementById('locationViewMode');
             const editMode = document.getElementById('locationEditMode');
-            
+
             viewMode.style.display = 'none';
             editMode.style.display = 'block';
-            
+
             if (currentProjectData) {
                 document.getElementById('editProjectLocation').value = currentProjectData.project_location || '';
                 document.getElementById('editLatitude').value = currentProjectData.latitude || '';
                 document.getElementById('editLongitude').value = currentProjectData.longitude || '';
             }
-            
+
             setTimeout(() => {
                 if (!editMap) {
                     initEditLocationMap();
                 } else {
                     google.maps.event.trigger(editMap, 'resize');
                     if (currentProjectData?.latitude && currentProjectData?.longitude) {
-                        const center = { lat: parseFloat(currentProjectData.latitude), lng: parseFloat(currentProjectData.longitude) };
+                        const center = {
+                            lat: parseFloat(currentProjectData.latitude),
+                            lng: parseFloat(currentProjectData.longitude)
+                        };
                         editMap.setCenter(center);
                     }
                 }
             }, 100);
         }
-        
+
         function cancelLocationEdit() {
             document.getElementById('locationViewMode').style.display = 'block';
             document.getElementById('locationEditMode').style.display = 'none';
         }
-        
+
         async function saveLocationEdit() {
             const location = document.getElementById('editProjectLocation').value.trim();
             const latitude = document.getElementById('editLatitude').value;
             const longitude = document.getElementById('editLongitude').value;
-            
+
             if (!location || !latitude || !longitude) {
                 showToast('{{ __('messages.please_select_location') }}', 'warning');
                 return;
             }
-            
+
             try {
                 const response = await api.updateProject({
                     project_id: currentProjectId,
@@ -775,7 +829,7 @@
                     latitude: latitude,
                     longitude: longitude
                 });
-                
+
                 if (response.code === 200) {
                     showToast('{{ __('messages.location_updated_successfully') }}', 'success');
                     cancelLocationEdit();
@@ -788,12 +842,20 @@
                 showToast('{{ __('messages.error_updating_location') }}', 'error');
             }
         }
-        
+
         // Load project data and make edit buttons functional
         document.addEventListener('DOMContentLoaded', function() {
+            // Set current date on button
+            const currentDateBtn = document.getElementById('currentDateBtn');
+            if (currentDateBtn) {
+                const today = new Date();
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                currentDateBtn.textContent = today.toLocaleDateString('en-US', options);
+            }
+            
             loadProjectData();
             loadPhases();
-            
+
             const editButtons = document.querySelectorAll('a[title="Edit"]');
             editButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
@@ -801,7 +863,7 @@
                     editProjectField(this);
                 });
             });
-            
+
             // Make manpower links functional
             const manpowerLinks = document.querySelectorAll('.table a');
             manpowerLinks.forEach(link => {
@@ -815,26 +877,26 @@
                 });
             });
         });
-        
+
         let phasesCache = null;
         let lastLoadTime = 0;
         const CACHE_DURATION = 30000; // 30 seconds
 
         async function loadPhases(forceReload = false) {
             const now = Date.now();
-            
+
             // Use cache if available and not expired
             if (!forceReload && phasesCache && (now - lastLoadTime) < CACHE_DURATION) {
                 renderPhases(phasesCache);
                 return;
             }
-            
+
             try {
                 const response = await api.makeRequest('projects/list_phases', {
                     project_id: currentProjectId,
                     user_id: {{ auth()->id() ?? 1 }}
                 });
-                
+
                 if (response.code === 200 && response.data) {
                     phasesCache = response.data;
                     lastLoadTime = now;
@@ -846,10 +908,10 @@
                 console.error('Error loading phases:', error);
             }
         }
-        
+
         function renderPhases(phases) {
             const container = document.getElementById('phasesContainer');
-            
+
             if (!phases || phases.length === 0) {
                 container.innerHTML = `
                     <div class="col-12 text-center py-5">
@@ -862,15 +924,16 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = phases.map((phase, index) => {
                 // Use time-based progress
                 const progress = phase.time_progress || 0;
-                
-                const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) : 0;
+
+                const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) :
+                    0;
                 const hasExtensions = phase.has_extensions || false;
                 const extensionDays = phase.total_extension_days || 0;
-                
+
                 // Determine badge based on time progress and extensions
                 let badgeClass, badgeText;
                 if (progress >= 100) {
@@ -886,7 +949,7 @@
                     badgeClass = 'badge2';
                     badgeText = 'Pending';
                 }
-                
+
                 // Progress bar color based on status
                 let progressColor;
                 if (progress >= 100) {
@@ -896,7 +959,7 @@
                 } else {
                     progressColor = 'linear-gradient(90deg, #4477C4 0%, #F58D2E 100%)';
                 }
-                
+
                 return `
                     <div class="col-12 col-md-4 wow fadeInUp" data-wow-delay="${index * 0.4}s">
                         <div class="card h-100 B_shadow" style="cursor: pointer;" onclick="openPhaseModal('${phase.title}', ${phase.id})">
@@ -908,40 +971,40 @@
                                 <div class="mb-3">
                                     <div class="progress position-relative" style="height:12px;">
                                         ${hasExtensions ? `
-                                            <!-- Original timeline progress -->
-                                            <div class="progress-bar" role="progressbar" 
-                                                style="width: ${Math.min(progress, 100)}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
-                                                aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                            <!-- Extension area (lighter color) -->
-                                            <div class="progress-bar" role="progressbar" 
-                                                style="width: ${Math.max(0, Math.min(100 - progress, extensionDays / (totalDays / 100)))}%; background: rgba(255, 193, 7, 0.3); border-left: 2px solid #ffc107;"
-                                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                            <!-- Extension indicator -->
-                                            <div class="position-absolute top-0 h-100 d-flex align-items-center" style="left: ${Math.min(progress, 100)}%; transform: translateX(-50%);">
-                                                <div style="width: 2px; height: 100%; background: #ffc107;"></div>
-                                            </div>
-                                            <div class="position-absolute top-0 end-0 h-100 d-flex align-items-center" style="padding-right: 4px;">
-                                                <i class="fas fa-clock text-warning" title="Extended by ${extensionDays} days" style="font-size: 10px;"></i>
-                                            </div>
-                                        ` : `
-                                            <!-- Normal progress bar -->
-                                            <div class="progress-bar" role="progressbar" 
-                                                style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
-                                                aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                        `}
+                                                    <!-- Original timeline progress -->
+                                                    <div class="progress-bar" role="progressbar" 
+                                                        style="width: ${Math.min(progress, 100)}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
+                                                        aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    <!-- Extension area (lighter color) -->
+                                                    <div class="progress-bar" role="progressbar" 
+                                                        style="width: ${Math.max(0, Math.min(100 - progress, extensionDays / (totalDays / 100)))}%; background: rgba(255, 193, 7, 0.3); border-left: 2px solid #ffc107;"
+                                                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    <!-- Extension indicator -->
+                                                    <div class="position-absolute top-0 h-100 d-flex align-items-center" style="left: ${Math.min(progress, 100)}%; transform: translateX(-50%);">
+                                                        <div style="width: 2px; height: 100%; background: #ffc107;"></div>
+                                                    </div>
+                                                    <div class="position-absolute top-0 end-0 h-100 d-flex align-items-center" style="padding-right: 4px;">
+                                                        <i class="fas fa-clock text-warning" title="Extended by ${extensionDays} days" style="font-size: 10px;"></i>
+                                                    </div>
+                                                ` : `
+                                                    <!-- Normal progress bar -->
+                                                    <div class="progress-bar" role="progressbar" 
+                                                        style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
+                                                        aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                `}
                                     </div>
                                     <div class="d-flex justify-content-between mt-1">
                                         <small class="text-muted">${Math.round(progress)}% Time Progress</small>
                                         <small class="text-muted">${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</small>
                                     </div>
                                     ${hasExtensions ? `
-                                        <div class="mt-1">
-                                            <small class="text-warning">
-                                                <i class="fas fa-info-circle me-1"></i>
-                                                Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                            </small>
-                                        </div>
-                                    ` : ''}
+                                                <div class="mt-1">
+                                                    <small class="text-warning">
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                    </small>
+                                                </div>
+                                            ` : ''}
                                 </div>
                                 <div class="small text-muted">
                                     ${phase.milestones ? phase.milestones.map(milestone => {
@@ -951,45 +1014,45 @@
                                         const extendedIcon = isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : '';
                                         
                                         return `
-                                            <div class="d-flex justify-content-between align-items-center ${overdueClass} mb-1">
-                                                <span>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}${extendedIcon}</span>
-                                                <div class="d-flex align-items-center gap-1">
-                                                    <input type="number" class="form-control form-control-sm" 
-                                                        style="width: 50px; height: 20px; font-size: 11px;" 
-                                                        value="${milestone.extension_days || 0}" 
-                                                        min="0" 
-                                                        id="ext_${milestone.id}" 
-                                                        title="Extension days"
-                                                        onclick="event.stopPropagation()">
-                                                    <button class="btn btn-sm btn-outline-primary" 
-                                                        style="padding: 1px 4px; font-size: 10px;" 
-                                                        onclick="event.stopPropagation(); extendMilestone(${milestone.id})" 
-                                                        title="Extend milestone">
-                                                        <i class="fas fa-save"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        `;
+                                                    <div class="d-flex justify-content-between align-items-center ${overdueClass} mb-1">
+                                                        <span>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}${extendedIcon}</span>
+                                                        <div class="d-flex align-items-center gap-1">
+                                                            <input type="number" class="form-control form-control-sm" 
+                                                                style="width: 50px; height: 20px; font-size: 11px;" 
+                                                                value="${milestone.extension_days || 0}" 
+                                                                min="0" 
+                                                                id="ext_${milestone.id}" 
+                                                                title="Extension days"
+                                                                onclick="event.stopPropagation()">
+                                                            <button class="btn btn-sm btn-outline-primary" 
+                                                                style="padding: 1px 4px; font-size: 10px;" 
+                                                                onclick="event.stopPropagation(); extendMilestone(${milestone.id})" 
+                                                                title="Extend milestone">
+                                                                <i class="fas fa-save"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                `;
                                     }).join('') : '<div>No milestones defined</div>'}
                                 </div>
                                 ${hasExtensions ? `
-                                    <div class="mt-2">
-                                        <small class="text-warning">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                            Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
-                                        </small>
-                                    </div>
-                                ` : ''}
+                                            <div class="mt-2">
+                                                <small class="text-warning">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
+                                                </small>
+                                            </div>
+                                        ` : ''}
                                 <div class="mt-2 d-flex gap-1 flex-wrap">
                                     <small class="text-muted me-2">{{ __('messages.quick_extend') }}:</small>
                                     ${phase.milestones && phase.milestones.length === 1 ? `
-                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
-                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
-                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
-                                    ` : ''}
+                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                    onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
+                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                    onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
+                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                    onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
+                                            ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -997,17 +1060,17 @@
                 `;
             }).join('');
         }
-        
+
         async function loadProjectData() {
             try {
                 const response = await api.getProjectDetails({
                     project_id: currentProjectId
                 });
-                
+
                 if (response.code === 200 && response.data) {
                     const project = response.data;
                     currentProjectData = project;
-                    
+
                     // Update project details
                     document.getElementById('projectName').textContent = project.project_title || 'N/A';
                     document.getElementById('companyName').textContent = project.contractor_name || 'N/A';
@@ -1015,7 +1078,7 @@
                     document.getElementById('projectManager').textContent = project.project_manager_name || 'N/A';
                     document.getElementById('siteEngineer').textContent = project.technical_engineer_name || 'N/A';
                     document.getElementById('projectLocation').textContent = project.project_location || 'N/A';
-                    
+
                     // Format and update dates
                     if (project.project_start_date) {
                         document.getElementById('startDate').textContent = formatDate(project.project_start_date);
@@ -1023,23 +1086,27 @@
                     if (project.project_due_date) {
                         document.getElementById('endDate').textContent = formatDate(project.project_due_date);
                     }
-                    
+
                     // Update location display and map
                     if (project.latitude && project.longitude) {
                         document.getElementById('displayLocation').textContent = project.project_location || 'N/A';
-                        document.getElementById('displayCoordinates').textContent = 
+                        document.getElementById('displayCoordinates').textContent =
                             `{{ __('messages.lat') }}: ${parseFloat(project.latitude).toFixed(6)}, {{ __('messages.lng') }}: ${parseFloat(project.longitude).toFixed(6)}`;
-                        
+
                         // Initialize map after a delay to ensure Google Maps is loaded
                         setTimeout(() => {
                             if (typeof google !== 'undefined' && google.maps && !mapInitialized) {
-                                initProjectLocationMap(project.latitude, project.longitude, project.project_location);
+                                initProjectLocationMap(project.latitude, project.longitude, project
+                                    .project_location);
                             }
                         }, 500);
                     } else {
-                        document.getElementById('displayLocation').textContent = project.project_location || '{{ __('messages.no_location_set') }}';
-                        document.getElementById('displayCoordinates').textContent = '{{ __('messages.coordinates_not_available') }}';
-                        document.getElementById('projectLocationMap').innerHTML = '<div class="alert alert-info m-3">{{ __('messages.no_coordinates_available') }}</div>';
+                        document.getElementById('displayLocation').textContent = project.project_location ||
+                            '{{ __('messages.no_location_set') }}';
+                        document.getElementById('displayCoordinates').textContent =
+                            '{{ __('messages.coordinates_not_available') }}';
+                        document.getElementById('projectLocationMap').innerHTML =
+                            '<div class="alert alert-info m-3">{{ __('messages.no_coordinates_available') }}</div>';
                     }
                 } else {
                     console.error('Failed to load project data:', response.message);
@@ -1050,7 +1117,7 @@
                 showErrorState();
             }
         }
-        
+
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', {
@@ -1059,9 +1126,11 @@
                 day: 'numeric'
             });
         }
-        
+
         function showErrorState() {
-            const elements = ['projectName', 'companyName', 'projectType', 'projectManager', 'siteEngineer', 'startDate', 'endDate'];
+            const elements = ['projectName', 'companyName', 'projectType', 'projectManager', 'siteEngineer', 'startDate',
+                'endDate'
+            ];
             elements.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) element.textContent = 'Error loading data';
@@ -1072,35 +1141,35 @@
             const fieldElement = editButton.previousElementSibling;
             const currentValue = fieldElement.textContent.trim();
             const fieldLabel = editButton.closest('.mb-2, .mb-md-3').querySelector('.text-muted').textContent;
-            
+
             let inputElement;
-            
+
             // Check if this field needs a dropdown
             if (fieldLabel === 'Project Manager' || fieldLabel === 'Site Engineer') {
                 // Create simple dropdown wrapper
                 const dropdownWrapper = document.createElement('div');
                 dropdownWrapper.className = 'dropdown d-inline-block';
                 dropdownWrapper.style.minWidth = '200px';
-                
+
                 // Create dropdown button
                 const dropdownButton = document.createElement('button');
                 dropdownButton.className = 'btn btn-outline-secondary dropdown-toggle';
                 dropdownButton.type = 'button';
                 dropdownButton.setAttribute('data-bs-toggle', 'dropdown');
                 dropdownButton.textContent = 'Loading users...';
-                
+
                 // Create dropdown menu
                 const dropdownMenu = document.createElement('ul');
                 dropdownMenu.className = 'dropdown-menu';
                 dropdownMenu.style.maxHeight = '200px';
                 dropdownMenu.style.overflowY = 'auto';
                 dropdownMenu.innerHTML = '<li><span class="dropdown-item-text">Loading users...</span></li>';
-                
+
                 dropdownWrapper.appendChild(dropdownButton);
                 dropdownWrapper.appendChild(dropdownMenu);
-                
+
                 inputElement = dropdownWrapper;
-                
+
                 // Load users for dropdown
                 loadUsersForSimpleDropdown(dropdownButton, dropdownMenu, fieldLabel, currentValue);
             } else {
@@ -1112,44 +1181,44 @@
                 inputElement.style.width = 'auto';
                 inputElement.style.minWidth = '200px';
             }
-            
+
             // Create save and cancel buttons
             const saveBtn = document.createElement('button');
             saveBtn.innerHTML = '<i class="fas fa-check"></i>';
             saveBtn.className = 'btn btn-success btn-sm ms-2';
-            
+
             const cancelBtn = document.createElement('button');
             cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
             cancelBtn.className = 'btn btn-secondary btn-sm ms-1';
-            
+
             // Replace text with input/select
             fieldElement.innerHTML = '';
             fieldElement.appendChild(inputElement);
             fieldElement.appendChild(saveBtn);
             fieldElement.appendChild(cancelBtn);
-            
+
             // Hide edit button
             editButton.style.display = 'none';
-            
+
             // Focus input
             inputElement.focus();
-            
+
             // Cancel function
             const cancelEdit = () => {
                 fieldElement.textContent = currentValue;
                 editButton.style.display = 'flex';
             };
-            
+
             // Save function
             const saveEdit = async () => {
                 let newValue, newId;
-                
+
                 if (inputElement.classList.contains('dropdown')) {
                     // For modern dropdown, get selected data from button
                     const button = inputElement.querySelector('button');
                     newId = button.dataset.selectedId;
                     newValue = button.dataset.selectedName;
-                    
+
                     if (!newId || newValue === currentValue) {
                         cancelEdit();
                         return;
@@ -1162,34 +1231,34 @@
                         return;
                     }
                 }
-                
+
                 // Map field labels to API field names
                 const fieldMapping = {
                     'Project Name': 'project_title',
-                    'Company Name': 'contractor_name', 
+                    'Company Name': 'contractor_name',
                     'Project Type': 'type',
                     'Project Manager': 'project_manager_id',
                     'Site Engineer': 'technical_engineer_id'
                 };
-                
+
                 const apiField = fieldMapping[fieldLabel];
                 if (!apiField) {
                     cancelEdit();
                     return;
                 }
-                
+
                 // Show loading
                 saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                 saveBtn.disabled = true;
-                
+
                 try {
                     const updateData = {
                         project_id: currentProjectId,
                         [apiField]: inputElement.classList.contains('dropdown') ? newId : newValue
                     };
-                    
+
                     const response = await api.updateProject(updateData);
-                    
+
                     if (response.code === 200) {
                         fieldElement.textContent = newValue;
                         editButton.style.display = 'flex';
@@ -1201,7 +1270,7 @@
                     cancelEdit();
                 }
             };
-            
+
             // Event listeners
             saveBtn.addEventListener('click', saveEdit);
             cancelBtn.addEventListener('click', cancelEdit);
@@ -1210,7 +1279,7 @@
                 if (e.key === 'Escape') cancelEdit();
             });
         }
-        
+
         async function loadUsersForSimpleDropdown(buttonElement, menuElement, fieldLabel, currentValue) {
             try {
                 let response;
@@ -1219,11 +1288,11 @@
                 } else if (fieldLabel === 'Site Engineer') {
                     response = await api.getTechnicalEngineers();
                 }
-                
+
                 if (response.code === 200 && response.data) {
                     buttonElement.textContent = `Select ${fieldLabel}`;
                     menuElement.innerHTML = '';
-                    
+
                     response.data.forEach(user => {
                         const listItem = document.createElement('li');
                         const link = document.createElement('a');
@@ -1232,32 +1301,33 @@
                         link.textContent = user.name;
                         link.dataset.userId = user.id;
                         link.dataset.userName = user.name;
-                        
+
                         if (user.name === currentValue) {
                             link.classList.add('active');
                             buttonElement.textContent = user.name;
                         }
-                        
+
                         link.addEventListener('click', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            
+
                             // Remove active class from all items
-                            menuElement.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
-                            
+                            menuElement.querySelectorAll('.dropdown-item').forEach(item => item
+                                .classList.remove('active'));
+
                             // Add active class to clicked item
                             link.classList.add('active');
-                            
+
                             // Update button text and data
                             buttonElement.textContent = user.name;
                             buttonElement.dataset.selectedId = user.id;
                             buttonElement.dataset.selectedName = user.name;
-                            
+
                             // Close dropdown
                             const dropdown = bootstrap.Dropdown.getInstance(buttonElement);
                             if (dropdown) dropdown.hide();
                         });
-                        
+
                         listItem.appendChild(link);
                         menuElement.appendChild(listItem);
                     });
@@ -1271,7 +1341,7 @@
                 menuElement.innerHTML = '<li><span class="dropdown-item-text">Error loading users</span></li>';
             }
         }
-        
+
         // Toast notification function
         function showToast(message, type = 'success') {
             if (typeof toastr !== 'undefined') {
@@ -1402,7 +1472,7 @@
             if (createPhaseForm) {
                 createPhaseForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
-                    
+
                     // Protect button
                     const btn = document.querySelector('#createPhaseModal .btn.orange_btn');
                     if (btn && btn.disabled) return;
@@ -1413,19 +1483,22 @@
 
                     const formData = new FormData(createPhaseForm);
                     const title = formData.get('title');
-                    
+
                     // Collect milestones
                     const milestones = [];
                     const milestoneItems = document.querySelectorAll('.milestone-item');
-                    
+
                     milestoneItems.forEach((item, index) => {
-                        const nameInput = item.querySelector(`input[name="milestones[${index}][milestone_name]"]`);
-                        const daysInput = item.querySelector(`input[name="milestones[${index}][days]"]`);
-                        
+                        const nameInput = item.querySelector(
+                            `input[name="milestones[${index}][milestone_name]"]`);
+                        const daysInput = item.querySelector(
+                            `input[name="milestones[${index}][days]"]`);
+
                         if (nameInput && nameInput.value.trim()) {
                             milestones.push({
                                 milestone_name: nameInput.value.trim(),
-                                days: daysInput && daysInput.value ? parseInt(daysInput.value) : null
+                                days: daysInput && daysInput.value ? parseInt(daysInput
+                                    .value) : null
                             });
                         }
                     });
@@ -1438,20 +1511,21 @@
                                 title: title,
                                 milestones: milestones.length > 0 ? milestones : null
                             });
-                            
+
                             if (response.code === 200) {
                                 // Close modal
-                                const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
+                                const modal = bootstrap.Modal.getInstance(document.getElementById(
+                                    'createPhaseModal'));
                                 if (modal) modal.hide();
-                                
+
                                 // Show success message
                                 alert('Phase "' + title + '" created successfully!');
-                                
+
                                 // Reset form
                                 createPhaseForm.reset();
                                 milestoneIndex = 1;
                                 resetMilestonesContainer();
-                                
+
                                 // Reload phases
                                 loadPhases();
                             } else {
@@ -1464,14 +1538,15 @@
                             // Reset button
                             if (btn) {
                                 btn.disabled = false;
-                                btn.innerHTML = '<i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}';
+                                btn.innerHTML =
+                                    '<i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}';
                             }
                         }
                     }
                 });
             }
         });
-        
+
         function resetMilestonesContainer() {
             const container = document.getElementById('milestonesContainer');
             container.innerHTML = `
@@ -1556,32 +1631,62 @@
 
 
 
-@include('website.modals.add-safety-checklist-modal')
+    @include('website.modals.add-safety-checklist-modal')
 
-<script>
-// Add Safety Checklist Form Handler for Project Progress Page
-document.addEventListener('DOMContentLoaded', function() {
-  const addSafetyChecklistForm = document.getElementById('addSafetyChecklistForm');
-  if (addSafetyChecklistForm) {
-    addSafetyChecklistForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      // Show loading state
-      const submitBtn = document.querySelector('#addSafetyChecklistModal .btn.orange_btn');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.creating') }}...';
-      submitBtn.disabled = true;
-      
-      // Simulate checklist creation
-      setTimeout(() => {
-        alert('{{ __('messages.safety_checklist_created_successfully') }}');
-        bootstrap.Modal.getInstance(document.getElementById('addSafetyChecklistModal')).hide();
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-        addSafetyChecklistForm.reset();
-        
-        // Reset safety items to default
-        document.getElementById('safetyItems').innerHTML = `
+    <!-- Delete Project Confirmation Modal -->
+    <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center px-4 pb-4">
+                    <div class="mb-3">
+                        <i class="fas fa-exclamation-triangle text-danger" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">{{ __('messages.delete_project') }}?</h5>
+                    <p class="text-muted mb-4">{{ __('messages.delete_project_warning') }}</p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>{{ __('messages.cancel') }}
+                        </button>
+                        <button type="button" class="btn btn-danger px-4" id="confirmDeleteBtn"
+                            onclick="confirmDeleteProject()">
+                            <i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add Safety Checklist Form Handler for Project Progress Page
+        document.addEventListener('DOMContentLoaded', function() {
+            const addSafetyChecklistForm = document.getElementById('addSafetyChecklistForm');
+            if (addSafetyChecklistForm) {
+                addSafetyChecklistForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Show loading state
+                    const submitBtn = document.querySelector('#addSafetyChecklistModal .btn.orange_btn');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML =
+                        '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.creating') }}...';
+                    submitBtn.disabled = true;
+
+                    // Simulate checklist creation
+                    setTimeout(() => {
+                        alert('{{ __('messages.safety_checklist_created_successfully') }}');
+                        bootstrap.Modal.getInstance(document.getElementById(
+                            'addSafetyChecklistModal')).hide();
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        addSafetyChecklistForm.reset();
+
+                        // Reset safety items to default
+                        document.getElementById('safetyItems').innerHTML = `
           <div class="input-group mb-2">
             <input type="text" class="form-control" name="items[]" placeholder="{{ __('messages.safety_item_placeholder') }}">
             <button class="btn btn-outline-danger" type="button" onclick="removeItem(this)">
@@ -1589,12 +1694,12 @@ document.addEventListener('DOMContentLoaded', function() {
             </button>
           </div>
         `;
-        
-        location.reload();
-      }, 2000);
-    });
-  }
-});
-</script>
+
+                        location.reload();
+                    }, 2000);
+                });
+            }
+        });
+    </script>
 
 @endsection

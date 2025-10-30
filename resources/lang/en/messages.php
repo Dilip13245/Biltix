@@ -1103,6 +1103,11 @@ return [
     'coordinates_not_available' => 'Coordinates not available',
     'no_coordinates_available' => 'No coordinates available. Please edit to add location.',
     'map_loading_error' => 'Unable to load map. Please enable billing on Google Maps API key or enter location manually.',
+    'delete_project_warning' => 'This action cannot be undone. All project data including phases, tasks, inspections, and files will be permanently removed.',
+    'deleting' => 'Deleting',
+    'project_deleted_successfully' => 'Project deleted successfully',
+    'failed_to_delete_project' => 'Failed to delete project',
+    'error_deleting_project' => 'Error deleting project',
 ];
 
 
