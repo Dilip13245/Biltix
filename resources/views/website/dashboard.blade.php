@@ -291,6 +291,89 @@
             font-size: 11px;
             padding: 4px 8px;
         }
+        
+        /* Search icon RTL support */
+        .serchBar .fa-search {
+            left: 12px;
+        }
+        
+        [dir="rtl"] .serchBar .fa-search {
+            left: auto;
+            right: 12px;
+        }
+        
+        .serchBar input {
+            padding-left: 40px;
+        }
+        
+        [dir="rtl"] .serchBar input {
+            padding-left: 0.75rem;
+            padding-right: 40px;
+        }
+        
+        /* Custom Combo Dropdown */
+        .custom-combo-dropdown {
+            position: relative;
+        }
+        
+        .custom-combo-dropdown .dropdown-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        [dir="rtl"] .custom-combo-dropdown .dropdown-arrow {
+            right: auto;
+            left: 12px;
+        }
+        
+        .custom-combo-dropdown input {
+            padding-right: 35px;
+            cursor: pointer;
+        }
+        
+        [dir="rtl"] .custom-combo-dropdown input {
+            padding-right: 0.75rem;
+            padding-left: 35px;
+        }
+        
+        .dropdown-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .dropdown-options.show {
+            display: block;
+        }
+        
+        .dropdown-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .dropdown-option:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .dropdown-option:active {
+            background-color: #e9ecef;
+        }
     </style>
 
 
@@ -329,6 +412,7 @@
                             </div>
 
                             <form class="d-none d-md-block serchBar position-relative">
+                                <i class="fas fa-search position-absolute top-50 translate-middle-y" style="color: #6c757d; pointer-events: none;"></i>
                                 <input class="form-control" type="search"
                                     placeholder="{{ __('messages.search_projects') }}" aria-label="Search"
                                     data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
@@ -1064,6 +1148,49 @@
 
         // Filter functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Custom Combo Dropdown Handler
+            const typeInput = document.getElementById('type');
+            const typeDropdown = document.getElementById('typeDropdown');
+            
+            if (typeInput && typeDropdown) {
+                // Show dropdown on input click
+                typeInput.addEventListener('click', function() {
+                    typeDropdown.classList.toggle('show');
+                });
+                
+                // Filter options on input
+                typeInput.addEventListener('input', function() {
+                    const filter = this.value.toLowerCase();
+                    const options = typeDropdown.querySelectorAll('.dropdown-option');
+                    
+                    options.forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(filter)) {
+                            option.style.display = 'block';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+                    
+                    typeDropdown.classList.add('show');
+                });
+                
+                // Select option on click
+                typeDropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        typeInput.value = this.getAttribute('data-value');
+                        typeDropdown.classList.remove('show');
+                    });
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!typeInput.contains(e.target) && !typeDropdown.contains(e.target)) {
+                        typeDropdown.classList.remove('show');
+                    }
+                });
+            }
+            
             // Load notifications and projects on page load
             loadNotifications();
             loadProjects('all', true);

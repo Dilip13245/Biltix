@@ -18,8 +18,8 @@ class PlanController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
-                'title' => 'required|string|max:255',
-                'drawing_number' => 'required|string|max:50',
+                'title' => 'nullable|string|max:255',
+                'drawing_number' => 'nullable|string|max:50',
                 'files' => 'required|array',
                 'files.*' => 'file|max:25600', // 25MB max per file
             ]);
@@ -31,13 +31,18 @@ class PlanController extends Controller
             $uploadedPlans = [];
             $files = $request->file('files');
             
+            if (!$files || count($files) === 0) {
+                return $this->toJsonEnc([], 'No files provided', Config::get('constant.ERROR'));
+            }
+            
             foreach ($files as $index => $file) {
-                $fileData = FileHelper::uploadFile($file, 'plans');
+                try {
+                    $fileData = FileHelper::uploadFile($file, 'plans');
                 
                 $planDetails = new Plan();
                 $planDetails->project_id = $request->project_id;
-                $planDetails->title = $request->title . ($index > 0 ? ' - ' . ($index + 1) : '');
-                $planDetails->drawing_number = $request->drawing_number . ($index > 0 ? '-' . ($index + 1) : '');
+                $planDetails->title = $request->title ? ($request->title . ($index > 0 ? ' - ' . ($index + 1) : '')) : ($fileData['original_name'] ?? $file->getClientOriginalName());
+                $planDetails->drawing_number = $request->drawing_number ?: null;
                 $planDetails->file_name = $fileData['filename'];
                 $planDetails->file_path = $fileData['path'];
                 $planDetails->file_size = $fileData['size'];
@@ -45,8 +50,11 @@ class PlanController extends Controller
                 $planDetails->uploaded_by = $request->user_id;
                 $planDetails->is_active = true;
 
-                if ($planDetails->save()) {
-                    $uploadedPlans[] = $planDetails;
+                    if ($planDetails->save()) {
+                        $uploadedPlans[] = $planDetails;
+                    }
+                } catch (\Exception $e) {
+                    continue;
                 }
             }
 

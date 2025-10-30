@@ -65,6 +65,17 @@ class TeamController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
+            // Check if user already exists in the project
+            $existing = TeamMember::where('user_id', $request->member_user_id)
+                ->where('project_id', $request->project_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if ($existing) {
+                return $this->toJsonEnc([], trans('api.team.already_assigned'), Config::get('constant.ERROR'));
+            }
+
             $teamMemberDetails = new TeamMember();
             $teamMemberDetails->user_id = $request->member_user_id;
             $teamMemberDetails->project_id = $request->project_id;

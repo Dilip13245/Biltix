@@ -152,7 +152,7 @@ return [
         'member_details_retrieved' => 'تم استرداد تفاصيل العضو بنجاح',
         'role_updated' => 'تم تحديث الدور بنجاح',
         'member_not_found' => 'عضو الفريق غير موجود',
-        'already_assigned' => 'العضو مُعين بالفعل للمشروع',
+        'already_assigned' => 'المستخدم موجود بالفعل في هذا المشروع',
     ],
     'plans' => [
         'uploaded_success' => 'تم رفع المخطط بنجاح',

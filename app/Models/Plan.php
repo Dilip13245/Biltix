@@ -16,6 +16,11 @@ class Plan extends Model
         'file_type', 'uploaded_by', 'is_active', 'is_deleted'
     ];
 
+    protected $attributes = [
+        'title' => null,
+        'drawing_number' => null,
+    ];
+
     protected $casts = [
         'approved_at' => 'datetime',
         'is_active' => 'boolean',

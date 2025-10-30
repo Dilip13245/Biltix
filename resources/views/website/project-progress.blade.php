@@ -1527,7 +1527,7 @@
                                 resetMilestonesContainer();
 
                                 // Reload phases
-                                loadPhases();
+                                loadPhases(true);
                             } else {
                                 alert('Error creating phase: ' + response.message);
                             }

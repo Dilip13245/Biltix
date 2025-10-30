@@ -46,7 +46,7 @@ class SnagController extends Controller
             $snagDetails->location = $request->location;
             $snagDetails->reported_by = $request->user_id;
             $snagDetails->assigned_to = $request->assigned_to;
-            $snagDetails->status = 'in_progress';
+            $snagDetails->status = 'todo';
             $snagDetails->is_active = true;
             
             // Handle multiple image uploads
@@ -208,7 +208,7 @@ class SnagController extends Controller
                 'description' => 'nullable|string',
                 'location' => 'nullable|string',
                 'assigned_to' => 'nullable|integer',
-                'status' => 'nullable|in:open,in_progress,resolved,closed',
+                'status' => 'nullable|in:todo,in_progress,complete,approve',
                 'comment' => 'nullable|string',
                 'images' => 'nullable|array',
                 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240'
@@ -293,7 +293,7 @@ class SnagController extends Controller
                 return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            $snag->status = 'resolved';
+            $snag->status = 'approve';
             $snag->resolution_notes = $resolution_notes;
             $snag->resolved_by = $user_id;
             $snag->resolved_at = now();
@@ -322,7 +322,7 @@ class SnagController extends Controller
             }
 
             $snag->assigned_to = $assigned_to;
-            $snag->status = 'assigned';
+            $snag->status = 'in_progress';
             $snag->save();
 
             return $this->toJsonEnc($snag, trans('api.snags.assigned_success'), Config::get('constant.SUCCESS'));

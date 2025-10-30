@@ -66,7 +66,7 @@ class Snag extends Model
                 $snag->snag_number = 'SNG-' . str_pad(Snag::count() + 1, 4, '0', STR_PAD_LEFT);
             }
             if (!$snag->status) {
-                $snag->status = 'open';
+                $snag->status = 'todo';
             }
         });
     }

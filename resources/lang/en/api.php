@@ -153,7 +153,7 @@ return [
         'member_details_retrieved' => 'Member details retrieved successfully',
         'role_updated' => 'Role updated successfully',
         'member_not_found' => 'Team member not found',
-        'already_assigned' => 'Member already assigned to project',
+        'already_assigned' => 'User already exists in this project',
     ],
     'plans' => [
         'uploaded_success' => 'Plan uploaded successfully',

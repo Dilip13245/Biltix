@@ -25,15 +25,15 @@
       <div class="modal-body">
         <form id="uploadPlanForm" enctype="multipart/form-data">
           @csrf
-          <div class="row">
+          <div class="row d-none">
             <div class="col-md-6 mb-3">
               <label for="planTitle" class="form-label fw-medium">{{ __('messages.plan_title') }}</label>
-              <input type="text" class="form-control Input_control" id="planTitle" name="title" required
+              <input type="text" class="form-control Input_control" id="planTitle" name="title"
                 placeholder="{{ __('messages.plan_title_example') }}">
             </div>
             <div class="col-md-6 mb-3">
               <label for="drawingNumber" class="form-label fw-medium">{{ __('messages.drawing_number') }}</label>
-              <input type="text" class="form-control Input_control" id="drawingNumber" name="drawing_number" required
+              <input type="text" class="form-control Input_control" id="drawingNumber" name="drawing_number"
                 placeholder="{{ __('messages.drawing_number_example') }}">
             </div>
           </div>
@@ -67,5 +67,24 @@
 </div>
 
 <script>
-// Button protection is handled in the form submission handler
+// Reset modal when it's hidden
+document.getElementById('uploadPlanModal')?.addEventListener('hidden.bs.modal', function() {
+    const form = document.getElementById('uploadPlanForm');
+    const btn = document.getElementById('uploadPlanBtn');
+    
+    if (form) form.reset();
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '{{ __('messages.upload_plan') }} <i class="fas fa-upload ms-2"></i>';
+    }
+});
+
+// Reset button text when modal is shown
+document.getElementById('uploadPlanModal')?.addEventListener('show.bs.modal', function() {
+    const btn = document.getElementById('uploadPlanBtn');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '{{ __('messages.upload_plan') }} <i class="fas fa-upload ms-2"></i>';
+    }
+});
 </script>

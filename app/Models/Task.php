@@ -59,13 +59,14 @@ class Task extends Model
     }
 
     // Automatically set status to pending if current date >= due_date
-    public function getStatusAttribute($value)
-    {
-        if ($value !== 'completed' && $this->due_date && now()->format('Y-m-d') >= $this->due_date->format('Y-m-d')) {
-            return 'pending';
-        }
-        return $value;
-    }
+    // Commented out to return actual database status
+    // public function getStatusAttribute($value)
+    // {
+    //     if ($value !== 'completed' && $this->due_date && now()->format('Y-m-d') >= $this->due_date->format('Y-m-d')) {
+    //         return 'pending';
+    //     }
+    //     return $value;
+    // }
 
     protected static function boot()
     {
@@ -73,7 +74,7 @@ class Task extends Model
         
         static::creating(function ($task) {
             if (!$task->status) {
-                $task->status = 'in_progress';
+                $task->status = 'todo';
             }
             if (!$task->task_number) {
                 $task->task_number = 'TSK-' . str_pad(Task::count() + 1, 4, '0', STR_PAD_LEFT);
