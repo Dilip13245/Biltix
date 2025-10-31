@@ -602,7 +602,7 @@ class ProjectController extends Controller
             $validator = Validator::make($request->all(), [
                 'milestone_id' => 'required|integer',
                 'user_id' => 'required|integer',
-                'extension_days' => 'required|integer|min:0',
+                'extension_days' => 'required|integer|min:0|max:3650',
             ]);
 
             if ($validator->fails()) {

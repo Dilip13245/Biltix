@@ -29,7 +29,6 @@ class HomeController extends Controller
     public function dashboard()
     {
         $user = request()->attributes->get('user');
-        $dashboardAccess = $user ? $user->getDashboardAccess() : 'full';
         
         // Get project IDs created by user
         $createdProjectIds = Project::where('created_by', $user->id)
@@ -75,70 +74,7 @@ class HomeController extends Controller
             'total_pending_tasks' => $totalPendingTasks,
         ];
 
-        // Role-based project data
-        $ongoing_projects = $this->getProjectsByRole($dashboardAccess);
-
-        return view('website.dashboard', compact('stats', 'ongoing_projects', 'dashboardAccess'));
-    }
-    
-    private function getProjectsByRole($dashboardAccess)
-    {
-        $allProjects = [
-            [
-                'name' => 'Downtown Office Complex',
-                'type' => 'Commercial Building',
-                'progress' => 68,
-                'due_date' => 'Dec 15, 2024',
-                'status' => 'Active',
-                'team_count' => 7,
-                'role_access' => 'full'
-            ],
-            [
-                'name' => 'Residential Tower A',
-                'type' => 'Residential Complex',
-                'progress' => 45,
-                'due_date' => 'Mar 20, 2025',
-                'status' => 'Active',
-                'team_count' => 5,
-                'role_access' => 'assigned'
-            ],
-            [
-                'name' => 'Shopping Mall Renovation',
-                'type' => 'Renovation Project',
-                'progress' => 100,
-                'due_date' => 'Nov 30, 2024',
-                'status' => 'Completed',
-                'team_count' => 4,
-                'role_access' => 'full'
-            ],
-            [
-                'name' => 'Industrial Warehouse',
-                'type' => 'Industrial Building',
-                'progress' => 32,
-                'due_date' => 'Jun 10, 2025',
-                'status' => 'Active',
-                'team_count' => 6,
-                'role_access' => 'assigned'
-            ],
-            [
-                'name' => 'Hospital Extension',
-                'type' => 'Healthcare Facility',
-                'progress' => 78,
-                'due_date' => 'Jun 10, 2025',
-                'status' => 'Active',
-                'team_count' => 6,
-                'role_access' => 'full'
-            ]
-        ];
-        
-        if ($dashboardAccess === 'assigned_only') {
-            // Site Engineer - only assigned projects
-            return array_filter($allProjects, function($project) {
-                return $project['role_access'] === 'assigned';
-            });
-        }
-        
-        return $allProjects;
+        return view('website.dashboard', compact('stats'));
     }
 
     public function plans($project_id)

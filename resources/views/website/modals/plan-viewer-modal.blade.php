@@ -70,10 +70,7 @@
                 <p id="planInfoName" class="mb-2">-</p>
               </div>
               
-              <div class="mb-3">
-                <strong>{{ __('messages.drawing_number') }}:</strong>
-                <p id="planInfoType" class="mb-2">-</p>
-              </div>
+
               
               <div class="mb-3">
                 <strong>{{ __('messages.file_type') }}:</strong>
@@ -138,9 +135,6 @@
 let currentZoom = 1;
 let isDragging = false;
 let startX, startY, scrollLeft, scrollTop;
-let currentPlanData = null;
-
-let currentZoom = 1;
 let currentPlanData = null;
 
 function loadPlanContent(planData) {

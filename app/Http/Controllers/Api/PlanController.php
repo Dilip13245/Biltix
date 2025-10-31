@@ -245,7 +245,14 @@ class PlanController extends Controller
             // Upload new file
             $fileData = FileHelper::uploadFile($request->file('file'), 'plans');
             
-            // Update plan with new file data
+            // Get original name without extension for title
+            $originalName = $fileData['original_name'] ?? $request->file('file')->getClientOriginalName();
+            $titleWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
+            
+            // Update plan with new file data - keep existing title if it's marked_plan (from drawing modal)
+            if ($titleWithoutExtension !== 'marked_plan') {
+                $plan->title = $titleWithoutExtension;
+            }
             $plan->file_name = $fileData['filename'];
             $plan->file_path = $fileData['path'];
             $plan->file_size = $fileData['size'];

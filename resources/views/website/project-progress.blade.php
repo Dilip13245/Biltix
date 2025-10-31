@@ -67,48 +67,36 @@
                     <div class="card B_shadow">
                         <div class="card-body p-md-4">
                             <div class="d-flex flex-wrap justify-content-between align-items-start">
-                                <div>
-                                    <h5 class="fw-semibold  mb-3 mb-md-4 black_color">{{ __('messages.project_timeline') }}
-                                    </h5>
+                                <div class="w-100">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
+                                        <h5 class="fw-semibold black_color mb-0">{{ __('messages.project_timeline') }}</h5>
+                                        @can('projects', 'edit')
+                                            <button class="btn btn-sm btn-outline-primary" id="editProjectBtn" onclick="toggleProjectEdit()">
+                                                <i class="fas fa-edit me-1"></i>{{ __('messages.edit_project') }}
+                                            </button>
+                                        @endcan
+                                    </div>
                                     <div class="row gy-3 gx-5">
                                         <div class="col-12 col-md-6">
                                             <div class="mb-2 mb-md-3">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.project_location') }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-2">
+                                                <div class="fw-medium">
                                                     <span id="projectLocation">{{ __('messages.loading') }}...</span>
-                                                    @can('projects', 'edit')
-                                                        <a href="#" class="text-primary ms-2 d-flex align-items-center"
-                                                            onclick="toggleLocationEdit(event)" title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit" style="width: 16px; height: 16px;"></a>
-                                                    @endcan
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.project_name') }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-2">
+                                                <div class="fw-medium">
                                                     <span id="projectName">{{ __('messages.loading') }}...</span>
-                                                    @can('projects', 'edit')
-                                                        <a href="#" class="text-primary ms-2 d-flex align-items-center"
-                                                            title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit" style="width: 16px; height: 16px;"></a>
-                                                    @endcan
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.company_name') }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-2">
+                                                <div class="fw-medium">
                                                     <span id="companyName">{{ __('messages.loading') }}...</span>
-                                                    @can('projects', 'edit')
-                                                        <a href="#" class="text-primary ms-2 d-flex align-items-center"
-                                                            title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit" style="width: 16px; height: 16px;"></a>
-                                                    @endcan
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
@@ -126,40 +114,22 @@
                                             <div class="mb-2 mb-md-3">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.project_type') }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-2">
+                                                <div class="fw-medium">
                                                     <span id="projectType">{{ __('messages.loading') }}...</span>
-                                                    @can('projects', 'edit')
-                                                        <a href="#" class="text-primary ms-2 d-flex align-items-center"
-                                                            title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit" style="width: 16px; height: 16px;"></a>
-                                                    @endcan
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.project_manager') }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-2">
+                                                <div class="fw-medium">
                                                     <span id="projectManager">{{ __('messages.loading') }}...</span>
-                                                    @can('projects', 'edit')
-                                                        <a href="#" class="text-primary ms-2 d-flex align-items-center"
-                                                            title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit" style="width: 16px; height: 16px;"></a>
-                                                    @endcan
                                                 </div>
                                             </div>
                                             <div class="mb-2 mb-md-3">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.site_engineer') }}</span>
-                                                <div class="fw-medium d-flex align-items-center gap-2">
+                                                <div class="fw-medium">
                                                     <span id="siteEngineer">{{ __('messages.loading') }}...</span>
-                                                    @can('projects', 'edit')
-                                                        <a href="#" class="text-primary ms-2 d-flex align-items-center"
-                                                            title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit" style="width: 16px; height: 16px;"></a>
-                                                    @endcan
                                                 </div>
                                             </div>
                                         </div>
@@ -602,6 +572,12 @@
             extendTimeout[milestoneId] = setTimeout(async () => {
                 const extensionInput = document.getElementById(`ext_${milestoneId}`);
                 const extensionDays = parseInt(extensionInput.value) || 0;
+                
+                if (extensionDays < 0 || extensionDays > 3650) {
+                    toastr.error('Extension days must be between 0 and 3650');
+                    extensionInput.value = Math.min(Math.max(extensionDays, 0), 3650);
+                    return;
+                }
 
                 try {
                     const response = await api.makeRequest('projects/extend_milestone', {
@@ -843,6 +819,203 @@
             }
         }
 
+        let isEditMode = false;
+        let originalValues = {};
+
+        function toggleProjectEdit() {
+            isEditMode = true;
+            
+            // Store original values
+            originalValues = {
+                projectName: document.getElementById('projectName').textContent,
+                companyName: document.getElementById('companyName').textContent,
+                projectType: document.getElementById('projectType').textContent,
+                projectManager: document.getElementById('projectManager').textContent,
+                siteEngineer: document.getElementById('siteEngineer').textContent
+            };
+            
+            // Make fields editable
+            makeFieldEditable('projectName', 'text');
+            makeFieldEditable('companyName', 'text');
+            makeFieldEditable('projectType', 'text');
+            makeFieldEditable('projectManager', 'dropdown', 'Project Manager');
+            makeFieldEditable('siteEngineer', 'dropdown', 'Site Engineer');
+            
+            // Show save and cancel buttons
+            showSaveButton();
+        }
+
+        function makeFieldEditable(fieldId, type, label = '') {
+            const fieldElement = document.getElementById(fieldId);
+            const currentValue = fieldElement.textContent.trim();
+            
+            if (type === 'text') {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentValue;
+                input.className = 'form-control Input_control';
+                input.style.width = '100%';
+                input.style.maxWidth = '300px';
+                input.id = fieldId + '_input';
+                fieldElement.innerHTML = '';
+                fieldElement.appendChild(input);
+            } else if (type === 'dropdown') {
+                const select = document.createElement('select');
+                select.className = 'form-select Input_control';
+                select.style.width = '100%';
+                select.style.maxWidth = '300px';
+                select.style.height = 'auto';
+                select.style.padding = '8px 12px';
+                select.style.fontSize = '14px';
+                select.style.borderRadius = '8px';
+                select.style.border = '1px solid #dee2e6';
+                select.id = fieldId + '_input';
+                select.innerHTML = '<option value="">Loading...</option>';
+                fieldElement.innerHTML = '';
+                fieldElement.appendChild(select);
+                
+                // Load dropdown options
+                loadDropdownOptions(select, label, currentValue);
+            }
+        }
+
+        async function loadDropdownOptions(selectElement, label, currentValue) {
+            try {
+                let response;
+                if (label === 'Project Manager') {
+                    response = await api.getProjectManagers();
+                } else if (label === 'Site Engineer') {
+                    response = await api.getTechnicalEngineers();
+                }
+                
+                if (response.code === 200 && response.data) {
+                    selectElement.innerHTML = '<option value="">Select ' + label + '</option>';
+                    response.data.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.id;
+                        option.textContent = user.name;
+                        if (user.name === currentValue) {
+                            option.selected = true;
+                        }
+                        selectElement.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load options:', error);
+                selectElement.innerHTML = '<option value="">Error loading options</option>';
+            }
+        }
+
+        function showSaveButton() {
+            const btn = document.getElementById('editProjectBtn');
+            
+            // Create button container
+            const btnContainer = document.createElement('div');
+            btnContainer.className = 'd-flex gap-2 align-items-center';
+            btnContainer.id = 'editButtonsContainer';
+            
+            // Create save button
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'btn btn-sm btn-success';
+            saveBtn.id = 'saveProjectBtn';
+            saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
+            saveBtn.onclick = saveProjectChanges;
+            
+            // Create cancel button
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn btn-sm btn-secondary';
+            cancelBtn.id = 'cancelProjectBtn';
+            cancelBtn.innerHTML = '<i class="fas fa-times me-1"></i>{{ __('messages.cancel') }}';
+            cancelBtn.onclick = cancelProjectEdit;
+            
+            // Add buttons to container
+            btnContainer.appendChild(saveBtn);
+            btnContainer.appendChild(cancelBtn);
+            
+            // Replace edit button with button container
+            btn.style.display = 'none';
+            btn.parentElement.appendChild(btnContainer);
+        }
+
+        async function saveProjectChanges() {
+            const saveBtn = document.getElementById('saveProjectBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{{ __('messages.saving') }}...';
+            
+            try {
+                const updateData = {
+                    project_id: currentProjectId
+                };
+                
+                // Get values from inputs
+                const projectNameInput = document.getElementById('projectName_input');
+                const companyNameInput = document.getElementById('companyName_input');
+                const projectTypeInput = document.getElementById('projectType_input');
+                const projectManagerInput = document.getElementById('projectManager_input');
+                const siteEngineerInput = document.getElementById('siteEngineer_input');
+                
+                if (projectNameInput && projectNameInput.value.trim()) {
+                    updateData.project_title = projectNameInput.value.trim();
+                }
+                if (companyNameInput && companyNameInput.value.trim()) {
+                    updateData.contractor_name = companyNameInput.value.trim();
+                }
+                if (projectTypeInput && projectTypeInput.value.trim()) {
+                    updateData.type = projectTypeInput.value.trim();
+                }
+                if (projectManagerInput && projectManagerInput.value) {
+                    updateData.project_manager_id = projectManagerInput.value;
+                }
+                if (siteEngineerInput && siteEngineerInput.value) {
+                    updateData.technical_engineer_id = siteEngineerInput.value;
+                }
+                
+                const response = await api.updateProject(updateData);
+                
+                if (response.code === 200) {
+                    showToast('{{ __('messages.project_updated_successfully') }}', 'success');
+                    isEditMode = false;
+                    loadProjectData();
+                    
+                    // Show edit button again
+                    const editBtn = document.getElementById('editProjectBtn');
+                    editBtn.style.display = 'inline-block';
+                    
+                    // Remove button container
+                    const btnContainer = document.getElementById('editButtonsContainer');
+                    if (btnContainer) btnContainer.remove();
+                } else {
+                    showToast(response.message || '{{ __('messages.failed_to_update_project') }}', 'error');
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
+                }
+            } catch (error) {
+                console.error('Error updating project:', error);
+                showToast('{{ __('messages.error_updating_project') }}', 'error');
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
+            }
+        }
+
+        function cancelProjectEdit() {
+            isEditMode = false;
+            
+            // Restore original values
+            document.getElementById('projectName').textContent = originalValues.projectName;
+            document.getElementById('companyName').textContent = originalValues.companyName;
+            document.getElementById('projectType').textContent = originalValues.projectType;
+            document.getElementById('projectManager').textContent = originalValues.projectManager;
+            document.getElementById('siteEngineer').textContent = originalValues.siteEngineer;
+            
+            // Show edit button again
+            const btn = document.getElementById('editProjectBtn');
+            btn.style.display = 'inline-block';
+            
+            // Remove button container
+            const btnContainer = document.getElementById('editButtonsContainer');
+            if (btnContainer) btnContainer.remove();
+        }
+
         // Load project data and make edit buttons functional
         document.addEventListener('DOMContentLoaded', function() {
             // Set current date on button
@@ -855,27 +1028,6 @@
             
             loadProjectData();
             loadPhases();
-
-            const editButtons = document.querySelectorAll('a[title="Edit"]');
-            editButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    editProjectField(this);
-                });
-            });
-
-            // Make manpower links functional
-            const manpowerLinks = document.querySelectorAll('.table a');
-            manpowerLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const role = this.closest('tr').querySelector('td').textContent;
-                    const count = this.textContent;
-                    alert(
-                        `${role}: ${count}\n\nDetailed view would show:\n- Individual assignments\n- Work schedules\n- Performance metrics`
-                    );
-                });
-            });
         });
 
         let phasesCache = null;
@@ -1021,8 +1173,9 @@
                                                                 style="width: 50px; height: 20px; font-size: 11px;" 
                                                                 value="${milestone.extension_days || 0}" 
                                                                 min="0" 
+                                                                max="3650" 
                                                                 id="ext_${milestone.id}" 
-                                                                title="Extension days"
+                                                                title="Extension days (max 3650)"
                                                                 onclick="event.stopPropagation()">
                                                             <button class="btn btn-sm btn-outline-primary" 
                                                                 style="padding: 1px 4px; font-size: 10px;" 

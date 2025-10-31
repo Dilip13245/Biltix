@@ -1,5 +1,5 @@
 <!-- Search Modal -->
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header" style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
@@ -19,38 +19,180 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
+                <div class="row mb-3 g-3">
                     <div class="col-md-4">
                         <label class="form-label fw-medium">{{ __('messages.project_type') }}</label>
-                        <select class="form-select" id="searchType">
-                            <option value="">{{ __('messages.all_types') }}</option>
-                            <option value="villa">{{ __('messages.villa') }}</option>
-                            <option value="tower">{{ __('messages.tower') }}</option>
-                            <option value="hospital">{{ __('messages.hospital') }}</option>
-                            <option value="commercial">{{ __('messages.commercial') }}</option>
-                            <option value="residential">{{ __('messages.residential') }}</option>
-                            <option value="industrial">{{ __('messages.industrial') }}</option>
-                        </select>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select-trigger" onclick="toggleCustomDropdown('searchType')">
+                                <span id="searchTypeText">{{ __('messages.all_types') }}</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-select-options" id="searchTypeOptions">
+                                <div class="custom-select-option" data-value="" onclick="selectCustomOption('searchType', '', '{{ __('messages.all_types') }}')">
+                                    {{ __('messages.all_types') }}
+                                </div>
+                                <div class="custom-select-option" data-value="villa" onclick="selectCustomOption('searchType', 'villa', '{{ __('messages.villa') }}')">
+                                    {{ __('messages.villa') }}
+                                </div>
+                                <div class="custom-select-option" data-value="tower" onclick="selectCustomOption('searchType', 'tower', '{{ __('messages.tower') }}')">
+                                    {{ __('messages.tower') }}
+                                </div>
+                                <div class="custom-select-option" data-value="hospital" onclick="selectCustomOption('searchType', 'hospital', '{{ __('messages.hospital') }}')">
+                                    {{ __('messages.hospital') }}
+                                </div>
+                                <div class="custom-select-option" data-value="commercial" onclick="selectCustomOption('searchType', 'commercial', '{{ __('messages.commercial') }}')">
+                                    {{ __('messages.commercial') }}
+                                </div>
+                                <div class="custom-select-option" data-value="residential" onclick="selectCustomOption('searchType', 'residential', '{{ __('messages.residential') }}')">
+                                    {{ __('messages.residential') }}
+                                </div>
+                                <div class="custom-select-option" data-value="industrial" onclick="selectCustomOption('searchType', 'industrial', '{{ __('messages.industrial') }}')">
+                                    {{ __('messages.industrial') }}
+                                </div>
+                            </div>
+                            <input type="hidden" id="searchType" value="">
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-medium">{{ __('messages.status') }}</label>
-                        <select class="form-select" id="searchStatus">
-                            <option value="">{{ __('messages.all_status') }}</option>
-                            <option value="ongoing">{{ __('messages.active') }}</option>
-                            <option value="completed">{{ __('messages.completed') }}</option>
-                        </select>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select-trigger" onclick="toggleCustomDropdown('searchStatus')">
+                                <span id="searchStatusText">{{ __('messages.all_status') }}</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-select-options" id="searchStatusOptions">
+                                <div class="custom-select-option" data-value="" onclick="selectCustomOption('searchStatus', '', '{{ __('messages.all_status') }}')">
+                                    {{ __('messages.all_status') }}
+                                </div>
+                                <div class="custom-select-option" data-value="ongoing" onclick="selectCustomOption('searchStatus', 'ongoing', '{{ __('messages.active') }}')">
+                                    {{ __('messages.active') }}
+                                </div>
+                                <div class="custom-select-option" data-value="completed" onclick="selectCustomOption('searchStatus', 'completed', '{{ __('messages.completed') }}')">
+                                    {{ __('messages.completed') }}
+                                </div>
+                            </div>
+                            <input type="hidden" id="searchStatus" value="">
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-medium">{{ __('messages.progress') }}</label>
-                        <select class="form-select" id="searchProgress">
-                            <option value="">{{ __('messages.any_progress') }}</option>
-                            <option value="0-25">0-25%</option>
-                            <option value="26-50">26-50%</option>
-                            <option value="51-75">51-75%</option>
-                            <option value="76-100">76-100%</option>
-                        </select>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select-trigger" onclick="toggleCustomDropdown('searchProgress')">
+                                <span id="searchProgressText">{{ __('messages.any_progress') }}</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="custom-select-options" id="searchProgressOptions">
+                                <div class="custom-select-option" data-value="" onclick="selectCustomOption('searchProgress', '', '{{ __('messages.any_progress') }}')">
+                                    {{ __('messages.any_progress') }}
+                                </div>
+                                <div class="custom-select-option" data-value="0-25" onclick="selectCustomOption('searchProgress', '0-25', '0-25%')">
+                                    0-25%
+                                </div>
+                                <div class="custom-select-option" data-value="26-50" onclick="selectCustomOption('searchProgress', '26-50', '26-50%')">
+                                    26-50%
+                                </div>
+                                <div class="custom-select-option" data-value="51-75" onclick="selectCustomOption('searchProgress', '51-75', '51-75%')">
+                                    51-75%
+                                </div>
+                                <div class="custom-select-option" data-value="76-100" onclick="selectCustomOption('searchProgress', '76-100', '76-100%')">
+                                    76-100%
+                                </div>
+                            </div>
+                            <input type="hidden" id="searchProgress" value="">
+                        </div>
                     </div>
                 </div>
+
+                <style>
+                    .custom-select-wrapper {
+                        position: relative;
+                    }
+                    
+                    .custom-select-trigger {
+                        padding: 10px 12px;
+                        border: 1px solid #dee2e6;
+                        border-radius: 8px;
+                        background: white;
+                        cursor: pointer;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        transition: all 0.2s;
+                    }
+                    
+                    .custom-select-trigger:hover {
+                        border-color: #F58D2E;
+                    }
+                    
+                    .custom-select-trigger i {
+                        color: #6c757d;
+                        font-size: 12px;
+                        transition: transform 0.2s;
+                    }
+                    
+                    .custom-select-trigger.active i {
+                        transform: rotate(180deg);
+                    }
+                    
+                    .custom-select-options {
+                        position: absolute;
+                        top: calc(100% + 4px);
+                        left: 0;
+                        right: 0;
+                        background: white;
+                        border: 1px solid #dee2e6;
+                        border-radius: 8px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        max-height: 200px;
+                        overflow-y: auto;
+                        z-index: 1050;
+                        display: none;
+                    }
+                    
+                    .custom-select-options.show {
+                        display: block;
+                    }
+                    
+                    .custom-select-option {
+                        padding: 10px 12px;
+                        cursor: pointer;
+                        transition: background-color 0.2s;
+                    }
+                    
+                    .custom-select-option:hover {
+                        background-color: #f8f9fa;
+                    }
+                    
+                    .custom-select-option.selected {
+                        background-color: #fff5f0;
+                        color: #F58D2E;
+                        font-weight: 500;
+                    }
+                    
+                    /* RTL Support */
+                    [dir="rtl"] .custom-select-trigger {
+                        flex-direction: row-reverse;
+                    }
+                    
+                    /* Scrollbar styling */
+                    .custom-select-options::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    
+                    .custom-select-options::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 4px;
+                    }
+                    
+                    .custom-select-options::-webkit-scrollbar-thumb {
+                        background: #F58D2E;
+                        border-radius: 4px;
+                    }
+                    
+                    .custom-select-options::-webkit-scrollbar-thumb:hover {
+                        background: #e07a1f;
+                    }
+                </style>
 
                 <div id="searchResults" class="mt-4">
                     <h6 class="fw-bold mb-3">{{ __('messages.search_results') }}</h6>
@@ -207,17 +349,63 @@
         document.getElementById('searchType').value = '';
         document.getElementById('searchStatus').value = '';
         document.getElementById('searchProgress').value = '';
-        performSearch();
-
+        
+        document.getElementById('searchTypeText').textContent = '{{ __('messages.all_types') }}';
+        document.getElementById('searchStatusText').textContent = '{{ __('messages.all_status') }}';
+        document.getElementById('searchProgressText').textContent = '{{ __('messages.any_progress') }}';
+        
+        document.querySelectorAll('.custom-select-option.selected').forEach(el => el.classList.remove('selected'));
+        
         document.getElementById('resultsContainer').innerHTML = `
-    <div class="text-center text-muted py-4">
-      <i class="fas fa-search fa-3x mb-3"></i>
-      <p>{{ __('messages.enter_search_terms') }}</p>
-    </div>
-  `;
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-search fa-3x mb-3"></i>
+                <p>{{ __('messages.enter_search_terms') }}</p>
+            </div>
+        `;
     }
+    
+    function toggleCustomDropdown(id) {
+        const optionsEl = document.getElementById(id + 'Options');
+        const triggerEl = optionsEl.previousElementSibling;
+        
+        document.querySelectorAll('.custom-select-options.show').forEach(el => {
+            if (el.id !== id + 'Options') {
+                el.classList.remove('show');
+                el.previousElementSibling.classList.remove('active');
+            }
+        });
+        
+        optionsEl.classList.toggle('show');
+        triggerEl.classList.toggle('active');
+    }
+    
+    function selectCustomOption(id, value, text) {
+        document.getElementById(id).value = value;
+        document.getElementById(id + 'Text').textContent = text;
+        
+        const optionsContainer = document.getElementById(id + 'Options');
+        optionsContainer.querySelectorAll('.custom-select-option').forEach(el => {
+            el.classList.remove('selected');
+            if (el.getAttribute('data-value') === value) {
+                el.classList.add('selected');
+            }
+        });
+        
+        optionsContainer.classList.remove('show');
+        optionsContainer.previousElementSibling.classList.remove('active');
+        
+        performSearch();
+    }
+    
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-select-wrapper')) {
+            document.querySelectorAll('.custom-select-options.show').forEach(el => {
+                el.classList.remove('show');
+                el.previousElementSibling.classList.remove('active');
+            });
+        }
+    });
 
-    // Auto-search with debounce
     document.addEventListener('DOMContentLoaded', function() {
         let searchTimeout;
         const searchInput = document.getElementById('searchInput');
@@ -227,13 +415,12 @@
                 searchTimeout = setTimeout(performSearch, 500);
             });
         }
-
-        const filters = ['searchType', 'searchStatus', 'searchProgress'];
-        filters.forEach(filterId => {
-            const element = document.getElementById(filterId);
-            if (element) {
-                element.addEventListener('change', performSearch);
-            }
-        });
+        
+        const searchModal = document.getElementById('searchModal');
+        if (searchModal) {
+            searchModal.addEventListener('hidden.bs.modal', function() {
+                clearSearch();
+            });
+        }
     });
 </script>

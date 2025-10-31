@@ -1110,6 +1110,10 @@ return [
     'error_deleting_project' => 'Error deleting project',
     'total_tasks' => 'Total Tasks',
     'pending_tasks' => 'Pending Tasks',
+    'edit_project' => 'Edit Project',
+    'project_updated_successfully' => 'Project updated successfully',
+    'failed_to_update_project' => 'Failed to update project',
+    'error_updating_project' => 'Error updating project',
 ];
 
 

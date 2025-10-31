@@ -8,7 +8,8 @@
             <h2>{{ __('messages.plans') }}</h2>
             <p>{{ __('messages.view_markup_plans') }}</p>
         </div>
-        <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#uploadPlanModal" data-permission="plans:upload" id="uploadPlanBtn" style="display: none;">
+        <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#uploadPlanModal" data-permission="plans:upload"
+            id="uploadPlanBtn" style="display: none;">
             <i class="fas fa-arrow-up"></i>
             {{ __('messages.upload_plan') }}
         </button>
@@ -169,33 +170,33 @@
         let hasMorePages = true;
         const plansPerPage = 6;
         let isUploading = false;
-        
+
         // Load plans from API with server-side pagination
         async function loadPlans(resetPagination = true) {
             if (isLoading) return;
-            
+
             try {
                 isLoading = true;
                 const projectId = getProjectIdFromUrl();
-                
+
                 if (resetPagination) {
                     currentPage = 1;
                     currentDisplayedPlans = [];
                     hasMorePages = true;
                 }
-                
-                const response = await api.getPlans({ 
+
+                const response = await api.getPlans({
                     project_id: projectId,
                     page: currentPage,
                     limit: plansPerPage
                 });
-                
+
                 if (response.code === 200 && response.data) {
                     let plans = response.data.data || response.data;
                     if (!Array.isArray(plans)) {
                         plans = [];
                     }
-                    
+
                     if (resetPagination) {
                         currentDisplayedPlans = plans;
                         displayPlans(currentDisplayedPlans, false);
@@ -203,7 +204,7 @@
                         currentDisplayedPlans = currentDisplayedPlans.concat(plans);
                         displayPlans(plans, true);
                     }
-                    
+
                     hasMorePages = plans.length === plansPerPage;
                 } else {
                     displayNoPlans();
@@ -215,35 +216,36 @@
                 isLoading = false;
             }
         }
-        
+
         function displayPlans(plans, append = false) {
             const container = document.getElementById('plansContainer');
-            
+
             if (!plans || plans.length === 0) {
                 if (!append) displayNoPlans();
                 return;
             }
-            
+
             if (!append) {
                 container.className = 'CarDs-grid';
             }
-            
+
             const plansHtml = plans.map((plan, index) => {
                 const fileIcon = getFileIcon(plan.file_type, plan.file_name);
                 const fileSize = formatFileSize(plan.file_size);
                 const uploadDate = formatDate(plan.created_at);
                 const isImage = isImageFile(plan.file_type, plan.file_name);
-                
-                const fullImagePath = plan.file_path.startsWith('http') ? plan.file_path : `{{ asset('storage') }}/${plan.file_path}`;
-                
+
+                const fullImagePath = plan.file_path.startsWith('http') ? plan.file_path :
+                    `{{ asset('storage') }}/${plan.file_path}`;
+
                 return `
                     <div class="CustOm_Card wow fadeInUp" data-wow-delay="${index * 0.2}s">
                         <div class="plan-image">
                             ${isImage ? 
                                 `<img src="${fullImagePath}" alt="${plan.title}">` :
                                 `<div class="file-icon-container d-flex align-items-center justify-content-center" style="height: 200px; background: #f8f9fa;">
-                                    <i class="${fileIcon} fa-4x text-primary"></i>
-                                </div>`
+                                        <i class="${fileIcon} fa-4x text-primary"></i>
+                                    </div>`
                             }
                         </div>
                         <div class="carD-details">
@@ -255,20 +257,20 @@
                                 </button>
                                 ${window.userPermissions && window.userPermissions.canUpload() ? 
                                     `<button class="btn btn-primary btn-sm flex-fill rounded-pill" 
-                                        onclick="replacePlan(${plan.id})" data-permission="plans:upload">
-                                        {{ __('messages.replace') }} <i class="fas fa-sync ms-2"></i>
-                                    </button>` : ''}
+                                            onclick="replacePlan(${plan.id})" data-permission="plans:upload">
+                                            {{ __('messages.replace') }} <i class="fas fa-sync ms-2"></i>
+                                        </button>` : ''}
                                 ${window.userPermissions && window.userPermissions.canDelete() ? 
                                     `<button class="btn btn-danger btn-sm flex-fill rounded-pill" 
-                                        onclick="deletePlan(${plan.id})" data-permission="plans:delete">
-                                        {{ __('messages.delete') }} <i class="fas fa-trash ms-2"></i>
-                                    </button>` : ''}
+                                            onclick="deletePlan(${plan.id})" data-permission="plans:delete">
+                                            {{ __('messages.delete') }} <i class="fas fa-trash ms-2"></i>
+                                        </button>` : ''}
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
-            
+
             if (append) {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = plansHtml;
@@ -279,25 +281,25 @@
                 container.innerHTML = plansHtml;
             }
         }
-        
+
         function handlePlansScroll() {
             if (isLoading || !hasMorePages) return;
-            
+
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.offsetHeight;
-            
+
             if (scrollTop + windowHeight >= documentHeight - 200) {
                 loadMorePlans();
             }
         }
-        
+
         function loadMorePlans() {
             if (isLoading || !hasMorePages) return;
             currentPage++;
             loadPlans(false);
         }
-        
+
         function displayNoPlans() {
             const container = document.getElementById('plansContainer');
             container.className = 'd-flex justify-content-center align-items-center';
@@ -310,28 +312,29 @@
                 </div>
             `;
         }
-        
+
         function getFileIcon(fileType, fileName = '') {
             const type = fileType?.toLowerCase();
             const name = fileName?.toLowerCase();
-            
+
             // Check by file extension first
             if (name.endsWith('.dwg')) return 'fas fa-drafting-compass';
             if (name.endsWith('.pdf')) return 'fas fa-file-pdf';
             if (name.endsWith('.doc') || name.endsWith('.docx')) return 'fas fa-file-word';
             if (name.endsWith('.xls') || name.endsWith('.xlsx')) return 'fas fa-file-excel';
-            if (name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png') || name.endsWith('.gif')) return 'fas fa-image';
-            
+            if (name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png') || name.endsWith('.gif'))
+            return 'fas fa-image';
+
             // Fallback to mime type
             if (type?.includes('pdf')) return 'fas fa-file-pdf';
             if (type?.includes('dwg')) return 'fas fa-drafting-compass';
             if (type?.includes('image') || type?.includes('jpg') || type?.includes('png')) return 'fas fa-image';
             if (type?.includes('word') || type?.includes('doc')) return 'fas fa-file-word';
             if (type?.includes('excel') || type?.includes('sheet')) return 'fas fa-file-excel';
-            
+
             return 'fas fa-file';
         }
-        
+
         function getFileTypeName(fileType) {
             const type = fileType?.toLowerCase();
             if (type?.includes('pdf')) return 'PDF Document';
@@ -340,15 +343,18 @@
             if (type?.includes('image/png') || type?.includes('png')) return 'PNG Image';
             if (type?.includes('image/gif')) return 'GIF Image';
             if (type?.includes('image')) return 'Image File';
-            if (type?.includes('wordprocessingml') || type?.includes('msword') || type?.includes('doc')) return 'Word Document';
-            if (type?.includes('spreadsheetml') || type?.includes('excel') || type?.includes('xls')) return 'Excel Spreadsheet';
-            if (type?.includes('presentationml') || type?.includes('powerpoint') || type?.includes('ppt')) return 'PowerPoint Presentation';
+            if (type?.includes('wordprocessingml') || type?.includes('msword') || type?.includes('doc'))
+            return 'Word Document';
+            if (type?.includes('spreadsheetml') || type?.includes('excel') || type?.includes('xls'))
+            return 'Excel Spreadsheet';
+            if (type?.includes('presentationml') || type?.includes('powerpoint') || type?.includes('ppt'))
+            return 'PowerPoint Presentation';
             if (type?.includes('text/plain')) return 'Text File';
             if (type?.includes('application/zip')) return 'ZIP Archive';
             if (type?.includes('application/rar')) return 'RAR Archive';
             return fileType?.split('/').pop()?.toUpperCase() || 'Unknown File';
         }
-        
+
         function isImageFile(fileType, fileName = '') {
             const type = fileType?.toLowerCase();
             const name = fileName?.toLowerCase();
@@ -356,7 +362,7 @@
             if (name.endsWith('.dwg')) return false;
             return type?.includes('image') || type?.includes('jpg') || type?.includes('jpeg') || type?.includes('png');
         }
-        
+
         function formatFileSize(bytes) {
             if (!bytes) return '0 B';
             const k = 1024;
@@ -364,19 +370,23 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
-        
+
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
             const date = new Date(dateString);
-            return date.toLocaleDateString('{{ app()->getLocale() }}', { year: 'numeric', month: 'short', day: 'numeric' });
+            return date.toLocaleDateString('{{ app()->getLocale() }}', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
         }
-        
+
         function getProjectIdFromUrl() {
             const pathParts = window.location.pathname.split('/');
             const projectIndex = pathParts.indexOf('project');
             return projectIndex !== -1 && pathParts[projectIndex + 1] ? pathParts[projectIndex + 1] : 1;
         }
-        
+
         function viewPlan(planId) {
             const plan = currentDisplayedPlans.find(p => p.id === planId);
             if (plan) {
@@ -385,7 +395,7 @@
                 console.error('Plan not found:', planId);
             }
         }
-        
+
         // Plan viewer functions - wrapped to avoid conflicts
         const PlanViewer = {
             currentZoom: 1,
@@ -396,17 +406,17 @@
             scrollLeft: 0,
             scrollTop: 0
         };
-        
+
         function loadPlanContent(planData) {
             PlanViewer.currentPlanData = planData;
             PlanViewer.currentZoom = 1;
             const container = document.getElementById('planContent');
             const fileType = planData.file_type?.toLowerCase();
-            
+
             // Reset container
             container.innerHTML = '';
             container.style.overflow = 'auto';
-            
+
             // Reset container display properties
             const parentContainer = container.parentElement;
             if (fileType?.includes('pdf')) {
@@ -419,10 +429,11 @@
                 parentContainer.classList.remove('d-block');
                 parentContainer.classList.add('d-flex', 'align-items-center', 'justify-content-center');
             }
-            
+
             if (isImageFile(fileType)) {
                 // Image files
-                container.innerHTML = `<img id="planImage" src="${planData.file_path}" alt="${planData.title}" style="cursor: grab; transition: transform 0.3s; max-width: 100%; height: auto; display: block; margin: 0 auto;">`;
+                container.innerHTML =
+                    `<img id="planImage" src="${planData.file_path}" alt="${planData.title}" style="cursor: grab; transition: transform 0.3s; max-width: 100%; height: auto; display: block; margin: 0 auto;">`;
                 setupImageInteractions();
             } else if (fileType?.includes('pdf')) {
                 // PDF files - use full content area without centering
@@ -492,13 +503,13 @@
                 `;
             }
         }
-        
+
         function setupImageInteractions() {
             const image = document.getElementById('planImage');
             if (!image) return;
-            
+
             const container = document.getElementById('planViewerContainer');
-            
+
             // Mouse events for dragging
             image.addEventListener('mousedown', (e) => {
                 PlanViewer.isDragging = true;
@@ -509,17 +520,17 @@
                 PlanViewer.scrollTop = container.scrollTop;
                 e.preventDefault();
             });
-            
+
             image.addEventListener('mouseleave', () => {
                 PlanViewer.isDragging = false;
                 image.style.cursor = 'grab';
             });
-            
+
             image.addEventListener('mouseup', () => {
                 PlanViewer.isDragging = false;
                 image.style.cursor = 'grab';
             });
-            
+
             image.addEventListener('mousemove', (e) => {
                 if (!PlanViewer.isDragging) return;
                 e.preventDefault();
@@ -530,7 +541,7 @@
                 container.scrollLeft = PlanViewer.scrollLeft - walkX;
                 container.scrollTop = PlanViewer.scrollTop - walkY;
             });
-            
+
             // Wheel zoom
             container.addEventListener('wheel', (e) => {
                 e.preventDefault();
@@ -539,12 +550,12 @@
                 image.style.transform = `scale(${PlanViewer.currentZoom})`;
             });
         }
-        
+
         // Make zoom functions global
         window.zoomIn = function() {
             const image = document.getElementById('planImage');
             const pdfViewer = document.getElementById('pdfViewer');
-            
+
             if (image) {
                 PlanViewer.currentZoom = Math.min(PlanViewer.currentZoom * 1.2, 5);
                 image.style.transform = `scale(${PlanViewer.currentZoom})`;
@@ -562,11 +573,11 @@
                 }
             }
         };
-        
+
         window.zoomOut = function() {
             const image = document.getElementById('planImage');
             const pdfViewer = document.getElementById('pdfViewer');
-            
+
             if (image) {
                 PlanViewer.currentZoom = Math.max(PlanViewer.currentZoom / 1.2, 0.1);
                 image.style.transform = `scale(${PlanViewer.currentZoom})`;
@@ -584,11 +595,11 @@
                 }
             }
         };
-        
+
         window.resetZoom = function() {
             const image = document.getElementById('planImage');
             const pdfViewer = document.getElementById('pdfViewer');
-            
+
             if (image) {
                 PlanViewer.currentZoom = 1;
                 image.style.transform = `scale(${PlanViewer.currentZoom})`;
@@ -602,7 +613,7 @@
                 }
             }
         };
-        
+
         window.downloadPlan = function() {
             if (PlanViewer.currentPlanData) {
                 const link = document.createElement('a');
@@ -613,35 +624,45 @@
                 document.body.removeChild(link);
             }
         };
-        
-        function openPlanViewer(plan) {
+
+        async function openPlanViewer(plan) {
+            // Refresh plan data from API to get latest info
+            try {
+                const response = await api.getPlanDetails({ plan_id: plan.id });
+                if (response.code === 200 && response.data) {
+                    plan = response.data;
+                }
+            } catch (error) {
+                console.log('Could not refresh plan data, using cached data');
+            }
+
             // Fix file path for viewer
             const planWithFullPath = {
                 ...plan,
-                file_path: plan.file_path.startsWith('http') ? plan.file_path : `{{ asset('storage') }}/${plan.file_path}`
+                file_path: plan.file_path.startsWith('http') ? plan.file_path :
+                    `{{ asset('storage') }}/${plan.file_path}`
             };
-            
+
             // Populate plan information
-            document.getElementById('planInfoName').textContent = plan.title;
-            document.getElementById('planInfoType').textContent = plan.drawing_number;
+            document.getElementById('planInfoName').textContent = plan.title || plan.file_name || 'N/A';
             document.getElementById('planInfoFileType').textContent = getFileTypeName(plan.file_type);
             document.getElementById('planInfoSize').textContent = formatFileSize(plan.file_size);
-            document.getElementById('planInfoUpdated').textContent = formatDate(plan.created_at);
-            
+            document.getElementById('planInfoUpdated').textContent = formatDate(plan.updated_at || plan.created_at);
+
             // Load content based on file type
             loadPlanContent(planWithFullPath);
-            
+
             // Show modal
             const modal = new bootstrap.Modal(document.getElementById('planViewerModal'));
             modal.show();
         }
-        
+
         async function deletePlan(planId) {
             // Skip permission check - buttons already control access
-            
+
             const plan = currentDisplayedPlans.find(p => p.id === planId);
             const planTitle = plan ? plan.title : 'this plan';
-            
+
             confirmationModal.show({
                 title: '{{ __('messages.delete_plan') }}',
                 message: `{{ __('messages.confirm_delete_plan_message') }} "${planTitle}"?`,
@@ -651,7 +672,9 @@
                 confirmClass: 'btn-danger',
                 onConfirm: async () => {
                     try {
-                        const response = await api.deletePlan({ plan_id: planId });
+                        const response = await api.deletePlan({
+                            plan_id: planId
+                        });
                         if (response.code === 200) {
                             toastr.success('{{ __('messages.plan_deleted_successfully') }}');
                             loadPlans();
@@ -665,28 +688,28 @@
                 }
             });
         }
-        
+
         function replacePlan(planId) {
             // Skip permission check - buttons already control access
-            
+
             // Create hidden file input for single file selection
             const fileInput = document.createElement('input');
             fileInput.type = 'file';
             fileInput.accept = '*/*';
             fileInput.style.display = 'none';
-            
+
             fileInput.onchange = function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
-                
+
                 console.log('File selected for replacement:', file.name);
-                
+
                 // Check if file is image (exclude DWG)
                 if (file.type.startsWith('image/') && !file.name.toLowerCase().endsWith('.dwg')) {
                     // Store data for drawing modal
                     window.replacingPlanId = planId;
                     window.replacingFile = file;
-                    
+
                     // Open drawing modal
                     if (typeof openDrawingModal === 'function') {
                         openDrawingModal({
@@ -697,13 +720,15 @@
                                 replaceWithMarkup(planId, markedUpImageData);
                             }
                         });
-                        
+
                         // Load image to canvas when modal opens
                         const drawingModal = document.getElementById('drawingModal');
                         if (drawingModal) {
                             drawingModal.addEventListener('shown.bs.modal', function() {
                                 loadImageToCanvas(file);
-                            }, { once: true });
+                            }, {
+                                once: true
+                            });
                         }
                     } else {
                         // Fallback to direct replacement
@@ -713,30 +738,33 @@
                     // Direct replacement for non-image files
                     replaceDirectly(planId, file);
                 }
-                
+
                 // Clean up
                 document.body.removeChild(fileInput);
             };
-            
+
             // Add to DOM and trigger click
             document.body.appendChild(fileInput);
             fileInput.click();
         }
-        
+
         async function replaceWithMarkup(planId, markedUpImageData) {
             try {
                 const response = await fetch(markedUpImageData);
                 const blob = await response.blob();
-                
+
+                // Get original file name from stored file
+                const originalFileName = window.replacingFile ? window.replacingFile.name : 'marked_plan.png';
+
                 const formData = new FormData();
                 formData.append('plan_id', planId);
-                formData.append('file', blob, 'marked_plan.png');
-                
+                formData.append('file', blob, originalFileName);
+
                 const apiResponse = await api.replacePlan(formData);
                 if (apiResponse.code === 200) {
                     const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
                     if (drawingModal) drawingModal.hide();
-                    
+
                     toastr.success('{{ __('messages.plan_replaced_successfully') }}');
                     loadPlans();
                 } else {
@@ -747,61 +775,65 @@
                 toastr.error('{{ __('messages.failed_to_replace_plan') }}');
             }
         }
-        
+
         async function replaceDirectly(planId, file) {
             try {
                 const formData = new FormData();
                 formData.append('plan_id', planId);
                 formData.append('file', file);
-                
+
                 console.log('Replacing plan:', planId, 'with file:', file.name);
                 const response = await api.replacePlan(formData);
                 console.log('Replace response:', response);
-                
+
                 if (response.code === 200) {
                     toastr.success('{{ __('messages.plan_replaced_successfully') }}');
                     loadPlans();
                 } else {
-                    toastr.error('{{ __('messages.failed_to_replace_plan') }}: ' + (response.message || 'Unknown error'));
+                    toastr.error('{{ __('messages.failed_to_replace_plan') }}: ' + (response.message ||
+                        'Unknown error'));
                 }
             } catch (error) {
                 console.error('Replace directly error:', error);
                 toastr.error('{{ __('messages.failed_to_replace_plan') }}: ' + error.message);
             }
         }
-        
+
         // Upload mixed files (images with markup + documents)
         async function uploadMixedFiles(markedUpImageData) {
             if (isUploading) {
                 console.log('Upload already in progress');
                 return;
             }
-            
+
             try {
                 isUploading = true;
                 const formData = window.planFormData;
-                const { images, documents } = window.allSelectedFiles;
-                
+                const {
+                    images,
+                    documents
+                } = window.allSelectedFiles;
+
                 // Remove original files
                 formData.delete('files[]');
-                
+
                 // Add marked up image
                 if (markedUpImageData) {
                     const response = await fetch(markedUpImageData);
                     const blob = await response.blob();
                     formData.append('files[]', blob, 'marked_plan.png');
                 }
-                
+
                 // Add document files as-is
                 documents.forEach((file, index) => {
                     formData.append('files[]', file);
                 });
-                
+
                 const apiResponse = await api.uploadPlan(formData);
                 if (apiResponse.code === 200) {
                     const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
                     if (drawingModal) drawingModal.hide();
-                    
+
                     toastr.success('{{ __('messages.plan_uploaded_successfully') }}');
                     loadPlans();
                 } else {
@@ -821,18 +853,19 @@
                 }
                 if (drawingBtn) {
                     drawingBtn.disabled = false;
-                    drawingBtn.innerHTML = '<i class="fas fa-save me-2"></i><span id="saveButtonText">{{ __('messages.save') }}</span>';
+                    drawingBtn.innerHTML =
+                        '<i class="fas fa-save me-2"></i><span id="saveButtonText">{{ __('messages.save') }}</span>';
                 }
             }
         }
-        
+
         // Upload Plan Form Handler
         document.addEventListener('DOMContentLoaded', function() {
             // Apply permissions after DOM is loaded
             if (window.permissions && window.permissions.user) {
                 window.permissions.applyPermissions();
             }
-            
+
             // Initialize user permissions - contractors have all rights
             window.userPermissions = {
                 canUpload: function() {
@@ -842,7 +875,7 @@
                     return true; // Contractors have delete rights
                 }
             };
-            
+
             // Show buttons based on permissions
             setTimeout(() => {
                 if (window.userPermissions.canUpload()) {
@@ -851,19 +884,19 @@
                         btn.style.display = 'inline-block';
                     });
                 }
-                
+
                 if (window.userPermissions.canDelete()) {
                     document.querySelectorAll('[data-permission="plans:delete"]').forEach(btn => {
                         btn.style.display = 'inline-block';
                     });
                 }
             }, 100);
-            
+
             loadPlans();
-            
+
             // Add scroll listener for pagination
             window.addEventListener('scroll', handlePlansScroll);
-            
+
             const uploadForm = document.getElementById('uploadPlanForm');
             if (uploadForm && !uploadForm.hasAttribute('data-listener-added')) {
                 console.log('Upload form found, adding event listener');
@@ -871,7 +904,7 @@
                 uploadForm.addEventListener('submit', function(e) {
                     e.preventDefault();
                     console.log('Form submitted');
-                    
+
                     // Protect button - early return if already processing
                     const btn = document.getElementById('uploadPlanBtn');
                     if (btn && btn.disabled) {
@@ -879,48 +912,55 @@
                         e.stopImmediatePropagation();
                         return false;
                     }
-                    
+
                     const fileInput = document.getElementById('planFiles');
                     const files = fileInput.files;
-                    
+
                     if (!files || files.length === 0) {
                         toastr.warning('{{ __('messages.please_select_files') }}');
                         return;
                     }
-                    
+
                     // Disable button after validation passes
                     if (btn) {
                         btn.disabled = true;
                         btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
                     }
-                    
+
                     // Store form data
                     window.planFormData = new FormData(uploadForm);
                     const projectId = getProjectIdFromUrl();
                     window.planFormData.append('project_id', projectId);
-                    
+
                     // Separate image and document files (exclude DWG from images)
                     const imageFiles = Array.from(files).filter(file => {
-                        return file.type.startsWith('image/') && !file.name.toLowerCase().endsWith('.dwg');
+                        return file.type.startsWith('image/') && !file.name.toLowerCase().endsWith(
+                            '.dwg');
                     });
                     const documentFiles = Array.from(files).filter(file => {
-                        return !file.type.startsWith('image/') || file.name.toLowerCase().endsWith('.dwg');
+                        return !file.type.startsWith('image/') || file.name.toLowerCase().endsWith(
+                            '.dwg');
                     });
-                    
+
                     // Store all files for later processing
-                    window.allSelectedFiles = { images: imageFiles, documents: documentFiles };
-                    
+                    window.allSelectedFiles = {
+                        images: imageFiles,
+                        documents: documentFiles
+                    };
+
                     if (imageFiles.length > 0) {
                         // Close upload modal
-                        const uploadModal = bootstrap.Modal.getInstance(document.getElementById('uploadPlanModal'));
+                        const uploadModal = bootstrap.Modal.getInstance(document.getElementById(
+                            'uploadPlanModal'));
                         if (uploadModal) uploadModal.hide();
-                        
+
                         // Reset button when going to drawing modal (user can still cancel)
                         if (btn) {
                             btn.disabled = false;
-                            btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                            btn.innerHTML =
+                                '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
                         }
-                        
+
                         // Open drawing modal for images
                         setTimeout(() => {
                             // Check if drawing modal function exists
@@ -931,11 +971,13 @@
                                     mode: 'image',
                                     onSave: function(markedUpImageData) {
                                         // Protect drawing save button
-                                        const drawingBtn = document.getElementById('saveDrawingBtn');
+                                        const drawingBtn = document.getElementById(
+                                            'saveDrawingBtn');
                                         if (drawingBtn && drawingBtn.disabled) return;
                                         if (drawingBtn) {
                                             drawingBtn.disabled = true;
-                                            drawingBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                                            drawingBtn.innerHTML =
+                                                '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
                                         }
                                         uploadMixedFiles(markedUpImageData);
                                     }
@@ -944,9 +986,9 @@
                                 console.error('Drawing modal not available, uploading directly');
                                 uploadPlanDirectly();
                             }
-                            
+
                             window.selectedFiles = imageFiles;
-                            
+
                             // Add event listener only if modal exists
                             const drawingModal = document.getElementById('drawingModal');
                             if (drawingModal) {
@@ -956,7 +998,9 @@
                                     } else {
                                         loadMultipleFiles(imageFiles);
                                     }
-                                }, { once: true });
+                                }, {
+                                    once: true
+                                });
                             }
                         }, 300);
                     } else {
@@ -965,13 +1009,13 @@
                     }
                 });
             }
-            
+
             window.uploadPlanDirectly = async function() {
                 if (isUploading) {
                     console.log('Upload already in progress');
                     return;
                 }
-                
+
                 try {
                     isUploading = true;
                     const response = await api.uploadPlan(window.planFormData);
@@ -992,7 +1036,8 @@
                     const btn = document.getElementById('uploadPlanBtn');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                        btn.innerHTML =
+                        '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
                     }
                 }
             }
@@ -1002,5 +1047,3 @@
     <script src="{{ asset('website/js/confirmation-modal.js') }}"></script>
 
 @endsection
-
-

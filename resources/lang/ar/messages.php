@@ -1053,4 +1053,8 @@ return [
     'error_deleting_project' => 'خطأ في حذف المشروع',
     'total_tasks' => 'إجمالي المهام',
     'pending_tasks' => 'المهام المعلقة',
+    'edit_project' => 'تعديل المشروع',
+    'project_updated_successfully' => 'تم تحديث المشروع بنجاح',
+    'failed_to_update_project' => 'فشل في تحديث المشروع',
+    'error_updating_project' => 'خطأ في تحديث المشروع',
 ];

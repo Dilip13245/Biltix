@@ -181,12 +181,14 @@
             tbody.innerHTML = inspections.map(inspection => {
                 const statusBadge = getStatusBadge(inspection.status);
                 const date = new Date(inspection.created_at).toLocaleDateString();
+                const title = inspection.category || 'Inspection';
+                const subtitle = inspection.phase_name || inspection.description || '-';
 
                 return `
                     <tr>
                         <td class="border-0">
-                            <div class="fw-semibold">${inspection.description || 'Inspection'}</div>
-                            <div class="small text-muted">${inspection.category}</div>
+                            <div class="fw-semibold">${title}</div>
+                            <div class="small text-muted">${subtitle}</div>
                         </td>
                         <td class="border-0">${date}</td>
                         <td class="border-0">${statusBadge}</td>

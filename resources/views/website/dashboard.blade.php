@@ -26,9 +26,11 @@
     <!-- TOASTR CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
-    
+
     <!-- GOOGLE MAPS -->
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places,marker&language={{ app()->getLocale() }}&callback=Function.prototype"></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places,marker&language={{ app()->getLocale() }}&callback=Function.prototype">
+    </script>
 
     <style>
         .step-indicator {
@@ -196,75 +198,75 @@
             left: 2.5rem !important;
             right: auto !important;
         }
-        
+
         [dir="rtl"] .vanilla-calendar-wrapper input {
             padding-left: 3.5rem !important;
             padding-right: 0.75rem !important;
         }
-        
+
         [dir="ltr"] .vanilla-calendar-wrapper input {
             padding-right: 2.5rem !important;
             padding-left: 0.75rem !important;
         }
-        
+
         /* Move validation icon to avoid overlap with calendar icon */
         [dir="rtl"] .vanilla-calendar-wrapper .is-invalid {
             background-position: left 0.5rem center !important;
             padding-left: 3.5rem !important;
             padding-right: 0.75rem !important;
         }
-        
+
         [dir="ltr"] .vanilla-calendar-wrapper .is-invalid {
             background-position: right 2.5rem center !important;
             padding-right: 2.25rem !important;
             padding-left: 0.75rem !important;
         }
-        
+
         /* Google Maps Styles */
         #map {
             width: 100%;
             height: 450px;
             border-radius: 12px;
             border: 2px solid #e9ecef;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        
+
         .pac-container {
             border-radius: 8px;
             margin-top: 5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             font-family: 'Poppins', sans-serif;
             z-index: 9999 !important;
         }
-        
+
         .pac-item {
             padding: 10px;
             cursor: pointer;
             border-top: 1px solid #e9ecef;
         }
-        
+
         .pac-item:hover {
             background-color: #fff5f0;
         }
-        
+
         .pac-icon {
             margin-top: 5px;
         }
-        
+
         .map-search-wrapper {
             position: relative;
             margin-bottom: 15px;
         }
-        
+
         .map-search-wrapper .form-control {
             padding-right: 40px;
         }
-        
+
         [dir="rtl"] .map-search-wrapper .form-control {
             padding-right: 0.75rem;
             padding-left: 40px;
         }
-        
+
         .map-search-icon {
             position: absolute;
             right: 12px;
@@ -273,12 +275,12 @@
             color: #6c757d;
             pointer-events: none;
         }
-        
+
         [dir="rtl"] .map-search-icon {
             right: auto;
             left: 12px;
         }
-        
+
         .location-info {
             background: #f8f9fa;
             padding: 12px;
@@ -286,36 +288,36 @@
             margin-top: 10px;
             font-size: 13px;
         }
-        
+
         .location-info .badge {
             font-size: 11px;
             padding: 4px 8px;
         }
-        
+
         /* Search icon RTL support */
         .serchBar .fa-search {
             left: 12px;
         }
-        
+
         [dir="rtl"] .serchBar .fa-search {
             left: auto;
             right: 12px;
         }
-        
+
         .serchBar input {
             padding-left: 40px;
         }
-        
+
         [dir="rtl"] .serchBar input {
             padding-left: 0.75rem;
             padding-right: 40px;
         }
-        
+
         /* Custom Combo Dropdown */
         .custom-combo-dropdown {
             position: relative;
         }
-        
+
         .custom-combo-dropdown .dropdown-arrow {
             position: absolute;
             right: 12px;
@@ -325,22 +327,22 @@
             color: #6c757d;
             font-size: 12px;
         }
-        
+
         [dir="rtl"] .custom-combo-dropdown .dropdown-arrow {
             right: auto;
             left: 12px;
         }
-        
+
         .custom-combo-dropdown input {
             padding-right: 35px;
             cursor: pointer;
         }
-        
+
         [dir="rtl"] .custom-combo-dropdown input {
             padding-right: 0.75rem;
             padding-left: 35px;
         }
-        
+
         .dropdown-options {
             position: absolute;
             top: 100%;
@@ -354,23 +356,23 @@
             overflow-y: auto;
             z-index: 1000;
             display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        
+
         .dropdown-options.show {
             display: block;
         }
-        
+
         .dropdown-option {
             padding: 10px 12px;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        
+
         .dropdown-option:hover {
             background-color: #f8f9fa;
         }
-        
+
         .dropdown-option:active {
             background-color: #e9ecef;
         }
@@ -412,7 +414,8 @@
                             </div>
 
                             <form class="d-none d-md-block serchBar position-relative">
-                                <i class="fas fa-search position-absolute top-50 translate-middle-y" style="color: #6c757d; pointer-events: none;"></i>
+                                <i class="fas fa-search position-absolute top-50 translate-middle-y"
+                                    style="color: #6c757d; pointer-events: none;"></i>
                                 <input class="form-control" type="search"
                                     placeholder="{{ __('messages.search_projects') }}" aria-label="Search"
                                     data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
@@ -553,14 +556,25 @@
                             </button>
                         @endcan
                         <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" id="statusFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
+                                type="button" id="statusFilterDropdown" data-bs-toggle="dropdown"
+                                aria-expanded="false">
                                 <i class="fas fa-filter"></i>
                                 <span id="statusFilterText">{{ __('messages.all_status') }}</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="statusFilterDropdown">
-                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setStatusFilter('all', '{{ __('messages.all_status') }}')"><i class="fas fa-list text-secondary"></i>{{ __('messages.all_status') }}</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setStatusFilter('active', '{{ __('messages.active') }}')"><i class="fas fa-play-circle text-success"></i>{{ __('messages.active') }}</a></li>
-                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#" onclick="setStatusFilter('completed', '{{ __('messages.completed') }}')"><i class="fas fa-check-circle text-primary"></i>{{ __('messages.completed') }}</a></li>
+                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"
+                                        onclick="setStatusFilter('all', '{{ __('messages.all_status') }}')"><i
+                                            class="fas fa-list text-secondary"></i>{{ __('messages.all_status') }}</a>
+                                </li>
+                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"
+                                        onclick="setStatusFilter('active', '{{ __('messages.active') }}')"><i
+                                            class="fas fa-play-circle text-success"></i>{{ __('messages.active') }}</a>
+                                </li>
+                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"
+                                        onclick="setStatusFilter('completed', '{{ __('messages.completed') }}')"><i
+                                            class="fas fa-check-circle text-primary"></i>{{ __('messages.completed') }}</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -671,16 +685,27 @@
                                             <label for="type"
                                                 class="form-label fw-medium">{{ __('messages.project_type_example') }}</label>
                                             <div class="custom-combo-dropdown position-relative">
-                                                <input type="text" class="form-control Input_control" id="type" name="type"
-                                                    placeholder="{{ __('messages.select_type') }}" required autocomplete="off">
+                                                <input type="text" class="form-control Input_control" id="type"
+                                                    name="type" placeholder="{{ __('messages.select_type') }}"
+                                                    required autocomplete="off">
                                                 <i class="fas fa-chevron-down dropdown-arrow"></i>
                                                 <div class="dropdown-options" id="typeDropdown">
-                                                    <div class="dropdown-option" data-value="{{ __('messages.villa') }}">{{ __('messages.villa') }}</div>
-                                                    <div class="dropdown-option" data-value="{{ __('messages.tower') }}">{{ __('messages.tower') }}</div>
-                                                    <div class="dropdown-option" data-value="{{ __('messages.hospital') }}">{{ __('messages.hospital') }}</div>
-                                                    <div class="dropdown-option" data-value="{{ __('messages.commercial') }}">{{ __('messages.commercial') }}</div>
-                                                    <div class="dropdown-option" data-value="{{ __('messages.residential') }}">{{ __('messages.residential') }}</div>
-                                                    <div class="dropdown-option" data-value="{{ __('messages.industrial') }}">{{ __('messages.industrial') }}</div>
+                                                    <div class="dropdown-option" data-value="{{ __('messages.villa') }}">
+                                                        {{ __('messages.villa') }}</div>
+                                                    <div class="dropdown-option" data-value="{{ __('messages.tower') }}">
+                                                        {{ __('messages.tower') }}</div>
+                                                    <div class="dropdown-option"
+                                                        data-value="{{ __('messages.hospital') }}">
+                                                        {{ __('messages.hospital') }}</div>
+                                                    <div class="dropdown-option"
+                                                        data-value="{{ __('messages.commercial') }}">
+                                                        {{ __('messages.commercial') }}</div>
+                                                    <div class="dropdown-option"
+                                                        data-value="{{ __('messages.residential') }}">
+                                                        {{ __('messages.residential') }}</div>
+                                                    <div class="dropdown-option"
+                                                        data-value="{{ __('messages.industrial') }}">
+                                                        {{ __('messages.industrial') }}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -732,7 +757,8 @@
                                             <div class="location-info" id="locationInfo" style="display: none;">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div>
-                                                        <span class="badge bg-success {{ margin_end(2) }}"><i class="fas fa-map-marker-alt {{ margin_end(1) }}"></i>{{ __('messages.selected') }}</span>
+                                                        <span class="badge bg-success {{ margin_end(2) }}"><i
+                                                                class="fas fa-map-marker-alt {{ margin_end(1) }}"></i>{{ __('messages.selected') }}</span>
                                                         <span id="selectedLocation" class="fw-medium"></span>
                                                     </div>
                                                 </div>
@@ -767,7 +793,8 @@
                                         <div id="construction-files" class="selected-files mt-3"></div>
                                     </div>
                                     <div id="construction-notes-container" class="mt-3" style="display: none;">
-                                        <label class="form-label fw-medium">{{ __('messages.add_notes_for_files') }}</label>
+                                        <label
+                                            class="form-label fw-medium">{{ __('messages.add_notes_for_files') }}</label>
                                         <div id="construction-notes-list"></div>
                                     </div>
                                 </div>
@@ -789,7 +816,8 @@
                                         <div id="gantt-files" class="selected-files mt-3"></div>
                                     </div>
                                     <div id="gantt-notes-container" class="mt-3" style="display: none;">
-                                        <label class="form-label fw-medium">{{ __('messages.add_notes_for_files') }}</label>
+                                        <label
+                                            class="form-label fw-medium">{{ __('messages.add_notes_for_files') }}</label>
                                         <div id="gantt-notes-list"></div>
                                     </div>
                                 </div>
@@ -799,8 +827,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                             data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
-                        <button type="button" class="btn btn-outline-primary d-none" id="prevBtn"
-                            onclick="changeStep(-1)">
+                        <button type="button" class="btn orange_btn d-none" id="prevBtn" onclick="changeStep(-1)">
                             <i
                                 class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }} {{ is_rtl() ? 'ms-2' : 'me-2' }}"></i>{{ __('messages.previous') }}
                         </button>
@@ -1057,25 +1084,33 @@
                 projectCard.setAttribute('data-wow-delay', `${index * 0.1}s`);
 
                 projectCard.innerHTML = `
-                    <a href="/website/project/${project.id}/plans">
+                    <a href="/website/project/${project.id}/plans" class="text-decoration-none">
                         <div class="card project-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 class="fw-bold mb-0">${project.project_title}</h6>
-                                    <span class="badge ${statusClass}">${statusText}</span>
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <h6 class="mb-0 fw-semibold" >${project.project_title}</h6>
+                                    </div>
+                                    <i class="fas fa-ellipsis-v" style="color: #4A90E2;"></i>
                                 </div>
-                                <div class="text-muted small mb-2">${project.type || 'Construction Project'}</div>
+                                <hr style="border-color: #e0e0e0; margin: 12px 0;">
                                 <div class="mb-2">
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <span class="text-muted small">Progress</span>
-                                        <span class="fw-medium small">${progressPercent}%</span>
-                                    </div>
-                                    <div class="progress" style="height: 6px;">
-                                        <div class="progress-bar ${getProgressBarClass(progressPercent)}" style="width: ${progressPercent}%;"></div>
-                                    </div>
+                                    <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
+                                    <span class="text-muted ms-2" style="font-size: 14px;">${project.type || 'N/A'}</span>
                                 </div>
-                                <div class="small text-muted mb-2 mb-md-3">
-                                    ${project.status === 'completed' ? 'Completed' : 'Due'}: ${formatDate(project.project_due_date)}
+                                <div class="mb-2">
+                                    <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
+                                    <span class="text-muted ms-2" style="font-size: 14px;">${project.project_location || 'N/A'}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
+                                        <span class="text-muted ms-2" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                    </div>
+                                    <div>
+                                        <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
+                                        <span class="text-muted ms-2" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1151,18 +1186,18 @@
             // Custom Combo Dropdown Handler
             const typeInput = document.getElementById('type');
             const typeDropdown = document.getElementById('typeDropdown');
-            
+
             if (typeInput && typeDropdown) {
                 // Show dropdown on input click
                 typeInput.addEventListener('click', function() {
                     typeDropdown.classList.toggle('show');
                 });
-                
+
                 // Filter options on input
                 typeInput.addEventListener('input', function() {
                     const filter = this.value.toLowerCase();
                     const options = typeDropdown.querySelectorAll('.dropdown-option');
-                    
+
                     options.forEach(option => {
                         const text = option.textContent.toLowerCase();
                         if (text.includes(filter)) {
@@ -1171,10 +1206,10 @@
                             option.style.display = 'none';
                         }
                     });
-                    
+
                     typeDropdown.classList.add('show');
                 });
-                
+
                 // Select option on click
                 typeDropdown.querySelectorAll('.dropdown-option').forEach(option => {
                     option.addEventListener('click', function() {
@@ -1182,7 +1217,7 @@
                         typeDropdown.classList.remove('show');
                     });
                 });
-                
+
                 // Close dropdown when clicking outside
                 document.addEventListener('click', function(e) {
                     if (!typeInput.contains(e.target) && !typeDropdown.contains(e.target)) {
@@ -1190,7 +1225,7 @@
                     }
                 });
             }
-            
+
             // Load notifications and projects on page load
             loadNotifications();
             loadProjects('all', true);
@@ -1216,7 +1251,7 @@
                                 dueDateInput.value = '';
                                 window.dueDateMinDate = nextDay;
                                 window.dueDateStartMonth =
-                                nextDay; // Set calendar to open at this month
+                                    nextDay; // Set calendar to open at this month
                             }
                         }
                     });
@@ -1224,7 +1259,7 @@
             }, 500);
 
             // Status filter functionality is now handled by setStatusFilter function
-            
+
             // Add setStatusFilter function to global scope
             window.setStatusFilter = function(value, text) {
                 document.getElementById('statusFilterText').textContent = text;
@@ -1252,11 +1287,14 @@
             // Multi-step form variables
             let currentStep = 1;
             const totalSteps = 3;
-            
+
             // Initialize Google Maps
             let map, marker, autocomplete;
-            const saudiArabia = { lat: 23.8859, lng: 45.0792 };
-            
+            const saudiArabia = {
+                lat: 23.8859,
+                lng: 45.0792
+            };
+
             function initMap() {
                 try {
                     map = new google.maps.Map(document.getElementById('map'), {
@@ -1266,13 +1304,15 @@
                         streetViewControl: false,
                         fullscreenControl: true
                     });
-                    
+
                     const input = document.getElementById('project_location');
                     autocomplete = new google.maps.places.Autocomplete(input, {
-                        componentRestrictions: { country: 'sa' },
+                        componentRestrictions: {
+                            country: 'sa'
+                        },
                         fields: ['formatted_address', 'geometry', 'name']
                     });
-                    
+
                     autocomplete.addListener('place_changed', function() {
                         const place = autocomplete.getPlace();
                         if (!place.geometry) {
@@ -1281,57 +1321,65 @@
                         }
                         updateMapLocation(place.geometry.location, place.formatted_address || place.name);
                     });
-                    
+
                     map.addListener('click', function(event) {
                         const geocoder = new google.maps.Geocoder();
-                        geocoder.geocode({ location: event.latLng }, function(results, status) {
+                        geocoder.geocode({
+                            location: event.latLng
+                        }, function(results, status) {
                             if (status === 'OK' && results[0]) {
                                 updateMapLocation(event.latLng, results[0].formatted_address);
-                                document.getElementById('project_location').value = results[0].formatted_address;
+                                document.getElementById('project_location').value = results[0]
+                                    .formatted_address;
                             }
                         });
                     });
                 } catch (error) {
                     console.error('Map initialization error:', error);
-                    document.getElementById('map').innerHTML = '<div class="alert alert-warning m-3"><i class="fas fa-exclamation-triangle me-2"></i>{{ __('messages.map_loading_error') }}</div>';
+                    document.getElementById('map').innerHTML =
+                        '<div class="alert alert-warning m-3"><i class="fas fa-exclamation-triangle me-2"></i>{{ __('messages.map_loading_error') }}</div>';
                 }
             }
-            
+
             function updateMapLocation(location, address) {
                 if (marker) marker.setMap(null);
-                
+
                 marker = new google.maps.Marker({
                     position: location,
                     map: map,
                     animation: google.maps.Animation.DROP,
                     draggable: true
                 });
-                
+
                 map.setCenter(location);
                 map.setZoom(15);
-                
+
                 document.getElementById('latitude').value = location.lat();
                 document.getElementById('longitude').value = location.lng();
                 document.getElementById('selectedLocation').textContent = address;
-                document.getElementById('coordinatesDisplay').textContent = 
+                document.getElementById('coordinatesDisplay').textContent =
                     `{{ __('messages.lat') }}: ${location.lat().toFixed(6)}, {{ __('messages.lng') }}: ${location.lng().toFixed(6)}`;
                 document.getElementById('locationInfo').style.display = 'block';
-                
+
                 marker.addListener('dragend', function(event) {
                     const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ location: event.latLng }, function(results, status) {
+                    geocoder.geocode({
+                        location: event.latLng
+                    }, function(results, status) {
                         if (status === 'OK' && results[0]) {
-                            document.getElementById('project_location').value = results[0].formatted_address;
+                            document.getElementById('project_location').value = results[0]
+                                .formatted_address;
                             document.getElementById('latitude').value = event.latLng.lat();
                             document.getElementById('longitude').value = event.latLng.lng();
-                            document.getElementById('selectedLocation').textContent = results[0].formatted_address;
-                            document.getElementById('coordinatesDisplay').textContent = 
+                            document.getElementById('selectedLocation').textContent = results[0]
+                                .formatted_address;
+                            document.getElementById('coordinatesDisplay').textContent =
                                 `{{ __('messages.lat') }}: ${event.latLng.lat().toFixed(6)}, {{ __('messages.lng') }}: ${event.latLng.lng().toFixed(6)}`;
                         }
                     });
                 });
             }
-            
+
             const createProjectModal = document.getElementById('createProjectModal');
             if (createProjectModal) {
                 createProjectModal.addEventListener('shown.bs.modal', function() {
@@ -1450,7 +1498,7 @@
             if (createProjectForm) {
                 createProjectForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    
+
                     // Protect button
                     const btn = document.querySelector('#createProjectModal .btn.orange_btn');
                     if (btn && btn.disabled) return;
@@ -1493,7 +1541,8 @@
                             let allFiles = [];
                             fileInputs.forEach(input => {
                                 if (input.files && input.files.length > 0) {
-                                    const imageFiles = Array.from(input.files).filter(file => 
+                                    const imageFiles = Array.from(input.files).filter(
+                                        file =>
                                         file.type.startsWith('image/'));
                                     allFiles = allFiles.concat(imageFiles);
                                 }
@@ -1548,28 +1597,28 @@
 
                         container.appendChild(fileItem);
                     });
-                    
+
                     // Show notes section for all files
                     showNotesForImages(input, containerId);
                 }
             };
-            
+
             // Show smart notes section - only for selected files
             function showNotesForImages(input, containerId) {
                 const notesContainerId = containerId.replace('-files', '-notes-container');
                 const notesListId = containerId.replace('-files', '-notes-list');
                 const notesContainer = document.getElementById(notesContainerId);
                 const notesList = document.getElementById(notesListId);
-                
+
                 if (!notesContainer || !notesList) return;
-                
+
                 // Clear previous notes
                 notesList.innerHTML = '';
-                
+
                 // Show smart notes interface for multiple files
                 if (input.files && input.files.length > 0) {
                     notesContainer.style.display = 'block';
-                    
+
                     if (input.files.length > 3) {
                         // Smart interface for many files
                         const smartInterface = document.createElement('div');
@@ -1582,21 +1631,21 @@
                                 ${Array.from(input.files).map((file, index) => {
                                     const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                     return `
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
-                                                    onchange="toggleFileDescription('${containerId}', ${index})">
-                                                <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
-                                                    <i class="${fileIcon} me-2"></i>
-                                                    <span class="text-truncate">${file.name}</span>
-                                                </label>
-                                            </div>
-                                            <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
-                                                <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
-                                                    placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                            </div>
-                                        </div>
-                                    `;
+                                                            <div class="col-12">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
+                                                                        onchange="toggleFileDescription('${containerId}', ${index})">
+                                                                    <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
+                                                                        <i class="${fileIcon} me-2"></i>
+                                                                        <span class="text-truncate">${file.name}</span>
+                                                                    </label>
+                                                                </div>
+                                                                <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
+                                                                    <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
+                                                                        placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        `;
                                 }).join('')}
                             </div>
                         `;
@@ -1606,7 +1655,8 @@
                         Array.from(input.files).forEach((file, index) => {
                             const noteItem = document.createElement('div');
                             noteItem.className = 'mb-3';
-                            const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
+                            const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' :
+                                'fas fa-file text-primary';
                             noteItem.innerHTML = `
                                 <div class="d-flex align-items-center mb-2">
                                     <i class="${fileIcon} me-2"></i>
@@ -1622,12 +1672,12 @@
                     notesContainer.style.display = 'none';
                 }
             }
-            
+
             // Toggle description input for selected files
             window.toggleFileDescription = function(containerId, index) {
                 const checkbox = document.getElementById(`file_${containerId}_${index}`);
                 const descContainer = document.getElementById(`desc_${containerId}_${index}`);
-                
+
                 if (checkbox.checked) {
                     descContainer.style.display = 'block';
                     const textarea = descContainer.querySelector('textarea');
@@ -1713,7 +1763,7 @@
                         construction_plans: [],
                         gantt_chart: []
                     };
-                    
+
                     const fileInputs = document.querySelectorAll('input[type="file"]');
                     fileInputs.forEach(input => {
                         if (input.files && input.files.length > 0) {
@@ -1751,7 +1801,7 @@
                             fileNotes[input.name] = input.value.trim();
                         }
                     });
-                    
+
                     // Add file notes to form data
                     if (Object.keys(fileNotes).length > 0) {
                         formData.append('file_notes', JSON.stringify(fileNotes));
@@ -1765,17 +1815,21 @@
                             if (input.files && input.files.length > 0) {
                                 Array.from(input.files).forEach(file => {
                                     if (file.type.startsWith('image/')) {
-                                        imageFiles.push({ file, inputName: input.name });
+                                        imageFiles.push({
+                                            file,
+                                            inputName: input.name
+                                        });
                                     }
                                 });
                             }
                         });
-                        
+
                         for (let i = 0; i < markedUpImageData.length; i++) {
                             if (markedUpImageData[i] && imageFiles[i]) {
                                 const targetInput = imageFiles[i].inputName;
-                                
-                                if (typeof markedUpImageData[i] === 'string' && markedUpImageData[i].startsWith('data:')) {
+
+                                if (typeof markedUpImageData[i] === 'string' && markedUpImageData[i].startsWith(
+                                        'data:')) {
                                     // This is a canvas data URL (marked up image)
                                     const response = await fetch(markedUpImageData[i]);
                                     const blob = await response.blob();
@@ -1798,7 +1852,7 @@
                                 });
                             }
                         });
-                        
+
                         if (typeof markedUpImageData === 'string' && markedUpImageData.startsWith('data:')) {
                             // Single marked up image
                             const response = await fetch(markedUpImageData);
@@ -1838,7 +1892,8 @@
                     }
                     if (drawingBtn) {
                         drawingBtn.disabled = false;
-                        drawingBtn.innerHTML = '<i class="fas fa-save me-2"></i><span id="saveButtonText">Save</span>';
+                        drawingBtn.innerHTML =
+                            '<i class="fas fa-save me-2"></i><span id="saveButtonText">Save</span>';
                     }
                 }
             }
@@ -1847,7 +1902,7 @@
             async function createProjectDirectly() {
                 try {
                     const formData = new FormData(document.getElementById('createProjectForm'));
-                    
+
                     // Collect file notes even for direct creation
                     const fileNotes = {};
                     const noteInputs = document.querySelectorAll('textarea[name^="file_notes_"]');
@@ -1856,12 +1911,12 @@
                             fileNotes[input.name] = input.value.trim();
                         }
                     });
-                    
+
                     // Add file notes to form data
                     if (Object.keys(fileNotes).length > 0) {
                         formData.append('file_notes', JSON.stringify(fileNotes));
                     }
-                    
+
                     const response = await api.createProject(formData);
 
                     if (response.code === 200) {

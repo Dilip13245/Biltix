@@ -514,7 +514,7 @@ select {
 .orange_btn {
   background: #f58d2e;
   color: #fff;
-  border: none;
+  border: 2px solid #f58d2e;
   padding: 0.7rem 1.5rem;
   border-radius: 8px;
   font-weight: 500;
@@ -531,6 +531,7 @@ select {
 .orange_btn:hover {
   background: #d97706;
   color: #fff;
+  border-color: #d97706;
   transform: translateY(-2px);
   text-decoration: none;
   -webkit-transform: translateY(-2px);

@@ -36,52 +36,8 @@ class PhaseMilestone extends Model
 
     public function getStartDateAttribute()
     {
-        if (!$this->phase || !$this->phase->project) {
-            return null;
-        }
-
-        $project = $this->phase->project;
-        if (!$project->project_start_date) {
-            return null;
-        }
-
-        // Calculate start date based on previous milestones in the same phase
-        $previousMilestones = $this->phase->milestones()
-            ->where('id', '<', $this->id)
-            ->where('is_active', true)
-            ->where('is_deleted', false)
-            ->orderBy('id')
-            ->get();
-
-        $startDate = $project->project_start_date->copy();
-        
-        // Add days from previous phases
-        $previousPhases = $project->phases()
-            ->where('id', '<', $this->phase_id)
-            ->where('is_active', true)
-            ->where('is_deleted', false)
-            ->with('milestones')
-            ->orderBy('id')
-            ->get();
-            
-        foreach ($previousPhases as $prevPhase) {
-            foreach ($prevPhase->milestones as $prevMilestone) {
-                if ($prevMilestone->days) {
-                    $totalDays = $prevMilestone->days + ($prevMilestone->attributes['extension_days'] ?? 0);
-                    $startDate = $startDate->addDays($totalDays);
-                }
-            }
-        }
-        
-        // Add days from previous milestones in same phase
-        foreach ($previousMilestones as $milestone) {
-            if ($milestone->days) {
-                $totalDays = $milestone->days + ($milestone->attributes['extension_days'] ?? 0);
-                $startDate = $startDate->addDays($totalDays);
-            }
-        }
-
-        return $startDate;
+        // Use milestone creation date as start date
+        return $this->created_at;
     }
 
     public function getDueDateAttribute()
@@ -117,6 +73,11 @@ class PhaseMilestone extends Model
         $originalDueDate = $this->original_due_date;
         
         if (!$startDate || !$originalDueDate) {
+            return 0;
+        }
+
+        // If milestone hasn't started yet, return 0
+        if (now()->lt($startDate)) {
             return 0;
         }
 

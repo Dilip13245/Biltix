@@ -89,7 +89,7 @@ class InspectionController extends Controller
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
-            $query = Inspection::with(['checklists', 'images', 'createdBy:id,name'])
+            $query = Inspection::with(['checklists', 'images', 'createdBy:id,name', 'phase:id,title'])
                 ->where('is_active', 1)
                 ->where('is_deleted', 0);
 
@@ -113,7 +113,8 @@ class InspectionController extends Controller
                     return $image;
                 });
                 $inspection->created_by_name = $inspection->createdBy ? $inspection->createdBy->name : null;
-                unset($inspection->createdBy); // Remove the full created_by object
+                $inspection->phase_name = $inspection->phase ? $inspection->phase->title : null;
+                unset($inspection->createdBy, $inspection->phase);
                 return $inspection;
             });
 
@@ -133,7 +134,7 @@ class InspectionController extends Controller
             $inspection_id = $request->input('inspection_id');
             $user_id = $request->input('user_id');
 
-            $inspection = Inspection::with(['checklists', 'images', 'createdBy:id,name', 'inspectedBy:id,name'])
+            $inspection = Inspection::with(['checklists', 'images', 'createdBy:id,name', 'inspectedBy:id,name', 'phase:id,title'])
                 ->where('id', $inspection_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
@@ -150,7 +151,8 @@ class InspectionController extends Controller
             
             $inspection->created_by_name = $inspection->createdBy ? $inspection->createdBy->name : null;
             $inspection->inspected_by_name = $inspection->inspectedBy ? $inspection->inspectedBy->name : null;
-            unset($inspection->createdBy, $inspection->inspectedBy);
+            $inspection->phase_name = $inspection->phase ? $inspection->phase->title : null;
+            unset($inspection->createdBy, $inspection->inspectedBy, $inspection->phase);
 
             return $this->toJsonEnc($inspection, trans('api.inspections.details_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
