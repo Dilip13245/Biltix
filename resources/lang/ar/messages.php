@@ -577,6 +577,8 @@ return [
     'add_item' => 'إضافة عنصر',
     'images_optional' => 'الصور (اختياري)',
     'max_10mb_per_image' => 'الحد الأقصى 10 ميجابايت لكل صورة. التنسيقات: JPG، JPEG، PNG',
+    'type_to_add_new_category' => 'اكتب واضغط Enter لإضافة فئة جديدة',
+    'filter_by_category' => 'تصفية حسب الفئة',
     
     // Project progress
     'track_project_phases' => 'تتبع مراحل المشروع والمعالم',

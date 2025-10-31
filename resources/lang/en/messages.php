@@ -588,6 +588,8 @@ return [
     'add_item' => 'Add Item',
     'images_optional' => 'Images (Optional)',
     'max_10mb_per_image' => 'Max 10MB per image. Formats: JPG, JPEG, PNG',
+    'type_to_add_new_category' => 'Type and press Enter to add new category',
+    'filter_by_category' => 'Filter by Category',
     
     // Project progress
     'track_project_phases' => 'Track project phases and milestones',

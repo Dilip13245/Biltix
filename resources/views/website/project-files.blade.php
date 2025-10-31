@@ -504,7 +504,7 @@
                         <div class="card-body text-center p-3">
                             <i class="fas fa-folder fa-3x text-primary mb-2"></i>
                             <h6 class="card-title mb-1 text-truncate">${folder.name}</h6>
-                            <small class="text-muted">${folder.files_count || 0} {{ __('messages.files') }}</small>
+                            <small class="text-muted">${folder.files_count || 0} {{ __('messages.documents') }}</small>
                         </div>
                     </div>
                 </div>

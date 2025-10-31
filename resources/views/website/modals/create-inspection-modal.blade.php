@@ -43,7 +43,7 @@
           
           <div class="mb-3">
             <label for="category" class="form-label fw-medium">{{ __("messages.category") }}</label>
-            <select class="form-select Input_control" id="category" name="category" required>
+            <select class="form-select Input_control searchable-select" id="category" name="category" required>
               <option value="">{{ __("messages.select_category") }}</option>
               <option value="structural">{{ __("messages.structural") }}</option>
               <option value="electrical">{{ __("messages.electrical") }}</option>
@@ -53,6 +53,7 @@
               <option value="mechanical">{{ __("messages.mechanical") }}</option>
               <option value="finishing">{{ __("messages.finishing") }}</option>
             </select>
+            <small class="text-muted">{{ __("messages.type_to_add_new_category") }}</small>
           </div>
 
           <div class="mb-3">
@@ -126,6 +127,54 @@ function protectButton(btn) {
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-plus me-2"></i>{{ __("messages.create_inspection") }}';
   }, 5000);
+}
+
+// Allow adding new category when modal opens
+const createInspectionModal = document.getElementById('createInspectionModal');
+if (createInspectionModal) {
+  createInspectionModal.addEventListener('shown.bs.modal', function() {
+    setTimeout(() => {
+      const categorySelect = document.getElementById('category');
+      const categoryWrapper = categorySelect?.closest('.searchable-dropdown');
+      const categoryInput = categoryWrapper?.querySelector('input[type="text"]');
+      
+      if (categoryInput && !categoryInput.hasAttribute('data-custom-listener')) {
+        categoryInput.setAttribute('data-custom-listener', 'true');
+        categoryInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && this.value.trim()) {
+            e.preventDefault();
+            const newValue = this.value.trim();
+            
+            // Check if option already exists
+            const existingOption = Array.from(categorySelect.options).find(opt => 
+              opt.value.toLowerCase() === newValue.toLowerCase()
+            );
+            
+            if (!existingOption) {
+              // Add new option
+              const newOption = document.createElement('option');
+              newOption.value = newValue;
+              newOption.textContent = newValue;
+              categorySelect.appendChild(newOption);
+              
+              // Update searchable dropdown
+              if (categorySelect.searchableDropdown) {
+                categorySelect.searchableDropdown.updateOptions();
+              }
+            }
+            
+            // Select the option
+            categorySelect.value = existingOption ? existingOption.value : newValue;
+            this.value = existingOption ? existingOption.textContent : newValue;
+            
+            if (categorySelect.searchableDropdown) {
+              categorySelect.searchableDropdown.hideDropdown();
+            }
+          }
+        });
+      }
+    }, 300);
+  });
 }
 
 // Form submission with API integration

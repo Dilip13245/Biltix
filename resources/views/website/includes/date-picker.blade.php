@@ -92,7 +92,7 @@
         {{ is_rtl() ? 'right: 0;' : 'left: 0;' }} z-index: 1000;
         margin-top: 8px;
         width: 100%;
-        min-width: 320px;
+        min-width: 350px;
         max-width: 350px;
     }
 

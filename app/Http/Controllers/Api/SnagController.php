@@ -183,9 +183,10 @@ class SnagController extends Controller
                 'title' => $snag->title,
                 'description' => $snag->description,
                 'location' => $snag->location,
-                'status' => ucfirst($snag->status),
+                'status' => $snag->status,
                 'reported_by' => $snag->reporter ? $snag->reporter->name : 'Unknown',
                 'assigned_to' => $snag->assignedUser ? $snag->assignedUser->name : null,
+                'assigned_to_id' => $snag->assigned_to,
                 'date' => $snag->created_at->format('jS M, Y'),
                 'image_urls' => $imageUrls,
                 'comment' => $snag->comment,
@@ -225,6 +226,11 @@ class SnagController extends Controller
 
             if (!$snag) {
                 return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is assigned to this snag (only for status changes)
+            if ($request->filled('status') && $snag->assigned_to && $snag->assigned_to != $request->user_id) {
+                return $this->toJsonEnc([], trans('api.snags.not_assigned_to_user'), Config::get('constant.FORBIDDEN'));
             }
 
             // Update fields if provided
@@ -291,6 +297,16 @@ class SnagController extends Controller
 
             if (!$snag) {
                 return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Check if user is assigned to this snag
+            if ($snag->assigned_to && $snag->assigned_to != $user_id) {
+                return $this->toJsonEnc([], trans('api.snags.not_assigned_to_user'), Config::get('constant.FORBIDDEN'));
+            }
+
+            // Only allow resolve if status is complete
+            if ($snag->status !== 'complete') {
+                return $this->toJsonEnc([], trans('api.snags.must_be_complete'), Config::get('constant.ERROR'));
             }
 
             $snag->status = 'approve';

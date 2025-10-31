@@ -51,8 +51,10 @@
                                     <label class="fw-medium mb-2">{{ __('messages.status') }}</label>
                                     <select class="form-select w-100" id="statusFilter">
                                         <option value="all">{{ __('messages.all_status') }}</option>
+                                        <option value="todo">{{ __('messages.todo') }}</option>
                                         <option value="in_progress">{{ __('messages.in_progress') }}</option>
-                                        <option value="resolved">{{ __('messages.resolved') }}</option>
+                                        <option value="complete">{{ __('messages.complete') }}</option>
+                                        <option value="approve">{{ __('messages.approve') }}</option>
                                     </select>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-12 mt-3 mt-md-0">
@@ -255,13 +257,13 @@
 
         function getStatusBadge(status) {
             const statusMap = {
-                'Open': { class: 'badge5' },
-                'In_progress': { class: 'badge4' },
-                'Resolved': { class: 'badge1' },
-                'Closed': { class: 'badge1' }
+                'todo': { class: 'badge5' },
+                'in_progress': { class: 'badge4' },
+                'complete': { class: 'badge1' },
+                'approve': { class: 'badge1' }
             };
             
-            const statusInfo = statusMap[status] || statusMap['Open'];
+            const statusInfo = statusMap[status.toLowerCase()] || statusMap['todo'];
             return `<span class="badge ${statusInfo.class}">${status}</span>`;
         }
 
@@ -502,9 +504,11 @@
         }
         
         function displaySnagDetails(snag) {
-            const canComment = snag.status.toLowerCase() !== 'resolved' && snag.status.toLowerCase() !== 'closed';
-            const canResolve = snag.status.toLowerCase() !== 'resolved' && snag.status.toLowerCase() !== 'closed';
             const currentUserId = {{ auth()->id() ?? 1 }};
+            const isAssignedUser = snag.assigned_to_id && parseInt(snag.assigned_to_id) === parseInt(currentUserId);
+            const isCompleted = snag.status.toLowerCase() === 'complete';
+            const isApproved = snag.status.toLowerCase() === 'approve';
+            const canComment = !isApproved;
             const hasCommented = snag.has_comment || false;
             
             const imagesHtml = snag.image_urls && snag.image_urls.length > 0 
@@ -551,7 +555,13 @@
                                 </div>
                             </div>
                             <div class="col-md-4 text-end">
-                                ${canResolve ? `
+                                <select class="form-select mb-2" id="snagStatusSelect" onchange="changeSnagStatus()" ${isApproved || !isAssignedUser ? 'disabled' : ''}>
+                                    <option value="todo">{{ __('messages.todo') }}</option>
+                                    <option value="in_progress">{{ __('messages.in_progress') }}</option>
+                                    <option value="complete">{{ __('messages.complete') }}</option>
+                                    ${isApproved ? '<option value="approve">{{ __('messages.approve') }}</option>' : ''}
+                                </select>
+                                ${isCompleted && isAssignedUser && !isApproved ? `
                                     <button class="btn btn-success" onclick="resolveSnag(${snag.id})">
                                         <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
                                     </button>
@@ -621,7 +631,7 @@
                             </div>
                         `}
                         
-                        ${canComment && !hasCommented ? `
+                        ${canComment && !hasCommented && isAssignedUser ? `
                             <div class="mt-4 pt-3 border-top" id="commentSection">
                                 <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
                                 <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
@@ -630,17 +640,31 @@
                                 </button>
                             </div>
                         ` : ''}
+                        ${!isAssignedUser && !isApproved ? `
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
             `;
+            
+            setTimeout(() => {
+                const statusSelect = document.getElementById('snagStatusSelect');
+                if (statusSelect) {
+                    statusSelect.value = snag.status.toLowerCase();
+                }
+            }, 100);
+            
+            window.currentSnagDetails = snag;
         }
         
         function getStatusBadgeClass(status) {
             const statusMap = {
-                'open': 'badge5',
+                'todo': 'badge5',
                 'in_progress': 'badge4', 
-                'resolved': 'badge1',
-                'closed': 'badge1'
+                'complete': 'badge1',
+                'approve': 'badge1'
             };
             return statusMap[status.toLowerCase()] || 'badge5';
         }
@@ -711,6 +735,33 @@
                     <p>${message}</p>
                 </div>
             `;
+        }
+        
+        async function changeSnagStatus() {
+            if (!window.currentSnagDetails) return;
+            
+            const newStatus = document.getElementById('snagStatusSelect').value;
+            
+            try {
+                const response = await api.updateSnag({
+                    snag_id: window.currentSnagDetails.id,
+                    user_id: {{ auth()->id() ?? 1 }},
+                    status: newStatus
+                });
+
+                if (response.code === 200) {
+                    window.currentSnagDetails.status = newStatus;
+                    loadSnags();
+                    toastr.success('{{ __('messages.snag_updated_successfully') }}');
+                } else {
+                    toastr.error(response.message || '{{ __('messages.failed_to_update_snag') }}');
+                    document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
+                }
+            } catch (error) {
+                console.error('Error updating snag status:', error);
+                toastr.error('{{ __('messages.error_updating_snag') }}');
+                document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
+            }
         }
     </script>
     

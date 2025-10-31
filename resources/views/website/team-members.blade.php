@@ -220,14 +220,11 @@
                                         <i class="fas fa-user" style="font-size: 24px;"></i>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h5 class="fw-semibold mb-1">${member.user ? member.user.name : 'Unknown User'}</h5>
-                                        <p class="text-muted small mb-0">${member.user ? member.user.role_name : 'Unknown Role'}</p>
-                                    </div>
+                                        <h5 class="fw-semibold mb-1">${member.user ? member.user.name : 'Unknown User'}</h5>                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <p class="text-muted small mb-2">${member.user ? member.user.company : 'Unknown Company'}</p>
-                                    <div class="d-flex gap-2 flex-wrap">
-                                        <span class="badge badge1">${member.user ? member.user.status : 'Unknown'}</span>
+                                    <div class="d-flex gap-2 flex-wrap">                                        
                                         <span class="badge bg2 orange_color">${member.role_in_project}</span>
                                     </div>
                                 </div>

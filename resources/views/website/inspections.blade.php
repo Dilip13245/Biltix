@@ -54,9 +54,20 @@
                     <div class="card-body p-md-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="fw-semibold black_color mb-0">{{ __('messages.previous_inspections') }}</h5>
-                            <select class="form-select w-auto small" id="categoryFilter" style="min-width: 140px;">
-                                <option value="all">{{ __('messages.all_categories') }}</option>
-                            </select>
+                            <div class="dropdown">
+                                <button class="btn filter-btn d-flex align-items-center px-3 py-2 bg4" type="button" data-bs-toggle="dropdown">
+                                    <svg width="17" height="14" viewBox="0 0 17 14" class="me-2" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M0.512337 0.715625C0.718587 0.278125 1.15609 0 1.64046 0H15.1405C15.6248 0 16.0623 0.278125 16.2686 0.715625C16.4748 1.15313 16.4123 1.66875 16.1061 2.04375L10.3905 9.02812V13C10.3905 13.3781 10.178 13.725 9.83734 13.8938C9.49671 14.0625 9.09359 14.0281 8.79046 13.8L6.79046 12.3C6.53734 12.1125 6.39046 11.8156 6.39046 11.5V9.02812L0.671712 2.04063C0.368587 1.66875 0.302962 1.15 0.512337 0.715625Z"
+                                            fill="#374151" />
+                                    </svg>
+                                    <span class="text-black">{{ __('messages.filter') }}</span>
+                                </button>
+                                <ul class="dropdown-menu" style="min-width: 200px; z-index: 1050;" id="categoryFilterMenu">
+                                    <li><a class="dropdown-item active" href="#" data-value="all">{{ __('messages.all_categories') }}</a></li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="table-responsive" style="height: 400px; overflow-y: auto;">
                             <table class="table align-middle mb-0">
@@ -125,13 +136,8 @@
                 });
             }
 
-            // Filter functionality
-            const categoryFilter = document.getElementById('categoryFilter');
-            if (categoryFilter) {
-                categoryFilter.addEventListener('change', function() {
-                    filterInspections(this.value);
-                });
-            }
+            // Filter functionality - setup click handlers for dropdown items
+            setupCategoryFilterHandlers();
         });
 
         function getCurrentProjectId() {
@@ -230,16 +236,36 @@
             </span>`;
         }
 
+        function setupCategoryFilterHandlers() {
+            const menu = document.getElementById('categoryFilterMenu');
+            if (!menu) return;
+            
+            menu.addEventListener('click', function(e) {
+                if (e.target.classList.contains('dropdown-item')) {
+                    e.preventDefault();
+                    const value = e.target.getAttribute('data-value');
+                    
+                    // Update active state
+                    menu.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    filterInspections(value);
+                }
+            });
+        }
+
         function updateCategoryFilter() {
-            const categoryFilter = document.getElementById('categoryFilter');
-            if (!categoryFilter) return;
+            const menu = document.getElementById('categoryFilterMenu');
+            if (!menu) return;
 
             const categories = [...new Set(allInspections.map(i => i.category).filter(cat => cat))];
 
-            categoryFilter.innerHTML = `
-                <option value="all">{{ __('messages.all_categories') }}</option>
-                ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+            menu.innerHTML = `
+                <li><a class="dropdown-item active" href="#" data-value="all">{{ __('messages.all_categories') }}</a></li>
+                ${categories.map(cat => `<li><a class="dropdown-item" href="#" data-value="${cat}">${cat}</a></li>`).join('')}
             `;
+            
+            setupCategoryFilterHandlers();
         }
 
         function filterInspections(filterValue) {
