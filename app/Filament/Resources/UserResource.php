@@ -258,6 +258,35 @@ class UserResource extends Resource
                     }),
                 Tables\Actions\ViewAction::make()->label('')->tooltip('View'),
                 Tables\Actions\EditAction::make()->label('')->tooltip('Edit'),
+                Tables\Actions\Action::make('send_notification')
+                    ->label('')
+                    ->tooltip('Send Notification')
+                    ->icon('heroicon-o-bell')
+                    ->color('info')
+                    ->form([
+                        Forms\Components\TextInput::make('title')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Notification title'),
+                        Forms\Components\Textarea::make('message')
+                            ->required()
+                            ->rows(3)
+                            ->placeholder('Notification message'),
+                    ])
+                    ->action(function (User $record, array $data): void {
+                        \App\Models\Notification::create([
+                            'user_id' => $record->id,
+                            'title' => $data['title'],
+                            'message' => $data['message'],
+                            'is_read' => false,
+                            'is_active' => true,
+                            'is_deleted' => false
+                        ]);
+                        Notification::make()
+                            ->title('Notification sent successfully')
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\Action::make('delete')
                     ->label('')
                     ->tooltip('Delete')
@@ -292,6 +321,36 @@ class UserResource extends Resource
                             $records->each->update(['is_active' => false]);
                             Notification::make()
                                 ->title(__('filament.messages.users_deactivated'))
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\BulkAction::make('send_notification')
+                        ->label('Send Notification')
+                        ->icon('heroicon-o-bell')
+                        ->color('info')
+                        ->form([
+                            Forms\Components\TextInput::make('title')
+                                ->required()
+                                ->maxLength(255)
+                                ->placeholder('Notification title'),
+                            Forms\Components\Textarea::make('message')
+                                ->required()
+                                ->rows(3)
+                                ->placeholder('Notification message'),
+                        ])
+                        ->action(function ($records, array $data): void {
+                            foreach ($records as $record) {
+                                \App\Models\Notification::create([
+                                    'user_id' => $record->id,
+                                    'title' => $data['title'],
+                                    'message' => $data['message'],
+                                    'is_read' => false,
+                                    'is_active' => true,
+                                    'is_deleted' => false
+                                ]);
+                            }
+                            Notification::make()
+                                ->title('Notifications sent to ' . $records->count() . ' users')
                                 ->success()
                                 ->send();
                         }),

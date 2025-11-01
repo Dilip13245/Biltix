@@ -33,4 +33,9 @@ class Notification extends Model
     {
         return $query->where('is_read', false);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

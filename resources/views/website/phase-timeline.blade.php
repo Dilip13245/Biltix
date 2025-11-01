@@ -1390,6 +1390,94 @@
             function redirectToTimeline() {
                 window.location.href = '/website/phase-timeline';
             }
+
+            let currentPhaseForMilestone = null;
+
+            function openAddMilestoneModal() {
+                // Get current phase ID from timeline
+                const currentPhaseId = getCurrentPhaseId();
+                if (!currentPhaseId) {
+                    alert('No phase selected');
+                    return;
+                }
+                
+                currentPhaseForMilestone = currentPhaseId;
+                
+                // Reset form
+                document.getElementById('addMilestoneForm').reset();
+                
+                // Open modal
+                const modal = new bootstrap.Modal(document.getElementById('addMilestoneModal'));
+                modal.show();
+            }
+
+            async function saveMilestone() {
+                const form = document.getElementById('addMilestoneForm');
+                const milestoneName = document.getElementById('milestoneName').value.trim();
+                const milestoneDays = parseInt(document.getElementById('milestoneDays').value);
+                
+                if (!milestoneName || !milestoneDays || milestoneDays < 1) {
+                    alert('Please fill all fields correctly');
+                    return;
+                }
+                
+                const saveBtn = document.querySelector('#addMilestoneModal .btn.orange_btn');
+                const originalText = saveBtn.innerHTML;
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.saving') }}...';
+                
+                try {
+                    // First get the current phase to update it with new milestone
+                    const phaseResponse = await api.makeRequest('projects/list_phases', {
+                        project_id: currentProjectId,
+                        user_id: currentUserId
+                    });
+                    
+                    if (phaseResponse.code === 200) {
+                        const currentPhase = phaseResponse.data.find(phase => phase.id == currentPhaseForMilestone);
+                        if (currentPhase) {
+                            // Add new milestone to existing milestones
+                            const existingMilestones = currentPhase.milestones || [];
+                            const newMilestones = [...existingMilestones, {
+                                milestone_name: milestoneName,
+                                days: milestoneDays
+                            }];
+                            
+                            // Update phase with new milestones
+                            const updateResponse = await api.makeRequest('projects/update_phase', {
+                                phase_id: currentPhaseForMilestone,
+                                user_id: currentUserId,
+                                title: currentPhase.title,
+                                milestones: newMilestones
+                            });
+                            
+                            if (updateResponse.code === 200) {
+                                // Close modal
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('addMilestoneModal'));
+                                if (modal) modal.hide();
+                                
+                                // Show success message
+                                alert('Milestone added successfully!');
+                                
+                                // Reload timeline
+                                loadPhaseTimeline();
+                            } else {
+                                alert('Failed to add milestone: ' + updateResponse.message);
+                            }
+                        } else {
+                            alert('Phase not found');
+                        }
+                    } else {
+                        alert('Failed to load phase data');
+                    }
+                } catch (error) {
+                    console.error('Error adding milestone:', error);
+                    alert('Error adding milestone');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = originalText;
+                }
+            }
         </script>
 
         <!-- Timeline Modal -->
@@ -1423,6 +1511,12 @@
                         @endif
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">{{ __('messages.phase_milestones') }}</h6>
+                            <button class="btn btn-sm orange_btn" onclick="openAddMilestoneModal()">
+                                <i class="fas fa-plus me-1"></i>{{ __('messages.add_milestone') }}
+                            </button>
+                        </div>
                         <div id="timelineContent">
                             <div class="text-center py-4">
                                 <div class="spinner-border text-primary" role="status">
@@ -1479,6 +1573,62 @@
                 max-width: 100%;
             }
         </style>
+
+        <!-- Add Milestone Modal -->
+        <div class="modal fade" id="addMilestoneModal" tabindex="-1" aria-labelledby="addMilestoneModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <style>
+                          #addMilestoneModal .modal-header .btn-close {
+                            position: static !important;
+                            right: auto !important;
+                            top: auto !important;
+                            margin: 0 !important;
+                          }
+                          #addMilestoneModal .modal-header {
+                            position: relative !important;
+                          }
+                        </style>
+                        @if(app()->getLocale() == 'ar')
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                          <h5 class="modal-title" id="addMilestoneModalLabel">
+                            {{ __('messages.add_milestone') }}<i class="fas fa-plus ms-2"></i>
+                          </h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        @else
+                        <h5 class="modal-title" id="addMilestoneModalLabel">
+                            <i class="fas fa-plus me-2"></i>{{ __('messages.add_milestone') }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        @endif
+                    </div>
+                    <div class="modal-body">
+                        <form id="addMilestoneForm">
+                            <div class="mb-3">
+                                <label for="milestoneName" class="form-label fw-medium">{{ __('messages.milestone_name') }}</label>
+                                <input type="text" class="form-control Input_control" id="milestoneName" 
+                                    name="milestone_name" required maxlength="80"
+                                    placeholder="{{ __('messages.enter_milestone_name') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="milestoneDays" class="form-label fw-medium">{{ __('messages.days') }}</label>
+                                <input type="number" class="form-control Input_control" id="milestoneDays" 
+                                    name="days" required min="1" max="999"
+                                    placeholder="{{ __('messages.enter_days') }}">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                        <button type="button" class="btn orange_btn" onclick="saveMilestone()">
+                            <i class="fas fa-save me-2"></i>{{ __('messages.save') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         @include('website.modals.project-progress-modals')
 

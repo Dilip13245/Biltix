@@ -1117,6 +1117,14 @@ return [
     'failed_to_update_project' => 'Failed to update project',
     'error_updating_project' => 'Error updating project',
     'project_details' => 'Project Details',
+    'phase_milestones' => 'Phase Milestones',
+    'add_milestone' => 'Add Milestone',
+    'enter_milestone_name' => 'Enter milestone name',
+    'enter_days' => 'Enter days',
+    'saving' => 'Saving',
+    'stay_updated_notifications' => 'Stay updated with project notifications and important updates',
+    'no_notifications' => 'No notifications',
+    'no_notifications_desc' => 'You\'re all caught up! Check back later for new updates.',
 ];
 
 

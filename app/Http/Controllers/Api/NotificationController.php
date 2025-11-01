@@ -173,4 +173,5 @@ class NotificationController extends Controller
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
     }
+
 }

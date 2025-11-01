@@ -3,6 +3,8 @@
 return [
     // Common
     'welcome' => 'مرحباً',
+    'notifications' => 'الإشعارات',
+    'stay_updated_notifications' => 'ابق على اطلاع بإشعارات المشروع والتحديثات المهمة',
     'login' => 'تسجيل الدخول',
     'logout' => 'تسجيل الخروج',
     'dashboard' => 'لوحة التحكم',
@@ -1060,4 +1062,11 @@ return [
     'failed_to_update_project' => 'فشل في تحديث المشروع',
     'error_updating_project' => 'خطأ في تحديث المشروع',
     'project_details' => 'تفاصيل المشروع',
+    'phase_milestones' => 'معالم المرحلة',
+    'add_milestone' => 'إضافة معلم',
+    'enter_milestone_name' => 'أدخل اسم المعلم',
+    'enter_days' => 'أدخل الأيام',
+    'saving' => 'جاري الحفظ',
+    'no_notifications' => 'لا توجد إشعارات',
+    'no_notifications_desc' => 'أنت محدث بالكامل! تحقق لاحقاً للحصول على تحديثات جديدة.',
 ];

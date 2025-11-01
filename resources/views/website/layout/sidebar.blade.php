@@ -17,14 +17,14 @@
     </li>
     
     <!-- General Navigation Items -->
-    @if(!isset($project))
+    {{-- @if(!isset($project))
       <li class="nav-item">
         <a href="{{ route('website.safety-checklist') }}" class="nav-link {{ request()->routeIs('website.safety-checklist') ? 'active' : '' }}">
           <i class="fas fa-shield-alt"></i>
           <span>{{ __('messages.safety_checklist') }}</span>
         </a>
       </li>
-    @endif
+    @endif --}}
     @if(isset($project))
       @can('plans', 'view')
       <li class="nav-item">
@@ -114,14 +114,14 @@
         </a>
       </li>
       
-      @can('inspections', 'view')
+      {{-- @can('inspections', 'view')
       <li class="nav-item">
         <a href="{{ route('website.project.safety-checklist', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.safety-checklist') ? 'active' : '' }}">
           <i class="fas fa-shield-alt"></i>
           <span>{{ __('messages.safety_checklist') }}</span>
         </a>
       </li>
-      @endcan
+      @endcan --}}
       
       <li class="nav-item">
         <a href="{{ route('website.project.help-support', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.help-support') ? 'active' : '' }}">
