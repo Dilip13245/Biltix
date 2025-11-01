@@ -3,6 +3,10 @@
 @section('title', 'Snag List')
 
 @section('content')
+    <style>
+        select.searchable-select { opacity: 0; transition: opacity 0.2s; }
+        select.searchable-select.initialized, .searchable-dropdown { opacity: 1; }
+    </style>
     <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
             <h2>{{ __('messages.snag_list') }}</h2>
@@ -24,7 +28,7 @@
                             <div class="row">
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                                     <label class="fw-medium mb-2">{{ __('messages.status') }}</label>
-                                    <select class="form-select w-100" id="statusFilter">
+                                    <select class="form-select w-100 searchable-select" id="statusFilter">
                                         <option value="all">{{ __('messages.all_status') }}</option>
                                         <option value="todo">{{ __('messages.todo') }}</option>
                                         <option value="in_progress">{{ __('messages.in_progress') }}</option>
@@ -38,12 +42,12 @@
                                     <form class="serchBar position-relative serchBar2">
                                         @if (app()->getLocale() == 'ar')
                                             <input class="form-control" type="search" id="searchInput"
-                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-left: 45px; padding-right: 15px;">
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-left: 45px; padding-right: 15px;" maxlength="100">
                                             <span class="search_icon" style="left: 15px; right: auto; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
                                                     alt="search"></span>
                                         @else
                                             <input class="form-control" type="search" id="searchInput"
-                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-right: 45px;">
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-right: 45px;" maxlength="100">
                                             <span class="search_icon" style="right: 15px; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
                                                     alt="search"></span>
                                         @endif
@@ -85,6 +89,12 @@
                 console.error('API not available');
                 showError('{{ __('messages.api_not_available') }}');
             }
+            
+            // Initialize searchable dropdowns
+            if (typeof initSearchableDropdowns === 'function') {
+                initSearchableDropdowns();
+            }
+            document.querySelectorAll('.searchable-select').forEach(el => el.classList.add('initialized'));
         });
 
         async function loadSnags() {

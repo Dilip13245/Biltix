@@ -1116,6 +1116,7 @@ return [
     'project_updated_successfully' => 'Project updated successfully',
     'failed_to_update_project' => 'Failed to update project',
     'error_updating_project' => 'Error updating project',
+    'project_details' => 'Project Details',
 ];
 
 

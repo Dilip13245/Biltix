@@ -181,8 +181,25 @@
                 const file = input.files[0];
                 window.selectedFile = file;
                 
-                // Show category selection modal first
-                showCategorySelectionModal(file);
+                // Use default category and proceed directly
+                window.selectedCategoryId = 1;
+                window.selectedFileDescription = '';
+                
+                if (isImageFile(file.type)) {
+                    openDrawingModal({
+                        title: 'Add Markup to Image',
+                        saveButtonText: 'Upload File',
+                        mode: 'image',
+                        onSave: function(imageData) {
+                            uploadFileWithMarkup(imageData);
+                        }
+                    });
+                    document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
+                        loadImageToCanvas(file);
+                    }, { once: true });
+                } else {
+                    uploadFile();
+                }
                 
                 // Reset input
                 input.value = '';
@@ -889,7 +906,7 @@
                 const formData = new FormData();
 
                 formData.append('project_id', projectId);
-                formData.append('category_id', window.selectedCategoryId || 1);
+                formData.append('category_id', 1);
                 if (currentFolderId) {
                     formData.append('folder_id', currentFolderId);
                 }
@@ -922,7 +939,7 @@
                 const formData = new FormData();
 
                 formData.append('project_id', projectId);
-                formData.append('category_id', window.selectedCategoryId || 1);
+                formData.append('category_id', 1);
                 if (currentFolderId) {
                     formData.append('folder_id', currentFolderId);
                 }

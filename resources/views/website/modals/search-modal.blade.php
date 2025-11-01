@@ -12,7 +12,7 @@
                 <div class="mb-4">
                     <div class="input-group">
                         <input type="text" class="form-control form-control-lg" id="searchInput"
-                            placeholder="{{ __('messages.search_by_project') }}" autofocus>
+                            placeholder="{{ __('messages.search_by_project') }}" autofocus maxlength="100">
                         <button class="btn orange_btn" type="button" onclick="performSearch()">
                             <i class="fas fa-search"></i>
                         </button>

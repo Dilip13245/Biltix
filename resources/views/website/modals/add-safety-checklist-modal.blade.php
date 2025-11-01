@@ -15,7 +15,7 @@
             <div class="col-md-8 mb-3">
               <label for="checklistTitle" class="form-label fw-medium">{{ __('messages.checklist_title') }}</label>
               <input type="text" class="form-control Input_control" id="checklistTitle" name="title" required
-                placeholder="{{ __('messages.checklist_title_placeholder') }}">
+                placeholder="{{ __('messages.checklist_title_placeholder') }}" maxlength="100">
             </div>
             <div class="col-md-4 mb-3">
               <label for="checklistType" class="form-label fw-medium">{{ __('messages.checklist_type') }}</label>
@@ -44,7 +44,7 @@
             <div class="col-md-6 mb-3">
               <label for="inspector" class="form-label fw-medium">{{ __('messages.inspector_responsible') }}</label>
               <input type="text" class="form-control Input_control" id="inspector" name="inspector" 
-                placeholder="{{ __('messages.inspector_placeholder') }}">
+                placeholder="{{ __('messages.inspector_placeholder') }}" maxlength="100">
             </div>
           </div>
 
@@ -52,7 +52,7 @@
             <label class="form-label fw-medium">{{ __('messages.safety_items_to_check') }}</label>
             <div id="safetyItems">
               <div class="input-group mb-2">
-                <input type="text" class="form-control" name="items[]" placeholder="{{ __('messages.safety_item_example') }}">
+                <input type="text" class="form-control" name="items[]" placeholder="{{ __('messages.safety_item_example') }}" maxlength="200">
                 <button class="btn btn-outline-danger" type="button" onclick="removeItem(this)">
                   <i class="fas fa-times"></i>
                 </button>
@@ -66,13 +66,13 @@
           <div class="mb-3">
             <label for="location" class="form-label fw-medium">{{ __('messages.location_area') }}</label>
             <input type="text" class="form-control Input_control" id="location" name="location" 
-              placeholder="{{ __('messages.location_placeholder') }}">
+              placeholder="{{ __('messages.location_placeholder') }}" maxlength="200">
           </div>
 
           <div class="mb-3">
             <label for="notes" class="form-label fw-medium">{{ __('messages.additional_notes') }}</label>
             <textarea class="form-control Input_control" id="notes" name="notes" rows="3"
-              placeholder="{{ __('messages.notes_placeholder') }}"></textarea>
+              placeholder="{{ __('messages.notes_placeholder') }}" maxlength="1000"></textarea>
           </div>
         </form>
       </div>
@@ -92,7 +92,7 @@ function addSafetyItem() {
   const newItem = document.createElement('div');
   newItem.className = 'input-group mb-2';
   newItem.innerHTML = `
-    <input type="text" class="form-control" name="items[]" placeholder="{{ __('messages.enter_safety_item') }}">
+    <input type="text" class="form-control" name="items[]" placeholder="{{ __('messages.enter_safety_item') }}" maxlength="200">
     <button class="btn btn-outline-danger" type="button" onclick="removeItem(this)">
       <i class="fas fa-times"></i>
     </button>

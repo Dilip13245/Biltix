@@ -633,7 +633,7 @@
                                             <label for="project_title"
                                                 class="form-label fw-medium">{{ __('messages.project_name') }} *</label>
                                             <input type="text" class="form-control Input_control" id="project_title"
-                                                name="project_title" required
+                                                name="project_title" required maxlength="100"
                                                 placeholder="{{ __('messages.project_name') }}">
                                         </div>
                                     </div>
@@ -643,7 +643,7 @@
                                                 class="form-label fw-medium">{{ __('messages.contractor_name') }}
                                                 *</label>
                                             <input type="text" class="form-control Input_control" id="contractor_name"
-                                                name="contractor_name"
+                                                name="contractor_name" maxlength="100"
                                                 placeholder="{{ __('messages.contractor_name') }}">
                                         </div>
                                     </div>
@@ -687,7 +687,7 @@
                                             <div class="custom-combo-dropdown position-relative">
                                                 <input type="text" class="form-control Input_control" id="type"
                                                     name="type" placeholder="{{ __('messages.select_type') }}"
-                                                    required autocomplete="off">
+                                                    required autocomplete="off" maxlength="50">
                                                 <i class="fas fa-chevron-down dropdown-arrow"></i>
                                                 <div class="dropdown-options" id="typeDropdown">
                                                     <div class="dropdown-option" data-value="{{ __('messages.villa') }}">
@@ -748,7 +748,7 @@
                                             <div class="map-search-wrapper">
                                                 <input type="text" class="form-control Input_control"
                                                     id="project_location" name="project_location" required
-                                                    placeholder="{{ __('messages.search_location') }}">
+                                                    placeholder="{{ __('messages.search_location') }}" maxlength="200">
                                                 <i class="fas fa-search map-search-icon"></i>
                                             </div>
                                             <input type="hidden" id="latitude" name="latitude">
@@ -1088,10 +1088,10 @@
                         <div class="card project-card h-100">
                             <div class="card-body p-3">
                                 <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <h6 class="mb-0 fw-semibold" >${project.project_title}</h6>
+                                    <div class="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
+                                        <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 100%;" title="${project.project_title}">${project.project_title}</h6>
                                     </div>
-                                    <i class="fas fa-ellipsis-v" style="color: #4A90E2;"></i>
+                                    <i class="fas fa-ellipsis-v flex-shrink-0" style="color: #4A90E2;"></i>
                                 </div>
                                 <hr style="border-color: #e0e0e0; margin: 12px 0;">
                                 <div class="mb-2">
@@ -1462,7 +1462,7 @@
             }
 
             // Reset form when modal opens and load dropdown data
-            createProjectModal.addEventListener('show.bs.modal', function() {
+            function resetProjectModal() {
                 currentStep = 1;
                 // Hide all steps except first
                 for (let i = 2; i <= totalSteps; i++) {
@@ -1473,6 +1473,12 @@
                 document.getElementById('step1').classList.remove('d-none');
                 document.getElementById('step1-indicator').classList.add('active');
                 updateButtons();
+
+                // Reset form
+                document.getElementById('createProjectForm').reset();
+                
+                // Clear validation errors
+                document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 
                 // Reset map and location
                 document.getElementById('project_location').value = '';
@@ -1488,10 +1494,21 @@
                     map.setZoom(6);
                 }
 
+                // Clear file displays
+                document.getElementById('construction-files').innerHTML = '';
+                document.getElementById('gantt-files').innerHTML = '';
+                document.getElementById('construction-notes-container').style.display = 'none';
+                document.getElementById('gantt-notes-container').style.display = 'none';
+                document.getElementById('construction-notes-list').innerHTML = '';
+                document.getElementById('gantt-notes-list').innerHTML = '';
+
                 // Load dropdown data
                 loadProjectManagers();
                 loadTechnicalEngineers();
-            });
+            }
+
+            createProjectModal.addEventListener('show.bs.modal', resetProjectModal);
+            createProjectModal.addEventListener('hidden.bs.modal', resetProjectModal);
 
             // Create Project Form Handler
             const createProjectForm = document.getElementById('createProjectForm');
@@ -1980,6 +1997,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
 
     <script src="{{ asset('website/js/custom.js') }}"></script>
+    <script src="{{ asset('website/js/button-protection.js') }}"></script>
     <script src="{{ asset('website/js/api-config.js') }}"></script>
     <script src="{{ asset('website/js/api-encryption.js') }}"></script>
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>

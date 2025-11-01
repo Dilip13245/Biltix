@@ -3,6 +3,10 @@
 @section('title', 'Team Members')
 
 @section('content')
+    <style>
+        select.searchable-select { opacity: 0; transition: opacity 0.2s; }
+        select.searchable-select.initialized, .searchable-dropdown { opacity: 1; }
+    </style>
     <div class="content-header border-0 shadow-none mb-4 d-flex align-items-center justify-content-between gap-2 flex-wrap">
         <div>
             <h2>{{ __('messages.team_members') }}</h2>
@@ -11,7 +15,7 @@
         <div class="gallery-filters d-flex align-items-center gap-3 flex-wrap">
             <form class="serchBar position-relative serchBar2">
                 <input class="form-control pe-5" type="search" placeholder="{{ __('messages.search_members') }}"
-                    aria-label="Search" id="searchInput">
+                    aria-label="Search" id="searchInput" maxlength="100">
                 <span class="search_icon position-absolute" style="right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none;">
                     <img src="{{ asset('website/images/icons/search.svg') }}" alt="search" style="width: 16px; height: 16px;">
                 </span>
@@ -29,7 +33,7 @@
                 <ul class="dropdown-menu p-3" style="min-width: 250px;">
                     <li>
                         <label class="form-label small fw-semibold">{{ __('messages.filter_by_role') }}</label>
-                        <select class="form-select form-select-sm" id="roleFilter">
+                        <select class="form-select form-select-sm searchable-select" id="roleFilter">
                             <option value="">{{ __('messages.all_roles') }}</option>
                             <option value="contractor">{{ __('messages.contractor') }}</option>
                             <option value="engineer">{{ __('messages.engineer') }}</option>
@@ -164,6 +168,11 @@
             loadTeamMembers();
             setupAddMemberForm();
             setupSearchAndFilter();
+            
+            if (typeof initSearchableDropdowns === 'function') {
+                initSearchableDropdowns();
+            }
+            document.querySelectorAll('.searchable-select').forEach(el => el.classList.add('initialized'));
         });
 
         async function loadTeamMembers() {

@@ -34,19 +34,19 @@
           <div class="mb-3">
             <label for="snagTitle" class="form-label fw-medium">{{ __("messages.snag_title") }}</label>
             <input type="text" class="form-control Input_control" id="snagTitle" name="title" required
-              placeholder="Enter snag title">
+              placeholder="Enter snag title" maxlength="100">
           </div>
 
           <div class="mb-3">
             <label for="description" class="form-label fw-medium">{{ __("messages.add_description") }}</label>
             <textarea class="form-control Input_control" id="description" name="description" rows="3"
-              placeholder="{{ __("messages.provide_detailed_description") }}"></textarea>
+              placeholder="{{ __("messages.provide_detailed_description") }}" maxlength="1000"></textarea>
           </div>
           
           <div class="mb-3">
             <label for="location" class="form-label fw-medium">{{ __("messages.add_location") }}</label>
             <input type="text" class="form-control Input_control" id="location" name="location" required
-              placeholder="{{ __("messages.location_example") }}">
+              placeholder="{{ __("messages.location_example") }}" maxlength="200">
           </div>
 
           <div class="mb-3" id="phaseSelectContainer">

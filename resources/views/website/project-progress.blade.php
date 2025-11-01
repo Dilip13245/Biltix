@@ -861,14 +861,9 @@
                 fieldElement.appendChild(input);
             } else if (type === 'dropdown') {
                 const select = document.createElement('select');
-                select.className = 'form-select Input_control';
+                select.className = 'form-select Input_control searchable-select';
                 select.style.width = '100%';
                 select.style.maxWidth = '300px';
-                select.style.height = 'auto';
-                select.style.padding = '8px 12px';
-                select.style.fontSize = '14px';
-                select.style.borderRadius = '8px';
-                select.style.border = '1px solid #dee2e6';
                 select.id = fieldId + '_input';
                 select.innerHTML = '<option value="">Loading...</option>';
                 fieldElement.innerHTML = '';
@@ -899,6 +894,15 @@
                         }
                         selectElement.appendChild(option);
                     });
+                    
+                    // Initialize searchable dropdown
+                    setTimeout(() => {
+                        if (typeof SearchableDropdown !== 'undefined') {
+                            new SearchableDropdown(selectElement, {
+                                placeholder: 'Search ' + label + '...'
+                            });
+                        }
+                    }, 200);
                 }
             } catch (error) {
                 console.error('Failed to load options:', error);
@@ -1168,22 +1172,6 @@
                                         return `
                                                     <div class="d-flex justify-content-between align-items-center ${overdueClass} mb-1">
                                                         <span>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}${extendedIcon}</span>
-                                                        <div class="d-flex align-items-center gap-1">
-                                                            <input type="number" class="form-control form-control-sm" 
-                                                                style="width: 50px; height: 20px; font-size: 11px;" 
-                                                                value="${milestone.extension_days || 0}" 
-                                                                min="0" 
-                                                                max="3650" 
-                                                                id="ext_${milestone.id}" 
-                                                                title="Extension days (max 3650)"
-                                                                onclick="event.stopPropagation()">
-                                                            <button class="btn btn-sm btn-outline-primary" 
-                                                                style="padding: 1px 4px; font-size: 10px;" 
-                                                                onclick="event.stopPropagation(); extendMilestone(${milestone.id})" 
-                                                                title="Extend milestone">
-                                                                <i class="fas fa-save"></i>
-                                                            </button>
-                                                        </div>
                                                     </div>
                                                 `;
                                     }).join('') : '<div>No milestones defined</div>'}
@@ -1196,17 +1184,7 @@
                                                 </small>
                                             </div>
                                         ` : ''}
-                                <div class="mt-2 d-flex gap-1 flex-wrap">
-                                    <small class="text-muted me-2">{{ __('messages.quick_extend') }}:</small>
-                                    ${phase.milestones && phase.milestones.length === 1 ? `
-                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                    onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
-                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                    onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
-                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                    onclick="event.stopPropagation(); quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
-                                            ` : ''}
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -1769,7 +1747,7 @@
                             <div class="card h-100 border-info" style="cursor: pointer;" onclick="redirectToTimeline()">
                                 <div class="card-body text-center p-4">
                                     <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
-                                    <h5 class="card-title">{{ __('messages.project_timeline') }}</h5>
+                                    <h5 class="card-title">{{ __('messages.project_details') }}</h5>
                                     <p class="card-text text-muted">{{ __('messages.view_project_timeline') }}</p>
                                 </div>
                             </div>

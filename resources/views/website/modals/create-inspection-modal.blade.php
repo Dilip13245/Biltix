@@ -59,7 +59,7 @@
           <div class="mb-3">
             <label for="description" class="form-label fw-medium">{{ __("messages.description") }}</label>
             <textarea class="form-control Input_control" id="description" name="description" rows="3" required
-              placeholder="{{ __("messages.provide_detailed_description") }}"></textarea>
+              placeholder="{{ __("messages.provide_detailed_description") }}" maxlength="1000"></textarea>
           </div>
 
           <div class="mb-3">
@@ -67,7 +67,7 @@
             <div id="checklistContainer">
               <div class="input-group mb-2">
                 <input type="text" class="form-control Input_control" name="checklist_items[]" 
-                  placeholder="{{ __("messages.enter_checklist_item") }}" required>
+                  placeholder="{{ __("messages.enter_checklist_item") }}" required maxlength="200">
                 <button type="button" class="btn btn-outline-danger" onclick="removeChecklistItem(this)">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -103,7 +103,7 @@ function addChecklistItem() {
   newItem.className = 'input-group mb-2';
   newItem.innerHTML = `
     <input type="text" class="form-control Input_control" name="checklist_items[]" 
-      placeholder="{{ __("messages.enter_checklist_item") }}" required>
+      placeholder="{{ __("messages.enter_checklist_item") }}" required maxlength="200">
     <button type="button" class="btn btn-outline-danger" onclick="removeChecklistItem(this)">
       <i class="fas fa-trash"></i>
     </button>

@@ -19,7 +19,7 @@ class FileController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
-                'category_id' => 'required|integer',
+                'category_id' => 'nullable|integer',
                 'folder_id' => 'nullable|integer',
                 'files' => 'required|array',
                 'files.*' => 'file|max:10240', // 10MB max
@@ -37,7 +37,7 @@ class FileController extends Controller
                 
                 $fileRecord = File::create([
                     'project_id' => $request->project_id,
-                    'category_id' => $request->category_id,
+                    'category_id' => $request->category_id ?? 1,
                     'folder_id' => $request->folder_id,
                     'name' => $fileData['filename'],
                     'original_name' => $fileData['original_name'],

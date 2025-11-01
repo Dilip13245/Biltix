@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <link rel="stylesheet" href="{{ asset('website/css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
+    <style>
+        select.searchable-select { opacity: 0; transition: opacity 0.2s; }
+        select.searchable-select.initialized, .searchable-dropdown { opacity: 1; }
+    </style>
 </head>
 <body data-phase-id="{{ request()->get('phase_id', 1) }}">
     <div class="content_wraper F_poppins">
@@ -49,7 +53,7 @@
                             <div class="row">
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                                     <label class="fw-medium mb-2">{{ __('messages.status') }}</label>
-                                    <select class="form-select w-100" id="statusFilter">
+                                    <select class="form-select w-100 searchable-select" id="statusFilter">
                                         <option value="all">{{ __('messages.all_status') }}</option>
                                         <option value="todo">{{ __('messages.todo') }}</option>
                                         <option value="in_progress">{{ __('messages.in_progress') }}</option>
@@ -62,12 +66,12 @@
                                     <form class="serchBar position-relative serchBar2">
                                         @if (app()->getLocale() == 'ar')
                                             <input class="form-control" type="search" id="searchInput"
-                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-left: 45px; padding-right: 15px;">
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-left: 45px; padding-right: 15px;" maxlength="100">
                                             <span class="search_icon" style="left: 15px; right: auto; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
                                                     alt="search"></span>
                                         @else
                                             <input class="form-control" type="search" id="searchInput"
-                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-right: 45px;">
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-right: 45px;" maxlength="100">
                                             <span class="search_icon" style="right: 15px; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
                                                     alt="search"></span>
                                         @endif
@@ -103,6 +107,11 @@
             setupFilters();
             setupAddSnagForm();
             setupModalUserLoading();
+            
+            if (typeof initSearchableDropdowns === 'function') {
+                initSearchableDropdowns();
+            }
+            document.querySelectorAll('.searchable-select').forEach(el => el.classList.add('initialized'));
         });
 
         function getProjectIdFromUrl() {
@@ -773,6 +782,7 @@
     <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>
     <script src="{{ asset('website/js/searchable-dropdown.js') }}"></script>
+  <script src="{{ asset('website/js/button-protection.js') }}"></script>
 
     </div>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>

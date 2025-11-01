@@ -42,7 +42,7 @@
           <div class="mb-3">
             <label for="roleDisplay" class="form-label fw-medium">{{ __("messages.role") }}</label>
             <input type="text" class="form-control Input_control" id="roleDisplay" name="role_in_project" readonly
-              placeholder="{{ __("messages.role_will_display_here") }}">
+              placeholder="{{ __("messages.role_will_display_here") }}" maxlength="50">
           </div>
 
         </form>

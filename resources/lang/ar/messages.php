@@ -1059,4 +1059,5 @@ return [
     'project_updated_successfully' => 'تم تحديث المشروع بنجاح',
     'failed_to_update_project' => 'فشل في تحديث المشروع',
     'error_updating_project' => 'خطأ في تحديث المشروع',
+    'project_details' => 'تفاصيل المشروع',
 ];

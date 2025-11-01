@@ -76,6 +76,9 @@
   
   <script src="{{ asset('website/js/custom.js') }}"></script>
   
+  <!-- Button Protection -->
+  <script src="{{ asset('website/js/button-protection.js') }}"></script>
+  
   <!-- Universal Auth System -->
   <script src="{{ asset('website/js/universal-auth.js') }}"></script>
   <script>

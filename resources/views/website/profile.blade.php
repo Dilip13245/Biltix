@@ -261,28 +261,28 @@
                                         <label class="form-label fw-medium">{{ __('auth.full_name') }}</label>
                                         <input type="text" class="form-control" id="editUserName"
                                             placeholder="{{ __('auth.enter_full_name') }}"
-                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}" maxlength="100">
                                         <div class="error-message" id="editNameError"></div>
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label fw-medium">{{ __('auth.company_name') }}</label>
                                         <input type="text" class="form-control" id="editCompanyName"
                                             placeholder="{{ __('auth.enter_company_name') }}"
-                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}" maxlength="200">
                                         <div class="error-message" id="editCompanyError"></div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label class="form-label fw-medium">{{ __('auth.mobile_number') }}</label>
                                         <input type="tel" class="form-control" id="editUserPhone"
                                             placeholder="{{ __('auth.enter_mobile') }}"
-                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}" maxlength="20">
                                         <div class="error-message" id="editPhoneError"></div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label class="form-label fw-medium">{{ __('auth.email_address') }}</label>
                                         <input type="email" class="form-control" id="editUserEmail"
                                             placeholder="{{ __('auth.enter_email') }}"
-                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}">
+                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}" maxlength="255">
                                         <div class="error-message" id="editEmailError"></div>
                                     </div>
                                 </div>

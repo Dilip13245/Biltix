@@ -374,6 +374,8 @@
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="{{ asset('website/js/toastr-config.js') }}"></script>
+      <script src="{{ asset('website/js/button-protection.js') }}"></script>
+
 </body>
 
 </html>

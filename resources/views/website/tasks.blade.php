@@ -3,6 +3,17 @@
 @section('title', 'Tasks')
 
 @section('content')
+    <style>
+        /* Hide searchable selects until initialized */
+        select.searchable-select {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        select.searchable-select.initialized,
+        .searchable-dropdown {
+            opacity: 1;
+        }
+    </style>
     <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
             <h2>{{ __('messages.tasks') }}</h2>
@@ -13,25 +24,25 @@
                 @if (app()->getLocale() == 'ar')
                     <input class="form-control" type="search" id="searchInput"
                         placeholder="{{ __('messages.search_task_name') }}" aria-label="Search" dir="auto"
-                        style="padding-left: 45px; padding-right: 15px;">
+                        style="padding-left: 45px; padding-right: 15px;" maxlength="100">
                     <span class="search_icon" style="left: 15px; right: auto; pointer-events: none;"><img
                             src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
                 @else
                     <input class="form-control" type="search" id="searchInput"
                         placeholder="{{ __('messages.search_task_name') }}" aria-label="Search" dir="auto"
-                        style="padding-right: 45px;">
+                        style="padding-right: 45px;" maxlength="100">
                     <span class="search_icon" style="right: 15px; pointer-events: none;"><img
                             src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
                 @endif
             </form>
-            <select class="form-select w-auto" id="statusFilter">
+            <select class="form-select w-auto searchable-select" id="statusFilter">
                 <option value="">{{ __('messages.all_status') }}</option>
                 <option value="todo">{{ __('messages.todo') }}</option>
                 <option value="in_progress">{{ __('messages.in_progress') }}</option>
                 <option value="complete">{{ __('messages.complete') }}</option>
                 <option value="approve">{{ __('messages.approve') }}</option>
             </select>
-            <select class="form-select w-auto" id="priorityFilter">
+            <select class="form-select w-auto searchable-select" id="priorityFilter">
                 <option value="">{{ __('messages.all_priorities') }}</option>
                 <option value="low">{{ __('messages.low') }}</option>
                 <option value="medium">{{ __('messages.medium') }}</option>
@@ -97,8 +108,16 @@
 
             // Setup event listeners
             setupEventListeners();
-
-
+            
+            // Initialize searchable dropdowns immediately
+            if (typeof initSearchableDropdowns === 'function') {
+                initSearchableDropdowns();
+            }
+            
+            // Mark as initialized
+            document.querySelectorAll('.searchable-select').forEach(el => {
+                el.classList.add('initialized');
+            });
         });
 
         function setupEventListeners() {

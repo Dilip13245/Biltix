@@ -34,13 +34,13 @@
           <div class="mb-3">
             <label for="taskName" class="form-label fw-medium">{{ __("messages.task_name") }}</label>
             <input type="text" class="form-control Input_control" id="taskName" name="task_name" required
-              placeholder="{{ __("messages.enter_task_name") }}">
+              placeholder="{{ __("messages.enter_task_name") }}" maxlength="100">
           </div>
 
           <div class="mb-3">
             <label for="taskDescription" class="form-label fw-medium">{{ __("messages.task_description") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
             <textarea class="form-control Input_control" id="taskDescription" name="description" rows="3"
-              placeholder="{{ __("messages.brief_task_description") }}"></textarea>
+              placeholder="{{ __("messages.brief_task_description") }}" maxlength="500"></textarea>
           </div>
 
           <div class="mb-3" id="phaseSelectContainer">
@@ -59,7 +59,7 @@
 
           <div class="mb-3">
             <label for="taskPriority" class="form-label fw-medium">{{ __("messages.priority") }}</label>
-            <select class="form-select Input_control" id="taskPriority" name="priority">
+            <select class="form-select Input_control searchable-select" id="taskPriority" name="priority">
               <option value="low">{{ __("messages.low") }}</option>
               <option value="medium" selected>{{ __("messages.medium") }}</option>
               <option value="high">{{ __("messages.high") }}</option>

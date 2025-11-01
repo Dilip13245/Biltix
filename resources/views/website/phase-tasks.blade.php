@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="{{ asset('website/css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        select.searchable-select { opacity: 0; transition: opacity 0.2s; }
+        select.searchable-select.initialized, .searchable-dropdown { opacity: 1; }
+    </style>
 </head>
 <body>
     <div class="content_wraper F_poppins">
@@ -35,17 +39,17 @@
   </div>
   <div class="d-flex align-items-center gap-2 gap-md-3 flex-wrap">
     <form class="serchBar position-relative serchBar2">
-      <input class="form-control" type="search" placeholder="{{ __('messages.search_task_name') }}" aria-label="Search" dir="auto" style="padding-right: 45px;">
+      <input class="form-control" type="search" placeholder="{{ __('messages.search_task_name') }}" aria-label="Search" dir="auto" style="padding-right: 45px;" maxlength="100">
       <span class="search_icon" style="right: 15px; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
     </form>
-    <select class="form-select w-auto" id="statusFilter">
+    <select class="form-select w-auto searchable-select" id="statusFilter">
       <option value="">{{ __('messages.all_status') }}</option>
       <option value="todo">{{ __('messages.todo') }}</option>
       <option value="in_progress">{{ __('messages.in_progress') }}</option>
       <option value="complete">{{ __('messages.complete') }}</option>
       <option value="approve">{{ __('messages.approve') }}</option>
     </select>
-    <select class="form-select w-auto" id="priorityFilter">
+    <select class="form-select w-auto searchable-select" id="priorityFilter">
       <option value="">{{ __('messages.all_priorities') }}</option>
       <option value="low">{{ __('messages.low') }}</option>
       <option value="medium">{{ __('messages.medium') }}</option>
@@ -132,6 +136,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Setup event listeners
     setupEventListeners();
+    
+    // Initialize searchable dropdowns
+    if (typeof initSearchableDropdowns === 'function') {
+        initSearchableDropdowns();
+    }
+    document.querySelectorAll('.searchable-select').forEach(el => el.classList.add('initialized'));
 });
 
 function setupEventListeners() {
@@ -942,5 +952,6 @@ async function submitAdditionalImages(imageData) {
     <script src="{{ asset('website/js/drawing.js') }}"></script>
     <script src="{{ asset('website/js/searchable-dropdown.js') }}"></script>
     <script src="{{ asset('website/js/api-client.js') }}"></script>
+      <script src="{{ asset('website/js/button-protection.js') }}"></script>
 </body>
 </html>

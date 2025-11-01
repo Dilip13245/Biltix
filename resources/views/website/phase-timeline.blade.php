@@ -137,77 +137,75 @@
                         <div class="card B_shadow">
                             <div class="card-body p-md-4">
                                 <div class="d-flex flex-wrap justify-content-between align-items-start">
-                                    <div>
-                                        <h5 class="fw-semibold  mb-3 mb-md-4 black_color">
-                                            {{ __('messages.project_details') }}</h5>
+                                    <div class="w-100">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
+                                            <h5 class="fw-semibold black_color mb-0">{{ __('messages.project_details') }}</h5>
+                                            @can('projects', 'edit')
+                                                <button class="btn btn-sm btn-outline-primary" id="editProjectBtn" onclick="toggleProjectEdit()">
+                                                    <i class="fas fa-edit me-1"></i>{{ __('messages.edit_project') }}
+                                                </button>
+                                            @endcan
+                                        </div>
                                         <div class="row gy-3 gx-5">
                                             <div class="col-12 col-md-6">
                                                 <div class="mb-2 mb-md-3">
                                                     <span
+                                                        class="text-muted small black_color">{{ __('messages.project_location') }}</span>
+                                                    <div class="fw-medium">
+                                                        <span id="projectLocation">{{ __('messages.loading') }}...</span>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-2 mb-md-3">
+                                                    <span
                                                         class="text-muted small black_color">{{ __('messages.project_name') }}</span>
-                                                    <div class="fw-medium d-flex align-items-center gap-1">
-                                                        {{ __('messages.urban_sky_towers') }}
-                                                        <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit"></a>
+                                                    <div class="fw-medium">
+                                                        <span id="projectName">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.company_name') }}</span>
-                                                    <div class="fw-medium d-flex align-items-center gap-1p-md-4">
-                                                        {{ __('messages.summit_construction') }}
-                                                        <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit"></a>
+                                                    <div class="fw-medium">
+                                                        <span id="companyName">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.start_date') }}</span>
-                                                    <div class="fw-medium">{{ __('messages.may_25_2025_full') }}</div>
+                                                    <div class="fw-medium" id="startDate">{{ __('messages.loading') }}...</div>
                                                 </div>
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.end_date') }}</span>
-                                                    <div class="fw-medium">{{ __('messages.may_8_2026') }}</div>
+                                                    <div class="fw-medium" id="endDate">{{ __('messages.loading') }}...</div>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6">
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.project_type') }}</span>
-                                                    <div class="fw-medium d-flex align-items-center gap-1p-md-4">
-                                                        {{ __('messages.tower') }}
-                                                        <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit"></a>
+                                                    <div class="fw-medium">
+                                                        <span id="projectType">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.project_manager') }}</span>
-                                                    <div class="fw-medium d-flex align-items-center gap-1p-md-4">
-                                                        {{ __('messages.robert_parker') }}
-                                                        <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit"></a>
+                                                    <div class="fw-medium">
+                                                        <span id="projectManager">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.site_engineer') }}</span>
-                                                    <div class="fw-medium d-flex align-items-center gap-1p-md-4">
-                                                        {{ __('messages.johar_parker') }}
-                                                        <a href="#" class="text-primary ms-1" title="Edit"><img
-                                                                src="{{ asset('website/images/icons/edit.svg') }}"
-                                                                alt="edit"></a>
+                                                    <div class="fw-medium">
+                                                        <span id="siteEngineer">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="mt-4 d-flex flex-wrap gap-2">
-                                            <button
+                                            <button onclick="window.location.href='/website/project/'+currentProjectId+'/plans'"
                                                 class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -217,7 +215,7 @@
                                                 </svg>
                                                 {{ __('messages.view_plan') }}
                                             </button>
-                                            <button
+                                            <button onclick="openTimelineModal()"
                                                 class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
                                                 <svg width="21" height="16" viewBox="0 0 21 16"
                                                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -234,7 +232,7 @@
                                                 </svg>
                                                 {{ __('messages.timeline') }}
                                             </button>
-                                            <button
+                                            <button onclick="window.location.href='/website/project/'+currentProjectId+'/daily-logs'"
                                                 class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
                                                 <svg width="15" height="16" viewBox="0 0 15 16"
                                                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -242,19 +240,19 @@
                                                         d="M3.23438 1V2H1.73438C0.90625 2 0.234375 2.67188 0.234375 3.5V5H14.2344V3.5C14.2344 2.67188 13.5625 2 12.7344 2H11.2344V1C11.2344 0.446875 10.7875 0 10.2344 0C9.68125 0 9.23438 0.446875 9.23438 1V2H5.23438V1C5.23438 0.446875 4.7875 0 4.23438 0C3.68125 0 3.23438 0.446875 3.23438 1ZM14.2344 6H0.234375V14.5C0.234375 15.3281 0.90625 16 1.73438 16H12.7344C13.5625 16 14.2344 15.3281 14.2344 14.5V6Z"
                                                         fill="#4477C4" />
                                                 </svg>
-                                                {{ __('messages.may_25_2025') }}
+                                                <span id="currentDateBtn"></span>
                                             </button>
 
                                         </div>
                                     </div>
-                                    <div class="ms-auto mt-3 mt-md-0">
-                                        @can('projects', 'delete')
+                                    @can('projects', 'delete')
+                                        <div class="ms-auto mt-3 mt-md-0">
                                             <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2"
                                                 onclick="deleteProject()">
                                                 <i class="fas fa-trash"></i> {{ __('messages.delete_project') }}
                                             </button>
-                                        @endcan
-                                    </div>
+                                        </div>
+                                    @endcan
                                 </div>
                             </div>
                         </div>
@@ -384,11 +382,334 @@
 
             // Load all data on page load
             document.addEventListener('DOMContentLoaded', function() {
+                // Set current date on button
+                const currentDateBtn = document.getElementById('currentDateBtn');
+                if (currentDateBtn) {
+                    const today = new Date();
+                    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                    currentDateBtn.textContent = today.toLocaleDateString('en-US', options);
+                }
+                
+                loadProjectData();
                 loadActivities();
                 loadManpowerEquipment();
                 loadSafetyItems();
                 renderPhaseProgressFromServer();
             });
+
+            // Project data and edit functionality
+            let currentProjectData = null;
+            let isEditMode = false;
+            let originalValues = {};
+
+            async function loadProjectData() {
+                try {
+                    const response = await api.getProjectDetails({
+                        project_id: currentProjectId
+                    });
+
+                    if (response.code === 200 && response.data) {
+                        const project = response.data;
+                        currentProjectData = project;
+
+                        // Update project details
+                        document.getElementById('projectName').textContent = project.project_title || 'N/A';
+                        document.getElementById('companyName').textContent = project.contractor_name || 'N/A';
+                        document.getElementById('projectType').textContent = project.type || 'N/A';
+                        document.getElementById('projectManager').textContent = project.project_manager_name || 'N/A';
+                        document.getElementById('siteEngineer').textContent = project.technical_engineer_name || 'N/A';
+                        document.getElementById('projectLocation').textContent = project.project_location || 'N/A';
+
+                        // Format and update dates
+                        if (project.project_start_date) {
+                            document.getElementById('startDate').textContent = formatDate(project.project_start_date);
+                        }
+                        if (project.project_due_date) {
+                            document.getElementById('endDate').textContent = formatDate(project.project_due_date);
+                        }
+                    } else {
+                        console.error('Failed to load project data:', response.message);
+                        showErrorState();
+                    }
+                } catch (error) {
+                    console.error('Error loading project data:', error);
+                    showErrorState();
+                }
+            }
+
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+
+            function showErrorState() {
+                const elements = ['projectName', 'companyName', 'projectType', 'projectManager', 'siteEngineer', 'projectLocation', 'startDate', 'endDate'];
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.textContent = 'Error loading data';
+                });
+            }
+
+            function toggleProjectEdit() {
+                isEditMode = true;
+                
+                // Store original values
+                originalValues = {
+                    projectName: document.getElementById('projectName').textContent,
+                    companyName: document.getElementById('companyName').textContent,
+                    projectType: document.getElementById('projectType').textContent,
+                    projectManager: document.getElementById('projectManager').textContent,
+                    siteEngineer: document.getElementById('siteEngineer').textContent
+                };
+                
+                // Make fields editable
+                makeFieldEditable('projectName', 'text');
+                makeFieldEditable('companyName', 'text');
+                makeFieldEditable('projectType', 'text');
+                makeFieldEditable('projectManager', 'dropdown', 'Project Manager');
+                makeFieldEditable('siteEngineer', 'dropdown', 'Site Engineer');
+                
+                // Show save and cancel buttons
+                showSaveButton();
+            }
+
+            function makeFieldEditable(fieldId, type, label = '') {
+                const fieldElement = document.getElementById(fieldId);
+                const currentValue = fieldElement.textContent.trim();
+                
+                if (type === 'text') {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = currentValue;
+                    input.className = 'form-control Input_control';
+                    input.style.width = '100%';
+                    input.style.maxWidth = '300px';
+                    input.id = fieldId + '_input';
+                    fieldElement.innerHTML = '';
+                    fieldElement.appendChild(input);
+                } else if (type === 'dropdown') {
+                    const select = document.createElement('select');
+                    select.className = 'form-select Input_control searchable-select';
+                    select.style.width = '100%';
+                    select.style.maxWidth = '300px';
+                    select.id = fieldId + '_input';
+                    select.innerHTML = '<option value="">Loading...</option>';
+                    fieldElement.innerHTML = '';
+                    fieldElement.appendChild(select);
+                    
+                    // Load dropdown options
+                    loadDropdownOptions(select, label, currentValue);
+                }
+            }
+
+            async function loadDropdownOptions(selectElement, label, currentValue) {
+                try {
+                    let response;
+                    if (label === 'Project Manager') {
+                        response = await api.getProjectManagers();
+                    } else if (label === 'Site Engineer') {
+                        response = await api.getTechnicalEngineers();
+                    }
+                    
+                    if (response.code === 200 && response.data) {
+                        selectElement.innerHTML = '<option value="">Select ' + label + '</option>';
+                        response.data.forEach(user => {
+                            const option = document.createElement('option');
+                            option.value = user.id;
+                            option.textContent = user.name;
+                            if (user.name === currentValue) {
+                                option.selected = true;
+                            }
+                            selectElement.appendChild(option);
+                        });
+                        
+                        // Initialize searchable dropdown
+                        setTimeout(() => {
+                            if (typeof SearchableDropdown !== 'undefined') {
+                                selectElement.searchableDropdown = new SearchableDropdown(selectElement, {
+                                    placeholder: 'Search ' + label + '...'
+                                });
+                            }
+                        }, 200);
+                    }
+                } catch (error) {
+                    console.error('Failed to load options:', error);
+                    selectElement.innerHTML = '<option value="">Error loading options</option>';
+                }
+            }
+
+            function showSaveButton() {
+                const btn = document.getElementById('editProjectBtn');
+                
+                // Create button container
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'd-flex gap-2 align-items-center';
+                btnContainer.id = 'editButtonsContainer';
+                
+                // Create save button
+                const saveBtn = document.createElement('button');
+                saveBtn.className = 'btn btn-sm btn-success';
+                saveBtn.id = 'saveProjectBtn';
+                saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
+                saveBtn.onclick = saveProjectChanges;
+                
+                // Create cancel button
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'btn btn-sm btn-secondary';
+                cancelBtn.id = 'cancelProjectBtn';
+                cancelBtn.innerHTML = '<i class="fas fa-times me-1"></i>{{ __('messages.cancel') }}';
+                cancelBtn.onclick = cancelProjectEdit;
+                
+                // Add buttons to container
+                btnContainer.appendChild(saveBtn);
+                btnContainer.appendChild(cancelBtn);
+                
+                // Replace edit button with button container
+                btn.style.display = 'none';
+                btn.parentElement.appendChild(btnContainer);
+            }
+
+            async function saveProjectChanges() {
+                const saveBtn = document.getElementById('saveProjectBtn');
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{{ __('messages.saving') }}...';
+                
+                try {
+                    const updateData = {
+                        project_id: currentProjectId
+                    };
+                    
+                    // Get values from inputs
+                    const projectNameInput = document.getElementById('projectName_input');
+                    const companyNameInput = document.getElementById('companyName_input');
+                    const projectTypeInput = document.getElementById('projectType_input');
+                    const projectManagerInput = document.getElementById('projectManager_input');
+                    const siteEngineerInput = document.getElementById('siteEngineer_input');
+                    
+                    if (projectNameInput && projectNameInput.value.trim()) {
+                        updateData.project_title = projectNameInput.value.trim();
+                    }
+                    if (companyNameInput && companyNameInput.value.trim()) {
+                        updateData.contractor_name = companyNameInput.value.trim();
+                    }
+                    if (projectTypeInput && projectTypeInput.value.trim()) {
+                        updateData.type = projectTypeInput.value.trim();
+                    }
+                    if (projectManagerInput && projectManagerInput.value) {
+                        updateData.project_manager_id = projectManagerInput.value;
+                    }
+                    if (siteEngineerInput && siteEngineerInput.value) {
+                        updateData.technical_engineer_id = siteEngineerInput.value;
+                    }
+                    
+                    const response = await api.updateProject(updateData);
+                    
+                    if (response.code === 200) {
+                        showToast('{{ __('messages.project_updated_successfully') }}', 'success');
+                        isEditMode = false;
+                        loadProjectData();
+                        
+                        // Show edit button again
+                        const editBtn = document.getElementById('editProjectBtn');
+                        editBtn.style.display = 'inline-block';
+                        
+                        // Remove button container
+                        const btnContainer = document.getElementById('editButtonsContainer');
+                        if (btnContainer) btnContainer.remove();
+                    } else {
+                        showToast(response.message || '{{ __('messages.failed_to_update_project') }}', 'error');
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
+                    }
+                } catch (error) {
+                    console.error('Error updating project:', error);
+                    showToast('{{ __('messages.error_updating_project') }}', 'error');
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
+                }
+            }
+
+            function cancelProjectEdit() {
+                isEditMode = false;
+                
+                // Restore original values
+                document.getElementById('projectName').textContent = originalValues.projectName;
+                document.getElementById('companyName').textContent = originalValues.companyName;
+                document.getElementById('projectType').textContent = originalValues.projectType;
+                document.getElementById('projectManager').textContent = originalValues.projectManager;
+                document.getElementById('siteEngineer').textContent = originalValues.siteEngineer;
+                
+                // Show edit button again
+                const btn = document.getElementById('editProjectBtn');
+                btn.style.display = 'inline-block';
+                
+                // Remove button container
+                const btnContainer = document.getElementById('editButtonsContainer');
+                if (btnContainer) btnContainer.remove();
+            }
+
+            function deleteProject() {
+                const modal = new bootstrap.Modal(document.getElementById('deleteProjectModal'));
+                modal.show();
+            }
+
+            async function confirmDeleteProject() {
+                const btn = document.getElementById('confirmDeleteBtn');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.deleting') }}...';
+
+                try {
+                    const response = await api.makeRequest('projects/delete', {
+                        project_id: currentProjectId,
+                        user_id: currentUserId
+                    });
+
+                    if (response.code === 200) {
+                        showToast(response.message || '{{ __('messages.project_deleted_successfully') }}', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 1000);
+                    } else {
+                        showToast(response.message || '{{ __('messages.failed_to_delete_project') }}', 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }
+                } catch (error) {
+                    console.error('Error deleting project:', error);
+                    showToast(error.message || '{{ __('messages.error_deleting_project') }}', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            }
+
+            // Toast notification function
+            function showToast(message, type = 'success') {
+                if (typeof toastr !== 'undefined') {
+                    switch (type) {
+                        case 'success':
+                            toastr.success(message);
+                            break;
+                        case 'error':
+                            toastr.error(message);
+                            break;
+                        case 'warning':
+                            toastr.warning(message);
+                            break;
+                        case 'info':
+                            toastr.info(message);
+                            break;
+                        default:
+                            toastr.success(message);
+                    }
+                } else {
+                    alert(message);
+                }
+            }
 
             // Activities Functions
             async function loadActivities() {
@@ -426,7 +747,7 @@
       ${activities.map(activity => `
                                         <li class="d-flex align-items-center mb-2">
                                           <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                          <span class="flex-grow-1">${activity.description}</span>
+                                          <span class="flex-grow-1 text-wrap">${activity.description}</span>
                                         </li>
                                       `).join('')}
     </ul>
@@ -470,7 +791,7 @@
         <tbody>
           ${items.map(item => `
                                             <tr>
-                                              <td class="text-muted fw-medium">${item.category}</td>
+                                              <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
                                               <td class="text-end">
                                                 <span class="text-primary fw-semibold">${item.count}</span>
                                               </td>
@@ -521,7 +842,7 @@
                                             <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
                                               <i class="fas fa-check-circle"></i>
                                             </span>
-                                            <span class="flex-grow-1">${item.checklist_item}</span>
+                                            <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
                                           </div>
                                         </li>
                                       `).join('')}
@@ -656,7 +977,7 @@
                                 <label for="title"
                                     class="form-label fw-medium">{{ __('messages.phase_title') }}</label>
                                 <input type="text" class="form-control Input_control" id="title"
-                                    name="title" required
+                                    name="title" required maxlength="100"
                                     placeholder="e.g., Foundation Work, Structure Phase, Finishing">
                             </div>
 
@@ -667,7 +988,7 @@
                                         <div class="row">
                                             <div class="col-8">
                                                 <input type="text" class="form-control Input_control"
-                                                    name="milestones[0][milestone_name]"
+                                                    name="milestones[0][milestone_name]" maxlength="80"
                                                     placeholder="{{ __('messages.milestone_name') }}" required>
                                             </div>
                                             <div class="col-3">
@@ -712,7 +1033,7 @@
     <div class="row">
       <div class="col-8">
         <input type="text" class="form-control Input_control" name="milestones[${milestoneIndex}][milestone_name]" 
-          placeholder="Milestone name" required>
+          placeholder="Milestone name" maxlength="80" required>
       </div>
       <div class="col-3">
         <input type="number" class="form-control Input_control" name="milestones[${milestoneIndex}][days]" 
@@ -839,7 +1160,7 @@
                                     onclick="redirectToTimeline()">
                                     <div class="card-body text-center p-4">
                                         <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
-                                        <h5 class="card-title">{{ __('messages.project_timeline') }}</h5>
+                                        <h5 class="card-title">{{ __('messages.project_details') }}</h5>
                                         <p class="card-text text-muted">{{ __('messages.view_project_timeline') }}</p>
                                     </div>
                                 </div>
@@ -855,6 +1176,203 @@
                 document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
                 const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
                 modal.show();
+            }
+
+            function openTimelineModal() {
+                loadPhaseTimeline();
+                const modal = new bootstrap.Modal(document.getElementById('timelineModal'));
+                modal.show();
+            }
+
+            async function loadPhaseTimeline() {
+                try {
+                    const currentPhaseId = getCurrentPhaseId();
+                    const response = await api.makeRequest('projects/list_phases', {
+                        project_id: currentProjectId,
+                        user_id: currentUserId
+                    });
+
+                    if (response.code === 200 && response.data && response.data.length > 0) {
+                        let phaseToShow = response.data.find(phase => phase.id == currentPhaseId);
+                        if (!phaseToShow) {
+                            phaseToShow = response.data[0]; // Show first phase if current not found
+                        }
+                        renderPhaseTimeline([phaseToShow]);
+                    } else {
+                        document.getElementById('timelineContent').innerHTML = '<div class="text-center py-4 text-muted">No phases found</div>';
+                    }
+                } catch (error) {
+                    console.error('Error loading timeline:', error);
+                    document.getElementById('timelineContent').innerHTML = '<div class="text-center py-4 text-danger">Error loading timeline</div>';
+                }
+            }
+
+            let extendTimeout = {};
+
+            async function extendMilestone(milestoneId) {
+                if (extendTimeout[milestoneId]) {
+                    clearTimeout(extendTimeout[milestoneId]);
+                }
+
+                extendTimeout[milestoneId] = setTimeout(async () => {
+                    const extensionInput = document.getElementById(`ext_${milestoneId}`);
+                    const extensionDays = parseInt(extensionInput.value) || 0;
+                    
+                    if (extensionDays < 0 || extensionDays > 3650) {
+                        alert('Extension days must be between 0 and 3650');
+                        extensionInput.value = Math.min(Math.max(extensionDays, 0), 3650);
+                        return;
+                    }
+
+                    try {
+                        const response = await api.makeRequest('projects/extend_milestone', {
+                            milestone_id: milestoneId,
+                            user_id: currentUserId,
+                            extension_days: extensionDays
+                        });
+
+                        if (response.code === 200) {
+                            loadPhaseTimeline();
+                            if (extensionDays > 0) {
+                                alert(`Milestone extended by ${extensionDays} days`);
+                            } else {
+                                alert('Extension reset successfully');
+                            }
+                        } else {
+                            alert('Failed to extend milestone: ' + response.message);
+                        }
+                    } catch (error) {
+                        console.error('Error extending milestone:', error);
+                        alert('Error extending milestone');
+                    }
+                }, 500);
+            }
+
+            async function quickExtend(milestoneId, days) {
+                const extensionInput = document.getElementById(`ext_${milestoneId}`);
+                const currentExtension = parseInt(extensionInput.value) || 0;
+                const newExtension = currentExtension + days;
+
+                extensionInput.value = newExtension;
+                await extendMilestone(milestoneId);
+            }
+
+            function renderPhaseTimeline(phases) {
+                const container = document.getElementById('timelineContent');
+                
+                if (!phases || phases.length === 0) {
+                    container.innerHTML = '<div class="text-center py-4 text-muted">No phases found</div>';
+                    return;
+                }
+
+                container.innerHTML = phases.map((phase, index) => {
+                    const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) : 0;
+                    const extensionDays = phase.total_extension_days || 0;
+                    const progress = phase.time_progress || 0;
+                    
+                    // Determine badge based on time progress and extensions
+                let badgeClass, badgeText;
+                if (progress >= 100) {
+                    badgeClass = 'badge1';
+                    badgeText = 'Completed';
+                } else if (extensionDays > 0) {
+                    badgeClass = 'badge3';
+                    badgeText = 'Extended';
+                } else if (progress > 0) {
+                    badgeClass = 'badge4';
+                    badgeText = 'In Progress';
+                } else {
+                    badgeClass = 'badge2';
+                    badgeText = 'Pending';
+                }
+
+                return `
+                        <div class="timeline-phase mb-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="timeline-marker me-3">
+                                    <div class="timeline-dot bg-primary"></div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="mb-0 fw-semibold">${phase.title}</h5>
+                                        <span class="badge ${badgeClass}">${badgeText}</span>
+                                    </div>
+                                    <div class="text-muted small mb-1">${Math.round(progress)}% Time Progress</div>
+                                    <div class="d-flex align-items-center gap-3 text-muted small">
+                                        <span><i class="fas fa-calendar me-1"></i>${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</span>
+                                    </div>
+                                    ${extensionDays > 0 ? `
+                                        <div class="mt-1">
+                                            <small class="text-warning">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                            </small>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="timeline-milestones ps-5">
+                                ${phase.milestones ? phase.milestones.map(milestone => {
+                                    const isExtended = milestone.is_extended;
+                                    const isOverdue = milestone.is_overdue;
+                                    return `
+                                        <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
+                                                    <span class="${isOverdue ? 'text-danger fw-medium' : ''}">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
+                                                    ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : ''}
+                                                </div>
+                                                <div class="text-muted small">
+                                                    ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 mt-2">
+                                                <span class="text-muted small">Extend:</span>
+                                                <div class="input-group" style="width: 80px;">
+                                                    <input type="number" class="form-control form-control-sm" 
+                                                        style="font-size: 11px; text-align: center;" 
+                                                        value="${milestone.extension_days || 0}" 
+                                                        min="0" max="999" 
+                                                        id="ext_${milestone.id}" 
+                                                        onchange="extendMilestone(${milestone.id})">
+                                                    <span class="input-group-text" style="font-size: 10px; padding: 2px 4px;">d</span>
+                                                </div>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-outline-secondary btn-sm" 
+                                                        style="font-size: 10px; padding: 2px 6px;" 
+                                                        onclick="quickExtend(${milestone.id}, 1)">+1</button>
+                                                    <button class="btn btn-outline-secondary btn-sm" 
+                                                        style="font-size: 10px; padding: 2px 6px;" 
+                                                        onclick="quickExtend(${milestone.id}, 7)">+7</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') : '<div class="text-muted small">No milestones defined</div>'}
+                                ${extensionDays > 0 ? `
+                                    <div class="mt-2">
+                                        <small class="text-warning">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
+                                        </small>
+                                    </div>
+                                ` : ''}
+                                <div class="mt-2 d-flex gap-1 flex-wrap">
+                                    <small class="text-muted me-2">Quick extend:</small>
+                                    ${phase.milestones && phase.milestones.length === 1 ? `
+                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                            onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
+                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                            onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
+                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                            onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
 
             function redirectToInspections() {
@@ -874,7 +1392,121 @@
             }
         </script>
 
+        <!-- Timeline Modal -->
+        <div class="modal fade" id="timelineModal" tabindex="-1" aria-labelledby="timelineModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <style>
+                          #timelineModal .modal-header .btn-close {
+                            position: static !important;
+                            right: auto !important;
+                            top: auto !important;
+                            margin: 0 !important;
+                          }
+                          #timelineModal .modal-header {
+                            position: relative !important;
+                          }
+                        </style>
+                        @if(app()->getLocale() == 'ar')
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                          <h5 class="modal-title" id="timelineModalLabel">
+                            {{ __('messages.project_timeline') }}<i class="fas fa-chart-line ms-2"></i>
+                          </h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        @else
+                        <h5 class="modal-title" id="timelineModalLabel">
+                            <i class="fas fa-chart-line me-2"></i>{{ __('messages.project_timeline') }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        @endif
+                    </div>
+                    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                        <div id="timelineContent">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">{{ __('messages.loading') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .timeline-marker {
+                position: relative;
+            }
+            .timeline-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                position: relative;
+            }
+            .timeline-phase:not(:last-child) .timeline-marker::after {
+                content: '';
+                position: absolute;
+                top: 20px;
+                {{ is_rtl() ? 'right' : 'left' }}: 50%;
+                transform: translateX(-50%);
+                width: 2px;
+                height: 60px;
+                background: #e9ecef;
+            }
+            .milestone-item {
+                border: 1px solid #e9ecef;
+                transition: all 0.2s ease;
+            }
+            .milestone-item:hover {
+                border-color: #4477C4;
+                box-shadow: 0 2px 4px rgba(68, 119, 196, 0.1);
+            }
+            [dir="rtl"] .timeline-milestones {
+                padding-right: 3rem !important;
+                padding-left: 0 !important;
+            }
+            [dir="rtl"] .timeline-marker {
+                margin-left: 1rem;
+                margin-right: 0;
+            }
+            .text-wrap {
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                word-break: break-word;
+                hyphens: auto;
+                max-width: 100%;
+            }
+        </style>
+
         @include('website.modals.project-progress-modals')
+
+        <!-- Delete Project Confirmation Modal -->
+        <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0 pb-0">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center px-4 pb-4">
+                        <div class="mb-3">
+                            <i class="fas fa-exclamation-triangle text-danger" style="font-size: 4rem;"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">{{ __('messages.delete_project') }}?</h5>
+                        <p class="text-muted mb-4">{{ __('messages.delete_project_warning') }}</p>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-2"></i>{{ __('messages.cancel') }}
+                            </button>
+                            <button type="button" class="btn btn-danger px-4" id="confirmDeleteBtn" onclick="confirmDeleteProject()">
+                                <i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Activities Update Modal -->
         <div class="modal fade" id="activitiesUpdateModal" tabindex="-1">
@@ -955,7 +1587,7 @@
             <label class="form-label small fw-medium mb-1">{{ __('messages.description') }}</label>
             <div class="input-group input-group-sm">
                 <input type="text" class="form-control form-control-sm" name="description[]" 
-                    placeholder="{{ __('messages.enter_activity_description') }}" required>
+                    placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
                 <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
                     <i class="fas fa-times"></i>
                 </button>
@@ -979,7 +1611,7 @@
                 <div class="col-7">
                     <label class="form-label small fw-medium mb-1">{{ __('messages.category') }}</label>
                     <input type="text" class="form-control form-control-sm" name="category[]" 
-                        placeholder="{{ __('messages.enter_category') }}" required>
+                        placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
                 </div>
                 <div class="col-3">
                     <label class="form-label small fw-medium mb-1">{{ __('messages.count') }}</label>
@@ -1010,7 +1642,7 @@
             <label class="form-label small fw-medium mb-1">{{ __('messages.checklist_item') }}</label>
             <div class="input-group input-group-sm">
                 <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
-                    placeholder="{{ __('messages.enter_safety_item') }}" required>
+                    placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
                 <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1029,7 +1661,7 @@
                 fieldDiv.innerHTML = `
         <div class="input-group input-group-sm">
             <input type="text" class="form-control form-control-sm" name="description[]" 
-                placeholder="{{ __('messages.enter_activity_description') }}" required>
+                placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
             <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)">
                 <i class="fas fa-times"></i>
             </button>
@@ -1047,7 +1679,7 @@
         <div class="row g-2">
             <div class="col-7">
                 <input type="text" class="form-control form-control-sm" name="category[]" 
-                    placeholder="{{ __('messages.enter_category') }}" required>
+                    placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
             </div>
             <div class="col-3">
                 <input type="number" class="form-control form-control-sm" name="count[]" 
@@ -1071,7 +1703,7 @@
                 fieldDiv.innerHTML = `
         <div class="input-group input-group-sm">
             <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
-                placeholder="{{ __('messages.enter_safety_item') }}" required>
+                placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
             <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)">
                 <i class="fas fa-times"></i>
             </button>
@@ -1322,7 +1954,7 @@
         <div class="mb-2">
             <input type="hidden" name="activity_id[]" value="${activity.id}">
             <input type="text" class="form-control" name="activity_description[]" 
-                value="${activity.description}" placeholder="Activity description">
+                value="${activity.description}" placeholder="Activity description" maxlength="150">
         </div>
     `).join('');
 
@@ -1344,7 +1976,7 @@
             <div class="col-6">
                 <input type="hidden" name="manpower_id[]" value="${item.id}">
                 <input type="text" class="form-control" name="manpower_category[]" 
-                    value="${item.category}" placeholder="Category">
+                    value="${item.category}" placeholder="Category" maxlength="50">
             </div>
             <div class="col-6">
                 <input type="number" class="form-control" name="manpower_count[]" 
@@ -1370,7 +2002,7 @@
         <div class="mb-2">
             <input type="hidden" name="safety_id[]" value="${item.id}">
             <input type="text" class="form-control" name="safety_item[]" 
-                value="${item.checklist_item}" placeholder="Safety item">
+                value="${item.checklist_item}" placeholder="Safety item" maxlength="120">
         </div>
     `).join('');
 
@@ -1463,6 +2095,8 @@
     <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
     <script src="{{ asset('website/js/api-client.js') }}"></script>
+    <script src="{{ asset('website/js/button-protection.js') }}"></script>
+    <script src="{{ asset('website/js/searchable-dropdown.js') }}"></script>
 
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
