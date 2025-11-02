@@ -322,12 +322,12 @@
                             <div class="col-md-3">
                                 <span class="badge ${statusClass}">${project.status}</span>
                             </div>
-                            <div class="col-md-3">
+                            {{-- <div class="col-md-3">
                                 <div class="progress" style="height: 6px;">
                                     <div class="progress-bar" style="width: ${progress}%"></div>
                                 </div>
                                 <small class="text-muted">${progress}% {{ __('messages.complete') }}</small>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
