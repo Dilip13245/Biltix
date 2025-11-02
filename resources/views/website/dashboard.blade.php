@@ -2008,9 +2008,31 @@
 
     <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script src="{{ asset('website/js/rtl-spacing-fix.js') }}"></script>
+    
+    <!-- Firebase Web Push Notifications -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
+    <script src="{{ asset('firebase-config.js') }}"></script>
+    <script src="{{ asset('website/js/web-push-manager.js') }}"></script>
+    
     <script>
         // Disable auth check on dashboard - Laravel middleware handles it
         window.DISABLE_JS_AUTH_CHECK = true;
+        
+        // Initialize web push notifications on dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Dashboard] Page loaded, checking for web push initialization');
+            
+            // Wait a bit for all scripts to load and user data to be available
+            setTimeout(function() {
+                if (typeof window.initializeWebPush === 'function') {
+                    console.log('[Dashboard] Triggering web push initialization');
+                    window.initializeWebPush();
+                } else {
+                    console.warn('[Dashboard] initializeWebPush function not available');
+                }
+            }, 2000);
+        });
     </script>
 
     <script>

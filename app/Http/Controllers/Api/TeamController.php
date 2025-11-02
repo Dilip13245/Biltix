@@ -86,14 +86,29 @@ class TeamController extends Controller
             $teamMemberDetails->is_active = true;
 
             if ($teamMemberDetails->save()) {
+                \Illuminate\Support\Facades\Log::info('[TEAM] Team member added successfully', [
+                    'team_member_id' => $teamMemberDetails->id,
+                    'project_id' => $request->project_id,
+                    'member_user_id' => $request->member_user_id,
+                    'role' => $request->role_in_project,
+                    'added_by' => $request->user_id
+                ]);
+                
                 // Send notification for team member added
                 $project = \App\Models\Project::find($request->project_id);
                 $addedBy = \App\Models\User::find($request->user_id);
                 $newMember = \App\Models\User::find($request->member_user_id);
 
                 if ($project && $addedBy && $newMember) {
+                    \Illuminate\Support\Facades\Log::info('[TEAM] Sending notifications for new team member', [
+                        'project_title' => $project->project_title,
+                        'new_member_name' => $newMember->name,
+                        'new_member_email' => $newMember->email,
+                        'added_by_name' => $addedBy->name
+                    ]);
+                    
                     // Notify new member
-                    NotificationHelper::send(
+                    $newMemberResult = NotificationHelper::send(
                         $request->member_user_id,
                         'team_member_added',
                         'Added to Project Team',
@@ -108,9 +123,14 @@ class TeamController extends Controller
                         ],
                         'high'
                     );
+                    
+                    \Illuminate\Support\Facades\Log::info('[TEAM] New member notification result', [
+                        'user_id' => $request->member_user_id,
+                        'result' => $newMemberResult
+                    ]);
 
                     // Notify project team
-                    NotificationHelper::sendToProjectTeam(
+                    $teamResult = NotificationHelper::sendToProjectTeam(
                         $project->id,
                         'team_member_added',
                         'New Team Member Added',
@@ -127,8 +147,20 @@ class TeamController extends Controller
                         'medium',
                         [$request->member_user_id, $request->user_id]
                     );
+                    
+                    \Illuminate\Support\Facades\Log::info('[TEAM] Project team notification result', [
+                        'project_id' => $project->id,
+                        'result' => $teamResult
+                    ]);
+                } else {
+                    \Illuminate\Support\Facades\Log::warning('[TEAM] Could not send notifications - missing data', [
+                        'has_project' => !is_null($project),
+                        'has_added_by' => !is_null($addedBy),
+                        'has_new_member' => !is_null($newMember)
+                    ]);
                 }
 
+                \Illuminate\Support\Facades\Log::info('[TEAM] Team member addition completed successfully');
                 return $this->toJsonEnc($teamMemberDetails, trans('api.team.member_added'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.team.add_failed'), Config::get('constant.ERROR'));

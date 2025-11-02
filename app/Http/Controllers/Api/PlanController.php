@@ -63,12 +63,14 @@ class PlanController extends Controller
                 // Send notification for plan upload
                 foreach ($uploadedPlans as $plan) {
                     $project = \App\Models\Project::find($plan->project_id);
-                    if ($project) {
-                        NotificationHelper::sendToProjectTeam(
-                            $project->id,
+                    $uploader = \App\Models\User::find($request->user_id);
+                    if ($project && $uploader) {
+                        // Notify uploader
+                        NotificationHelper::send(
+                            $request->user_id,
                             'plan_uploaded',
-                            'New Plan Uploaded',
-                            "New plan '{$plan->title}' uploaded to project '{$project->project_title}'",
+                            'Plan Uploaded Successfully',
+                            "Your plan '{$plan->title}' has been uploaded to project '{$project->project_title}'",
                             [
                                 'plan_id' => $plan->id,
                                 'plan_title' => $plan->title,
@@ -77,8 +79,25 @@ class PlanController extends Controller
                                 'uploaded_by' => $request->user_id,
                                 'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
                             ],
-                            'medium',
-                            [$request->user_id]
+                            'medium'
+                        );
+                        
+                        // Notify project team (including uploader)
+                        NotificationHelper::sendToProjectTeam(
+                            $project->id,
+                            'plan_uploaded',
+                            'New Plan Uploaded',
+                            "New plan '{$plan->title}' uploaded to project '{$project->project_title}' by {$uploader->name}",
+                            [
+                                'plan_id' => $plan->id,
+                                'plan_title' => $plan->title,
+                                'project_id' => $project->id,
+                                'project_title' => $project->project_title,
+                                'uploaded_by' => $request->user_id,
+                                'uploader_name' => $uploader->name,
+                                'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
+                            ],
+                            'medium'
                         );
                     }
                 }

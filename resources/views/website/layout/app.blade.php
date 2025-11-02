@@ -81,9 +81,27 @@
   
   <!-- Universal Auth System -->
   <script src="{{ asset('website/js/universal-auth.js') }}"></script>
+  
+  <!-- Firebase Web Push Notifications -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
+  <script src="{{ asset('firebase-config.js') }}"></script>
+  <script src="{{ asset('website/js/web-push-manager.js') }}"></script>
+  
   <script>
       // Disable auth check on app layout pages - Laravel middleware handles it
       window.DISABLE_JS_AUTH_CHECK = true;
+      
+      // Initialize web push after page loads (wait a bit for all scripts)
+      document.addEventListener('DOMContentLoaded', function() {
+          // Wait for Firebase and WebPushManager to be available
+          setTimeout(function() {
+              if (typeof window.initializeWebPush === 'function') {
+                  console.log('[App Layout] Triggering web push initialization');
+                  window.initializeWebPush();
+              }
+          }, 1500);
+      });
       
       // Load header project data
       document.addEventListener('DOMContentLoaded', function() {

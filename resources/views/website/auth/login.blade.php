@@ -425,6 +425,14 @@
                         
                         if (sessionResult.success) {
                             toastr.success(response.message || 'Login successful');
+                            
+                            // Initialize web push notifications after login
+                            if (typeof window !== 'undefined' && window.initializeWebPush) {
+                                setTimeout(() => {
+                                    window.initializeWebPush();
+                                }, 500);
+                            }
+                            
                             setTimeout(() => {
                                 window.location.href = '/dashboard';
                             }, 1000);

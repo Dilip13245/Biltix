@@ -63,6 +63,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
     Route::prefix('auth')->group(function () {
         Route::post('get_user_profile', [AuthController::class, 'getUserProfile']);
         Route::post('update_profile', [AuthController::class, 'updateProfile']);
+        Route::post('register_device', [AuthController::class, 'registerDevice']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('delete_account', [AuthController::class, 'deleteAccount']);
     });

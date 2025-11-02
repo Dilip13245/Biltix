@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Notification</title>
+</head>
+<body>
+    <h1>Test Web Push Notification</h1>
+    <button onclick="testNotification()">Test Notification</button>
+    
+    <script>
+        function testNotification() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification('Test Notification', {
+                    body: 'Ye test notification hai - agar ye dikhe to notifications kaam kar rahi hain!',
+                    icon: '/website/images/icons/logo.svg',
+                    badge: '/website/images/icons/logo.svg',
+                    tag: 'test-notification',
+                    requireInteraction: true
+                });
+                
+                console.log('✅ Notification created');
+                notification.onclick = function() {
+                    console.log('Notification clicked');
+                    notification.close();
+                };
+            } else if ('Notification' in window && Notification.permission !== 'denied') {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        testNotification();
+                    }
+                });
+            } else {
+                alert('Notification permission denied ya browser support nahi karta');
+            }
+        }
+    </script>
+</body>
+</html>
+

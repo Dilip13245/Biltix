@@ -7,11 +7,24 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configure FCM for Android push notifications
+    | 
+    | IMPORTANT: Firebase has deprecated the legacy server key method.
+    | The new FCM HTTP v1 API uses OAuth2 authentication.
+    |
+    | Configuration options:
+    | - credentials_path: Path to google-services.json (for project info)
+    | - service_account_path: Path to service account JSON (for OAuth2)
+    | - project_id: Firebase project ID (auto-loaded from credentials if not set)
+    | - server_key: Legacy API key (fallback only, deprecated)
     |
     */
     'fcm' => [
-        'server_key' => env('FCM_SERVER_KEY', ''),
-        'api_url' => 'https://fcm.googleapis.com/fcm/send',
+        'credentials_path' => env('FIREBASE_CREDENTIALS_PATH', config_path('firebase-credentials.json')),
+        'service_account_path' => env('FIREBASE_SERVICE_ACCOUNT_PATH', storage_path('app/firebase-service-account.json')),
+        'project_id' => env('FIREBASE_PROJECT_ID', ''),
+        'server_key' => env('FCM_SERVER_KEY', ''), // Deprecated: Legacy API fallback only
+        'api_url_v1' => 'https://fcm.googleapis.com/v1/projects/{project_id}/messages:send',
+        'api_url_legacy' => 'https://fcm.googleapis.com/fcm/send',
         'timeout' => 30,
     ],
 

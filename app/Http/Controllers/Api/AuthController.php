@@ -192,18 +192,39 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'token' => $accessToken,
                 'device_type' => $request->device_type,
-                'ip_address' => $request->ip_address ?? "",
+                'ip_address' => $request->ip_address ?? $request->ip() ?? "",
                 'uuid' => $request->uuid ?? "",
                 'os_version' => $request->os_version ?? "",
                 'device_model' => $request->device_model ?? "",
-                'app_version' => $request->app_version ?? 'v1',
+                'app_version' => $request->app_version ?? ($request->device_type === 'W' ? 'web-1.0.0' : 'v1'),
                 'device_token' => $request->device_token ?? "",
+                'push_notification_enabled' => $request->push_notification_enabled ?? true,
+                'is_active' => true,
+                'is_deleted' => false,
             ];
 
-            UserDevice::updateOrCreate(
-                ['user_id' => $user->id],
-                $deviceData
-            );
+            // For web devices, allow multiple devices per user
+            // For mobile devices, update existing device or create new one
+            if ($request->device_type === 'W') {
+                // Web: Create new device or update existing web device with same token
+                UserDevice::updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'device_type' => 'W',
+                        'token' => $accessToken, // Match by user_id, device_type, and token
+                    ],
+                    $deviceData
+                );
+            } else {
+                // Mobile: Update or create device (one per user per device type)
+                UserDevice::updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'device_type' => $request->device_type,
+                    ],
+                    $deviceData
+                );
+            }
 
             // Update last login time
             $user->last_login_at = now();
@@ -633,6 +654,101 @@ class AuthController extends Controller
 
             return $this->toJsonEnc([], trans('api.auth.account_deleted'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function registerDevice(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer',
+                'device_type' => 'required|in:A,I,W',
+                'device_token' => 'nullable|string',
+                'ip_address' => 'nullable|string',
+                'uuid' => 'nullable|string',
+                'os_version' => 'nullable|string',
+                'device_model' => 'nullable|string',
+                'app_version' => 'nullable|string',
+                'push_notification_enabled' => 'nullable|boolean',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            // Get user token from headers
+            $token = $request->header('token');
+            if (!$token) {
+                return $this->toJsonEnc([], trans('api.auth.token_required'), Config::get('constant.ERROR'));
+            }
+
+            // Find device by user_id and token (verify ownership)
+            $device = UserDevice::where('user_id', $request->user_id)
+                ->where('token', $token)
+                ->where('device_type', $request->device_type)
+                ->first();
+
+            if (!$device) {
+                // For web devices, try to find by user_id and device_type if token doesn't match
+                // (in case token was updated or device created during login)
+                if ($request->device_type === 'W') {
+                    $device = UserDevice::where('user_id', $request->user_id)
+                        ->where('device_type', 'W')
+                        ->where('is_active', true)
+                        ->where('is_deleted', false)
+                        ->orderBy('created_at', 'desc')
+                        ->first();
+                    
+                    // If found but token doesn't match, update token too
+                    if ($device && $device->token !== $token) {
+                        $device->token = $token;
+                    }
+                }
+                
+                if (!$device) {
+                    Log::warning('[Auth] Device not found for token registration', [
+                        'user_id' => $request->user_id,
+                        'device_type' => $request->device_type,
+                        'has_token_in_request' => !empty($token)
+                    ]);
+                    return $this->toJsonEnc([], 'Device not found. Please login again.', Config::get('constant.ERROR'));
+                }
+            }
+
+            // Update device with new push token
+            $deviceData = [
+                'device_type' => $request->device_type,
+                'device_token' => $request->device_token ?? $device->device_token ?? "",
+                'ip_address' => $request->ip_address ?? $device->ip_address ?? $request->ip() ?? "",
+                'uuid' => $request->uuid ?? $device->uuid ?? "",
+                'os_version' => $request->os_version ?? $device->os_version ?? "",
+                'device_model' => $request->device_model ?? $device->device_model ?? "",
+                'app_version' => $request->app_version ?? $device->app_version ?? ($request->device_type === 'W' ? 'web-1.0.0' : 'v1'),
+                'push_notification_enabled' => $request->push_notification_enabled ?? true,
+                'is_active' => true,
+                'is_deleted' => false,
+            ];
+
+            $device->update($deviceData);
+
+            Log::info('[Auth] Device registered/updated', [
+                'user_id' => $request->user_id,
+                'device_type' => $request->device_type,
+                'has_token' => !empty($deviceData['device_token'])
+            ]);
+
+            return $this->toJsonEnc([
+                'device_id' => $device->id,
+                'device_type' => $device->device_type,
+                'push_notification_enabled' => $device->push_notification_enabled,
+            ], 'Device registered successfully', Config::get('constant.SUCCESS'));
+
+        } catch (\Exception $e) {
+            Log::error('[Auth] Device registration error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
     }
