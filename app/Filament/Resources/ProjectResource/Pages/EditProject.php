@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource;
 use App\Models\File;
 use App\Models\FileCategory;
+use App\Helpers\NotificationHelper;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -22,7 +23,25 @@ class EditProject extends EditRecord
                 ->color('danger')
                 ->requiresConfirmation()
                 ->action(function (): void {
-                    $this->record->update(['is_deleted' => true]);
+                    $project = $this->record;
+                    $project->update(['is_deleted' => true]);
+                    
+                    // Send notification for project deletion
+                    NotificationHelper::sendToProjectTeam(
+                        $project->id,
+                        'project_deleted',
+                        'Project Deleted',
+                        "Project '{$project->project_title}' has been deleted",
+                        [
+                            'project_id' => $project->id,
+                            'project_title' => $project->project_title,
+                            'deleted_by' => auth()->id(),
+                            'action_url' => "/projects"
+                        ],
+                        'high',
+                        [auth()->id()]
+                    );
+                    
                     $this->redirect($this->getResource()::getUrl('index'));
                 }),
         ];
@@ -57,6 +76,112 @@ class EditProject extends EditRecord
     protected function afterSave(): void
     {
         $this->handleFileUploads();
+        
+        // Send push notifications for project updates
+        $project = $this->record->fresh(); // Refresh to get latest data
+        $oldData = $this->record->getOriginal();
+        $updater = \App\Models\User::find(auth()->id());
+        
+        // Refresh original after save to compare properly
+        $this->record->refresh();
+        $project = $this->record;
+        
+        // Check if project manager changed
+        if (isset($oldData['project_manager_id']) && $oldData['project_manager_id'] != $project->project_manager_id) {
+            // Notify old project manager if removed
+            if ($oldData['project_manager_id']) {
+                NotificationHelper::send(
+                    $oldData['project_manager_id'],
+                    'project_manager_changed',
+                    'Project Manager Changed',
+                    "You have been removed as project manager from '{$project->project_title}'",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'changed_by' => auth()->id(),
+                        'action_url' => "/projects"
+                    ],
+                    'medium'
+                );
+            }
+            
+            // Notify new project manager if assigned
+            if ($project->project_manager_id) {
+                NotificationHelper::send(
+                    $project->project_manager_id,
+                    'project_manager_assigned',
+                    'Assigned as Project Manager',
+                    "You have been assigned as project manager for '{$project->project_title}'",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'assigned_by' => auth()->id(),
+                        'assigned_by_name' => $updater ? $updater->name : 'Admin',
+                        'action_url' => "/projects/{$project->id}"
+                    ],
+                    'high'
+                );
+            }
+        }
+        
+        // Check if technical engineer changed
+        if (isset($oldData['technical_engineer_id']) && $oldData['technical_engineer_id'] != $project->technical_engineer_id) {
+            // Notify old technical engineer if removed
+            if ($oldData['technical_engineer_id']) {
+                NotificationHelper::send(
+                    $oldData['technical_engineer_id'],
+                    'technical_engineer_changed',
+                    'Technical Engineer Changed',
+                    "You have been removed as technical engineer from '{$project->project_title}'",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'changed_by' => auth()->id(),
+                        'action_url' => "/projects"
+                    ],
+                    'medium'
+                );
+            }
+            
+            // Notify new technical engineer if assigned
+            if ($project->technical_engineer_id) {
+                NotificationHelper::send(
+                    $project->technical_engineer_id,
+                    'technical_engineer_assigned',
+                    'Assigned as Technical Engineer',
+                    "You have been assigned as technical engineer for '{$project->project_title}'",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'assigned_by' => auth()->id(),
+                        'assigned_by_name' => $updater ? $updater->name : 'Admin',
+                        'action_url' => "/projects/{$project->id}"
+                    ],
+                    'high'
+                );
+            }
+        }
+        
+        // Check if status changed
+        if (isset($oldData['status']) && $oldData['status'] != $project->status) {
+            NotificationHelper::sendToProjectTeam(
+                $project->id,
+                'project_status_changed',
+                'Project Status Updated',
+                "Project '{$project->project_title}' status changed to " . ucfirst(str_replace('_', ' ', $project->status)),
+                [
+                    'project_id' => $project->id,
+                    'project_title' => $project->project_title,
+                    'old_status' => $oldData['status'],
+                    'new_status' => $project->status,
+                    'changed_by' => auth()->id(),
+                    'changed_by_name' => $updater ? $updater->name : 'Admin',
+                    'action_url' => "/projects/{$project->id}"
+                ],
+                'medium',
+                [auth()->id()]
+            );
+        }
     }
     
     protected function handleFileUploads(): void

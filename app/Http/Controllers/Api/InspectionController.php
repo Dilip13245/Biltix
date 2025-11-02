@@ -10,6 +10,7 @@ use App\Helpers\FileHelper;
 use App\Models\InspectionResult;
 use App\Models\InspectionTemplate;
 use App\Models\ProjectPhase;
+use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -67,6 +68,32 @@ class InspectionController extends Controller
                             'uploaded_by' => $request->user_id
                         ]);
                     }
+                }
+
+                // Send notifications for inspection creation
+                $project = \App\Models\Project::find($request->project_id);
+                $recipients = [];
+                if ($inspectionDetails->inspected_by) {
+                    $recipients[] = $inspectionDetails->inspected_by;
+                }
+
+                if ($project) {
+                    NotificationHelper::sendToProjectTeam(
+                        $project->id,
+                        'inspection_created',
+                        'New Inspection Scheduled',
+                        "New {$inspectionDetails->category} inspection scheduled for project '{$project->project_title}'",
+                        [
+                            'inspection_id' => $inspectionDetails->id,
+                            'project_id' => $project->id,
+                            'project_title' => $project->project_title,
+                            'category' => $inspectionDetails->category,
+                            'created_by' => $request->user_id,
+                            'action_url' => "/inspections/{$inspectionDetails->id}"
+                        ],
+                        'high',
+                        array_merge([$request->user_id], $recipients)
+                    );
                 }
 
                 $inspectionDetails->load(['checklists', 'images']);
@@ -266,6 +293,29 @@ class InspectionController extends Controller
             $inspection->status = 'completed';
             $inspection->save();
 
+            // Send notification for inspection completed
+            $project = \App\Models\Project::find($inspection->project_id);
+            $inspector = \App\Models\User::find($user_id);
+            if ($project && $inspector) {
+                NotificationHelper::sendToProjectTeam(
+                    $project->id,
+                    'inspection_completed',
+                    'Inspection Completed',
+                    "{$inspection->category} inspection has been completed by {$inspector->name}",
+                    [
+                        'inspection_id' => $inspection->id,
+                        'project_id' => $project->id,
+                        'category' => $inspection->category,
+                        'inspector_id' => $user_id,
+                        'inspector_name' => $inspector->name,
+                        'completed_at' => now()->toDateTimeString(),
+                        'action_url' => "/inspections/{$inspection->id}"
+                    ],
+                    'high',
+                    [$user_id]
+                );
+            }
+
             return $this->toJsonEnc($inspection, trans('api.inspections.completed_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
@@ -291,6 +341,40 @@ class InspectionController extends Controller
             $inspection->status = 'approved';
             $inspection->notes = $approval_notes ?? '';
             $inspection->save();
+
+            // Send notification for inspection approved
+            $project = \App\Models\Project::find($inspection->project_id);
+            $approver = \App\Models\User::find($user_id);
+            if ($project && $approver) {
+                $recipients = [];
+                if ($inspection->created_by) {
+                    $recipients[] = $inspection->created_by;
+                }
+                if ($inspection->inspected_by && !in_array($inspection->inspected_by, $recipients)) {
+                    $recipients[] = $inspection->inspected_by;
+                }
+                
+                // Exclude approver
+                $recipients = array_diff($recipients, [$user_id]);
+                
+                if (!empty($recipients)) {
+                    NotificationHelper::send(
+                        $recipients,
+                        'inspection_approved',
+                        'Inspection Approved',
+                        "{$inspection->category} inspection has been approved by {$approver->name}",
+                        [
+                            'inspection_id' => $inspection->id,
+                            'project_id' => $project->id,
+                            'category' => $inspection->category,
+                            'approver_id' => $user_id,
+                            'approver_name' => $approver->name,
+                            'action_url' => "/inspections/{$inspection->id}"
+                        ],
+                        'high'
+                    );
+                }
+            }
 
             return $this->toJsonEnc($inspection, trans('api.inspections.approved_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -369,6 +453,27 @@ class InspectionController extends Controller
             $inspection->status = 'in_progress';
             $inspection->started_at = now();
             $inspection->save();
+
+            // Send notification for inspection started
+            $project = \App\Models\Project::find($inspection->project_id);
+            $inspector = \App\Models\User::find($user_id);
+            if ($project && $inspector) {
+                NotificationHelper::sendToProjectManagers(
+                    $project->id,
+                    'inspection_started',
+                    'Inspection Started',
+                    "{$inspector->name} has started the {$inspection->category} inspection",
+                    [
+                        'inspection_id' => $inspection->id,
+                        'project_id' => $project->id,
+                        'category' => $inspection->category,
+                        'inspector_id' => $user_id,
+                        'inspector_name' => $inspector->name,
+                        'action_url' => "/inspections/{$inspection->id}"
+                    ],
+                    'medium'
+                );
+            }
 
             return $this->toJsonEnc($inspection, trans('api.inspections.started_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

@@ -179,6 +179,35 @@ class SnagResource extends Resource
                             'resolved_at' => now(),
                             'resolved_by' => auth()->id(),
                         ]);
+                        
+                        // Send notification for snag resolution
+                        $project = \App\Models\Project::find($record->project_id);
+                        $resolver = \App\Models\User::find(auth()->id());
+                        if ($project && $resolver) {
+                            $recipients = [$record->reported_by];
+                            if ($project->project_manager_id) {
+                                $recipients[] = $project->project_manager_id;
+                            }
+                            $recipients = array_unique(array_diff($recipients, [auth()->id()]));
+                            
+                            if (!empty($recipients)) {
+                                \App\Helpers\NotificationHelper::send(
+                                    $recipients,
+                                    'snag_resolved',
+                                    'Snag Resolved',
+                                    "Snag '{$record->title}' has been resolved by {$resolver->name}",
+                                    [
+                                        'snag_id' => $record->id,
+                                        'snag_title' => $record->title,
+                                        'project_id' => $project->id,
+                                        'resolver_id' => auth()->id(),
+                                        'resolver_name' => $resolver->name,
+                                        'action_url' => "/snags/{$record->id}"
+                                    ],
+                                    'medium'
+                                );
+                            }
+                        }
                     }),
                 Tables\Actions\DeleteAction::make(),
             ])

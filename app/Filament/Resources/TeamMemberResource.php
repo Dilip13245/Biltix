@@ -126,11 +126,61 @@ class TeamMemberResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(function ($record) {
+                        $teamMember = $record;
+                        $project = \App\Models\Project::find($teamMember->project_id);
+                        $removedMember = \App\Models\User::find($teamMember->user_id);
+                        
+                        // Send notification before deletion
+                        if ($project && $removedMember) {
+                            \App\Helpers\NotificationHelper::send(
+                                $teamMember->user_id,
+                                'team_member_removed',
+                                'Removed from Project Team',
+                                "You have been removed from project '{$project->project_title}' team",
+                                [
+                                    'project_id' => $project->id,
+                                    'project_title' => $project->project_title,
+                                    'removed_by' => auth()->id(),
+                                    'action_url' => "/projects"
+                                ],
+                                'medium'
+                            );
+                        }
+                        
+                        $record->update(['is_deleted' => true]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->action(function ($records) {
+                            foreach ($records as $record) {
+                                $teamMember = $record;
+                                $project = \App\Models\Project::find($teamMember->project_id);
+                                $removedMember = \App\Models\User::find($teamMember->user_id);
+                                
+                                // Send notification before deletion
+                                if ($project && $removedMember) {
+                                    \App\Helpers\NotificationHelper::send(
+                                        $teamMember->user_id,
+                                        'team_member_removed',
+                                        'Removed from Project Team',
+                                        "You have been removed from project '{$project->project_title}' team",
+                                        [
+                                            'project_id' => $project->id,
+                                            'project_title' => $project->project_title,
+                                            'removed_by' => auth()->id(),
+                                            'action_url' => "/projects"
+                                        ],
+                                        'medium'
+                                    );
+                                }
+                                
+                                $record->update(['is_deleted' => true]);
+                            }
+                        }),
                 ]),
             ])
             ->defaultSort('assigned_at', 'desc');

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DailyLog;
 use App\Models\EquipmentLog;
 use App\Models\StaffLog;
+use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -39,6 +40,29 @@ class DailyLogController extends Controller
             $dailyLogDetails->is_active = true;
 
             if ($dailyLogDetails->save()) {
+                // Send notification for daily log creation
+                $project = \App\Models\Project::find($request->project_id);
+                $logger = \App\Models\User::find($request->user_id);
+                if ($project && $logger) {
+                    NotificationHelper::sendToProjectManagers(
+                        $project->id,
+                        'daily_log_created',
+                        'Daily Log Entry Created',
+                        "Daily log for {$request->log_date} created for project '{$project->project_title}'",
+                        [
+                            'log_id' => $dailyLogDetails->id,
+                            'project_id' => $project->id,
+                            'project_title' => $project->project_title,
+                            'log_date' => $request->log_date,
+                            'logged_by' => $request->user_id,
+                            'logged_by_name' => $logger->name,
+                            'action_url' => "/projects/{$project->id}/daily-logs/{$dailyLogDetails->id}"
+                        ],
+                        'low',
+                        [$request->user_id]
+                    );
+                }
+
                 return $this->toJsonEnc($dailyLogDetails, trans('api.daily_logs.created_success'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.daily_logs.creation_failed'), Config::get('constant.ERROR'));

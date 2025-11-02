@@ -12,7 +12,20 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Send task due reminders every hour
+        $schedule->command('notifications:task-due-reminders')
+            ->hourly()
+            ->withoutOverlapping();
+
+        // Send task overdue notifications daily at 9 AM
+        $schedule->command('notifications:task-overdue')
+            ->dailyAt('09:00')
+            ->withoutOverlapping();
+
+        // Send inspection due reminders every hour
+        $schedule->command('notifications:inspection-due-reminders')
+            ->hourly()
+            ->withoutOverlapping();
     }
 
     /**

@@ -14,6 +14,7 @@ use App\Models\PhaseMilestone;
 use App\Models\File;
 use App\Models\FileCategory;
 use App\Models\FileFolder;
+use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -155,6 +156,33 @@ class ProjectController extends Controller
                     }
                 }
 
+                // Send notifications
+                $recipients = [];
+                $creator = \App\Models\User::find($request->user_id);
+                if ($projectDetails->project_manager_id) {
+                    $recipients[] = $projectDetails->project_manager_id;
+                }
+                if ($projectDetails->technical_engineer_id && !in_array($projectDetails->technical_engineer_id, $recipients)) {
+                    $recipients[] = $projectDetails->technical_engineer_id;
+                }
+                if (!empty($recipients)) {
+                    NotificationHelper::send(
+                        $recipients,
+                        'project_created',
+                        'New Project Created',
+                        "Project '{$projectDetails->project_title}' has been created by {$creator->name}",
+                        [
+                            'project_id' => $projectDetails->id,
+                            'project_code' => $projectDetails->project_code,
+                            'project_title' => $projectDetails->project_title,
+                            'creator_id' => $request->user_id,
+                            'creator_name' => $creator->name,
+                            'action_url' => "/projects/{$projectDetails->id}"
+                        ],
+                        'high'
+                    );
+                }
+
                 return $this->toJsonEnc($projectDetails, trans('api.projects.created_success'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.projects.creation_failed'), Config::get('constant.ERROR'));
@@ -270,9 +298,46 @@ class ProjectController extends Controller
             if ($request->filled('project_start_date')) $project->project_start_date = $request->project_start_date;
             if ($request->filled('project_due_date')) $project->project_due_date = $request->project_due_date;
             if ($request->filled('priority')) $project->priority = $request->priority;
+            
+            $oldStatus = $project->status;
             if ($request->filled('status')) $project->status = $request->status;
 
             $project->save();
+
+            // Send notifications for project updates
+            NotificationHelper::sendToProjectTeam(
+                $project_id,
+                'project_updated',
+                'Project Updated',
+                "Project '{$project->project_title}' has been updated",
+                [
+                    'project_id' => $project->id,
+                    'project_title' => $project->project_title,
+                    'updated_by' => $user_id,
+                    'action_url' => "/projects/{$project->id}"
+                ],
+                'medium',
+                [$user_id] // Exclude updater
+            );
+
+            // Send notification if status changed
+            if ($request->filled('status') && $oldStatus !== $project->status) {
+                NotificationHelper::sendToProjectTeam(
+                    $project_id,
+                    'project_status_changed',
+                    'Project Status Changed',
+                    "Project '{$project->project_title}' status changed to {$project->status}",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'old_status' => $oldStatus,
+                        'new_status' => $project->status,
+                        'changed_by' => $user_id,
+                        'action_url' => "/projects/{$project->id}"
+                    ],
+                    'high'
+                );
+            }
 
             return $this->toJsonEnc($project, trans('api.projects.updated_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -409,6 +474,27 @@ class ProjectController extends Controller
                             'is_deleted' => false
                         ]);
                     }
+                }
+
+                // Send notification for phase creation
+                $project = Project::find($request->project_id);
+                if ($project) {
+                    NotificationHelper::sendToProjectTeam(
+                        $project->id,
+                        'phase_created',
+                        'New Phase Created',
+                        "New phase '{$phaseDetails->title}' added to project '{$project->project_title}'",
+                        [
+                            'project_id' => $project->id,
+                            'project_title' => $project->project_title,
+                            'phase_id' => $phaseDetails->id,
+                            'phase_title' => $phaseDetails->title,
+                            'created_by' => $request->user_id,
+                            'action_url' => "/projects/{$project->id}/phases/{$phaseDetails->id}"
+                        ],
+                        'medium',
+                        [$request->user_id]
+                    );
                 }
 
                 $phaseDetails->load('milestones');
@@ -587,8 +673,31 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.phase_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            $oldProgress = $phase->progress_percentage ?? 0;
             $phase->progress_percentage = $request->progress_percentage;
             $phase->save();
+
+            // Send notification for phase progress update
+            $project = Project::find($phase->project_id);
+            if ($project) {
+                NotificationHelper::sendToProjectTeam(
+                    $project->id,
+                    'phase_progress_updated',
+                    'Phase Progress Updated',
+                    "Phase '{$phase->title}' progress updated to {$request->progress_percentage}%",
+                    [
+                        'project_id' => $project->id,
+                        'phase_id' => $phase->id,
+                        'phase_title' => $phase->title,
+                        'old_progress' => $oldProgress,
+                        'new_progress' => $request->progress_percentage,
+                        'updated_by' => $request->user_id,
+                        'action_url' => "/projects/{$project->id}/phases/{$phase->id}"
+                    ],
+                    'low',
+                    [$request->user_id]
+                );
+            }
 
             return $this->toJsonEnc($phase, trans('api.projects.phase_progress_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -621,9 +730,35 @@ class ProjectController extends Controller
             $extensionDays = $request->extension_days;
             $isExtension = $extensionDays > 0;
 
+            $oldExtensionDays = $milestone->extension_days ?? 0;
             $milestone->extension_days = $extensionDays;
             $milestone->is_extended = $isExtension;
             $milestone->save();
+
+            // Send notification if milestone extended
+            if ($isExtension) {
+                $project = $milestone->phase->project ?? null;
+                if ($project) {
+                    NotificationHelper::sendToProjectTeam(
+                        $project->id,
+                        'milestone_extended',
+                        'Milestone Extended',
+                        "Milestone '{$milestone->milestone_name}' due date extended by {$extensionDays} days",
+                        [
+                            'project_id' => $project->id,
+                            'phase_id' => $milestone->phase_id,
+                            'milestone_id' => $milestone->id,
+                            'milestone_name' => $milestone->milestone_name,
+                            'old_extension_days' => $oldExtensionDays,
+                            'new_extension_days' => $extensionDays,
+                            'extended_by' => $request->user_id,
+                            'action_url' => "/projects/{$project->id}/phases/{$milestone->phase_id}"
+                        ],
+                        'medium',
+                        [$request->user_id]
+                    );
+                }
+            }
 
             // Load the milestone with calculated attributes
             $milestone->load('phase.project');

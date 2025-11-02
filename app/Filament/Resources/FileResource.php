@@ -195,6 +195,29 @@ class FileResource extends Resource
                     ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make()
                     ->action(function ($record) {
+                        $file = $record;
+                        $project = \App\Models\Project::find($file->project_id);
+                        
+                        // Send notification before deletion (optional - file deletions might not need notifications)
+                        // Only notify if file is important/public
+                        if ($project && ($file->is_public || $file->category_id)) {
+                            \App\Helpers\NotificationHelper::sendToProjectTeam(
+                                $project->id,
+                                'file_deleted',
+                                'File Deleted',
+                                "File '{$file->original_name}' has been deleted from project",
+                                [
+                                    'file_id' => $file->id,
+                                    'file_name' => $file->original_name,
+                                    'project_id' => $project->id,
+                                    'deleted_by' => auth()->id(),
+                                    'action_url' => "/files"
+                                ],
+                                'low',
+                                [auth()->id()]
+                            );
+                        }
+                        
                         $record->update(['is_deleted' => true]);
                     }),
             ])
@@ -202,9 +225,31 @@ class FileResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
                         ->action(function ($records) {
-                            $records->each(function ($record) {
+                            foreach ($records as $record) {
+                                $file = $record;
+                                $project = \App\Models\Project::find($file->project_id);
+                                
+                                // Send notification before deletion if file is important/public
+                                if ($project && ($file->is_public || $file->category_id)) {
+                                    \App\Helpers\NotificationHelper::sendToProjectTeam(
+                                        $project->id,
+                                        'file_deleted',
+                                        'File Deleted',
+                                        "File '{$file->original_name}' has been deleted from project",
+                                        [
+                                            'file_id' => $file->id,
+                                            'file_name' => $file->original_name,
+                                            'project_id' => $project->id,
+                                            'deleted_by' => auth()->id(),
+                                            'action_url' => "/files"
+                                        ],
+                                        'low',
+                                        [auth()->id()]
+                                    );
+                                }
+                                
                                 $record->update(['is_deleted' => true]);
-                            });
+                            }
                         }),
                 ]),
             ])

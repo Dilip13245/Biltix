@@ -309,6 +309,23 @@ class ProjectResource extends Resource
                     ->requiresConfirmation()
                     ->action(function (Project $record): void {
                         $record->update(['is_active' => false]);
+                        
+                        // Send notification for project archive
+                        \App\Helpers\NotificationHelper::sendToProjectTeam(
+                            $record->id,
+                            'project_archived',
+                            'Project Archived',
+                            "Project '{$record->project_title}' has been archived",
+                            [
+                                'project_id' => $record->id,
+                                'project_title' => $record->project_title,
+                                'archived_by' => auth()->id(),
+                                'action_url' => "/projects/{$record->id}"
+                            ],
+                            'medium',
+                            [auth()->id()]
+                        );
+                        
                         Notification::make()
                             ->title(__('filament.messages.project_archived'))
                             ->success()
@@ -321,6 +338,23 @@ class ProjectResource extends Resource
                     ->visible(fn (Project $record): bool => !$record->is_active)
                     ->action(function (Project $record): void {
                         $record->update(['is_active' => true]);
+                        
+                        // Send notification for project restoration
+                        \App\Helpers\NotificationHelper::sendToProjectTeam(
+                            $record->id,
+                            'project_restored',
+                            'Project Restored',
+                            "Project '{$record->project_title}' has been restored",
+                            [
+                                'project_id' => $record->id,
+                                'project_title' => $record->project_title,
+                                'restored_by' => auth()->id(),
+                                'action_url' => "/projects/{$record->id}"
+                            ],
+                            'medium',
+                            [auth()->id()]
+                        );
+                        
                         Notification::make()
                             ->title(__('filament.messages.project_restored'))
                             ->success()
@@ -337,6 +371,23 @@ class ProjectResource extends Resource
                     ->requiresConfirmation()
                     ->action(function (Project $record): void {
                         $record->update(['is_deleted' => true]);
+                        
+                        // Send notification for project deletion
+                        \App\Helpers\NotificationHelper::sendToProjectTeam(
+                            $record->id,
+                            'project_deleted',
+                            'Project Deleted',
+                            "Project '{$record->project_title}' has been deleted",
+                            [
+                                'project_id' => $record->id,
+                                'project_title' => $record->project_title,
+                                'deleted_by' => auth()->id(),
+                                'action_url' => "/projects"
+                            ],
+                            'high',
+                            [auth()->id()]
+                        );
+                        
                         Notification::make()
                             ->title(__('filament.messages.project_deleted'))
                             ->success()
@@ -350,6 +401,23 @@ class ProjectResource extends Resource
                     ->visible(fn (Project $record): bool => $record->is_deleted)
                     ->action(function (Project $record): void {
                         $record->update(['is_deleted' => false]);
+                        
+                        // Send notification for project restoration
+                        \App\Helpers\NotificationHelper::sendToProjectTeam(
+                            $record->id,
+                            'project_restored',
+                            'Project Restored',
+                            "Project '{$record->project_title}' has been restored",
+                            [
+                                'project_id' => $record->id,
+                                'project_title' => $record->project_title,
+                                'restored_by' => auth()->id(),
+                                'action_url' => "/projects/{$record->id}"
+                            ],
+                            'medium',
+                            [auth()->id()]
+                        );
+                        
                         Notification::make()
                             ->title(__('filament.messages.project_restored'))
                             ->success()
@@ -364,7 +432,26 @@ class ProjectResource extends Resource
                         ->icon('heroicon-o-trash')
                         ->color('danger')
                         ->action(function ($records): void {
-                            $records->each->update(['is_deleted' => true]);
+                            foreach ($records as $record) {
+                                $record->update(['is_deleted' => true]);
+                                
+                                // Send notification for each project deletion
+                                \App\Helpers\NotificationHelper::sendToProjectTeam(
+                                    $record->id,
+                                    'project_deleted',
+                                    'Project Deleted',
+                                    "Project '{$record->project_title}' has been deleted",
+                                    [
+                                        'project_id' => $record->id,
+                                        'project_title' => $record->project_title,
+                                        'deleted_by' => auth()->id(),
+                                        'action_url' => "/projects"
+                                    ],
+                                    'high',
+                                    [auth()->id()]
+                                );
+                            }
+                            
                             Notification::make()
                                 ->title(__('filament.messages.projects_deleted'))
                                 ->success()
@@ -375,7 +462,26 @@ class ProjectResource extends Resource
                         ->icon('heroicon-o-archive-box')
                         ->color('warning')
                         ->action(function ($records): void {
-                            $records->each->update(['is_active' => false]);
+                            foreach ($records as $record) {
+                                $record->update(['is_active' => false]);
+                                
+                                // Send notification for each project archive
+                                \App\Helpers\NotificationHelper::sendToProjectTeam(
+                                    $record->id,
+                                    'project_archived',
+                                    'Project Archived',
+                                    "Project '{$record->project_title}' has been archived",
+                                    [
+                                        'project_id' => $record->id,
+                                        'project_title' => $record->project_title,
+                                        'archived_by' => auth()->id(),
+                                        'action_url' => "/projects/{$record->id}"
+                                    ],
+                                    'medium',
+                                    [auth()->id()]
+                                );
+                            }
+                            
                             Notification::make()
                                 ->title(__('filament.messages.projects_archived'))
                                 ->success()
@@ -386,7 +492,26 @@ class ProjectResource extends Resource
                         ->icon('heroicon-o-arrow-path')
                         ->color('success')
                         ->action(function ($records): void {
-                            $records->each->update(['is_active' => true]);
+                            foreach ($records as $record) {
+                                $record->update(['is_active' => true]);
+                                
+                                // Send notification for each project restoration
+                                \App\Helpers\NotificationHelper::sendToProjectTeam(
+                                    $record->id,
+                                    'project_restored',
+                                    'Project Restored',
+                                    "Project '{$record->project_title}' has been restored",
+                                    [
+                                        'project_id' => $record->id,
+                                        'project_title' => $record->project_title,
+                                        'restored_by' => auth()->id(),
+                                        'action_url' => "/projects/{$record->id}"
+                                    ],
+                                    'medium',
+                                    [auth()->id()]
+                                );
+                            }
+                            
                             Notification::make()
                                 ->title(__('filament.messages.projects_restored'))
                                 ->success()

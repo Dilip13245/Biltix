@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use App\Models\User;
 use App\Models\UserMember;
+use App\Helpers\NotificationHelper;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -116,6 +117,20 @@ class AuthController extends Controller
                 $userDetails->token = $accessToken;
                 $userDetails->device_type = $request->device_type;
                 $userDetails->members = $members;
+
+                // Send welcome notification
+                NotificationHelper::send(
+                    $userDetails->id,
+                    'account_created',
+                    'Welcome to Biltix!',
+                    "Your account has been successfully created. Welcome to Biltix!",
+                    [
+                        'user_id' => $userDetails->id,
+                        'user_name' => $userDetails->name,
+                        'action_url' => "/dashboard"
+                    ],
+                    'low'
+                );
 
                 return $this->toJsonEnc($userDetails, trans('api.auth.signup_success'), Config::get('constant.SUCCESS'));
             } else {
@@ -265,6 +280,21 @@ class AuthController extends Controller
                 return $this->toJsonEnc([], 'Failed to process OTP', Config::get('constant.ERROR'));
             }
 
+            // Send OTP notification
+            NotificationHelper::send(
+                $user->id,
+                'otp_sent',
+                'Verification OTP',
+                "Your verification OTP is {$otp}. Valid for 10 minutes.",
+                [
+                    'user_id' => $user->id,
+                    'otp' => $otp,
+                    'purpose' => $request->type ?? 'verification',
+                    'expires_at' => now()->addMinutes(10)->toDateTimeString()
+                ],
+                'high'
+            );
+
             return $this->toJsonEnc(['otp' => $otp], trans('api.auth.otp_sent'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             Log::error('sendOtp exception: ' . $e->getMessage());
@@ -384,6 +414,20 @@ class AuthController extends Controller
 
             $user->password = Hash::make($request->new_password);
             $user->save();
+
+            // Send password reset confirmation notification
+            NotificationHelper::send(
+                $user->id,
+                'password_reset',
+                'Password Reset Successful',
+                "Your password has been successfully reset. If you did not perform this action, please contact support immediately.",
+                [
+                    'user_id' => $user->id,
+                    'reset_at' => now()->toDateTimeString(),
+                    'action_url' => "/login"
+                ],
+                'high'
+            );
 
             return $this->toJsonEnc([], trans('api.auth.password_reset_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

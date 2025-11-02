@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\TeamMember;
 use App\Models\User;
+use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -85,6 +86,49 @@ class TeamController extends Controller
             $teamMemberDetails->is_active = true;
 
             if ($teamMemberDetails->save()) {
+                // Send notification for team member added
+                $project = \App\Models\Project::find($request->project_id);
+                $addedBy = \App\Models\User::find($request->user_id);
+                $newMember = \App\Models\User::find($request->member_user_id);
+
+                if ($project && $addedBy && $newMember) {
+                    // Notify new member
+                    NotificationHelper::send(
+                        $request->member_user_id,
+                        'team_member_added',
+                        'Added to Project Team',
+                        "You have been added to project '{$project->project_title}' team as {$request->role_in_project}",
+                        [
+                            'project_id' => $project->id,
+                            'project_title' => $project->project_title,
+                            'role_in_project' => $request->role_in_project,
+                            'added_by' => $request->user_id,
+                            'added_by_name' => $addedBy->name,
+                            'action_url' => "/projects/{$project->id}/team"
+                        ],
+                        'high'
+                    );
+
+                    // Notify project team
+                    NotificationHelper::sendToProjectTeam(
+                        $project->id,
+                        'team_member_added',
+                        'New Team Member Added',
+                        "{$newMember->name} has been added to project team",
+                        [
+                            'project_id' => $project->id,
+                            'project_title' => $project->project_title,
+                            'member_id' => $request->member_user_id,
+                            'member_name' => $newMember->name,
+                            'role_in_project' => $request->role_in_project,
+                            'added_by' => $request->user_id,
+                            'action_url' => "/projects/{$project->id}/team"
+                        ],
+                        'medium',
+                        [$request->member_user_id, $request->user_id]
+                    );
+                }
+
                 return $this->toJsonEnc($teamMemberDetails, trans('api.team.member_added'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.team.add_failed'), Config::get('constant.ERROR'));
@@ -111,6 +155,26 @@ class TeamController extends Controller
 
             $teamMember->is_deleted = true;
             $teamMember->save();
+
+            // Send notification for team member removed
+            $project = \App\Models\Project::find($teamMember->project_id);
+            $removedMember = \App\Models\User::find($teamMember->user_id);
+
+            if ($project && $removedMember) {
+                NotificationHelper::send(
+                    $teamMember->user_id,
+                    'team_member_removed',
+                    'Removed from Project Team',
+                    "You have been removed from project '{$project->project_title}' team",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'removed_by' => $user_id,
+                        'action_url' => "/projects"
+                    ],
+                    'medium'
+                );
+            }
 
             return $this->toJsonEnc([], trans('api.team.member_removed'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -151,6 +215,29 @@ class TeamController extends Controller
             $teamMemberDetails->assigned_by = $request->user_id;
             $teamMemberDetails->is_active = true;
             $teamMemberDetails->save();
+
+            // Send notification for project assignment (same as addMember)
+            $project = \App\Models\Project::find($request->project_id);
+            $addedBy = \App\Models\User::find($request->user_id);
+            $newMember = \App\Models\User::find($request->member_user_id);
+
+            if ($project && $addedBy && $newMember) {
+                NotificationHelper::send(
+                    $request->member_user_id,
+                    'team_member_added',
+                    'Added to Project Team',
+                    "You have been added to project '{$project->project_title}' team as {$request->role_in_project}",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'role_in_project' => $request->role_in_project,
+                        'added_by' => $request->user_id,
+                        'added_by_name' => $addedBy->name,
+                        'action_url' => "/projects/{$project->id}/team"
+                    ],
+                    'high'
+                );
+            }
 
             return $this->toJsonEnc($teamMemberDetails, trans('api.team.project_assigned'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -195,8 +282,29 @@ class TeamController extends Controller
                 return $this->toJsonEnc([], trans('api.team.member_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            $oldRole = $teamMember->role_in_project;
             $teamMember->role_in_project = $role_in_project;
             $teamMember->save();
+
+            // Send notification for role update
+            $project = \App\Models\Project::find($teamMember->project_id);
+            if ($project) {
+                NotificationHelper::send(
+                    $teamMember->user_id,
+                    'team_role_updated',
+                    'Team Role Updated',
+                    "Your role in project '{$project->project_title}' has been changed to {$role_in_project}",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'old_role' => $oldRole,
+                        'new_role' => $role_in_project,
+                        'updated_by' => $user_id,
+                        'action_url' => "/projects/{$project->id}/team"
+                    ],
+                    'medium'
+                );
+            }
 
             return $this->toJsonEnc($teamMember, trans('api.team.role_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

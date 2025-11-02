@@ -14,10 +14,11 @@ class UserDevice extends Model
     protected $fillable = [
         'user_id', 'token', 'device_type', 'ip_address', 'uuid',
         'os_version', 'device_model', 'app_version', 'device_token',
-        'is_active', 'is_deleted'
+        'push_notification_enabled', 'is_active', 'is_deleted'
     ];
 
     protected $casts = [
+        'push_notification_enabled' => 'boolean',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
     ];

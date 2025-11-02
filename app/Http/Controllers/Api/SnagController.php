@@ -7,6 +7,7 @@ use App\Models\Snag;
 use App\Models\SnagCategory;
 use App\Models\SnagComment;
 use App\Helpers\NumberHelper;
+use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -82,6 +83,58 @@ class SnagController extends Controller
                     'image_urls' => $imageUrls,
                     'message' => 'Snag created successfully.'
                 ];
+                
+                // Send notifications for snag reporting
+                $project = \App\Models\Project::find($request->project_id);
+                $reporter = \App\Models\User::find($request->user_id);
+                $recipients = [];
+                
+                if ($snagDetails->assigned_to) {
+                    $recipients[] = $snagDetails->assigned_to;
+                }
+
+                if ($project && $reporter) {
+                    // Notify project managers
+                    NotificationHelper::sendToProjectManagers(
+                        $project->id,
+                        'snag_reported',
+                        'New Snag Reported',
+                        "Snag '{$snagDetails->title}' reported in project '{$project->project_title}'",
+                        [
+                            'snag_id' => $snagDetails->id,
+                            'snag_number' => $snagDetails->snag_number,
+                            'snag_title' => $snagDetails->title,
+                            'project_id' => $project->id,
+                            'project_title' => $project->project_title,
+                            'location' => $snagDetails->location,
+                            'reported_by' => $request->user_id,
+                            'reported_by_name' => $reporter->name,
+                            'assigned_to' => $snagDetails->assigned_to,
+                            'status' => $snagDetails->status,
+                            'action_url' => "/snags/{$snagDetails->id}"
+                        ],
+                        'high',
+                        [$request->user_id]
+                    );
+
+                    // Notify assigned user if different from reporter
+                    if ($snagDetails->assigned_to && $snagDetails->assigned_to != $request->user_id) {
+                        NotificationHelper::send(
+                            $snagDetails->assigned_to,
+                            'snag_assigned',
+                            'Snag Assigned to You',
+                            "Snag '{$snagDetails->title}' has been assigned to you",
+                            [
+                                'snag_id' => $snagDetails->id,
+                                'snag_title' => $snagDetails->title,
+                                'project_id' => $project->id,
+                                'assigned_by' => $request->user_id,
+                                'action_url' => "/snags/{$snagDetails->id}"
+                            ],
+                            'high'
+                        );
+                    }
+                }
                 
                 return $this->toJsonEnc($response, trans('api.snags.created_success'), Config::get('constant.SUCCESS'));
             } else {
@@ -315,6 +368,36 @@ class SnagController extends Controller
             $snag->resolved_at = now();
             $snag->save();
 
+            // Send notification for snag resolution
+            $project = \App\Models\Project::find($snag->project_id);
+            $resolver = \App\Models\User::find($user_id);
+            if ($project && $resolver) {
+                $recipients = [$snag->reported_by];
+                if ($project->project_manager_id) {
+                    $recipients[] = $project->project_manager_id;
+                }
+                if ($project->technical_engineer_id && !in_array($project->technical_engineer_id, $recipients)) {
+                    $recipients[] = $project->technical_engineer_id;
+                }
+
+                NotificationHelper::send(
+                    array_unique(array_diff($recipients, [$user_id])),
+                    'snag_resolved',
+                    'Snag Resolved',
+                    "Snag '{$snag->title}' has been resolved by {$resolver->name}",
+                    [
+                        'snag_id' => $snag->id,
+                        'snag_title' => $snag->title,
+                        'project_id' => $project->id,
+                        'resolver_id' => $user_id,
+                        'resolver_name' => $resolver->name,
+                        'resolved_at' => now()->toDateTimeString(),
+                        'action_url' => "/snags/{$snag->id}"
+                    ],
+                    'medium'
+                );
+            }
+
             return $this->toJsonEnc($snag, trans('api.snags.resolved_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
@@ -337,9 +420,29 @@ class SnagController extends Controller
                 return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            $oldAssignedTo = $snag->assigned_to;
             $snag->assigned_to = $assigned_to;
             $snag->status = 'in_progress';
             $snag->save();
+
+            // Send notification for snag assignment
+            $project = \App\Models\Project::find($snag->project_id);
+            if ($project && $assigned_to != $snag->reported_by) {
+                NotificationHelper::send(
+                    $assigned_to,
+                    'snag_assigned',
+                    'Snag Assigned to You',
+                    "Snag '{$snag->title}' has been assigned to you",
+                    [
+                        'snag_id' => $snag->id,
+                        'snag_title' => $snag->title,
+                        'project_id' => $project->id,
+                        'assigned_by' => $user_id,
+                        'action_url' => "/snags/{$snag->id}"
+                    ],
+                    'high'
+                );
+            }
 
             return $this->toJsonEnc($snag, trans('api.snags.assigned_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -370,6 +473,38 @@ class SnagController extends Controller
             $snagComment->status_changed_to = $request->status_changed_to;
             $snagComment->is_active = true;
             $snagComment->save();
+
+            // Send notifications for snag comment
+            $recipients = [$snag->reported_by];
+            if ($snag->assigned_to) {
+                $recipients[] = $snag->assigned_to;
+            }
+
+            $project = \App\Models\Project::find($snag->project_id);
+            if ($project && $project->project_manager_id) {
+                $recipients[] = $project->project_manager_id;
+            }
+
+            $commenter = \App\Models\User::find($user_id);
+            if ($commenter) {
+                NotificationHelper::send(
+                    array_unique(array_diff($recipients, [$user_id])),
+                    'snag_comment',
+                    'New Comment on Snag',
+                    "{$commenter->name} commented on snag '{$snag->title}'",
+                    [
+                        'snag_id' => $snag->id,
+                        'snag_title' => $snag->title,
+                        'comment_id' => $snagComment->id,
+                        'commenter_id' => $user_id,
+                        'commenter_name' => $commenter->name,
+                        'comment_preview' => substr($comment, 0, 100),
+                        'project_id' => $snag->project_id,
+                        'action_url' => "/snags/{$snag->id}#comment_{$snagComment->id}"
+                    ],
+                    'medium'
+                );
+            }
 
             return $this->toJsonEnc($snagComment, trans('api.snags.comment_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

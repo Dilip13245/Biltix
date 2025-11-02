@@ -8,6 +8,7 @@ use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskImage;
 use App\Helpers\NumberHelper;
+use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -82,6 +83,53 @@ class TaskController extends Controller
                             'is_deleted' => false
                         ]);
                     }
+                }
+                
+                // Send notifications for task assignment
+                $recipients = [$request->assigned_to];
+                $creator = \App\Models\User::find($request->user_id);
+                $assignedUser = \App\Models\User::find($request->assigned_to);
+                
+                if ($request->user_id != $request->assigned_to) {
+                    NotificationHelper::send(
+                        $request->assigned_to,
+                        'task_assigned',
+                        'New Task Assigned',
+                        "You have been assigned task '{$taskDetails->title}' in project",
+                        [
+                            'task_id' => $taskDetails->id,
+                            'task_number' => $taskDetails->task_number,
+                            'task_title' => $taskDetails->title,
+                            'project_id' => $request->project_id,
+                            'assigned_to' => $request->assigned_to,
+                            'assigned_by' => $request->user_id,
+                            'due_date' => $taskDetails->due_date,
+                            'priority' => $taskDetails->priority,
+                            'action_url' => "/tasks/{$taskDetails->id}"
+                        ],
+                        'high'
+                    );
+                }
+                
+                // Notify project manager
+                $project = \App\Models\Project::find($request->project_id);
+                if ($project && $project->project_manager_id && !in_array($project->project_manager_id, $recipients)) {
+                    NotificationHelper::send(
+                        $project->project_manager_id,
+                        'task_assigned',
+                        'New Task Created',
+                        "New task '{$taskDetails->title}' created in project '{$project->project_title}'",
+                        [
+                            'task_id' => $taskDetails->id,
+                            'task_number' => $taskDetails->task_number,
+                            'task_title' => $taskDetails->title,
+                            'project_id' => $request->project_id,
+                            'assigned_to' => $request->assigned_to,
+                            'created_by' => $request->user_id,
+                            'action_url' => "/tasks/{$taskDetails->id}"
+                        ],
+                        'medium'
+                    );
                 }
                 
                 $taskDetails->load('images');
@@ -267,12 +315,42 @@ class TaskController extends Controller
                 return $this->toJsonEnc([], trans('api.tasks.not_assigned_to_user'), Config::get('constant.FORBIDDEN'));
             }
 
+            $oldStatus = $task->status;
             $task->status = $status;
             if ($status === 'complete') {
                 $task->completed_at = now();
                 $task->progress_percentage = 100;
             }
             $task->save();
+
+            // Send notification for status change
+            $recipients = [$task->created_by];
+            $project = \App\Models\Project::find($task->project_id);
+            if ($project && $project->project_manager_id && !in_array($project->project_manager_id, $recipients)) {
+                $recipients[] = $project->project_manager_id;
+            }
+            
+            // Exclude user who changed it
+            $recipients = array_diff($recipients, [$user_id]);
+            
+            if (!empty($recipients)) {
+                NotificationHelper::send(
+                    $recipients,
+                    'task_status_changed',
+                    'Task Status Updated',
+                    "Task '{$task->title}' status changed to {$status}",
+                    [
+                        'task_id' => $task->id,
+                        'task_title' => $task->title,
+                        'old_status' => $oldStatus,
+                        'new_status' => $status,
+                        'changed_by' => $user_id,
+                        'project_id' => $task->project_id,
+                        'action_url' => "/tasks/{$task->id}"
+                    ],
+                    'medium'
+                );
+            }
 
             return $this->toJsonEnc($task, trans('api.tasks.status_changed'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -304,6 +382,57 @@ class TaskController extends Controller
             $taskComment->is_active = true;
             $taskComment->save();
 
+            // Send notifications for task comment
+            $recipients = [$task->assigned_to, $task->created_by];
+            $recipients = array_unique($recipients);
+            
+            // Check for mentions
+            $mentions = NotificationHelper::extractMentions($comment);
+            if (!empty($mentions)) {
+                $recipients = array_merge($recipients, $mentions);
+                $recipients = array_unique($recipients);
+                
+                // Send mention notifications (exclude commenter)
+                $mentionRecipients = array_diff($mentions, [$user_id]);
+                if (!empty($mentionRecipients)) {
+                    NotificationHelper::send(
+                        $mentionRecipients,
+                        'task_mention',
+                        'Mentioned in Task Comment',
+                        "You were mentioned in a comment on task '{$task->title}'",
+                        [
+                            'task_id' => $task->id,
+                            'task_title' => $task->title,
+                            'comment_id' => $taskComment->id,
+                            'commenter_id' => $user_id,
+                            'project_id' => $task->project_id,
+                            'action_url' => "/tasks/{$task->id}#comment_{$taskComment->id}"
+                        ],
+                        'high'
+                    );
+                }
+            }
+            
+            // Send regular comment notification
+            $commenter = \App\Models\User::find($user_id);
+            NotificationHelper::send(
+                array_diff($recipients, [$user_id]), // Exclude commenter
+                'task_comment',
+                'New Comment on Task',
+                "{$commenter->name} commented on task '{$task->title}'",
+                [
+                    'task_id' => $task->id,
+                    'task_title' => $task->title,
+                    'comment_id' => $taskComment->id,
+                    'commenter_id' => $user_id,
+                    'commenter_name' => $commenter->name,
+                    'comment_preview' => substr($comment, 0, 100),
+                    'project_id' => $task->project_id,
+                    'action_url' => "/tasks/{$task->id}#comment_{$taskComment->id}"
+                ],
+                'medium'
+            );
+
             return $this->toJsonEnc($taskComment, trans('api.tasks.comment_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
@@ -331,6 +460,7 @@ class TaskController extends Controller
                 return $this->toJsonEnc([], trans('api.tasks.not_assigned_to_user'), Config::get('constant.FORBIDDEN'));
             }
 
+            $oldProgress = $task->progress_percentage ?? 0;
             $task->progress_percentage = $progress_percentage;
             if ($progress_percentage >= 100) {
                 $task->status = 'complete';
@@ -339,6 +469,35 @@ class TaskController extends Controller
                 $task->status = 'in_progress';
             }
             $task->save();
+
+            // Send notification for progress update
+            $project = \App\Models\Project::find($task->project_id);
+            $recipients = [$task->created_by];
+            if ($project && $project->project_manager_id && !in_array($project->project_manager_id, $recipients)) {
+                $recipients[] = $project->project_manager_id;
+            }
+            
+            // Exclude updater
+            $recipients = array_diff($recipients, [$user_id]);
+            
+            if (!empty($recipients)) {
+                NotificationHelper::send(
+                    $recipients,
+                    'task_progress_updated',
+                    'Task Progress Updated',
+                    "Task '{$task->title}' progress updated to {$progress_percentage}%",
+                    [
+                        'task_id' => $task->id,
+                        'task_title' => $task->title,
+                        'old_progress' => $oldProgress,
+                        'new_progress' => $progress_percentage,
+                        'updated_by' => $user_id,
+                        'project_id' => $task->project_id,
+                        'action_url' => "/tasks/{$task->id}"
+                    ],
+                    'low'
+                );
+            }
 
             return $this->toJsonEnc($task, trans('api.tasks.progress_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -361,9 +520,31 @@ class TaskController extends Controller
                     ->first();
 
                 if ($task) {
+                    $oldAssignedTo = $task->assigned_to;
                     $task->assigned_to = $assigned_to;
                     $task->save();
                     $updatedTasks[] = $task;
+                    
+                    // Send notification for task assignment
+                    if ($oldAssignedTo != $assigned_to) {
+                        NotificationHelper::send(
+                            $assigned_to,
+                            'task_assigned',
+                            'Task Assigned to You',
+                            "You have been assigned task '{$task->title}'",
+                            [
+                                'task_id' => $task->id,
+                                'task_number' => $task->task_number,
+                                'task_title' => $task->title,
+                                'project_id' => $task->project_id,
+                                'assigned_by' => $user_id,
+                                'due_date' => $task->due_date,
+                                'priority' => $task->priority,
+                                'action_url' => "/tasks/{$task->id}"
+                            ],
+                            'high'
+                        );
+                    }
                 }
             }
 

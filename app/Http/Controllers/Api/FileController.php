@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\FileCategory;
 use App\Models\FileFolder;
 use App\Helpers\FileHelper;
+use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -50,6 +51,31 @@ class FileController extends Controller
                 ]);
 
                 $uploadedFiles[] = $fileRecord;
+            }
+
+            // Send notification for file upload (if shared with project/team)
+            if ($request->project_id) {
+                $project = \App\Models\Project::find($request->project_id);
+                if ($project) {
+                    foreach ($uploadedFiles as $file) {
+                        NotificationHelper::sendToProjectTeam(
+                            $project->id,
+                            'file_uploaded',
+                            'New File Uploaded',
+                            "New file '{$file->original_name}' uploaded to project",
+                            [
+                                'file_id' => $file->id,
+                                'file_name' => $file->original_name,
+                                'file_category' => $file->category_id ?? 'Documents',
+                                'project_id' => $project->id,
+                                'uploaded_by' => $request->user_id,
+                                'action_url' => "/files/{$file->id}"
+                            ],
+                            'low',
+                            [$request->user_id]
+                        );
+                    }
+                }
             }
 
             return $this->toJsonEnc($uploadedFiles, trans('api.files.uploaded_success'), Config::get('constant.SUCCESS'));
@@ -173,6 +199,27 @@ class FileController extends Controller
                 'share_link' => asset('storage/' . $file->file_path),
                 'shared_at' => now(),
             ];
+
+            // Send notification for file sharing
+            if (!empty($share_with) && is_array($share_with)) {
+                $sharer = \App\Models\User::find($user_id);
+                if ($sharer) {
+                    NotificationHelper::send(
+                        $share_with,
+                        'file_shared',
+                        'File Shared with You',
+                        "{$sharer->name} shared '{$file->original_name}' with you",
+                        [
+                            'file_id' => $file->id,
+                            'file_name' => $file->original_name,
+                            'sharer_id' => $user_id,
+                            'sharer_name' => $sharer->name,
+                            'action_url' => "/files/{$file->id}"
+                        ],
+                        'medium'
+                    );
+                }
+            }
 
             return $this->toJsonEnc($shareData, trans('api.files.shared_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

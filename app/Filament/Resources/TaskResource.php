@@ -178,7 +178,36 @@ class TaskResource extends Resource
                     ->color('success')
                     ->visible(fn ($record) => $record->status !== 'completed')
                     ->action(function ($record) {
-                        $record->update(['status' => 'completed']);
+                        $oldStatus = $record->status;
+                        $record->update(['status' => 'completed', 'completed_at' => now()]);
+                        
+                        // Send notification for task completion
+                        $project = \App\Models\Project::find($record->project_id);
+                        $recipients = [$record->created_by];
+                        if ($project && $project->project_manager_id) {
+                            $recipients[] = $project->project_manager_id;
+                        }
+                        $recipients = array_unique(array_diff($recipients, [auth()->id(), $record->assigned_to]));
+                        
+                        if (!empty($recipients)) {
+                            \App\Helpers\NotificationHelper::send(
+                                $recipients,
+                                'task_status_changed',
+                                'Task Completed',
+                                "Task '{$record->title}' has been marked as completed",
+                                [
+                                    'task_id' => $record->id,
+                                    'task_title' => $record->title,
+                                    'old_status' => $oldStatus,
+                                    'new_status' => 'completed',
+                                    'completed_by' => auth()->id(),
+                                    'project_id' => $record->project_id,
+                                    'action_url' => "/tasks/{$record->id}"
+                                ],
+                                'medium'
+                            );
+                        }
+                        
                         Notification::make()
                             ->title(__('filament.messages.task_completed'))
                             ->success()

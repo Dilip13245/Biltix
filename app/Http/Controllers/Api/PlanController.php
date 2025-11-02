@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Plan;
 use App\Models\PlanMarkup;
 use App\Helpers\FileHelper;
+use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -59,6 +60,29 @@ class PlanController extends Controller
             }
 
             if (count($uploadedPlans) > 0) {
+                // Send notification for plan upload
+                foreach ($uploadedPlans as $plan) {
+                    $project = \App\Models\Project::find($plan->project_id);
+                    if ($project) {
+                        NotificationHelper::sendToProjectTeam(
+                            $project->id,
+                            'plan_uploaded',
+                            'New Plan Uploaded',
+                            "New plan '{$plan->title}' uploaded to project '{$project->project_title}'",
+                            [
+                                'plan_id' => $plan->id,
+                                'plan_title' => $plan->title,
+                                'project_id' => $project->id,
+                                'project_title' => $project->project_title,
+                                'uploaded_by' => $request->user_id,
+                                'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
+                            ],
+                            'medium',
+                            [$request->user_id]
+                        );
+                    }
+                }
+                
                 return $this->toJsonEnc($uploadedPlans, trans('api.plans.uploaded_success'), Config::get('constant.SUCCESS'));
             } else {
                 return $this->toJsonEnc([], trans('api.plans.upload_failed'), Config::get('constant.ERROR'));
@@ -152,6 +176,29 @@ class PlanController extends Controller
             $markupDetails->is_active = true;
             $markupDetails->save();
 
+            // Send notification for plan markup
+            $project = \App\Models\Project::find($plan->project_id);
+            $markupAuthor = \App\Models\User::find($user_id);
+            if ($project && $markupAuthor && $plan->uploaded_by) {
+                NotificationHelper::send(
+                    [$plan->uploaded_by],
+                    'plan_markup_added',
+                    'Plan Markup Added',
+                    "{$markupAuthor->name} added a markup to plan '{$plan->title}'",
+                    [
+                        'plan_id' => $plan->id,
+                        'plan_title' => $plan->title,
+                        'markup_id' => $markupDetails->id,
+                        'markup_author_id' => $user_id,
+                        'markup_author' => $markupAuthor->name,
+                        'project_id' => $project->id,
+                        'action_url' => "/projects/{$project->id}/plans/{$plan->id}#markup_{$markupDetails->id}"
+                    ],
+                    'low',
+                    [$user_id]
+                );
+            }
+
             return $this->toJsonEnc($markupDetails, trans('api.plans.markup_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
@@ -191,6 +238,27 @@ class PlanController extends Controller
             $plan->approved_by = $user_id;
             $plan->approved_at = now();
             $plan->save();
+
+            // Send notification for plan approval
+            $project = \App\Models\Project::find($plan->project_id);
+            $approver = \App\Models\User::find($user_id);
+            if ($project && $approver && $plan->uploaded_by) {
+                NotificationHelper::send(
+                    [$plan->uploaded_by],
+                    'plan_approved',
+                    'Plan Approved',
+                    "Plan '{$plan->title}' has been approved by {$approver->name}",
+                    [
+                        'plan_id' => $plan->id,
+                        'plan_title' => $plan->title,
+                        'project_id' => $project->id,
+                        'approver_id' => $user_id,
+                        'approver_name' => $approver->name,
+                        'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
+                    ],
+                    'medium'
+                );
+            }
 
             return $this->toJsonEnc($plan, trans('api.plans.approved_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

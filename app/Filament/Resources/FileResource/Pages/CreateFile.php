@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\FileResource\Pages;
 
 use App\Filament\Resources\FileResource;
+use App\Helpers\NotificationHelper;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateFile extends CreateRecord
@@ -32,5 +33,31 @@ class CreateFile extends CreateRecord
         }
 
         return $data;
+    }
+    
+    protected function afterCreate(): void
+    {
+        $file = $this->record;
+        $project = \App\Models\Project::find($file->project_id);
+        
+        // Notify project team about new file upload
+        if ($project) {
+            NotificationHelper::sendToProjectTeam(
+                $project->id,
+                'file_uploaded',
+                'New File Uploaded',
+                "New file '{$file->original_name}' uploaded to project",
+                [
+                    'file_id' => $file->id,
+                    'file_name' => $file->original_name,
+                    'file_category' => $file->category_id ?? 'Documents',
+                    'project_id' => $project->id,
+                    'uploaded_by' => auth()->id(),
+                    'action_url' => "/files/{$file->id}"
+                ],
+                'low',
+                [auth()->id()]
+            );
+        }
     }
 }

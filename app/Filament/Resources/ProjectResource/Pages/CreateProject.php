@@ -6,6 +6,7 @@ use App\Filament\Resources\ProjectResource;
 use App\Models\File;
 use App\Models\FileCategory;
 use App\Helpers\FileHelper;
+use App\Helpers\NotificationHelper;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Http\UploadedFile;
 
@@ -36,6 +37,50 @@ class CreateProject extends CreateRecord
     protected function afterCreate(): void
     {
         $this->handleFileUploads();
+        
+        // Send push notification for project creation
+        $project = $this->record;
+        $creator = \App\Models\User::find(auth()->id());
+        
+        // Notify project manager if assigned
+        if ($project->project_manager_id) {
+            NotificationHelper::send(
+                $project->project_manager_id,
+                'project_created',
+                'New Project Assigned',
+                "You have been assigned as project manager for '{$project->project_title}'",
+                [
+                    'project_id' => $project->id,
+                    'project_title' => $project->project_title,
+                    'project_code' => $project->project_code,
+                    'created_by' => auth()->id(),
+                    'created_by_name' => $creator ? $creator->name : 'Admin',
+                    'action_url' => "/projects/{$project->id}"
+                ],
+                'high',
+                [auth()->id()]
+            );
+        }
+        
+        // Notify technical engineer if assigned
+        if ($project->technical_engineer_id && $project->technical_engineer_id != $project->project_manager_id) {
+            NotificationHelper::send(
+                $project->technical_engineer_id,
+                'project_created',
+                'New Project Assigned',
+                "You have been assigned as technical engineer for '{$project->project_title}'",
+                [
+                    'project_id' => $project->id,
+                    'project_title' => $project->project_title,
+                    'project_code' => $project->project_code,
+                    'created_by' => auth()->id(),
+                    'created_by_name' => $creator ? $creator->name : 'Admin',
+                    'action_url' => "/projects/{$project->id}"
+                ],
+                'high',
+                [auth()->id()]
+            );
+        }
     }
     
     protected function handleFileUploads(): void
