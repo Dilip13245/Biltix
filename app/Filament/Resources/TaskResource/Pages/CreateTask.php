@@ -32,8 +32,7 @@ class CreateTask extends CreateRecord
                     'assigned_by_name' => $creator ? $creator->name : 'Admin',
                     'action_url' => "/tasks/{$task->id}"
                 ],
-                'high',
-                [auth()->id()]
+                'high'
             );
         }
         
@@ -52,8 +51,7 @@ class CreateTask extends CreateRecord
                     'created_by' => auth()->id(),
                     'action_url' => "/tasks/{$task->id}"
                 ],
-                'medium',
-                [auth()->id()]
+                'medium'
             );
         }
     }

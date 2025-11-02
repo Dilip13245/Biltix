@@ -35,8 +35,7 @@ class CreateSnag extends CreateRecord
                     'assigned_to' => $snag->assigned_to,
                     'action_url' => "/snags/{$snag->id}"
                 ],
-                'high',
-                [auth()->id()]
+                'high'
             );
             
             // Notify assigned user if different from reporter

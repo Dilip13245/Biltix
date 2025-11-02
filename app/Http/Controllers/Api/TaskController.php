@@ -85,50 +85,67 @@ class TaskController extends Controller
                     }
                 }
                 
-                // Send notifications for task assignment
-                $recipients = [$request->assigned_to];
+                // Send notifications for task creation
                 $creator = \App\Models\User::find($request->user_id);
-                $assignedUser = \App\Models\User::find($request->assigned_to);
-                
-                if ($request->user_id != $request->assigned_to) {
-                    NotificationHelper::send(
-                        $request->assigned_to,
-                        'task_assigned',
-                        'New Task Assigned',
-                        "You have been assigned task '{$taskDetails->title}' in project",
-                        [
-                            'task_id' => $taskDetails->id,
-                            'task_number' => $taskDetails->task_number,
-                            'task_title' => $taskDetails->title,
-                            'project_id' => $request->project_id,
-                            'assigned_to' => $request->assigned_to,
-                            'assigned_by' => $request->user_id,
-                            'due_date' => $taskDetails->due_date,
-                            'priority' => $taskDetails->priority,
-                            'action_url' => "/tasks/{$taskDetails->id}"
-                        ],
-                        'high'
-                    );
-                }
-                
-                // Notify project manager
                 $project = \App\Models\Project::find($request->project_id);
-                if ($project && $project->project_manager_id && !in_array($project->project_manager_id, $recipients)) {
+                
+                if ($creator && $project) {
+                    // Direct notification to creator
                     NotificationHelper::send(
-                        $project->project_manager_id,
-                        'task_assigned',
-                        'New Task Created',
-                        "New task '{$taskDetails->title}' created in project '{$project->project_title}'",
+                        $request->user_id,
+                        'task_created',
+                        'Task Created Successfully',
+                        "Task '{$taskDetails->title}' has been created successfully",
                         [
                             'task_id' => $taskDetails->id,
                             'task_number' => $taskDetails->task_number,
                             'task_title' => $taskDetails->title,
                             'project_id' => $request->project_id,
-                            'assigned_to' => $request->assigned_to,
-                            'created_by' => $request->user_id,
                             'action_url' => "/tasks/{$taskDetails->id}"
                         ],
                         'medium'
+                    );
+                    
+                    // Notify assigned user if different from creator
+                    if ($request->user_id != $request->assigned_to) {
+                        NotificationHelper::send(
+                            $request->assigned_to,
+                            'task_assigned',
+                            'New Task Assigned',
+                            "{$creator->name} assigned task '{$taskDetails->title}' to you",
+                            [
+                                'task_id' => $taskDetails->id,
+                                'task_number' => $taskDetails->task_number,
+                                'task_title' => $taskDetails->title,
+                                'project_id' => $request->project_id,
+                                'assigned_by' => $request->user_id,
+                                'assigned_by_name' => $creator->name,
+                                'due_date' => $taskDetails->due_date,
+                                'priority' => $taskDetails->priority,
+                                'action_url' => "/tasks/{$taskDetails->id}"
+                            ],
+                            'high'
+                        );
+                    }
+                    
+                    // Team notification (excluding creator and assigned user)
+                    NotificationHelper::sendToProjectTeam(
+                        $request->project_id,
+                        'task_created',
+                        'New Task Created',
+                        "{$creator->name} created task '{$taskDetails->title}'",
+                        [
+                            'task_id' => $taskDetails->id,
+                            'task_number' => $taskDetails->task_number,
+                            'task_title' => $taskDetails->title,
+                            'project_id' => $request->project_id,
+                            'created_by' => $request->user_id,
+                            'created_by_name' => $creator->name,
+                            'assigned_to' => $request->assigned_to,
+                            'action_url' => "/tasks/{$taskDetails->id}"
+                        ],
+                        'medium',
+                        [$request->user_id, $request->assigned_to]
                     );
                 }
                 
@@ -263,6 +280,28 @@ class TaskController extends Controller
             }
 
             $task->save();
+            
+            // Send notification for task update
+            $updater = \App\Models\User::find($user_id);
+            if ($updater) {
+                $recipients = [];
+                if ($task->created_by && $task->created_by != $user_id) $recipients[] = $task->created_by;
+                
+                if (!empty($recipients)) {
+                    NotificationHelper::send(
+                        $recipients,
+                        'task_updated',
+                        'Task Updated',
+                        "{$updater->name} updated task '{$task->title}'",
+                        [
+                            'task_id' => $task->id,
+                            'project_id' => $task->project_id,
+                            'action_url' => "/tasks/{$task->id}"
+                        ],
+                        'low'
+                    );
+                }
+            }
 
             return $this->toJsonEnc($task, trans('api.tasks.updated_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -324,31 +363,61 @@ class TaskController extends Controller
             $task->save();
 
             // Send notification for status change
-            $recipients = [$task->created_by];
+            $changer = \App\Models\User::find($user_id);
             $project = \App\Models\Project::find($task->project_id);
-            if ($project && $project->project_manager_id && !in_array($project->project_manager_id, $recipients)) {
-                $recipients[] = $project->project_manager_id;
-            }
             
-            // Exclude user who changed it
-            $recipients = array_diff($recipients, [$user_id]);
-            
-            if (!empty($recipients)) {
-                NotificationHelper::send(
-                    $recipients,
+            if ($changer && $project) {
+                $recipients = [];
+                
+                // Add task creator
+                if ($task->created_by && $task->created_by != $user_id) {
+                    $recipients[] = $task->created_by;
+                }
+                
+                // Add assigned user if different from changer
+                if ($task->assigned_to && $task->assigned_to != $user_id && !in_array($task->assigned_to, $recipients)) {
+                    $recipients[] = $task->assigned_to;
+                }
+                
+                // Notify relevant users
+                if (!empty($recipients)) {
+                    NotificationHelper::send(
+                        $recipients,
+                        'task_status_changed',
+                        'Task Status Updated',
+                        "{$changer->name} changed task '{$task->title}' status to {$status}",
+                        [
+                            'task_id' => $task->id,
+                            'task_title' => $task->title,
+                            'old_status' => $oldStatus,
+                            'new_status' => $status,
+                            'changed_by' => $user_id,
+                            'changed_by_name' => $changer->name,
+                            'project_id' => $task->project_id,
+                            'action_url' => "/tasks/{$task->id}"
+                        ],
+                        'medium'
+                    );
+                }
+                
+                // Team notification (excluding changer, creator, and assigned user)
+                NotificationHelper::sendToProjectTeam(
+                    $task->project_id,
                     'task_status_changed',
                     'Task Status Updated',
-                    "Task '{$task->title}' status changed to {$status}",
+                    "{$changer->name} changed task '{$task->title}' status to {$status}",
                     [
                         'task_id' => $task->id,
                         'task_title' => $task->title,
                         'old_status' => $oldStatus,
                         'new_status' => $status,
                         'changed_by' => $user_id,
+                        'changed_by_name' => $changer->name,
                         'project_id' => $task->project_id,
                         'action_url' => "/tasks/{$task->id}"
                     ],
-                    'medium'
+                    'low',
+                    [$user_id, $task->created_by, $task->assigned_to]
                 );
             }
 

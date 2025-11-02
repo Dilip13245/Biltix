@@ -166,7 +166,7 @@ class PushNotificationService
                 return $this->sendAPNS($device->device_token, $title, $message, $data, $priority);
             } elseif ($device->device_type === 'W') {
                 // Web - Send via FCM Web Push
-                $token = $device->fcm_token ?: $device->device_token;
+                $token = $device->device_token;
                 $webData = $data;
                 if (isset($webData['action_url'])) {
                     $webData['click_action'] = $webData['action_url'];

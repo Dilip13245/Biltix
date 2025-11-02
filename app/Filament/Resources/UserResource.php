@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use App\Models\Role;
+use App\Helpers\NotificationHelper;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -274,14 +275,14 @@ class UserResource extends Resource
                             ->placeholder('Notification message'),
                     ])
                     ->action(function (User $record, array $data): void {
-                        \App\Models\Notification::create([
-                            'user_id' => $record->id,
-                            'title' => $data['title'],
-                            'message' => $data['message'],
-                            'is_read' => false,
-                            'is_active' => true,
-                            'is_deleted' => false
-                        ]);
+                        NotificationHelper::send(
+                            $record->id,
+                            'system',
+                            $data['title'],
+                            $data['message'],
+                            ['action_url' => '/dashboard'],
+                            'medium'
+                        );
                         Notification::make()
                             ->title('Notification sent successfully')
                             ->success()
@@ -340,14 +341,14 @@ class UserResource extends Resource
                         ])
                         ->action(function ($records, array $data): void {
                             foreach ($records as $record) {
-                                \App\Models\Notification::create([
-                                    'user_id' => $record->id,
-                                    'title' => $data['title'],
-                                    'message' => $data['message'],
-                                    'is_read' => false,
-                                    'is_active' => true,
-                                    'is_deleted' => false
-                                ]);
+                                NotificationHelper::send(
+                                    $record->id,
+                                    'system',
+                                    $data['title'],
+                                    $data['message'],
+                                    ['action_url' => '/dashboard'],
+                                    'medium'
+                                );
                             }
                             Notification::make()
                                 ->title('Notifications sent to ' . $records->count() . ' users')

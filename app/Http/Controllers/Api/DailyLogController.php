@@ -44,11 +44,27 @@ class DailyLogController extends Controller
                 $project = \App\Models\Project::find($request->project_id);
                 $logger = \App\Models\User::find($request->user_id);
                 if ($project && $logger) {
+                    // Direct notification to logger
+                    NotificationHelper::send(
+                        $request->user_id,
+                        'daily_log_created',
+                        'Daily Log Created Successfully',
+                        "Daily log for {$request->log_date} has been created successfully",
+                        [
+                            'log_id' => $dailyLogDetails->id,
+                            'project_id' => $project->id,
+                            'log_date' => $request->log_date,
+                            'action_url' => "/projects/{$project->id}/daily-logs/{$dailyLogDetails->id}"
+                        ],
+                        'low'
+                    );
+                    
+                    // Notify project managers (excluding logger)
                     NotificationHelper::sendToProjectManagers(
                         $project->id,
                         'daily_log_created',
                         'Daily Log Entry Created',
-                        "Daily log for {$request->log_date} created for project '{$project->project_title}'",
+                        "{$logger->name} created daily log for {$request->log_date}",
                         [
                             'log_id' => $dailyLogDetails->id,
                             'project_id' => $project->id,

@@ -53,28 +53,46 @@ class FileController extends Controller
                 $uploadedFiles[] = $fileRecord;
             }
 
-            // Send notification for file upload (if shared with project/team)
+            // Send notification for file upload
             if ($request->project_id) {
                 $project = \App\Models\Project::find($request->project_id);
-                if ($project) {
-                    foreach ($uploadedFiles as $file) {
-                        NotificationHelper::sendToProjectTeam(
-                            $project->id,
-                            'file_uploaded',
-                            'New File Uploaded',
-                            "New file '{$file->original_name}' uploaded to project",
-                            [
-                                'file_id' => $file->id,
-                                'file_name' => $file->original_name,
-                                'file_category' => $file->category_id ?? 'Documents',
-                                'project_id' => $project->id,
-                                'uploaded_by' => $request->user_id,
-                                'action_url' => "/files/{$file->id}"
-                            ],
-                            'low',
-                            [$request->user_id]
-                        );
-                    }
+                $uploader = \App\Models\User::find($request->user_id);
+                if ($project && $uploader) {
+                    $fileCount = count($uploadedFiles);
+                    $firstFile = $uploadedFiles[0];
+                    
+                    // Direct notification to uploader
+                    NotificationHelper::send(
+                        $request->user_id,
+                        'file_uploaded',
+                        $fileCount > 1 ? 'Files Uploaded Successfully' : 'File Uploaded Successfully',
+                        $fileCount > 1 ? "{$fileCount} files uploaded successfully" : "File '{$firstFile->original_name}' uploaded successfully",
+                        [
+                            'file_id' => $firstFile->id,
+                            'file_count' => $fileCount,
+                            'project_id' => $project->id,
+                            'action_url' => "/files"
+                        ],
+                        'low'
+                    );
+                    
+                    // Team notification (excluding uploader)
+                    NotificationHelper::sendToProjectTeam(
+                        $project->id,
+                        'file_uploaded',
+                        $fileCount > 1 ? 'New Files Uploaded' : 'New File Uploaded',
+                        $fileCount > 1 ? "{$uploader->name} uploaded {$fileCount} files" : "{$uploader->name} uploaded '{$firstFile->original_name}'",
+                        [
+                            'file_id' => $firstFile->id,
+                            'file_count' => $fileCount,
+                            'project_id' => $project->id,
+                            'uploaded_by' => $request->user_id,
+                            'uploaded_by_name' => $uploader->name,
+                            'action_url' => "/files"
+                        ],
+                        'low',
+                        [$request->user_id]
+                    );
                 }
             }
 
@@ -129,11 +147,32 @@ class FileController extends Controller
                 return $this->toJsonEnc([], trans('api.files.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            $project = \App\Models\Project::find($file->project_id);
+            
             // Delete physical file
             FileHelper::deleteFile($file->file_path);
 
             // Soft delete record
             $file->update(['is_deleted' => true]);
+            
+            // Send notification for file deletion
+            if ($project) {
+                NotificationHelper::sendToProjectTeam(
+                    $project->id,
+                    'file_deleted',
+                    'File Deleted',
+                    "File '{$file->original_name}' has been deleted from project",
+                    [
+                        'file_id' => $file->id,
+                        'file_name' => $file->original_name,
+                        'project_id' => $project->id,
+                        'deleted_by' => $request->user_id ?? auth()->id(),
+                        'action_url' => "/files"
+                    ],
+                    'low',
+                    [$request->user_id ?? auth()->id()]
+                );
+            }
 
             return $this->toJsonEnc([], trans('api.files.deleted_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

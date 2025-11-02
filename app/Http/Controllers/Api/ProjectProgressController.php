@@ -56,6 +56,26 @@ class ProjectProgressController extends Controller
                     'created_by' => $request->user_id,
                 ]);
             }
+            
+            // Send notification for activities added
+            $project = \App\Models\Project::find($request->project_id);
+            $creator = \App\Models\User::find($request->user_id);
+            if ($project && $creator) {
+                $activityCount = count($activities);
+                \App\Helpers\NotificationHelper::sendToProjectTeam(
+                    $request->project_id,
+                    'activities_added',
+                    'Project Activities Added',
+                    "{$creator->name} added {$activityCount} activit" . ($activityCount > 1 ? 'ies' : 'y'),
+                    [
+                        'project_id' => $project->id,
+                        'activity_count' => $activityCount,
+                        'action_url' => "/projects/{$project->id}/progress"
+                    ],
+                    'low',
+                    [$request->user_id]
+                );
+            }
 
             return $this->toJsonEnc($activities, trans('api.project_progress.activities_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -140,6 +160,24 @@ class ProjectProgressController extends Controller
                     'count' => $itemData['count'],
                     'created_by' => $request->user_id,
                 ]);
+            }
+            
+            // Send notification for manpower/equipment added
+            $project = \App\Models\Project::find($request->project_id);
+            $creator = \App\Models\User::find($request->user_id);
+            if ($project && $creator) {
+                \App\Helpers\NotificationHelper::sendToProjectTeam(
+                    $request->project_id,
+                    'manpower_added',
+                    'Manpower/Equipment Updated',
+                    "{$creator->name} updated manpower and equipment data",
+                    [
+                        'project_id' => $project->id,
+                        'action_url' => "/projects/{$project->id}/progress"
+                    ],
+                    'low',
+                    [$request->user_id]
+                );
             }
 
             return $this->toJsonEnc($items, trans('api.project_progress.manpower_added'), Config::get('constant.SUCCESS'));
@@ -227,6 +265,24 @@ class ProjectProgressController extends Controller
                     'checklist_item' => $checklistItem,
                     'created_by' => $request->user_id,
                 ]);
+            }
+            
+            // Send notification for safety items added
+            $project = \App\Models\Project::find($request->project_id);
+            $creator = \App\Models\User::find($request->user_id);
+            if ($project && $creator) {
+                \App\Helpers\NotificationHelper::sendToProjectTeam(
+                    $request->project_id,
+                    'safety_items_added',
+                    'Safety Checklist Updated',
+                    "{$creator->name} updated safety checklist items",
+                    [
+                        'project_id' => $project->id,
+                        'action_url' => "/projects/{$project->id}/progress"
+                    ],
+                    'low',
+                    [$request->user_id]
+                );
             }
 
             return $this->toJsonEnc($items, trans('api.project_progress.safety_items_added'), Config::get('constant.SUCCESS'));

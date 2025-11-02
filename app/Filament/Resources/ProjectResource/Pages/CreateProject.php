@@ -57,8 +57,7 @@ class CreateProject extends CreateRecord
                     'created_by_name' => $creator ? $creator->name : 'Admin',
                     'action_url' => "/projects/{$project->id}"
                 ],
-                'high',
-                [auth()->id()]
+                'high'
             );
         }
         
@@ -77,8 +76,7 @@ class CreateProject extends CreateRecord
                     'created_by_name' => $creator ? $creator->name : 'Admin',
                     'action_url' => "/projects/{$project->id}"
                 ],
-                'high',
-                [auth()->id()]
+                'high'
             );
         }
     }

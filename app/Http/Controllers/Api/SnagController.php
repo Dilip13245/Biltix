@@ -87,19 +87,30 @@ class SnagController extends Controller
                 // Send notifications for snag reporting
                 $project = \App\Models\Project::find($request->project_id);
                 $reporter = \App\Models\User::find($request->user_id);
-                $recipients = [];
                 
-                if ($snagDetails->assigned_to) {
-                    $recipients[] = $snagDetails->assigned_to;
-                }
-
                 if ($project && $reporter) {
-                    // Notify project managers
+                    // Direct notification to reporter
+                    NotificationHelper::send(
+                        $request->user_id,
+                        'snag_reported',
+                        'Snag Reported Successfully',
+                        "Your snag '{$snagDetails->title}' has been reported successfully",
+                        [
+                            'snag_id' => $snagDetails->id,
+                            'snag_number' => $snagDetails->snag_number,
+                            'snag_title' => $snagDetails->title,
+                            'project_id' => $project->id,
+                            'action_url' => "/snags/{$snagDetails->id}"
+                        ],
+                        'medium'
+                    );
+                    
+                    // Notify project managers (excluding reporter)
                     NotificationHelper::sendToProjectManagers(
                         $project->id,
                         'snag_reported',
                         'New Snag Reported',
-                        "Snag '{$snagDetails->title}' reported in project '{$project->project_title}'",
+                        "{$reporter->name} reported snag '{$snagDetails->title}'",
                         [
                             'snag_id' => $snagDetails->id,
                             'snag_number' => $snagDetails->snag_number,
@@ -123,12 +134,13 @@ class SnagController extends Controller
                             $snagDetails->assigned_to,
                             'snag_assigned',
                             'Snag Assigned to You',
-                            "Snag '{$snagDetails->title}' has been assigned to you",
+                            "{$reporter->name} assigned snag '{$snagDetails->title}' to you",
                             [
                                 'snag_id' => $snagDetails->id,
                                 'snag_title' => $snagDetails->title,
                                 'project_id' => $project->id,
                                 'assigned_by' => $request->user_id,
+                                'assigned_by_name' => $reporter->name,
                                 'action_url' => "/snags/{$snagDetails->id}"
                             ],
                             'high'
@@ -305,6 +317,30 @@ class SnagController extends Controller
             }
 
             $snag->save();
+            
+            // Send notification for snag update
+            $project = \App\Models\Project::find($snag->project_id);
+            $updater = \App\Models\User::find($user_id);
+            if ($project && $updater) {
+                $recipients = [];
+                if ($snag->reported_by && $snag->reported_by != $user_id) $recipients[] = $snag->reported_by;
+                if ($snag->assigned_to && $snag->assigned_to != $user_id && !in_array($snag->assigned_to, $recipients)) $recipients[] = $snag->assigned_to;
+                
+                if (!empty($recipients)) {
+                    NotificationHelper::send(
+                        $recipients,
+                        'snag_updated',
+                        'Snag Updated',
+                        "{$updater->name} updated snag '{$snag->title}'",
+                        [
+                            'snag_id' => $snag->id,
+                            'project_id' => $project->id,
+                            'action_url' => "/snags/{$snag->id}"
+                        ],
+                        'low'
+                    );
+                }
+            }
             
             // Load relationships and return updated snag
             $snag->load(['reporter:id,name', 'assignedUser:id,name']);

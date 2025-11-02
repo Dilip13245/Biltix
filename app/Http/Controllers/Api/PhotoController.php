@@ -53,6 +53,29 @@ class PhotoController extends Controller
                 
                 $uploadedPhotos[] = $photoDetails;
             }
+            
+            // Send notification for photo upload
+            if (!empty($uploadedPhotos) && $request->project_id) {
+                $project = \App\Models\Project::find($request->project_id);
+                $uploader = \App\Models\User::find($request->user_id);
+                if ($project && $uploader) {
+                    $photoCount = count($uploadedPhotos);
+                    NotificationHelper::sendToProjectTeam(
+                        $request->project_id,
+                        'photos_uploaded',
+                        'New Photos Uploaded',
+                        "{$uploader->name} uploaded {$photoCount} photo" . ($photoCount > 1 ? 's' : ''),
+                        [
+                            'project_id' => $project->id,
+                            'photo_count' => $photoCount,
+                            'uploaded_by' => $request->user_id,
+                            'action_url' => "/projects/{$project->id}/photos"
+                        ],
+                        'low',
+                        [$request->user_id]
+                    );
+                }
+            }
 
             return $this->toJsonEnc($uploadedPhotos, trans('api.photos.uploaded_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -186,6 +209,26 @@ class PhotoController extends Controller
 
             $photo->is_deleted = true;
             $photo->save();
+            
+            // Send notification for photo deletion
+            if ($photo->project_id) {
+                $project = \App\Models\Project::find($photo->project_id);
+                $deleter = \App\Models\User::find($user_id);
+                if ($project && $deleter && $photo->taken_by != $user_id) {
+                    \App\Helpers\NotificationHelper::send(
+                        $photo->taken_by,
+                        'photo_deleted',
+                        'Photo Deleted',
+                        "Your photo has been deleted from project",
+                        [
+                            'project_id' => $project->id,
+                            'deleted_by' => $user_id,
+                            'action_url' => "/projects/{$project->id}/photos"
+                        ],
+                        'low'
+                    );
+                }
+            }
 
             return $this->toJsonEnc([], trans('api.photos.deleted_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

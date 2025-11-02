@@ -60,46 +60,43 @@ class PlanController extends Controller
             }
 
             if (count($uploadedPlans) > 0) {
-                // Send notification for plan upload
-                foreach ($uploadedPlans as $plan) {
-                    $project = \App\Models\Project::find($plan->project_id);
-                    $uploader = \App\Models\User::find($request->user_id);
-                    if ($project && $uploader) {
-                        // Notify uploader
-                        NotificationHelper::send(
-                            $request->user_id,
-                            'plan_uploaded',
-                            'Plan Uploaded Successfully',
-                            "Your plan '{$plan->title}' has been uploaded to project '{$project->project_title}'",
-                            [
-                                'plan_id' => $plan->id,
-                                'plan_title' => $plan->title,
-                                'project_id' => $project->id,
-                                'project_title' => $project->project_title,
-                                'uploaded_by' => $request->user_id,
-                                'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
-                            ],
-                            'medium'
-                        );
-                        
-                        // Notify project team (including uploader)
-                        NotificationHelper::sendToProjectTeam(
-                            $project->id,
-                            'plan_uploaded',
-                            'New Plan Uploaded',
-                            "New plan '{$plan->title}' uploaded to project '{$project->project_title}' by {$uploader->name}",
-                            [
-                                'plan_id' => $plan->id,
-                                'plan_title' => $plan->title,
-                                'project_id' => $project->id,
-                                'project_title' => $project->project_title,
-                                'uploaded_by' => $request->user_id,
-                                'uploader_name' => $uploader->name,
-                                'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
-                            ],
-                            'medium'
-                        );
-                    }
+                // Send single notification for all uploaded plans
+                $firstPlan = $uploadedPlans[0];
+                $project = \App\Models\Project::find($firstPlan->project_id);
+                $uploader = \App\Models\User::find($request->user_id);
+                if ($project && $uploader) {
+                    $planCount = count($uploadedPlans);
+                    $planTitle = $planCount > 1 ? "{$planCount} plans" : "plan '{$firstPlan->title}'";
+                    
+                    NotificationHelper::send(
+                        $request->user_id,
+                        'plan_uploaded',
+                        'Plan Uploaded Successfully',
+                        "Successfully uploaded {$planTitle}",
+                        [
+                            'project_id' => $project->id,
+                            'plan_id' => $firstPlan->id,
+                            'plan_count' => $planCount,
+                            'action_url' => "/projects/{$project->id}/plans"
+                        ],
+                        'low'
+                    );
+                    
+                    NotificationHelper::sendToProjectTeam(
+                        $project->id,
+                        'plan_uploaded',
+                        'New Plan Uploaded',
+                        "{$uploader->name} uploaded {$planTitle}",
+                        [
+                            'project_id' => $project->id,
+                            'plan_id' => $firstPlan->id,
+                            'plan_count' => $planCount,
+                            'uploaded_by' => $request->user_id,
+                            'action_url' => "/projects/{$project->id}/plans"
+                        ],
+                        'medium',
+                        [$request->user_id]
+                    );
                 }
                 
                 return $this->toJsonEnc($uploadedPlans, trans('api.plans.uploaded_success'), Config::get('constant.SUCCESS'));
@@ -195,26 +192,37 @@ class PlanController extends Controller
             $markupDetails->is_active = true;
             $markupDetails->save();
 
-            // Send notification for plan markup
             $project = \App\Models\Project::find($plan->project_id);
             $markupAuthor = \App\Models\User::find($user_id);
             if ($project && $markupAuthor && $plan->uploaded_by) {
                 NotificationHelper::send(
-                    [$plan->uploaded_by],
+                    $plan->uploaded_by,
                     'plan_markup_added',
                     'Plan Markup Added',
-                    "{$markupAuthor->name} added a markup to plan '{$plan->title}'",
+                    "Markup added to plan '{$plan->title}'",
                     [
                         'plan_id' => $plan->id,
-                        'plan_title' => $plan->title,
                         'markup_id' => $markupDetails->id,
-                        'markup_author_id' => $user_id,
-                        'markup_author' => $markupAuthor->name,
                         'project_id' => $project->id,
-                        'action_url' => "/projects/{$project->id}/plans/{$plan->id}#markup_{$markupDetails->id}"
+                        'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
+                    ],
+                    'low'
+                );
+                
+                NotificationHelper::sendToProjectTeam(
+                    $project->id,
+                    'plan_markup_added',
+                    'Plan Markup Added',
+                    "{$markupAuthor->name} added markup to plan '{$plan->title}'",
+                    [
+                        'plan_id' => $plan->id,
+                        'markup_id' => $markupDetails->id,
+                        'project_id' => $project->id,
+                        'created_by' => $user_id,
+                        'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
                     ],
                     'low',
-                    [$user_id]
+                    [$plan->uploaded_by, $user_id]
                 );
             }
 
@@ -258,24 +266,35 @@ class PlanController extends Controller
             $plan->approved_at = now();
             $plan->save();
 
-            // Send notification for plan approval
             $project = \App\Models\Project::find($plan->project_id);
             $approver = \App\Models\User::find($user_id);
             if ($project && $approver && $plan->uploaded_by) {
                 NotificationHelper::send(
-                    [$plan->uploaded_by],
+                    $plan->uploaded_by,
                     'plan_approved',
                     'Plan Approved',
-                    "Plan '{$plan->title}' has been approved by {$approver->name}",
+                    "Plan '{$plan->title}' has been approved",
                     [
                         'plan_id' => $plan->id,
-                        'plan_title' => $plan->title,
                         'project_id' => $project->id,
-                        'approver_id' => $user_id,
-                        'approver_name' => $approver->name,
                         'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
                     ],
                     'medium'
+                );
+                
+                NotificationHelper::sendToProjectTeam(
+                    $project->id,
+                    'plan_approved',
+                    'Plan Approved',
+                    "{$approver->name} approved plan '{$plan->title}'",
+                    [
+                        'plan_id' => $plan->id,
+                        'project_id' => $project->id,
+                        'approved_by' => $user_id,
+                        'action_url' => "/projects/{$project->id}/plans/{$plan->id}"
+                    ],
+                    'low',
+                    [$plan->uploaded_by, $user_id]
                 );
             }
 

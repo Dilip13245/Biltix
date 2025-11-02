@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\InspectionResource\Pages;
 
 use App\Filament\Resources\InspectionResource;
+use App\Helpers\NotificationHelper;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Infolist;
@@ -26,7 +27,45 @@ class ViewInspection extends ViewRecord
                 ->color('success')
                 ->visible(fn () => $this->record->status !== 'completed')
                 ->action(function () {
+                    $oldStatus = $this->record->status;
                     $this->record->update(['status' => 'completed']);
+                    
+                    // Send notification for inspection completed
+                    $project = \App\Models\Project::find($this->record->project_id);
+                    $inspector = \App\Models\User::find(auth()->id());
+                    if ($project && $inspector) {
+                        NotificationHelper::send(
+                            auth()->id(),
+                            'inspection_completed',
+                            'Inspection Completed Successfully',
+                            "Your {$this->record->category} inspection has been completed successfully",
+                            [
+                                'inspection_id' => $this->record->id,
+                                'project_id' => $project->id,
+                                'category' => $this->record->category,
+                                'action_url' => "/inspections/{$this->record->id}"
+                            ],
+                            'medium'
+                        );
+                        
+                        NotificationHelper::sendToProjectTeam(
+                            $project->id,
+                            'inspection_completed',
+                            'Inspection Completed',
+                            "{$inspector->name} completed {$this->record->category} inspection",
+                            [
+                                'inspection_id' => $this->record->id,
+                                'project_id' => $project->id,
+                                'category' => $this->record->category,
+                                'inspector_id' => auth()->id(),
+                                'inspector_name' => $inspector->name,
+                                'completed_at' => now()->toDateTimeString(),
+                                'action_url' => "/inspections/{$this->record->id}"
+                            ],
+                            'high',
+                            [auth()->id()]
+                        );
+                    }
                 }),
         ];
     }

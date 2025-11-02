@@ -305,38 +305,63 @@ class ProjectController extends Controller
             $project->save();
 
             // Send notifications for project updates
-            NotificationHelper::sendToProjectTeam(
-                $project_id,
-                'project_updated',
-                'Project Updated',
-                "Project '{$project->project_title}' has been updated",
-                [
-                    'project_id' => $project->id,
-                    'project_title' => $project->project_title,
-                    'updated_by' => $user_id,
-                    'action_url' => "/projects/{$project->id}"
-                ],
-                'medium',
-                [$user_id] // Exclude updater
-            );
-
-            // Send notification if status changed
-            if ($request->filled('status') && $oldStatus !== $project->status) {
-                NotificationHelper::sendToProjectTeam(
-                    $project_id,
-                    'project_status_changed',
-                    'Project Status Changed',
-                    "Project '{$project->project_title}' status changed to {$project->status}",
+            $updater = \App\Models\User::find($user_id);
+            if ($updater) {
+                // Direct notification to updater
+                NotificationHelper::send(
+                    $user_id,
+                    'project_updated',
+                    'Project Updated Successfully',
+                    "Project '{$project->project_title}' has been updated successfully",
                     [
                         'project_id' => $project->id,
                         'project_title' => $project->project_title,
-                        'old_status' => $oldStatus,
-                        'new_status' => $project->status,
-                        'changed_by' => $user_id,
                         'action_url' => "/projects/{$project->id}"
                     ],
-                    'high'
+                    'low'
                 );
+                
+                // Team notification (excluding updater)
+                NotificationHelper::sendToProjectTeam(
+                    $project_id,
+                    'project_updated',
+                    'Project Updated',
+                    "{$updater->name} updated project '{$project->project_title}'",
+                    [
+                        'project_id' => $project->id,
+                        'project_title' => $project->project_title,
+                        'updated_by' => $user_id,
+                        'updated_by_name' => $updater->name,
+                        'action_url' => "/projects/{$project->id}"
+                    ],
+                    'medium',
+                    [$user_id]
+                );
+            }
+
+            // Send notification if status changed
+            if ($request->filled('status') && $oldStatus !== $project->status) {
+                $changer = \App\Models\User::find($user_id);
+                if ($changer) {
+                    // Team notification (excluding changer)
+                    NotificationHelper::sendToProjectTeam(
+                        $project_id,
+                        'project_status_changed',
+                        'Project Status Changed',
+                        "{$changer->name} changed project '{$project->project_title}' status to {$project->status}",
+                        [
+                            'project_id' => $project->id,
+                            'project_title' => $project->project_title,
+                            'old_status' => $oldStatus,
+                            'new_status' => $project->status,
+                            'changed_by' => $user_id,
+                            'changed_by_name' => $changer->name,
+                            'action_url' => "/projects/{$project->id}"
+                        ],
+                        'high',
+                        [$user_id]
+                    );
+                }
             }
 
             return $this->toJsonEnc($project, trans('api.projects.updated_success'), Config::get('constant.SUCCESS'));
@@ -478,18 +503,36 @@ class ProjectController extends Controller
 
                 // Send notification for phase creation
                 $project = Project::find($request->project_id);
-                if ($project) {
+                $creator = \App\Models\User::find($request->user_id);
+                if ($project && $creator) {
+                    // Direct notification to creator
+                    NotificationHelper::send(
+                        $request->user_id,
+                        'phase_created',
+                        'Phase Created Successfully',
+                        "Phase '{$phaseDetails->title}' has been created successfully",
+                        [
+                            'project_id' => $project->id,
+                            'phase_id' => $phaseDetails->id,
+                            'phase_title' => $phaseDetails->title,
+                            'action_url' => "/projects/{$project->id}/phases/{$phaseDetails->id}"
+                        ],
+                        'low'
+                    );
+                    
+                    // Team notification (excluding creator)
                     NotificationHelper::sendToProjectTeam(
                         $project->id,
                         'phase_created',
                         'New Phase Created',
-                        "New phase '{$phaseDetails->title}' added to project '{$project->project_title}'",
+                        "{$creator->name} added phase '{$phaseDetails->title}' to project",
                         [
                             'project_id' => $project->id,
                             'project_title' => $project->project_title,
                             'phase_id' => $phaseDetails->id,
                             'phase_title' => $phaseDetails->title,
                             'created_by' => $request->user_id,
+                            'created_by_name' => $creator->name,
                             'action_url' => "/projects/{$project->id}/phases/{$phaseDetails->id}"
                         ],
                         'medium',
@@ -583,6 +626,38 @@ class ProjectController extends Controller
                     'is_deleted' => false
                 ]);
             }
+            
+            // Send notification for phase update
+            $project = Project::find($phase->project_id);
+            $updater = \App\Models\User::find($user_id);
+            if ($project && $updater) {
+                NotificationHelper::send(
+                    $user_id,
+                    'phase_updated',
+                    'Phase Updated Successfully',
+                    "Phase '{$phase->title}' has been updated",
+                    [
+                        'project_id' => $project->id,
+                        'phase_id' => $phase->id,
+                        'action_url' => "/projects/{$project->id}/phases"
+                    ],
+                    'low'
+                );
+                
+                NotificationHelper::sendToProjectTeam(
+                    $project->id,
+                    'phase_updated',
+                    'Phase Updated',
+                    "{$updater->name} updated phase '{$phase->title}'",
+                    [
+                        'project_id' => $project->id,
+                        'phase_id' => $phase->id,
+                        'action_url' => "/projects/{$project->id}/phases"
+                    ],
+                    'low',
+                    [$user_id]
+                );
+            }
 
             $phase->load('milestones');
             return $this->toJsonEnc($phase, trans('api.projects.phase_updated'), Config::get('constant.SUCCESS'));
@@ -606,8 +681,29 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.phase_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            $phaseTitle = $phase->title;
+            $projectId = $phase->project_id;
             $phase->is_deleted = true;
             $phase->save();
+            
+            // Send notification for phase deletion
+            $project = Project::find($projectId);
+            $deleter = \App\Models\User::find($user_id);
+            if ($project && $deleter) {
+                NotificationHelper::sendToProjectTeam(
+                    $project->id,
+                    'phase_deleted',
+                    'Phase Deleted',
+                    "{$deleter->name} deleted phase '{$phaseTitle}'",
+                    [
+                        'project_id' => $project->id,
+                        'phase_title' => $phaseTitle,
+                        'action_url' => "/projects/{$project->id}/phases"
+                    ],
+                    'medium',
+                    [$user_id]
+                );
+            }
 
             return $this->toJsonEnc([], trans('api.projects.phase_deleted'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -679,12 +775,30 @@ class ProjectController extends Controller
 
             // Send notification for phase progress update
             $project = Project::find($phase->project_id);
-            if ($project) {
+            $updater = \App\Models\User::find($request->user_id);
+            if ($project && $updater) {
+                // Direct notification to updater
+                NotificationHelper::send(
+                    $request->user_id,
+                    'phase_progress_updated',
+                    'Phase Progress Updated Successfully',
+                    "Phase '{$phase->title}' progress updated to {$request->progress_percentage}%",
+                    [
+                        'project_id' => $project->id,
+                        'phase_id' => $phase->id,
+                        'phase_title' => $phase->title,
+                        'new_progress' => $request->progress_percentage,
+                        'action_url' => "/projects/{$project->id}/phases/{$phase->id}"
+                    ],
+                    'low'
+                );
+                
+                // Team notification (excluding updater)
                 NotificationHelper::sendToProjectTeam(
                     $project->id,
                     'phase_progress_updated',
                     'Phase Progress Updated',
-                    "Phase '{$phase->title}' progress updated to {$request->progress_percentage}%",
+                    "{$updater->name} updated phase '{$phase->title}' progress to {$request->progress_percentage}%",
                     [
                         'project_id' => $project->id,
                         'phase_id' => $phase->id,
@@ -692,6 +806,7 @@ class ProjectController extends Controller
                         'old_progress' => $oldProgress,
                         'new_progress' => $request->progress_percentage,
                         'updated_by' => $request->user_id,
+                        'updated_by_name' => $updater->name,
                         'action_url' => "/projects/{$project->id}/phases/{$phase->id}"
                     ],
                     'low',
@@ -738,12 +853,31 @@ class ProjectController extends Controller
             // Send notification if milestone extended
             if ($isExtension) {
                 $project = $milestone->phase->project ?? null;
-                if ($project) {
+                $extender = \App\Models\User::find($request->user_id);
+                if ($project && $extender) {
+                    // Direct notification to extender
+                    NotificationHelper::send(
+                        $request->user_id,
+                        'milestone_extended',
+                        'Milestone Extended Successfully',
+                        "Milestone '{$milestone->milestone_name}' extended by {$extensionDays} days",
+                        [
+                            'project_id' => $project->id,
+                            'phase_id' => $milestone->phase_id,
+                            'milestone_id' => $milestone->id,
+                            'milestone_name' => $milestone->milestone_name,
+                            'extension_days' => $extensionDays,
+                            'action_url' => "/projects/{$project->id}/phases/{$milestone->phase_id}"
+                        ],
+                        'low'
+                    );
+                    
+                    // Team notification (excluding extender)
                     NotificationHelper::sendToProjectTeam(
                         $project->id,
                         'milestone_extended',
                         'Milestone Extended',
-                        "Milestone '{$milestone->milestone_name}' due date extended by {$extensionDays} days",
+                        "{$extender->name} extended milestone '{$milestone->milestone_name}' by {$extensionDays} days",
                         [
                             'project_id' => $project->id,
                             'phase_id' => $milestone->phase_id,
@@ -752,6 +886,7 @@ class ProjectController extends Controller
                             'old_extension_days' => $oldExtensionDays,
                             'new_extension_days' => $extensionDays,
                             'extended_by' => $request->user_id,
+                            'extended_by_name' => $extender->name,
                             'action_url' => "/projects/{$project->id}/phases/{$milestone->phase_id}"
                         ],
                         'medium',

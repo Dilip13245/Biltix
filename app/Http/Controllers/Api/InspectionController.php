@@ -72,27 +72,41 @@ class InspectionController extends Controller
 
                 // Send notifications for inspection creation
                 $project = \App\Models\Project::find($request->project_id);
-                $recipients = [];
-                if ($inspectionDetails->inspected_by) {
-                    $recipients[] = $inspectionDetails->inspected_by;
-                }
-
-                if ($project) {
+                $creator = \App\Models\User::find($request->user_id);
+                
+                if ($project && $creator) {
+                    // Direct notification to creator
+                    NotificationHelper::send(
+                        $request->user_id,
+                        'inspection_created',
+                        'Inspection Created Successfully',
+                        "Your {$inspectionDetails->category} inspection has been created successfully",
+                        [
+                            'inspection_id' => $inspectionDetails->id,
+                            'project_id' => $project->id,
+                            'category' => $inspectionDetails->category,
+                            'action_url' => "/inspections/{$inspectionDetails->id}"
+                        ],
+                        'medium'
+                    );
+                    
+                    // Team notification (excluding creator)
                     NotificationHelper::sendToProjectTeam(
                         $project->id,
                         'inspection_created',
                         'New Inspection Scheduled',
-                        "New {$inspectionDetails->category} inspection scheduled for project '{$project->project_title}'",
+                        "{$creator->name} scheduled {$inspectionDetails->category} inspection",
                         [
                             'inspection_id' => $inspectionDetails->id,
                             'project_id' => $project->id,
                             'project_title' => $project->project_title,
                             'category' => $inspectionDetails->category,
                             'created_by' => $request->user_id,
+                            'created_by_name' => $creator->name,
                             'action_url' => "/inspections/{$inspectionDetails->id}"
                         ],
                         'high',
-                        array_merge([$request->user_id], $recipients)
+                        [$request->user_id]
                     );
                 }
 
@@ -297,11 +311,27 @@ class InspectionController extends Controller
             $project = \App\Models\Project::find($inspection->project_id);
             $inspector = \App\Models\User::find($user_id);
             if ($project && $inspector) {
+                // Direct notification to inspector
+                NotificationHelper::send(
+                    $user_id,
+                    'inspection_completed',
+                    'Inspection Completed Successfully',
+                    "Your {$inspection->category} inspection has been completed successfully",
+                    [
+                        'inspection_id' => $inspection->id,
+                        'project_id' => $project->id,
+                        'category' => $inspection->category,
+                        'action_url' => "/inspections/{$inspection->id}"
+                    ],
+                    'medium'
+                );
+                
+                // Team notification (excluding inspector)
                 NotificationHelper::sendToProjectTeam(
                     $project->id,
                     'inspection_completed',
                     'Inspection Completed',
-                    "{$inspection->category} inspection has been completed by {$inspector->name}",
+                    "{$inspector->name} completed {$inspection->category} inspection",
                     [
                         'inspection_id' => $inspection->id,
                         'project_id' => $project->id,

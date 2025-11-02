@@ -51,8 +51,7 @@ class CreateInspection extends CreateRecord
                     'assigned_by' => auth()->id(),
                     'action_url' => "/inspections/{$inspection->id}"
                 ],
-                'high',
-                [auth()->id()]
+                'high'
             );
         }
     }

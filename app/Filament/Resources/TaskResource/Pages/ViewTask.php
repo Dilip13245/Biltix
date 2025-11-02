@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TaskResource\Pages;
 
 use App\Filament\Resources\TaskResource;
+use App\Helpers\NotificationHelper;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Infolist;
@@ -25,11 +26,57 @@ class ViewTask extends ViewRecord
                 ->color('success')
                 ->visible(fn () => $this->record->status !== 'completed')
                 ->action(function () {
+                    $oldStatus = $this->record->status;
                     $this->record->update([
                         'status' => 'completed',
                         'progress_percentage' => 100,
                         'completed_at' => now(),
                     ]);
+                    
+                    // Send notification for task completion
+                    $project = \App\Models\Project::find($this->record->project_id);
+                    $recipients = [$this->record->created_by];
+                    if ($project && $project->project_manager_id) {
+                        $recipients[] = $project->project_manager_id;
+                    }
+                    $recipients = array_unique(array_diff($recipients, [auth()->id(), $this->record->assigned_to]));
+                    
+                    if (!empty($recipients)) {
+                        NotificationHelper::send(
+                            $recipients,
+                            'task_status_changed',
+                            'Task Completed',
+                            "Task '{$this->record->title}' has been marked as completed",
+                            [
+                                'task_id' => $this->record->id,
+                                'task_title' => $this->record->title,
+                                'old_status' => $oldStatus,
+                                'new_status' => 'completed',
+                                'completed_by' => auth()->id(),
+                                'project_id' => $this->record->project_id,
+                                'action_url' => "/tasks/{$this->record->id}"
+                            ],
+                            'medium'
+                        );
+                    }
+                    
+                    NotificationHelper::sendToProjectTeam(
+                        $this->record->project_id,
+                        'task_status_changed',
+                        'Task Completed',
+                        "Task '{$this->record->title}' has been completed",
+                        [
+                            'task_id' => $this->record->id,
+                            'task_title' => $this->record->title,
+                            'old_status' => $oldStatus,
+                            'new_status' => 'completed',
+                            'completed_by' => auth()->id(),
+                            'project_id' => $this->record->project_id,
+                            'action_url' => "/tasks/{$this->record->id}"
+                        ],
+                        'low',
+                        [auth()->id(), $this->record->created_by, $this->record->assigned_to]
+                    );
                 }),
         ];
     }
