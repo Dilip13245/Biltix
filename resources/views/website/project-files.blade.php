@@ -31,7 +31,7 @@
             </button> --}}
             <!-- Create Folder Button -->
             @can('files', 'create')
-                <button class="btn orange_btn" onclick="showCreateFolderModal()">
+                <button class="btn orange_btn" id="createFolderBtn" onclick="showCreateFolderModal()">
                     <i class="fas fa-folder-plus me-2"></i>
                     {{ __('messages.create_folder') }}
                 </button>
@@ -160,6 +160,7 @@
                                                 <th>{{ __('messages.type') }}</th>
                                                 <th>{{ __('messages.upload_date') }}</th>
                                                 <th>{{ __('messages.size') }}</th>
+                                                <th>{{ __('messages.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody id="filesTableBody">
@@ -553,7 +554,7 @@
             if (!files || files.length === 0) {
                 if (!append) {
                     tbody.innerHTML =
-                        '<tr><td colspan="4" class="text-center py-4"><i class="fas fa-file fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
+                        '<tr><td colspan="5" class="text-center py-4"><i class="fas fa-file fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
                 }
                 return;
             }
@@ -563,8 +564,14 @@
                 const fileSize = formatFileSize(file.file_size);
                 const uploadDate = formatDate(file.created_at);
 
+                const ext = getFileExtension(file.file_type);
+                const isViewable = ['pdf', 'jpg', 'jpeg', 'png', 'gif'].includes(ext);
+                const fullPath = file.file_path.startsWith('http') ? file.file_path : `{{ url('storage') }}/${file.file_path}`;
+                const rowStyle = isViewable ? 'cursor: pointer;' : '';
+                const rowClick = isViewable ? `onclick="viewFile('${fullPath}', '${ext}', '${(file.original_name || file.name).replace(/'/g, "\\'")}')"`  : '';
+                
                 return `
-                    <tr>
+                    <tr style="${rowStyle}" ${rowClick}>
                         <td>
                             <div class="d-flex align-items-center gap-2">
                                 ${fileIcon}
@@ -577,6 +584,9 @@
                         <td>${getFileTypeDisplay(file.file_type)}</td>
                         <td>${uploadDate}</td>
                         <td>${fileSize}</td>
+                        <td>
+                            ${!isViewable ? `<a href="${fullPath}" download class="btn btn-sm btn-outline-primary"><i class="fas fa-download"></i></a>` : ''}
+                        </td>
                     </tr>
                 `;
             }).join('');
@@ -591,8 +601,38 @@
         function displayNoFiles() {
             const tbody = document.getElementById('filesTableBody');
             tbody.innerHTML =
-                '<tr><td colspan="4" class="text-center py-4"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
+                '<tr><td colspan="5" class="text-center py-4"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
         }
+        
+        window.viewFile = function(filePath, fileType, fileName) {
+            if (fileType === 'pdf') {
+                window.open(filePath, '_blank');
+            } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
+                const modal = document.createElement('div');
+                modal.className = 'modal fade';
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="fas fa-image me-2"></i>${fileName}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img src="${filePath}" class="img-fluid" alt="${fileName}" style="max-height: 70vh;">
+                            </div>
+                            <div class="modal-footer">
+                                <a href="${filePath}" download class="btn btn-primary"><i class="fas fa-download me-2"></i>{{ __('messages.download') }}</a>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+                modal.addEventListener('hidden.bs.modal', () => modal.remove());
+            }
+        };
 
         function updateFileCounts(allFiles, filteredFiles = null) {
             // Always show total counts from all files (not filtered)
@@ -783,6 +823,8 @@
             document.getElementById('currentPath').textContent = folderName;
             document.getElementById('backBtn').style.display = 'block';
             document.getElementById('folderActions').style.display = 'block';
+            const createFolderBtn = document.getElementById('createFolderBtn');
+            if (createFolderBtn) createFolderBtn.style.display = 'none';
             const filterBtn = document.getElementById('filterButton');
             const sortBtn = document.getElementById('sortButton');
             if (filterBtn) {
@@ -808,6 +850,8 @@
             document.getElementById('currentPath').textContent = '{{ __('messages.folders') }}';
             document.getElementById('backBtn').style.display = 'none';
             document.getElementById('folderActions').style.display = 'none';
+            const createFolderBtn = document.getElementById('createFolderBtn');
+            if (createFolderBtn) createFolderBtn.style.display = 'block';
             const filterBtn = document.getElementById('filterButton');
             const sortBtn = document.getElementById('sortButton');
             if (filterBtn) filterBtn.style.cssText = 'display: none !important';

@@ -32,6 +32,17 @@
         <form id="addSnagForm" class="protected-form" enctype="multipart/form-data">
           @csrf
           <div class="mb-3">
+            <label for="categorySelect" class="form-label fw-medium">{{ __("messages.category") }}</label>
+            <select class="form-select Input_control searchable-select" id="categorySelect" name="category" required>
+              <option value="">{{ __("messages.select_category") }}</option>
+              <option value="Category 1">Category 1</option>
+              <option value="Category 2">Category 2</option>
+              <option value="Category 3">Category 3</option>
+              <option value="Category 4">Category 4</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
             <label for="snagTitle" class="form-label fw-medium">{{ __("messages.snag_title") }}</label>
             <input type="text" class="form-control Input_control" id="snagTitle" name="title" required
               placeholder="Enter snag title" maxlength="100">

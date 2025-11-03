@@ -440,17 +440,17 @@
                                             <span class="ms-2">{{ __('messages.loading') }}...</span>
                                         </div>
                                     </div>
-                                    {{-- <div class="notification-footer">
-                                        <a href="#"
+                                    <div class="notification-footer">
+                                        <a href="#" onclick="viewAllNotifications(); return false;"
                                             class="text-primary">{{ __('messages.view_all_notifications') }}</a>
-                                    </div> --}}
+                                    </div>
                                 </div>
                             </div>
                             <div class="dropdown">
                                 <a href="#" class="d-flex align-items-center gap-2 gap-md-3" type="button"
                                     id="dropdownMenuButton" data-bs-toggle="dropdown">
-                                    <img id="headerProfileImage" src="{{ asset('website/images/icons/avatar.jpg') }}" alt="user img"
-                                        class="User_iMg">
+                                    <img id="headerProfileImage" src="{{ asset('website/images/icons/avatar.jpg') }}"
+                                        alt="user img" class="User_iMg">
                                     <span class=" text-end">
                                         <h6 class="fs14 fw-medium black_color">
                                             @if (isset($currentUser))
@@ -825,8 +825,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                         <button type="button" class="btn orange_btn d-none" id="prevBtn" onclick="changeStep(-1)">
                             <i
                                 class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }} {{ is_rtl() ? 'ms-2' : 'me-2' }}"></i>{{ __('messages.previous') }}
@@ -985,6 +985,12 @@
             }
         };
 
+        window.viewAllNotifications = function() {
+            // Get first project ID from loaded projects or use default
+            const firstProject = allProjects && allProjects.length > 0 ? allProjects[0].id : 1;
+            window.location.href = `/website/project/${firstProject}/notifications`;
+        };
+
         function formatNotificationTime(timestamp) {
             const date = new Date(timestamp);
             const now = new Date();
@@ -1141,7 +1147,7 @@
                 `;
 
                 container.appendChild(projectCard);
-                
+
                 // Initialize Bootstrap dropdown
                 const dropdownIcon = projectCard.querySelector('[data-bs-toggle="dropdown"]');
                 if (dropdownIcon && typeof bootstrap !== 'undefined') {
@@ -1506,7 +1512,7 @@
 
                 // Reset form
                 document.getElementById('createProjectForm').reset();
-                
+
                 // Clear validation errors
                 document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
 
@@ -1678,21 +1684,21 @@
                                 ${Array.from(input.files).map((file, index) => {
                                     const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                     return `
-                                                            <div class="col-12">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
-                                                                        onchange="toggleFileDescription('${containerId}', ${index})">
-                                                                    <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
-                                                                        <i class="${fileIcon} me-2"></i>
-                                                                        <span class="text-truncate">${file.name}</span>
-                                                                    </label>
+                                                                <div class="col-12">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
+                                                                            onchange="toggleFileDescription('${containerId}', ${index})">
+                                                                        <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
+                                                                            <i class="${fileIcon} me-2"></i>
+                                                                            <span class="text-truncate">${file.name}</span>
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
+                                                                        <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
+                                                                            placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
-                                                                    <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
-                                                                        placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                                                </div>
-                                                            </div>
-                                                        `;
+                                                            `;
                                 }).join('')}
                             </div>
                         `;
@@ -2008,10 +2014,12 @@
                         });
 
                         if (response.code === 200) {
-                            showToast(response.message || '{{ __('messages.project_deleted_successfully') }}', 'success');
+                            showToast(response.message || '{{ __('messages.project_deleted_successfully') }}',
+                                'success');
                             loadProjects(currentFilter, true);
                         } else {
-                            showToast(response.message || '{{ __('messages.failed_to_delete_project') }}', 'error');
+                            showToast(response.message || '{{ __('messages.failed_to_delete_project') }}',
+                                'error');
                         }
                     } catch (error) {
                         console.error('Error deleting project:', error);
@@ -2069,21 +2077,21 @@
     <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script src="{{ asset('website/js/rtl-spacing-fix.js') }}"></script>
     <script src="{{ asset('website/js/profile-image-sync.js') }}"></script>
-    
+
     <!-- Firebase Web Push Notifications -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js"></script>
     <script src="{{ asset('firebase-config.js') }}"></script>
     <script src="{{ asset('website/js/web-push-manager.js') }}"></script>
-    
+
     <script>
         // Disable auth check on dashboard - Laravel middleware handles it
         window.DISABLE_JS_AUTH_CHECK = true;
-        
+
         // Initialize web push notifications on dashboard
         document.addEventListener('DOMContentLoaded', function() {
             console.log('[Dashboard] Page loaded, checking for web push initialization');
-            
+
             // Wait a bit for all scripts to load and user data to be available
             setTimeout(function() {
                 if (typeof window.initializeWebPush === 'function') {

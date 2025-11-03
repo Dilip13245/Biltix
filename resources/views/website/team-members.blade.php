@@ -330,27 +330,31 @@
         }
 
         function updateStats(members, allUsers) {
-            // Count active users from database
-            const activeUsers = allUsers.filter(u => !u.is_deleted && u.is_active !== false);
-            const totalActiveUsers = activeUsers.length;
-            
-            // Count by role from database
+            // Count by role from current project members only
             const roleCounts = {};
-            activeUsers.forEach(user => {
-                const role = user.role || 'unknown';
-                roleCounts[role] = (roleCounts[role] || 0) + 1;
+            members.forEach(member => {
+                if (member.user) {
+                    const role = member.user.role || 'unknown';
+                    roleCounts[role] = (roleCounts[role] || 0) + 1;
+                }
             });
 
-            // Update total members (active users)
-            document.getElementById('totalMembers').textContent = totalActiveUsers;
+            // Update total members (project members only)
+            const totalEl = document.getElementById('totalMembers');
+            if (totalEl) totalEl.textContent = members.length;
             
             // Update role-specific counts
-            document.getElementById('siteEngineers').textContent = roleCounts['site_engineer'] || 0;
-            document.getElementById('contractors').textContent = roleCounts['contractor'] || 0;
-            document.getElementById('consultants').textContent = roleCounts['consultant'] || 0;
+            const engineersEl = document.getElementById('siteEngineers');
+            if (engineersEl) engineersEl.textContent = roleCounts['site_engineer'] || 0;
+            
+            const contractorsEl = document.getElementById('contractors');
+            if (contractorsEl) contractorsEl.textContent = roleCounts['contractor'] || 0;
+            
+            const consultantsEl = document.getElementById('consultants');
+            if (consultantsEl) consultantsEl.textContent = roleCounts['consultant'] || 0;
             
             // Update stats container with all roles dynamically
-            updateDynamicRoleStats(roleCounts, totalActiveUsers);
+            updateDynamicRoleStats(roleCounts, members.length);
         }
         
         function updateDynamicRoleStats(roleCounts, totalActiveUsers) {

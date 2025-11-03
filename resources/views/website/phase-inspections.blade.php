@@ -67,7 +67,8 @@
                             <h5 class="mb-3 mb-md-4 fw-semibold black_color">{{ __('messages.create_new_inspection') }}
                             </h5>
                             <button class="btn  orange_btn w-100 mb-3 mb-md-4 justify-content-center py-3"
-                                data-bs-toggle="modal" data-bs-target="#createInspectionModal" onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
+                                data-bs-toggle="modal" data-bs-target="#createInspectionModal"
+                                onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
                                 <i class="fas fa-plus"></i>
                                 {{ __('messages.create_inspection') }}
                             </button>
@@ -103,7 +104,7 @@
                 <div class="col-lg-6">
                     <div class="card h-100 B_shadow">
                         <div class="card-body p-md-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            {{-- <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h5 class="fw-semibold black_color mb-0">{{ __('messages.previous_inspections') }}</h5>
                                 <div class="dropdown">
                                     <button class="btn filter-btn d-flex align-items-center px-3 py-2 bg4" type="button" data-bs-toggle="dropdown">
@@ -119,7 +120,7 @@
                                         <li><a class="dropdown-item active" href="#" data-value="all">{{ __('messages.all_categories') }}</a></li>
                                     </ul>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="table-responsive" style="height: 400px; overflow-y: auto;">
                                 <table class="table align-middle mb-0">
                                     <thead class="sticky-top bg-white">
@@ -161,12 +162,12 @@
                         const phaseId = getCurrentPhaseId();
                         const projectId = getProjectIdFromUrl();
                         document.getElementById('modalProjectId').value = projectId;
-                        
+
                         // Store phase_id for form submission
                         window.currentPhaseId = phaseId;
                     });
                 }
-                
+
                 // Hide phase dropdown in modal since this is a phase page
                 const createInspectionModal = document.getElementById('createInspectionModal');
                 if (createInspectionModal) {
@@ -202,7 +203,7 @@
             async function loadInspections() {
                 try {
                     const projectId = getProjectIdFromUrl();
-                    
+
 
                     const phaseId = getCurrentPhaseId();
 
@@ -294,16 +295,16 @@
             function setupCategoryFilterHandlers() {
                 const menu = document.getElementById('categoryFilterMenu');
                 if (!menu) return;
-                
+
                 menu.addEventListener('click', function(e) {
                     if (e.target.classList.contains('dropdown-item')) {
                         e.preventDefault();
                         const value = e.target.getAttribute('data-value');
-                        
+
                         // Update active state
                         menu.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
                         e.target.classList.add('active');
-                        
+
                         filterInspections(value);
                     }
                 });
@@ -319,7 +320,7 @@
                     <li><a class="dropdown-item active" href="#" data-value="all">{{ __('messages.all_categories') }}</a></li>
                     ${categories.map(cat => `<li><a class="dropdown-item" href="#" data-value="${cat}">${cat}</a></li>`).join('')}
                 `;
-                
+
                 setupCategoryFilterHandlers();
             }
 
@@ -374,7 +375,7 @@
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="{{ asset('website/js/toastr-config.js') }}"></script>
-      <script src="{{ asset('website/js/button-protection.js') }}"></script>
+    <script src="{{ asset('website/js/button-protection.js') }}"></script>
 
 </body>
 
