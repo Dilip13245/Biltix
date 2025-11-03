@@ -139,9 +139,11 @@
                                 <div class="d-flex flex-wrap justify-content-between align-items-start">
                                     <div class="w-100">
                                         <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
-                                            <h5 class="fw-semibold black_color mb-0">{{ __('messages.project_details') }}</h5>
+                                            <h5 class="fw-semibold black_color mb-0">
+                                                {{ __('messages.project_details') }}</h5>
                                             @can('projects', 'edit')
-                                                <button class="btn btn-sm btn-outline-primary" id="editProjectBtn" onclick="toggleProjectEdit()">
+                                                <button class="btn btn-sm btn-outline-primary" id="editProjectBtn"
+                                                    onclick="toggleProjectEdit()">
                                                     <i class="fas fa-edit me-1"></i>{{ __('messages.edit_project') }}
                                                 </button>
                                             @endcan
@@ -152,7 +154,8 @@
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.project_location') }}</span>
                                                     <div class="fw-medium">
-                                                        <span id="projectLocation">{{ __('messages.loading') }}...</span>
+                                                        <span
+                                                            id="projectLocation">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
                                                 <div class="mb-2 mb-md-3">
@@ -172,12 +175,14 @@
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.start_date') }}</span>
-                                                    <div class="fw-medium" id="startDate">{{ __('messages.loading') }}...</div>
+                                                    <div class="fw-medium" id="startDate">
+                                                        {{ __('messages.loading') }}...</div>
                                                 </div>
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.end_date') }}</span>
-                                                    <div class="fw-medium" id="endDate">{{ __('messages.loading') }}...</div>
+                                                    <div class="fw-medium" id="endDate">
+                                                        {{ __('messages.loading') }}...</div>
                                                 </div>
                                             </div>
                                             <div class="col-12 col-md-6">
@@ -192,7 +197,8 @@
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.project_manager') }}</span>
                                                     <div class="fw-medium">
-                                                        <span id="projectManager">{{ __('messages.loading') }}...</span>
+                                                        <span
+                                                            id="projectManager">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
                                                 <div class="mb-2 mb-md-3">
@@ -205,7 +211,8 @@
                                             </div>
                                         </div>
                                         <div class="mt-4 d-flex flex-wrap gap-2">
-                                            <button onclick="window.location.href='/website/project/'+currentProjectId+'/plans'"
+                                            <button
+                                                onclick="window.location.href='/website/project/'+currentProjectId+'/plans'"
                                                 class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
                                                 <svg width="18" height="14" viewBox="0 0 18 14" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -217,8 +224,8 @@
                                             </button>
                                             <button onclick="openTimelineModal()"
                                                 class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
-                                                <svg width="21" height="16" viewBox="0 0 21 16"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="21" height="16" viewBox="0 0 21 16" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
                                                     <g clip-path="url(#clip0_861_1919)">
                                                         <path
                                                             d="M4.0625 2.25C4.26141 2.25 4.45218 2.32902 4.59283 2.46967C4.73348 2.61032 4.8125 2.80109 4.8125 3C4.8125 3.19891 4.73348 3.38968 4.59283 3.53033C4.45218 3.67098 4.26141 3.75 4.0625 3.75C3.86359 3.75 3.67282 3.67098 3.53217 3.53033C3.39152 3.38968 3.3125 3.19891 3.3125 3C3.3125 2.80109 3.39152 2.61032 3.53217 2.46967C3.67282 2.32902 3.86359 2.25 4.0625 2.25ZM5.0625 5.29063C5.94688 4.90625 6.5625 4.025 6.5625 3C6.5625 1.61875 5.44375 0.5 4.0625 0.5C2.68125 0.5 1.5625 1.61875 1.5625 3C1.5625 4.025 2.17812 4.90625 3.0625 5.29063V7H1.0625C0.509375 7 0.0625 7.44688 0.0625 8C0.0625 8.55313 0.509375 9 1.0625 9H9.0625V10.7094C8.17813 11.0938 7.5625 11.975 7.5625 13C7.5625 14.3813 8.68125 15.5 10.0625 15.5C11.4438 15.5 12.5625 14.3813 12.5625 13C12.5625 11.975 11.9469 11.0938 11.0625 10.7094V9H19.0625C19.6156 9 20.0625 8.55313 20.0625 8C20.0625 7.44688 19.6156 7 19.0625 7H17.0625V5.29063C17.9469 4.90625 18.5625 4.025 18.5625 3C18.5625 1.61875 17.4438 0.5 16.0625 0.5C14.6812 0.5 13.5625 1.61875 13.5625 3C13.5625 4.025 14.1781 4.90625 15.0625 5.29063V7H5.0625V5.29063ZM15.3125 3C15.3125 2.80109 15.3915 2.61032 15.5322 2.46967C15.6728 2.32902 15.8636 2.25 16.0625 2.25C16.2614 2.25 16.4522 2.32902 16.5928 2.46967C16.7335 2.61032 16.8125 2.80109 16.8125 3C16.8125 3.19891 16.7335 3.38968 16.5928 3.53033C16.4522 3.67098 16.2614 3.75 16.0625 3.75C15.8636 3.75 15.6728 3.67098 15.5322 3.53033C15.3915 3.38968 15.3125 3.19891 15.3125 3ZM10.0625 12.25C10.2614 12.25 10.4522 12.329 10.5928 12.4697C10.7335 12.6103 10.8125 12.8011 10.8125 13C10.8125 13.1989 10.7335 13.3897 10.5928 13.5303C10.4522 13.671 10.2614 13.75 10.0625 13.75C9.86359 13.75 9.67282 13.671 9.53217 13.5303C9.39152 13.3897 9.3125 13.1989 9.3125 13C9.3125 12.8011 9.39152 12.6103 9.53217 12.4697C9.67282 12.329 9.86359 12.25 10.0625 12.25Z"
@@ -232,7 +239,8 @@
                                                 </svg>
                                                 {{ __('messages.timeline') }}
                                             </button>
-                                            <button onclick="window.location.href='/website/project/'+currentProjectId+'/daily-logs'"
+                                            <button
+                                                onclick="window.location.href='/website/project/'+currentProjectId+'/daily-logs'"
                                                 class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
                                                 <svg width="15" height="16" viewBox="0 0 15 16"
                                                     fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -331,10 +339,10 @@
                                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
                                     <h5 class="fw-semibold black_color mb-0">{{ __('messages.safety_category') }}</h5>
                                     <div class="d-flex align-items-center gap-2">
-                                        <a href="{{ route('website.safety-checklist') }}"
+                                        {{-- <a href="{{ route('website.safety-checklist') }}"
                                             class="btn btn-primary d-flex align-items-center gap-2 btnsm">
                                             <i class="fas fa-eye"></i> {{ __('messages.view_checklist') }}
-                                        </a>
+                                        </a> --}}
                                         <button class="btn btn-primary d-flex align-items-center gap-2 btnsm"
                                             onclick="openSafetyModal()">
                                             <i class="fas fa-plus"></i> {{ __('messages.add_new') }}
@@ -386,10 +394,14 @@
                 const currentDateBtn = document.getElementById('currentDateBtn');
                 if (currentDateBtn) {
                     const today = new Date();
-                    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                    const options = {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    };
                     currentDateBtn.textContent = today.toLocaleDateString('en-US', options);
                 }
-                
+
                 loadProjectData();
                 loadActivities();
                 loadManpowerEquipment();
@@ -447,7 +459,9 @@
             }
 
             function showErrorState() {
-                const elements = ['projectName', 'companyName', 'projectType', 'projectManager', 'siteEngineer', 'projectLocation', 'startDate', 'endDate'];
+                const elements = ['projectName', 'companyName', 'projectType', 'projectManager', 'siteEngineer',
+                    'projectLocation', 'startDate', 'endDate'
+                ];
                 elements.forEach(id => {
                     const element = document.getElementById(id);
                     if (element) element.textContent = 'Error loading data';
@@ -456,7 +470,7 @@
 
             function toggleProjectEdit() {
                 isEditMode = true;
-                
+
                 // Store original values
                 originalValues = {
                     projectName: document.getElementById('projectName').textContent,
@@ -465,14 +479,14 @@
                     projectManager: document.getElementById('projectManager').textContent,
                     siteEngineer: document.getElementById('siteEngineer').textContent
                 };
-                
+
                 // Make fields editable
                 makeFieldEditable('projectName', 'text');
                 makeFieldEditable('companyName', 'text');
                 makeFieldEditable('projectType', 'text');
                 makeFieldEditable('projectManager', 'dropdown', 'Project Manager');
                 makeFieldEditable('siteEngineer', 'dropdown', 'Site Engineer');
-                
+
                 // Show save and cancel buttons
                 showSaveButton();
             }
@@ -480,7 +494,7 @@
             function makeFieldEditable(fieldId, type, label = '') {
                 const fieldElement = document.getElementById(fieldId);
                 const currentValue = fieldElement.textContent.trim();
-                
+
                 if (type === 'text') {
                     const input = document.createElement('input');
                     input.type = 'text';
@@ -489,6 +503,16 @@
                     input.style.width = '100%';
                     input.style.maxWidth = '300px';
                     input.id = fieldId + '_input';
+
+                    // Set maxlength based on field
+                    const maxLengths = {
+                        'projectName': 255,
+                        'companyName': 255,
+                        'projectType': 100,
+                        'projectLocation': 500
+                    };
+                    input.maxLength = maxLengths[fieldId] || 255;
+
                     fieldElement.innerHTML = '';
                     fieldElement.appendChild(input);
                 } else if (type === 'dropdown') {
@@ -500,7 +524,7 @@
                     select.innerHTML = '<option value="">Loading...</option>';
                     fieldElement.innerHTML = '';
                     fieldElement.appendChild(select);
-                    
+
                     // Load dropdown options
                     loadDropdownOptions(select, label, currentValue);
                 }
@@ -514,7 +538,7 @@
                     } else if (label === 'Site Engineer') {
                         response = await api.getTechnicalEngineers();
                     }
-                    
+
                     if (response.code === 200 && response.data) {
                         selectElement.innerHTML = '<option value="">Select ' + label + '</option>';
                         response.data.forEach(user => {
@@ -526,7 +550,7 @@
                             }
                             selectElement.appendChild(option);
                         });
-                        
+
                         // Initialize searchable dropdown
                         setTimeout(() => {
                             if (typeof SearchableDropdown !== 'undefined') {
@@ -544,30 +568,30 @@
 
             function showSaveButton() {
                 const btn = document.getElementById('editProjectBtn');
-                
+
                 // Create button container
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'd-flex gap-2 align-items-center';
                 btnContainer.id = 'editButtonsContainer';
-                
+
                 // Create save button
                 const saveBtn = document.createElement('button');
                 saveBtn.className = 'btn btn-sm btn-success';
                 saveBtn.id = 'saveProjectBtn';
                 saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
                 saveBtn.onclick = saveProjectChanges;
-                
+
                 // Create cancel button
                 const cancelBtn = document.createElement('button');
                 cancelBtn.className = 'btn btn-sm btn-secondary';
                 cancelBtn.id = 'cancelProjectBtn';
                 cancelBtn.innerHTML = '<i class="fas fa-times me-1"></i>{{ __('messages.cancel') }}';
                 cancelBtn.onclick = cancelProjectEdit;
-                
+
                 // Add buttons to container
                 btnContainer.appendChild(saveBtn);
                 btnContainer.appendChild(cancelBtn);
-                
+
                 // Replace edit button with button container
                 btn.style.display = 'none';
                 btn.parentElement.appendChild(btnContainer);
@@ -577,19 +601,19 @@
                 const saveBtn = document.getElementById('saveProjectBtn');
                 saveBtn.disabled = true;
                 saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{{ __('messages.saving') }}...';
-                
+
                 try {
                     const updateData = {
                         project_id: currentProjectId
                     };
-                    
+
                     // Get values from inputs
                     const projectNameInput = document.getElementById('projectName_input');
                     const companyNameInput = document.getElementById('companyName_input');
                     const projectTypeInput = document.getElementById('projectType_input');
                     const projectManagerInput = document.getElementById('projectManager_input');
                     const siteEngineerInput = document.getElementById('siteEngineer_input');
-                    
+
                     if (projectNameInput && projectNameInput.value.trim()) {
                         updateData.project_title = projectNameInput.value.trim();
                     }
@@ -605,18 +629,18 @@
                     if (siteEngineerInput && siteEngineerInput.value) {
                         updateData.technical_engineer_id = siteEngineerInput.value;
                     }
-                    
+
                     const response = await api.updateProject(updateData);
-                    
+
                     if (response.code === 200) {
                         showToast('{{ __('messages.project_updated_successfully') }}', 'success');
                         isEditMode = false;
                         loadProjectData();
-                        
+
                         // Show edit button again
                         const editBtn = document.getElementById('editProjectBtn');
                         editBtn.style.display = 'inline-block';
-                        
+
                         // Remove button container
                         const btnContainer = document.getElementById('editButtonsContainer');
                         if (btnContainer) btnContainer.remove();
@@ -635,18 +659,18 @@
 
             function cancelProjectEdit() {
                 isEditMode = false;
-                
+
                 // Restore original values
                 document.getElementById('projectName').textContent = originalValues.projectName;
                 document.getElementById('companyName').textContent = originalValues.companyName;
                 document.getElementById('projectType').textContent = originalValues.projectType;
                 document.getElementById('projectManager').textContent = originalValues.projectManager;
                 document.getElementById('siteEngineer').textContent = originalValues.siteEngineer;
-                
+
                 // Show edit button again
                 const btn = document.getElementById('editProjectBtn');
                 btn.style.display = 'inline-block';
-                
+
                 // Remove button container
                 const btnContainer = document.getElementById('editButtonsContainer');
                 if (btnContainer) btnContainer.remove();
@@ -745,11 +769,11 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${activities.map(activity => `
-                                        <li class="d-flex align-items-center mb-2">
-                                          <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                          <span class="flex-grow-1 text-wrap">${activity.description}</span>
-                                        </li>
-                                      `).join('')}
+                                                <li class="d-flex align-items-center mb-2">
+                                                  <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                                  <span class="flex-grow-1 text-wrap">${activity.description}</span>
+                                                </li>
+                                              `).join('')}
     </ul>
   `;
             }
@@ -790,13 +814,13 @@
       <table class="table table-borderless mb-0">
         <tbody>
           ${items.map(item => `
-                                            <tr>
-                                              <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
-                                              <td class="text-end">
-                                                <span class="text-primary fw-semibold">${item.count}</span>
-                                              </td>
-                                            </tr>
-                                          `).join('')}
+                                                    <tr>
+                                                      <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
+                                                      <td class="text-end">
+                                                        <span class="text-primary fw-semibold">${item.count}</span>
+                                                      </td>
+                                                    </tr>
+                                                  `).join('')}
         </tbody>
       </table>
     </div>
@@ -837,15 +861,15 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${items.map(item => `
-                                        <li class="mb-2">
-                                          <div class="d-flex align-items-center p-3 rounded bg4">
-                                            <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
-                                              <i class="fas fa-check-circle"></i>
-                                            </span>
-                                            <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
-                                          </div>
-                                        </li>
-                                      `).join('')}
+                                                <li class="mb-2">
+                                                  <div class="d-flex align-items-center p-3 rounded bg4">
+                                                    <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
+                                                      <i class="fas fa-check-circle"></i>
+                                                    </span>
+                                                    <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
+                                                  </div>
+                                                </li>
+                                              `).join('')}
     </ul>
   `;
             }
@@ -1199,11 +1223,13 @@
                         }
                         renderPhaseTimeline([phaseToShow]);
                     } else {
-                        document.getElementById('timelineContent').innerHTML = '<div class="text-center py-4 text-muted">No phases found</div>';
+                        document.getElementById('timelineContent').innerHTML =
+                            '<div class="text-center py-4 text-muted">No phases found</div>';
                     }
                 } catch (error) {
                     console.error('Error loading timeline:', error);
-                    document.getElementById('timelineContent').innerHTML = '<div class="text-center py-4 text-danger">Error loading timeline</div>';
+                    document.getElementById('timelineContent').innerHTML =
+                        '<div class="text-center py-4 text-danger">Error loading timeline</div>';
                 }
             }
 
@@ -1217,7 +1243,7 @@
                 extendTimeout[milestoneId] = setTimeout(async () => {
                     const extensionInput = document.getElementById(`ext_${milestoneId}`);
                     const extensionDays = parseInt(extensionInput.value) || 0;
-                    
+
                     if (extensionDays < 0 || extensionDays > 3650) {
                         alert('Extension days must be between 0 and 3650');
                         extensionInput.value = Math.min(Math.max(extensionDays, 0), 3650);
@@ -1259,34 +1285,35 @@
 
             function renderPhaseTimeline(phases) {
                 const container = document.getElementById('timelineContent');
-                
+
                 if (!phases || phases.length === 0) {
                     container.innerHTML = '<div class="text-center py-4 text-muted">No phases found</div>';
                     return;
                 }
 
                 container.innerHTML = phases.map((phase, index) => {
-                    const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) : 0;
+                    const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) :
+                    0;
                     const extensionDays = phase.total_extension_days || 0;
                     const progress = phase.time_progress || 0;
-                    
-                    // Determine badge based on time progress and extensions
-                let badgeClass, badgeText;
-                if (progress >= 100) {
-                    badgeClass = 'badge1';
-                    badgeText = 'Completed';
-                } else if (extensionDays > 0) {
-                    badgeClass = 'badge3';
-                    badgeText = 'Extended';
-                } else if (progress > 0) {
-                    badgeClass = 'badge4';
-                    badgeText = 'In Progress';
-                } else {
-                    badgeClass = 'badge2';
-                    badgeText = 'Pending';
-                }
 
-                return `
+                    // Determine badge based on time progress and extensions
+                    let badgeClass, badgeText;
+                    if (progress >= 100) {
+                        badgeClass = 'badge1';
+                        badgeText = 'Completed';
+                    } else if (extensionDays > 0) {
+                        badgeClass = 'badge3';
+                        badgeText = 'Extended';
+                    } else if (progress > 0) {
+                        badgeClass = 'badge4';
+                        badgeText = 'In Progress';
+                    } else {
+                        badgeClass = 'badge2';
+                        badgeText = 'Pending';
+                    }
+
+                    return `
                         <div class="timeline-phase mb-4">
                             <div class="d-flex align-items-center mb-3">
                                 <div class="timeline-marker me-3">
@@ -1302,13 +1329,13 @@
                                         <span><i class="fas fa-calendar me-1"></i>${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</span>
                                     </div>
                                     ${extensionDays > 0 ? `
-                                        <div class="mt-1">
-                                            <small class="text-warning">
-                                                <i class="fas fa-info-circle me-1"></i>
-                                                Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                            </small>
-                                        </div>
-                                    ` : ''}
+                                                <div class="mt-1">
+                                                    <small class="text-warning">
+                                                        <i class="fas fa-info-circle me-1"></i>
+                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                    </small>
+                                                </div>
+                                            ` : ''}
                                 </div>
                             </div>
                             <div class="timeline-milestones ps-5">
@@ -1316,58 +1343,58 @@
                                     const isExtended = milestone.is_extended;
                                     const isOverdue = milestone.is_overdue;
                                     return `
-                                        <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
-                                                    <span class="${isOverdue ? 'text-danger fw-medium' : ''}">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
-                                                    ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : ''}
+                                                <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
+                                                            <span class="${isOverdue ? 'text-danger fw-medium' : ''}">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
+                                                            ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : ''}
+                                                        </div>
+                                                        <div class="text-muted small">
+                                                            ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-2 mt-2">
+                                                        <span class="text-muted small">Extend:</span>
+                                                        <div class="input-group" style="width: 80px;">
+                                                            <input type="number" class="form-control form-control-sm" 
+                                                                style="font-size: 11px; text-align: center;" 
+                                                                value="${milestone.extension_days || 0}" 
+                                                                min="0" max="999" 
+                                                                id="ext_${milestone.id}" 
+                                                                onchange="extendMilestone(${milestone.id})">
+                                                            <span class="input-group-text" style="font-size: 10px; padding: 2px 4px;">d</span>
+                                                        </div>
+                                                        <div class="btn-group" role="group">
+                                                            <button class="btn btn-outline-secondary btn-sm" 
+                                                                style="font-size: 10px; padding: 2px 6px;" 
+                                                                onclick="quickExtend(${milestone.id}, 1)">+1</button>
+                                                            <button class="btn btn-outline-secondary btn-sm" 
+                                                                style="font-size: 10px; padding: 2px 6px;" 
+                                                                onclick="quickExtend(${milestone.id}, 7)">+7</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="text-muted small">
-                                                    ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
-                                                </div>
-                                            </div>
-                                            <div class="d-flex align-items-center gap-2 mt-2">
-                                                <span class="text-muted small">Extend:</span>
-                                                <div class="input-group" style="width: 80px;">
-                                                    <input type="number" class="form-control form-control-sm" 
-                                                        style="font-size: 11px; text-align: center;" 
-                                                        value="${milestone.extension_days || 0}" 
-                                                        min="0" max="999" 
-                                                        id="ext_${milestone.id}" 
-                                                        onchange="extendMilestone(${milestone.id})">
-                                                    <span class="input-group-text" style="font-size: 10px; padding: 2px 4px;">d</span>
-                                                </div>
-                                                <div class="btn-group" role="group">
-                                                    <button class="btn btn-outline-secondary btn-sm" 
-                                                        style="font-size: 10px; padding: 2px 6px;" 
-                                                        onclick="quickExtend(${milestone.id}, 1)">+1</button>
-                                                    <button class="btn btn-outline-secondary btn-sm" 
-                                                        style="font-size: 10px; padding: 2px 6px;" 
-                                                        onclick="quickExtend(${milestone.id}, 7)">+7</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
+                                            `;
                                 }).join('') : '<div class="text-muted small">No milestones defined</div>'}
                                 ${extensionDays > 0 ? `
-                                    <div class="mt-2">
-                                        <small class="text-warning">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                            Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
-                                        </small>
-                                    </div>
-                                ` : ''}
+                                            <div class="mt-2">
+                                                <small class="text-warning">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
+                                                </small>
+                                            </div>
+                                        ` : ''}
                                 <div class="mt-2 d-flex gap-1 flex-wrap">
                                     <small class="text-muted me-2">Quick extend:</small>
                                     ${phase.milestones && phase.milestones.length === 1 ? `
-                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
-                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
-                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                            onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
-                                    ` : ''}
+                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                    onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
+                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                    onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
+                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                    onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
+                                            ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -1400,12 +1427,12 @@
                     alert('No phase selected');
                     return;
                 }
-                
+
                 currentPhaseForMilestone = currentPhaseId;
-                
+
                 // Reset form
                 document.getElementById('addMilestoneForm').reset();
-                
+
                 // Open modal
                 const modal = new bootstrap.Modal(document.getElementById('addMilestoneModal'));
                 modal.show();
@@ -1415,24 +1442,24 @@
                 const form = document.getElementById('addMilestoneForm');
                 const milestoneName = document.getElementById('milestoneName').value.trim();
                 const milestoneDays = parseInt(document.getElementById('milestoneDays').value);
-                
+
                 if (!milestoneName || !milestoneDays || milestoneDays < 1) {
                     alert('Please fill all fields correctly');
                     return;
                 }
-                
+
                 const saveBtn = document.querySelector('#addMilestoneModal .btn.orange_btn');
                 const originalText = saveBtn.innerHTML;
                 saveBtn.disabled = true;
                 saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.saving') }}...';
-                
+
                 try {
                     // First get the current phase to update it with new milestone
                     const phaseResponse = await api.makeRequest('projects/list_phases', {
                         project_id: currentProjectId,
                         user_id: currentUserId
                     });
-                    
+
                     if (phaseResponse.code === 200) {
                         const currentPhase = phaseResponse.data.find(phase => phase.id == currentPhaseForMilestone);
                         if (currentPhase) {
@@ -1442,7 +1469,7 @@
                                 milestone_name: milestoneName,
                                 days: milestoneDays
                             }];
-                            
+
                             // Update phase with new milestones
                             const updateResponse = await api.makeRequest('projects/update_phase', {
                                 phase_id: currentPhaseForMilestone,
@@ -1450,15 +1477,15 @@
                                 title: currentPhase.title,
                                 milestones: newMilestones
                             });
-                            
+
                             if (updateResponse.code === 200) {
                                 // Close modal
                                 const modal = bootstrap.Modal.getInstance(document.getElementById('addMilestoneModal'));
                                 if (modal) modal.hide();
-                                
+
                                 // Show success message
                                 alert('Milestone added successfully!');
-                                
+
                                 // Reload timeline
                                 loadPhaseTimeline();
                             } else {
@@ -1481,33 +1508,37 @@
         </script>
 
         <!-- Timeline Modal -->
-        <div class="modal fade" id="timelineModal" tabindex="-1" aria-labelledby="timelineModalLabel" aria-hidden="true">
+        <div class="modal fade" id="timelineModal" tabindex="-1" aria-labelledby="timelineModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <style>
-                          #timelineModal .modal-header .btn-close {
-                            position: static !important;
-                            right: auto !important;
-                            top: auto !important;
-                            margin: 0 !important;
-                          }
-                          #timelineModal .modal-header {
-                            position: relative !important;
-                          }
+                            #timelineModal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+
+                            #timelineModal .modal-header {
+                                position: relative !important;
+                            }
                         </style>
-                        @if(app()->getLocale() == 'ar')
-                        <div class="d-flex justify-content-between align-items-center w-100">
-                          <h5 class="modal-title" id="timelineModalLabel">
-                            {{ __('messages.project_timeline') }}<i class="fas fa-chart-line ms-2"></i>
-                          </h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
+                        @if (app()->getLocale() == 'ar')
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <h5 class="modal-title" id="timelineModalLabel">
+                                    {{ __('messages.project_timeline') }}<i class="fas fa-chart-line ms-2"></i>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
                         @else
-                        <h5 class="modal-title" id="timelineModalLabel">
-                            <i class="fas fa-chart-line me-2"></i>{{ __('messages.project_timeline') }}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 class="modal-title" id="timelineModalLabel">
+                                <i class="fas fa-chart-line me-2"></i>{{ __('messages.project_timeline') }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         @endif
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -1533,12 +1564,14 @@
             .timeline-marker {
                 position: relative;
             }
+
             .timeline-dot {
                 width: 12px;
                 height: 12px;
                 border-radius: 50%;
                 position: relative;
             }
+
             .timeline-phase:not(:last-child) .timeline-marker::after {
                 content: '';
                 position: absolute;
@@ -1549,22 +1582,27 @@
                 height: 60px;
                 background: #e9ecef;
             }
+
             .milestone-item {
                 border: 1px solid #e9ecef;
                 transition: all 0.2s ease;
             }
+
             .milestone-item:hover {
                 border-color: #4477C4;
                 box-shadow: 0 2px 4px rgba(68, 119, 196, 0.1);
             }
+
             [dir="rtl"] .timeline-milestones {
                 padding-right: 3rem !important;
                 padding-left: 0 !important;
             }
+
             [dir="rtl"] .timeline-marker {
                 margin-left: 1rem;
                 margin-right: 0;
             }
+
             .text-wrap {
                 word-wrap: break-word;
                 overflow-wrap: break-word;
@@ -1575,53 +1613,60 @@
         </style>
 
         <!-- Add Milestone Modal -->
-        <div class="modal fade" id="addMilestoneModal" tabindex="-1" aria-labelledby="addMilestoneModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addMilestoneModal" tabindex="-1" aria-labelledby="addMilestoneModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <style>
-                          #addMilestoneModal .modal-header .btn-close {
-                            position: static !important;
-                            right: auto !important;
-                            top: auto !important;
-                            margin: 0 !important;
-                          }
-                          #addMilestoneModal .modal-header {
-                            position: relative !important;
-                          }
+                            #addMilestoneModal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+
+                            #addMilestoneModal .modal-header {
+                                position: relative !important;
+                            }
                         </style>
-                        @if(app()->getLocale() == 'ar')
-                        <div class="d-flex justify-content-between align-items-center w-100">
-                          <h5 class="modal-title" id="addMilestoneModalLabel">
-                            {{ __('messages.add_milestone') }}<i class="fas fa-plus ms-2"></i>
-                          </h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
+                        @if (app()->getLocale() == 'ar')
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <h5 class="modal-title" id="addMilestoneModalLabel">
+                                    {{ __('messages.add_milestone') }}<i class="fas fa-plus ms-2"></i>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
                         @else
-                        <h5 class="modal-title" id="addMilestoneModalLabel">
-                            <i class="fas fa-plus me-2"></i>{{ __('messages.add_milestone') }}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 class="modal-title" id="addMilestoneModalLabel">
+                                <i class="fas fa-plus me-2"></i>{{ __('messages.add_milestone') }}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         @endif
                     </div>
                     <div class="modal-body">
                         <form id="addMilestoneForm">
                             <div class="mb-3">
-                                <label for="milestoneName" class="form-label fw-medium">{{ __('messages.milestone_name') }}</label>
-                                <input type="text" class="form-control Input_control" id="milestoneName" 
+                                <label for="milestoneName"
+                                    class="form-label fw-medium">{{ __('messages.milestone_name') }}</label>
+                                <input type="text" class="form-control Input_control" id="milestoneName"
                                     name="milestone_name" required maxlength="80"
                                     placeholder="{{ __('messages.enter_milestone_name') }}">
                             </div>
                             <div class="mb-3">
-                                <label for="milestoneDays" class="form-label fw-medium">{{ __('messages.days') }}</label>
-                                <input type="number" class="form-control Input_control" id="milestoneDays" 
+                                <label for="milestoneDays"
+                                    class="form-label fw-medium">{{ __('messages.days') }}</label>
+                                <input type="number" class="form-control Input_control" id="milestoneDays"
                                     name="days" required min="1" max="999"
                                     placeholder="{{ __('messages.enter_days') }}">
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                        <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
                         <button type="button" class="btn orange_btn" onclick="saveMilestone()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.save') }}
                         </button>
@@ -1633,11 +1678,13 @@
         @include('website.modals.project-progress-modals')
 
         <!-- Delete Project Confirmation Modal -->
-        <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel" aria-hidden="true">
+        <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center px-4 pb-4">
                         <div class="mb-3">
@@ -1649,7 +1696,8 @@
                             <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
                                 <i class="fas fa-times me-2"></i>{{ __('messages.cancel') }}
                             </button>
-                            <button type="button" class="btn btn-danger px-4" id="confirmDeleteBtn" onclick="confirmDeleteProject()">
+                            <button type="button" class="btn btn-danger px-4" id="confirmDeleteBtn"
+                                onclick="confirmDeleteProject()">
                                 <i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}
                             </button>
                         </div>
@@ -1707,7 +1755,8 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">{{ __('messages.update') }} {{ __('messages.safety_category') }}</h5>
+                        <h5 class="modal-title">{{ __('messages.update') }} {{ __('messages.safety_category') }}
+                        </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -1766,7 +1815,7 @@
                 <div class="col-3">
                     <label class="form-label small fw-medium mb-1">{{ __('messages.count') }}</label>
                     <input type="number" class="form-control form-control-sm" name="count[]" 
-                        placeholder="0" min="0" required>
+                        placeholder="0" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
                 </div>
                 <div class="col-2 d-flex align-items-end">
                     <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)" style="display:none;">
@@ -1833,7 +1882,7 @@
             </div>
             <div class="col-3">
                 <input type="number" class="form-control form-control-sm" name="count[]" 
-                    placeholder="0" min="0" required>
+                    placeholder="0" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
             </div>
             <div class="col-2 d-flex align-items-end">
                 <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)">
@@ -1931,10 +1980,36 @@
             async function saveManpower() {
                 const form = document.getElementById('manpowerForm');
                 const itemId = document.getElementById('manpowerId').value;
-                const categories = Array.from(form.querySelectorAll('input[name="category[]"]')).map(input => input.value
-                    .trim());
-                const counts = Array.from(form.querySelectorAll('input[name="count[]"]')).map(input => parseInt(input
-                    .value));
+                const categoryInputs = Array.from(form.querySelectorAll('input[name="category[]"]'));
+                const countInputs = Array.from(form.querySelectorAll('input[name="count[]"]'));
+
+                // Validate all fields
+                let hasError = false;
+                for (let i = 0; i < categoryInputs.length; i++) {
+                    const category = categoryInputs[i].value.trim();
+                    const count = countInputs[i].value.trim();
+                    
+                    if (!category) {
+                        toastr.error('Category is required');
+                        categoryInputs[i].focus();
+                        return;
+                    }
+                    
+                    if (!count || count === '' || isNaN(count) || parseInt(count) < 0) {
+                        toastr.error('Count is required and must be a valid number');
+                        countInputs[i].focus();
+                        return;
+                    }
+
+                    if (parseInt(count) > 2147483647) {
+                        toastr.error('Count is too large');
+                        countInputs[i].focus();
+                        return;
+                    }
+                }
+
+                const categories = categoryInputs.map(input => input.value.trim());
+                const counts = countInputs.map(input => parseInt(input.value));
 
                 const validItems = [];
                 for (let i = 0; i < categories.length; i++) {
@@ -2045,7 +2120,7 @@
             <label class="form-label small fw-medium mb-1">{{ __('messages.description') }}</label>
             <div class="input-group input-group-sm">
                 <input type="text" class="form-control form-control-sm" name="description[]" 
-                    value="${description}" placeholder="{{ __('messages.enter_activity_description') }}" required>
+                    value="${description}" placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
                 <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
                     <i class="fas fa-times"></i>
                 </button>
@@ -2070,12 +2145,12 @@
                 <div class="col-7">
                     <label class="form-label small fw-medium mb-1">{{ __('messages.category') }}</label>
                     <input type="text" class="form-control form-control-sm" name="category[]" 
-                        value="${category}" placeholder="{{ __('messages.enter_category') }}" required>
+                        value="${category}" placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
                 </div>
                 <div class="col-3">
                     <label class="form-label small fw-medium mb-1">{{ __('messages.count') }}</label>
                     <input type="number" class="form-control form-control-sm" name="count[]" 
-                        value="${count}" placeholder="0" min="0" required>
+                        value="${count}" placeholder="0" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
                 </div>
                 <div class="col-2 d-flex align-items-end">
                     <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)" style="display:none;">
@@ -2126,11 +2201,11 @@
             <div class="col-6">
                 <input type="hidden" name="manpower_id[]" value="${item.id}">
                 <input type="text" class="form-control" name="manpower_category[]" 
-                    value="${item.category}" placeholder="Category" maxlength="50">
+                    value="${item.category}" placeholder="Category" maxlength="50" required>
             </div>
             <div class="col-6">
                 <input type="number" class="form-control" name="manpower_count[]" 
-                    value="${item.count}" placeholder="Count" min="0">
+                    value="${item.count}" placeholder="Count" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
             </div>
         </div>
     `).join('');
@@ -2161,10 +2236,24 @@
 
             // Save Functions
             async function saveActivitiesUpdate() {
-                const ids = Array.from(document.querySelectorAll('input[name="activity_id[]"]')).map(input => parseInt(input
-                    .value));
-                const descriptions = Array.from(document.querySelectorAll('input[name="activity_description[]"]')).map(
-                    input => input.value);
+                const descInputs = Array.from(document.querySelectorAll('input[name="activity_description[]"]'));
+                
+                // Validate descriptions
+                for (let input of descInputs) {
+                    if (!input.value.trim()) {
+                        toastr.error('Description is required');
+                        input.focus();
+                        return;
+                    }
+                    if (input.value.length > 150) {
+                        toastr.error('Description must be less than 150 characters');
+                        input.focus();
+                        return;
+                    }
+                }
+
+                const ids = Array.from(document.querySelectorAll('input[name="activity_id[]"]')).map(input => parseInt(input.value));
+                const descriptions = descInputs.map(input => input.value.trim());
 
                 const activities = ids.map((id, index) => ({
                     id,
@@ -2179,6 +2268,8 @@
                         bootstrap.Modal.getInstance(document.getElementById('activitiesUpdateModal')).hide();
                         loadActivities();
                         toastr.success('Activities updated successfully!');
+                    } else {
+                        toastr.error(response.message || 'Failed to update activities');
                     }
                 } catch (error) {
                     toastr.error('Failed to update activities');
@@ -2186,12 +2277,42 @@
             }
 
             async function saveManpowerUpdate() {
-                const ids = Array.from(document.querySelectorAll('input[name="manpower_id[]"]')).map(input => parseInt(input
-                    .value));
-                const categories = Array.from(document.querySelectorAll('input[name="manpower_category[]"]')).map(input =>
-                    input.value);
-                const counts = Array.from(document.querySelectorAll('input[name="manpower_count[]"]')).map(input =>
-                    parseInt(input.value));
+                const categoryInputs = Array.from(document.querySelectorAll('input[name="manpower_category[]"]'));
+                const countInputs = Array.from(document.querySelectorAll('input[name="manpower_count[]"]'));
+                
+                // Validate all fields
+                for (let i = 0; i < categoryInputs.length; i++) {
+                    const category = categoryInputs[i].value.trim();
+                    const count = countInputs[i].value.trim();
+                    
+                    if (!category) {
+                        toastr.error('Category is required');
+                        categoryInputs[i].focus();
+                        return;
+                    }
+                    
+                    if (category.length > 50) {
+                        toastr.error('Category must be less than 50 characters');
+                        categoryInputs[i].focus();
+                        return;
+                    }
+                    
+                    if (!count || count === '' || isNaN(count) || parseInt(count) < 0) {
+                        toastr.error('Count is required and must be a valid number');
+                        countInputs[i].focus();
+                        return;
+                    }
+
+                    if (parseInt(count) > 2147483647) {
+                        toastr.error('Count is too large');
+                        countInputs[i].focus();
+                        return;
+                    }
+                }
+
+                const ids = Array.from(document.querySelectorAll('input[name="manpower_id[]"]')).map(input => parseInt(input.value));
+                const categories = categoryInputs.map(input => input.value.trim());
+                const counts = countInputs.map(input => parseInt(input.value));
 
                 const manpower = ids.map((id, index) => ({
                     id,
@@ -2207,6 +2328,8 @@
                         bootstrap.Modal.getInstance(document.getElementById('manpowerUpdateModal')).hide();
                         loadManpowerEquipment();
                         toastr.success('Manpower updated successfully!');
+                    } else {
+                        toastr.error(response.message || 'Failed to update manpower');
                     }
                 } catch (error) {
                     toastr.error('Failed to update manpower');
@@ -2214,10 +2337,24 @@
             }
 
             async function saveSafetyUpdate() {
-                const ids = Array.from(document.querySelectorAll('input[name="safety_id[]"]')).map(input => parseInt(input
-                    .value));
-                const items = Array.from(document.querySelectorAll('input[name="safety_item[]"]')).map(input => input
-                    .value);
+                const itemInputs = Array.from(document.querySelectorAll('input[name="safety_item[]"]'));
+                
+                // Validate safety items
+                for (let input of itemInputs) {
+                    if (!input.value.trim()) {
+                        toastr.error('Safety item is required');
+                        input.focus();
+                        return;
+                    }
+                    if (input.value.length > 120) {
+                        toastr.error('Safety item must be less than 120 characters');
+                        input.focus();
+                        return;
+                    }
+                }
+
+                const ids = Array.from(document.querySelectorAll('input[name="safety_id[]"]')).map(input => parseInt(input.value));
+                const items = itemInputs.map(input => input.value.trim());
 
                 const safety_items = ids.map((id, index) => ({
                     id,
@@ -2232,6 +2369,8 @@
                         bootstrap.Modal.getInstance(document.getElementById('safetyUpdateModal')).hide();
                         loadSafetyItems();
                         toastr.success('Safety items updated successfully!');
+                    } else {
+                        toastr.error(response.message || 'Failed to update safety items');
                     }
                 } catch (error) {
                     toastr.error('Failed to update safety items');

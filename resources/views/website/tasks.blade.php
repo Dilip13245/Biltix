@@ -36,20 +36,40 @@
                             src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
                 @endif
             </form>
-            <select class="form-select w-auto searchable-select" id="statusFilter">
-                <option value="">{{ __('messages.all_status') }}</option>
-                <option value="todo">{{ __('messages.todo') }}</option>
-                <option value="in_progress">{{ __('messages.in_progress') }}</option>
-                <option value="complete">{{ __('messages.complete') }}</option>
-                <option value="approve">{{ __('messages.approve') }}</option>
-            </select>
-            <select class="form-select w-auto searchable-select" id="priorityFilter">
-                <option value="">{{ __('messages.all_priorities') }}</option>
-                <option value="low">{{ __('messages.low') }}</option>
-                <option value="medium">{{ __('messages.medium') }}</option>
-                <option value="high">{{ __('messages.high') }}</option>
-                <option value="critical">{{ __('messages.critical') }}</option>
-            </select>
+            <div class="custom-filter-dropdown" id="statusFilterWrapper">
+                <div class="custom-filter-btn" id="statusFilterBtn">{{ __('messages.all_status') }}</div>
+                <div class="custom-filter-options" id="statusFilterOptions">
+                    <div class="custom-filter-option selected" data-value="">{{ __('messages.all_status') }}</div>
+                    <div class="custom-filter-option" data-value="todo">{{ __('messages.todo') }}</div>
+                    <div class="custom-filter-option" data-value="in_progress">{{ __('messages.in_progress') }}</div>
+                    <div class="custom-filter-option" data-value="complete">{{ __('messages.complete') }}</div>
+                    <div class="custom-filter-option" data-value="approve">{{ __('messages.approve') }}</div>
+                </div>
+                <select class="form-select w-auto" id="statusFilter" style="display: none;">
+                    <option value="">{{ __('messages.all_status') }}</option>
+                    <option value="todo">{{ __('messages.todo') }}</option>
+                    <option value="in_progress">{{ __('messages.in_progress') }}</option>
+                    <option value="complete">{{ __('messages.complete') }}</option>
+                    <option value="approve">{{ __('messages.approve') }}</option>
+                </select>
+            </div>
+            <div class="custom-filter-dropdown" id="priorityFilterWrapper">
+                <div class="custom-filter-btn" id="priorityFilterBtn">{{ __('messages.all_priorities') }}</div>
+                <div class="custom-filter-options" id="priorityFilterOptions">
+                    <div class="custom-filter-option selected" data-value="">{{ __('messages.all_priorities') }}</div>
+                    <div class="custom-filter-option" data-value="low">{{ __('messages.low') }}</div>
+                    <div class="custom-filter-option" data-value="medium">{{ __('messages.medium') }}</div>
+                    <div class="custom-filter-option" data-value="high">{{ __('messages.high') }}</div>
+                    <div class="custom-filter-option" data-value="critical">{{ __('messages.critical') }}</div>
+                </div>
+                <select class="form-select w-auto" id="priorityFilter" style="display: none;">
+                    <option value="">{{ __('messages.all_priorities') }}</option>
+                    <option value="low">{{ __('messages.low') }}</option>
+                    <option value="medium">{{ __('messages.medium') }}</option>
+                    <option value="high">{{ __('messages.high') }}</option>
+                    <option value="critical">{{ __('messages.critical') }}</option>
+                </select>
+            </div>
             @can('tasks', 'create')
                 <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
                     <i class="fas fa-plus"></i>
@@ -102,6 +122,9 @@
             currentProjectId = getProjectIdFromUrl();
             currentUserId = window.UniversalAuth ? UniversalAuth.getUserId() : {{ auth()->id() ?? 1 }};
 
+            // Initialize filter dropdowns immediately
+            initializeFilterDropdowns();
+
             // Load tasks
             loadTasks();
 
@@ -112,6 +135,11 @@
             // Setup event listeners
             setupEventListeners();
         });
+        
+        function initializeFilterDropdowns() {
+            // Initialize custom filter dropdowns
+            // Custom dropdowns are now auto-initialized by global script
+        }
 
         function setupEventListeners() {
             // Search functionality
@@ -166,8 +194,6 @@
                                 ` (${user.role_in_project})` : '');
                             assignedToSelect.appendChild(option);
                         });
-
-
                     }
                 }
             } catch (error) {
@@ -194,8 +220,6 @@
                             option.textContent = phase.title || phase.name;
                             phaseSelect.appendChild(option);
                         });
-
-
                     }
                 }
             } catch (error) {
@@ -825,7 +849,7 @@
             console.error('API client not loaded properly');
         }
     </script>
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const modal = document.getElementById('addSnagModal');
             if (!modal) {
@@ -875,6 +899,6 @@
                 }
             });
         });
-    </script>
+    </script> --}}
 
 @endsection

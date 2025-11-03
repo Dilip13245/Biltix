@@ -14,6 +14,7 @@ return [
             'dashboard' => ['view', 'navigate'],
             'profile' => ['view', 'edit'],
             'projects' => ['create', 'edit', 'delete', 'view'],
+            'phases' => ['create', 'edit', 'delete', 'view'],
             'plans' => ['upload', 'markup', 'annotate', 'view', 'delete'],
             'files' => ['upload', 'download', 'delete', 'view'],
             'progress' => ['track', 'update', 'view'],
@@ -31,6 +32,7 @@ return [
             'dashboard' => ['view', 'navigate'],
             'profile' => ['view', 'edit'],
             'projects' => ['create', 'edit', 'delete', 'view'],
+            'phases' => ['create', 'edit', 'delete', 'view'],
             'plans' => ['upload', 'markup', 'annotate', 'view', 'delete'],
             'files' => ['upload', 'download', 'delete', 'view'],
             'progress' => ['track', 'update', 'view'],
@@ -48,6 +50,7 @@ return [
             'dashboard' => ['view', 'navigate'],
             'profile' => ['view', 'edit'],
             'projects' => ['create', 'edit', 'delete', 'view'],
+            'phases' => ['create', 'edit', 'delete', 'view'],
             'plans' => ['upload', 'markup', 'annotate', 'view', 'delete'],
             'files' => ['upload', 'download', 'delete', 'view'],
             'progress' => ['track', 'update', 'view'],
@@ -65,6 +68,7 @@ return [
             'dashboard' => ['view', 'navigate'], // Full dashboard access
             'profile' => ['view', 'edit_limited'],
             'projects' => ['view'], // Can view all projects
+            'phases' => ['view'], // Can view all phases
             'plans' => ['annotate', 'view'], // Can view and annotate plans
             'files' => ['upload_logs', 'download', 'view'], // Can view and download all files
             'progress' => ['view'], // Can view all progress
@@ -82,6 +86,7 @@ return [
             'dashboard' => ['view'], // View-only
             'profile' => ['view'], // View-only
             'projects' => [], // No Access
+            'phases' => [], // No Access
             'plans' => ['view'], // View-only
             'files' => ['download', 'view'], // View-only
             'progress' => ['view'], // View-only

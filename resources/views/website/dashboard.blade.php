@@ -449,7 +449,7 @@
                             <div class="dropdown">
                                 <a href="#" class="d-flex align-items-center gap-2 gap-md-3" type="button"
                                     id="dropdownMenuButton" data-bs-toggle="dropdown">
-                                    <img src="{{ asset('website/images/icons/avatar.jpg') }}" alt="user img"
+                                    <img id="headerProfileImage" src="{{ asset('website/images/icons/avatar.jpg') }}" alt="user img"
                                         class="User_iMg">
                                     <span class=" text-end">
                                         <h6 class="fs14 fw-medium black_color">
@@ -826,7 +826,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                            data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                         <button type="button" class="btn orange_btn d-none" id="prevBtn" onclick="changeStep(-1)">
                             <i
                                 class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }} {{ is_rtl() ? 'ms-2' : 'me-2' }}"></i>{{ __('messages.previous') }}
@@ -846,6 +846,24 @@
 
     <script>
         // Stats loaded from controller
+
+        // Load user profile image
+        async function loadUserProfileImage() {
+            try {
+                const response = await api.getProfile({});
+                if (response.code === 200 && response.data && response.data.profile_image) {
+                    const headerImg = document.getElementById('headerProfileImage');
+                    if (headerImg) {
+                        headerImg.src = response.data.profile_image;
+                        headerImg.onerror = function() {
+                            this.src = '{{ asset('website/images/icons/avatar.jpg') }}';
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load profile image:', error);
+            }
+        }
 
         // Notification functions
         async function loadNotifications() {
@@ -1084,15 +1102,20 @@
                 projectCard.setAttribute('data-wow-delay', `${index * 0.1}s`);
 
                 projectCard.innerHTML = `
-                    <a href="/website/project/${project.id}/plans" class="text-decoration-none">
-                        <div class="card project-card h-100">
-                            <div class="card-body p-3">
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <div class="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
-                                        <h6 class="mb-0 fw-semibold text-truncate" style="max-width: 100%;" title="${project.project_title}">${project.project_title}</h6>
-                                    </div>
-                                    <i class="fas fa-ellipsis-v flex-shrink-0" style="color: #4A90E2;"></i>
+                    <div class="card project-card h-100" style="position: relative;">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-start justify-content-between mb-3">
+                                <a href="/website/project/${project.id}/plans" class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px;">
+                                    <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word;" title="${project.project_title}">${project.project_title}</h6>
+                                </a>
+                                <div class="dropdown" style="flex-shrink: 0;">
+                                    <i class="fas fa-ellipsis-v" style="color: #4A90E2; cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); deleteProjectFromDashboard(${project.id});"><i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}</a></li>
+                                    </ul>
                                 </div>
+                            </div>
+                            <a href="/website/project/${project.id}/plans" class="text-decoration-none">
                                 <hr style="border-color: #e0e0e0; margin: 12px 0;">
                                 <div class="mb-2">
                                     <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
@@ -1112,12 +1135,18 @@
                                         <span class="text-muted ms-2" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
-                    </a>
+                    </div>
                 `;
 
                 container.appendChild(projectCard);
+                
+                // Initialize Bootstrap dropdown
+                const dropdownIcon = projectCard.querySelector('[data-bs-toggle="dropdown"]');
+                if (dropdownIcon && typeof bootstrap !== 'undefined') {
+                    new bootstrap.Dropdown(dropdownIcon);
+                }
             });
         }
 
@@ -1226,7 +1255,8 @@
                 });
             }
 
-            // Load notifications and projects on page load
+            // Load notifications, profile image and projects on page load
+            loadUserProfileImage();
             loadNotifications();
             loadProjects('all', true);
 
@@ -1961,6 +1991,36 @@
             }
         });
 
+        // Delete project from dashboard
+        function deleteProjectFromDashboard(projectId) {
+            confirmationModal.show({
+                title: '{{ __('messages.delete_project') }}',
+                message: '{{ __('messages.delete_project_warning') }}',
+                icon: 'fas fa-exclamation-triangle text-danger',
+                confirmText: '{{ __('messages.delete') }}',
+                cancelText: '{{ __('messages.cancel') }}',
+                confirmClass: 'btn-danger',
+                onConfirm: async () => {
+                    try {
+                        const response = await api.makeRequest('projects/delete', {
+                            project_id: projectId,
+                            user_id: {{ auth()->id() ?? 1 }}
+                        });
+
+                        if (response.code === 200) {
+                            showToast(response.message || '{{ __('messages.project_deleted_successfully') }}', 'success');
+                            loadProjects(currentFilter, true);
+                        } else {
+                            showToast(response.message || '{{ __('messages.failed_to_delete_project') }}', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting project:', error);
+                        showToast(error.message || '{{ __('messages.error_deleting_project') }}', 'error');
+                    }
+                }
+            });
+        }
+
         // Toast notification function using toastr
         function showToast(message, type = 'success') {
             switch (type) {
@@ -2008,6 +2068,7 @@
 
     <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script src="{{ asset('website/js/rtl-spacing-fix.js') }}"></script>
+    <script src="{{ asset('website/js/profile-image-sync.js') }}"></script>
     
     <!-- Firebase Web Push Notifications -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>

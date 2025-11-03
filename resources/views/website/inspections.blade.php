@@ -54,7 +54,7 @@
                     <div class="card-body p-md-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="fw-semibold black_color mb-0">{{ __('messages.previous_inspections') }}</h5>
-                            <div class="dropdown">
+                            {{-- <div class="dropdown">
                                 <button class="btn filter-btn d-flex align-items-center px-3 py-2 bg4" type="button"
                                     data-bs-toggle="dropdown">
                                     <svg width="17" height="14" viewBox="0 0 17 14" class="me-2" fill="none"
@@ -69,7 +69,7 @@
                                     <li><a class="dropdown-item active" href="#"
                                             data-value="all">{{ __('messages.all_categories') }}</a></li>
                                 </ul>
-                            </div>
+                            </div> --}}
                         </div>
                         <div class="table-responsive" style="height: 400px; overflow-y: auto;">
                             <table class="table align-middle mb-0">

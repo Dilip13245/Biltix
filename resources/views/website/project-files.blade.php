@@ -9,7 +9,7 @@
             <p>{{ __('messages.view_access_files') }}</p>
         </div>
         <div class="gallery-filters d-flex align-items-center gap-3 flex-wrap">
-            <!-- Filter Button -->
+            {{-- <!-- Filter Button -->
             <button class="filter-btn d-flex align-items-center border rounded-3 px-3 py-2 bg-light" id="filterButton" style="display: none !important;">
                 <svg width="17" height="14" class="{{ margin_end(2) }}" viewBox="0 0 17 14" fill="none"
                     xmlns="http://www.w3.org/2000/svg">
@@ -28,7 +28,7 @@
                         fill="#4477C4" />
                 </svg>
                 <span class="text-black">{{ __('messages.sort') }}</span>
-            </button>
+            </button> --}}
             <!-- Create Folder Button -->
             @can('files', 'create')
                 <button class="btn orange_btn" onclick="showCreateFolderModal()">
@@ -858,10 +858,6 @@
                                 <label class="form-label fw-medium">{{ __('messages.folder_name') }}</label>
                                 <input type="text" class="form-control" id="folderName" placeholder="{{ __('messages.enter_folder_name') }}">
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-medium">{{ __('messages.description') }} ({{ __('messages.optional') }})</label>
-                                <textarea class="form-control" id="folderDescription" rows="3" placeholder="{{ __('messages.enter_description') }}"></textarea>
-                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
@@ -879,7 +875,6 @@
 
         async function createFolder() {
             const name = document.getElementById('folderName').value.trim();
-            const description = document.getElementById('folderDescription').value.trim();
             
             if (!name) {
                 toastr.error('{{ __('messages.folder_name_required') }}');
@@ -890,8 +885,7 @@
                 const projectId = getProjectIdFromUrl();
                 const response = await api.createFolder({
                     project_id: projectId,
-                    name: name,
-                    description: description
+                    name: name
                 });
                 
                 if (response.code === 200) {

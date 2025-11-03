@@ -265,29 +265,47 @@
         async function handlePhotoUpload(input) {
             if (input.files && input.files.length > 0) {
                 const files = Array.from(input.files);
+                const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                
+                // Validate file sizes
+                const oversizedFiles = files.filter(file => file.size > maxSize);
+                if (oversizedFiles.length > 0) {
+                    const fileNames = oversizedFiles.map(f => f.name).join(', ');
+                    toastr.error(`{{ __('messages.file_too_large') }}: ${fileNames}. {{ __('messages.max_size_5mb') }}`);
+                    input.value = '';
+                    return;
+                }
                 
                 try {
                     const projectId = getProjectIdFromUrl();
                     const formData = new FormData();
                     
                     formData.append('project_id', projectId);
-                    // user_id will be added automatically by API interceptors
                     files.forEach(file => {
                         formData.append('photos[]', file);
                     });
                     
                     const response = await api.uploadPhotos(formData);
-                    console.log('Upload response:', response);
                     
                     if (response.code === 200) {
                         toastr.success(`${files.length} {{ __('messages.photos') }} {{ __('messages.file_uploaded_successfully') }}`);
                         loadPhotos();
                     } else {
-                        toastr.error('{{ __('messages.upload_failed') }}: ' + (response.message || 'Unknown error'));
+                        const errorMsg = response.message || 'Unknown error';
+                        if (errorMsg.includes('5120 kilobytes') || errorMsg.includes('greater than')) {
+                            toastr.error('{{ __('messages.file_too_large') }}. {{ __('messages.max_size_5mb') }}');
+                        } else {
+                            toastr.error('{{ __('messages.upload_failed') }}: ' + errorMsg);
+                        }
                     }
                 } catch (error) {
                     console.error('Upload error:', error);
-                    toastr.error('{{ __('messages.upload_failed') }}: ' + error.message);
+                    const errorMsg = error.message || error;
+                    if (errorMsg.includes('5120 kilobytes') || errorMsg.includes('greater than')) {
+                        toastr.error('{{ __('messages.file_too_large') }}. {{ __('messages.max_size_5mb') }}');
+                    } else {
+                        toastr.error('{{ __('messages.upload_failed') }}: ' + errorMsg);
+                    }
                 }
                 
                 input.value = '';

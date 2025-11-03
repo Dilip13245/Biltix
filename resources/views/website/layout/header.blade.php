@@ -89,10 +89,10 @@
           </div>
         </div>
         <div class="d-flex align-items-center gap-2 Wsm_100">
-          <div class="status-badge-active" id="headerStatusBadge">
+          {{-- <div class="status-badge-active" id="headerStatusBadge">
             <span class="status-dot"></span>
             <span id="headerStatus">{{ __('messages.loading') }}...</span>
-          </div>
+          </div> --}}
           
 
           

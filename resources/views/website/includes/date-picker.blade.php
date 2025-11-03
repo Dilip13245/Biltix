@@ -88,12 +88,20 @@
 
     .modern-datepicker-calendar {
         position: absolute;
-        top: 100%;
         {{ is_rtl() ? 'right: 0;' : 'left: 0;' }} z-index: 1000;
-        margin-top: 8px;
         width: 100%;
         min-width: 350px;
         max-width: 350px;
+    }
+
+    .modern-datepicker-calendar.position-top {
+        bottom: 100%;
+        margin-bottom: 8px;
+    }
+
+    .modern-datepicker-calendar.position-bottom {
+        top: 100%;
+        margin-top: 8px;
     }
 
     .datepicker-backdrop {
@@ -541,8 +549,23 @@
             calendar.style.display = 'block';
             renderCalendar();
 
-            // Add entrance animation
+            // Determine position based on available space
             requestAnimationFrame(() => {
+                const inputRect = input.getBoundingClientRect();
+                const calendarHeight = 450; // Approximate calendar height
+                const spaceAbove = inputRect.top;
+                const spaceBelow = window.innerHeight - inputRect.bottom;
+
+                // Remove existing position classes
+                calendar.classList.remove('position-top', 'position-bottom');
+
+                // If in modal or not enough space below, check space above
+                if (spaceBelow < calendarHeight && spaceAbove > calendarHeight) {
+                    calendar.classList.add('position-top');
+                } else {
+                    calendar.classList.add('position-bottom');
+                }
+
                 content.style.transform = 'translateY(0) scale(1)';
                 content.style.opacity = '1';
             });

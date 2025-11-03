@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ bootstrap_css() }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{{ asset('website/css/custom-filter-dropdown.css') }}">
     <style>
         body {
             background: #f5f5f5;
@@ -485,8 +486,8 @@
                                 <div class="col-12">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.designation') }}</label>
-                                        <div class="position-relative">
-                                            <select class="form-select" name="designation" id="designation" required>
+                                        <div class="custom-filter-dropdown" id="designationDropdown">
+                                            <select name="designation" id="designation" required style="display: none;">
                                                 <option value="">{{ __('auth.select_designation') }}</option>
                                                 <option value="consultant">{{ __('auth.consultant') }}</option>
                                                 <option value="contractor">{{ __('auth.contractor') }}</option>
@@ -494,7 +495,14 @@
                                                 <option value="project_manager">{{ __('auth.project_manager') }}</option>
                                                 <option value="stakeholder">{{ __('auth.stakeholder') }}</option>
                                             </select>
-                                            <i class="fas fa-chevron-down input-icon"></i>
+                                            <div class="custom-filter-btn" id="designationBtn">{{ __('auth.select_designation') }}</div>
+                                            <div class="custom-filter-options" id="designationOptions">
+                                                <div class="custom-filter-option" data-value="consultant">{{ __('auth.consultant') }}</div>
+                                                <div class="custom-filter-option" data-value="contractor">{{ __('auth.contractor') }}</div>
+                                                <div class="custom-filter-option" data-value="site_engineer">{{ __('auth.site_engineer') }}</div>
+                                                <div class="custom-filter-option" data-value="project_manager">{{ __('auth.project_manager') }}</div>
+                                                <div class="custom-filter-option" data-value="stakeholder">{{ __('auth.stakeholder') }}</div>
+                                            </div>
                                         </div>
                                         <div class="error-message" id="designationError"></div>
                                     </div>
@@ -564,6 +572,7 @@
     <script src="{{ asset('website/js/api-helpers.js') }}"></script>
     <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script src="{{ asset('website/js/registration-validation.js') }}"></script>
+    <script src="{{ asset('website/js/custom-filter-dropdown.js') }}"></script>
     <script>
         // Initialize validator
         const validator = new RegistrationValidator();

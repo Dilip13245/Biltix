@@ -36,10 +36,13 @@ class HomeController extends Controller
             ->where('is_deleted', 0)
             ->pluck('id');
 
-        // Get project IDs assigned to user via team_members
+        // Get project IDs assigned to user via team_members (only active projects)
         $assignedProjectIds = \App\Models\TeamMember::where('user_id', $user->id)
             ->where('is_active', 1)
             ->where('is_deleted', 0)
+            ->whereHas('project', function($q) {
+                $q->where('is_active', 1)->where('is_deleted', 0);
+            })
             ->pluck('project_id');
 
         // Merge both project IDs

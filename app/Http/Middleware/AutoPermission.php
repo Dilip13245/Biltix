@@ -43,6 +43,11 @@ class AutoPermission
             $module = $matches[1]; // projects, tasks, etc.
             $endpoint = $matches[2]; // create, list, etc.
             
+            // Override module for phase operations
+            if (in_array($endpoint, ['create_phase', 'list_phases', 'update_phase', 'delete_phase', 'update_phase_progress'])) {
+                $module = 'phases';
+            }
+            
             // Map endpoint to action
             $action = $this->mapToAction($endpoint);
             

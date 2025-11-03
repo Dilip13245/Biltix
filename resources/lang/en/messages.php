@@ -1125,6 +1125,8 @@ return [
     'stay_updated_notifications' => 'Stay updated with project notifications and important updates',
     'no_notifications' => 'No notifications',
     'no_notifications_desc' => 'You\'re all caught up! Check back later for new updates.',
+    'file_too_large' => 'File is too large',
+    'max_size_5mb' => 'Maximum file size is 5MB',
 ];
 
 

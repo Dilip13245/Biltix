@@ -39,8 +39,7 @@
                     <div class="col-12 d-flex align-items-center justify-content-between gap-2">
                         <a class="navbar-brand" href="{{ route('dashboard') }}">
                             <img src="{{ asset('website/images/icons/logo.svg') }}" alt="logo" class="img-fluid">
-                            <span
-                                class="Head_title fw-bold {{ margin_start(3) }} fs24 d-none d-lg-inline-block">{{ __('auth.my_profile') }}</span>
+                            {{-- <span class="Head_title fw-bold {{ margin_start(3) }} fs24 d-none d-lg-inline-block">{{ __('auth.my_profile') }}</span> --}}
                         </a>
                         <div class="d-flex align-items-center justify-content-end gap-md-4 gap-3 w-100 flex-wrap">
                             <!-- Language Toggle -->
@@ -60,8 +59,8 @@
                             <div class="dropdown">
                                 <a href="#" class="d-flex align-items-center gap-2 gap-md-3" type="button"
                                     data-bs-toggle="dropdown">
-                                    <img src="{{ asset('website/images/icons/avatar.jpg') }}" alt="user img"
-                                        class="User_iMg">
+                                    <img id="headerProfileImage" src="{{ asset('website/images/icons/avatar.jpg') }}"
+                                        alt="user img" class="User_iMg">
                                     <span class="{{ is_rtl() ? 'text-start' : 'text-end' }}">
                                         <h6 class="fs14 fw-medium black_color">
                                             @if (isset($currentUser))
@@ -282,7 +281,8 @@
                                         <label class="form-label fw-medium">{{ __('auth.email_address') }}</label>
                                         <input type="email" class="form-control" id="editUserEmail"
                                             placeholder="{{ __('auth.enter_email') }}"
-                                            style="{{ is_rtl() ? 'text-align: right;' : '' }}" maxlength="255">
+                                            style="{{ is_rtl() ? 'text-align: right;' : '' }} cursor: not-allowed; background-color: #e9ecef;"
+                                            maxlength="255" disabled readonly>
                                         <div class="error-message" id="editEmailError"></div>
                                     </div>
                                 </div>
@@ -321,6 +321,7 @@
     <script src="{{ asset('website/js/custom.js') }}"></script>
     <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script src="{{ asset('website/js/rtl-spacing-fix.js') }}"></script>
+    <script src="{{ asset('website/js/profile-image-sync.js') }}"></script>
     <script>
         // Disable auth check on profile - Laravel middleware handles it
         window.DISABLE_JS_AUTH_CHECK = true;
@@ -358,11 +359,20 @@
                     if (userData.profile_image) {
                         console.log('Profile image URL:', userData.profile_image);
                         const profileImg = document.getElementById('profileImage');
+                        const headerImg = document.getElementById('headerProfileImage');
+
                         profileImg.src = userData.profile_image;
+                        if (headerImg) headerImg.src = userData.profile_image;
+
                         profileImg.onerror = function() {
                             console.log('Profile image failed to load, using default');
                             this.src = '{{ asset('website/images/profile image.png') }}';
                         };
+                        if (headerImg) {
+                            headerImg.onerror = function() {
+                                this.src = '{{ asset('website/images/icons/avatar.jpg') }}';
+                            };
+                        }
                     }
                 } else {
                     toastr.error(response.message || '{{ __('auth.profile_load_failed') }}');
@@ -664,13 +674,17 @@
 
                     if (response.code === 200) {
                         // Update profile image with server URL if available
+                        const headerImg = document.getElementById('headerProfileImage');
+
                         if (response.data && response.data.profile_image) {
                             profileImg.src = response.data.profile_image;
+                            if (headerImg) headerImg.src = response.data.profile_image;
                         } else {
                             // Fallback to local preview
                             const reader = new FileReader();
                             reader.onload = function(e) {
                                 profileImg.src = e.target.result;
+                                if (headerImg) headerImg.src = e.target.result;
                             };
                             reader.readAsDataURL(file);
                         }

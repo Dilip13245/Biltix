@@ -13,6 +13,15 @@
         .searchable-dropdown {
             opacity: 1;
         }
+        
+        .custom-filter-dropdown {
+            width: 100%;
+        }
+        
+        .row.align-items-end > div {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
     <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
@@ -32,16 +41,26 @@
                 <div class="col-12">
                     <div class="card B_shadow">
                         <div class="card-body px-md-3 py-md-4">
-                            <div class="row">
+                            <div class="row align-items-end">
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                                     <label class="fw-medium mb-2">{{ __('messages.status') }}</label>
-                                    <select class="form-select w-100 searchable-select" id="statusFilter">
-                                        <option value="all">{{ __('messages.all_status') }}</option>
-                                        <option value="todo">{{ __('messages.todo') }}</option>
-                                        <option value="in_progress">{{ __('messages.in_progress') }}</option>
-                                        <option value="complete">{{ __('messages.complete') }}</option>
-                                        <option value="approve">{{ __('messages.approve') }}</option>
-                                    </select>
+                                    <div class="custom-filter-dropdown" id="statusFilterWrapper">
+                                        <div class="custom-filter-btn" id="statusFilterBtn">{{ __('messages.all_status') }}</div>
+                                        <div class="custom-filter-options" id="statusFilterOptions">
+                                            <div class="custom-filter-option selected" data-value="all">{{ __('messages.all_status') }}</div>
+                                            <div class="custom-filter-option" data-value="todo">{{ __('messages.todo') }}</div>
+                                            <div class="custom-filter-option" data-value="in_progress">{{ __('messages.in_progress') }}</div>
+                                            <div class="custom-filter-option" data-value="complete">{{ __('messages.complete') }}</div>
+                                            <div class="custom-filter-option" data-value="approve">{{ __('messages.approve') }}</div>
+                                        </div>
+                                        <select id="statusFilter" style="display: none;">
+                                            <option value="all">{{ __('messages.all_status') }}</option>
+                                            <option value="todo">{{ __('messages.todo') }}</option>
+                                            <option value="in_progress">{{ __('messages.in_progress') }}</option>
+                                            <option value="complete">{{ __('messages.complete') }}</option>
+                                            <option value="approve">{{ __('messages.approve') }}</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-12 mt-3 mt-md-0">

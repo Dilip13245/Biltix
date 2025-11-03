@@ -60,7 +60,7 @@ class UserController extends Controller
             $query = User::where('is_active', 1)
                 ->where('is_verified', 1)
                 ->where('is_deleted', 0)
-                ->select('id', 'name', 'email', 'company_name', 'role')
+                ->select('id', 'name', 'email', 'company_name', 'role', 'profile_image')
                 ->orderBy('name', 'asc');
             
             if ($role) {
@@ -73,7 +73,12 @@ class UserController extends Controller
                 $query->where('role', $role);
             }
 
-            $users = $query->get();
+            $users = $query->get()->map(function($user) {
+                if ($user->profile_image) {
+                    $user->profile_image = asset('storage/profile/' . $user->profile_image);
+                }
+                return $user;
+            });
 
             return $this->toJsonEnc($users, trans('api.users.users_by_role_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {

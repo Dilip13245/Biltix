@@ -183,14 +183,18 @@
                     project_id: currentProjectId
                 };
 
-                const response = await api.listMembers(requestData);
+                const [membersResponse, usersResponse] = await Promise.all([
+                    api.listMembers(requestData),
+                    api.getAllUsers()
+                ]);
 
-                if (response.code === 200) {
-                    currentMembers = response.data || [];
-                    updateStats(currentMembers);
+                if (membersResponse.code === 200) {
+                    currentMembers = membersResponse.data || [];
+                    const allUsers = usersResponse.code === 200 ? usersResponse.data : [];
+                    updateStats(currentMembers, allUsers);
                     renderTeamMembers(currentMembers);
                 } else {
-                    console.error('Failed to load team members:', response.message);
+                    console.error('Failed to load team members:', membersResponse.message);
                     showNoMembers();
                 }
             } catch (error) {
@@ -220,20 +224,26 @@
             const membersHtml = members.map((member, index) => {
                 const delay = (index * 0.4).toFixed(1);
                 
+                const profileImage = member.user?.profile_image;
+                const imageHtml = profileImage 
+                    ? `<img src="${profileImage}" alt="${member.user.name}" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">`
+                    : `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;"><i class="fas fa-user" style="font-size: 24px;"></i></div>`;
+                
                 return `
                     <div class="col-lg-4 col-md-6 mb-4 wow fadeInUp" data-wow-delay="${delay}s">
                         <div class="card h-100 B_shadow team-member-card">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; object-fit: cover;">
-                                        <i class="fas fa-user" style="font-size: 24px;"></i>
+                                    <div class="me-3">
+                                        ${imageHtml}
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h5 class="fw-semibold mb-1">${member.user ? member.user.name : 'Unknown User'}</h5>                                    </div>
+                                        <h5 class="fw-semibold mb-1">${member.user ? member.user.name : 'Unknown User'}</h5>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
-                                    <p class="text-muted small mb-2">${member.user ? member.user.company : 'Unknown Company'}</p>
-                                    <div class="d-flex gap-2 flex-wrap">                                        
+                                    <p class="text-muted small mb-2">${member.user?.company_name || 'Unknown Company'}</p>
+                                    <div class="d-flex gap-2 flex-wrap">
                                         <span class="badge bg2 orange_color">${member.role_in_project}</span>
                                     </div>
                                 </div>
@@ -319,29 +329,78 @@
             if (noMembersState) noMembersState.classList.remove('d-none');
         }
 
-        function updateStats(members) {
-            const totalMembers = members.length;
-            let siteEngineers = 0;
-            let contractors = 0;
-            let consultants = 0;
-
-            members.forEach(member => {
-                const role = member.user ? member.user.role_name.toLowerCase() : '';
-                const projectRole = member.role_in_project.toLowerCase();
-                
-                if (role.includes('engineer') || projectRole.includes('engineer')) {
-                    siteEngineers++;
-                } else if (projectRole.includes('contractor')) {
-                    contractors++;
-                } else if (role.includes('consultant') || projectRole.includes('consultant')) {
-                    consultants++;
-                }
+        function updateStats(members, allUsers) {
+            // Count active users from database
+            const activeUsers = allUsers.filter(u => !u.is_deleted && u.is_active !== false);
+            const totalActiveUsers = activeUsers.length;
+            
+            // Count by role from database
+            const roleCounts = {};
+            activeUsers.forEach(user => {
+                const role = user.role || 'unknown';
+                roleCounts[role] = (roleCounts[role] || 0) + 1;
             });
 
-            document.getElementById('totalMembers').textContent = totalMembers;
-            document.getElementById('siteEngineers').textContent = siteEngineers;
-            document.getElementById('contractors').textContent = contractors;
-            document.getElementById('consultants').textContent = consultants;
+            // Update total members (active users)
+            document.getElementById('totalMembers').textContent = totalActiveUsers;
+            
+            // Update role-specific counts
+            document.getElementById('siteEngineers').textContent = roleCounts['site_engineer'] || 0;
+            document.getElementById('contractors').textContent = roleCounts['contractor'] || 0;
+            document.getElementById('consultants').textContent = roleCounts['consultant'] || 0;
+            
+            // Update stats container with all roles dynamically
+            updateDynamicRoleStats(roleCounts, totalActiveUsers);
+        }
+        
+        function updateDynamicRoleStats(roleCounts, totalActiveUsers) {
+            const statsContainer = document.getElementById('statsContainer');
+            const existingCards = statsContainer.querySelectorAll('.col-xxl-3');
+            
+            // Keep first card (total), update others dynamically
+            const firstCard = existingCards[0];
+            statsContainer.innerHTML = '';
+            statsContainer.appendChild(firstCard);
+            
+            // Add role cards dynamically
+            let index = 1;
+            for (const [role, count] of Object.entries(roleCounts)) {
+                if (count > 0) {
+                    const delay = (index * 0.4).toFixed(1);
+                    const roleCard = createRoleCard(role, count, delay);
+                    statsContainer.insertAdjacentHTML('beforeend', roleCard);
+                    index++;
+                }
+            }
+        }
+        
+        function createRoleCard(role, count, delay) {
+            const roleDisplay = role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            const colors = {
+                'site_engineer': { bg: 'bg-green1', text: 'text-success', icon: '#16A34A' },
+                'contractor': { bg: 'bg2', text: 'orange_color', icon: '#F58D2E' },
+                'consultant': { bg: 'bg-blue1', text: 'text-blue', icon: '#9333EA' },
+                'project_manager': { bg: 'bg1', text: 'text-primary', icon: '#4477C4' }
+            };
+            const color = colors[role] || { bg: 'bg1', text: 'text-primary', icon: '#4477C4' };
+            
+            return `
+                <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-12 wow fadeInUp" data-wow-delay="${delay}s">
+                    <div class="card h-100 B_shadow">
+                        <div class="card-body d-flex align-items-center p-md-4">
+                            <div>
+                                <div class="small_tXt fw-medium">${roleDisplay}</div>
+                                <div class="stat-value ${color.text}">${count}</div>
+                            </div>
+                            <span class="ms-auto stat-icon ${color.bg}">
+                                <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 8C5.93913 8 4.92172 7.57857 4.17157 6.82843C3.42143 6.07828 3 5.06087 3 4C3 2.93913 3.42143 1.92172 4.17157 1.17157C4.92172 0.421427 5.93913 0 7 0C8.06087 0 9.07828 0.421427 9.82843 1.17157C10.5786 1.92172 11 2.93913 11 4C11 5.06087 10.5786 6.07828 9.82843 6.82843C9.07828 7.57857 8.06087 8 7 8ZM0 15.0719C0 11.9937 2.49375 9.5 5.57188 9.5H8.42813C11.5063 9.5 14 11.9937 14 15.0719C14 15.5844 13.5844 16 13.0719 16H0.928125C0.415625 16 0 15.5844 0 15.0719Z" fill="${color.icon}" />
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         function setupSearchAndFilter() {

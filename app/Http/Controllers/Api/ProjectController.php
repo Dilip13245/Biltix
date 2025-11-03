@@ -203,17 +203,26 @@ class ProjectController extends Controller
 
             $query = Project::where('is_active', 1)->where('is_deleted', 0);
 
+            // Get project IDs created by user
+            $createdProjectIds = Project::where('created_by', $user_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->pluck('id');
+
+            // Get project IDs assigned to user via team_members (only active projects)
+            $assignedProjectIds = \App\Models\TeamMember::where('user_id', $user_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->whereHas('project', function($q) {
+                    $q->where('is_active', 1)->where('is_deleted', 0);
+                })
+                ->pluck('project_id');
+
+            // Merge both project IDs
+            $allProjectIds = $createdProjectIds->merge($assignedProjectIds)->unique();
+
             // Filter projects based on user access
-            $query->where(function ($q) use ($user_id) {
-                $q->where('created_by', $user_id) // Projects created by user
-                  ->orWhere('project_manager_id', $user_id) // User is project manager
-                  ->orWhere('technical_engineer_id', $user_id) // User is technical engineer
-                  ->orWhereHas('teamMembers', function ($teamQuery) use ($user_id) {
-                      $teamQuery->where('user_id', $user_id)
-                                ->where('is_active', 1)
-                                ->where('is_deleted', 0);
-                  }); // User is team member
-            });
+            $query->whereIn('id', $allProjectIds);
 
             if ($type) {
                 if ($type === 'ongoing') {

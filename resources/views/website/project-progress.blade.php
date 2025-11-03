@@ -41,7 +41,7 @@
             <h2>{{ __('messages.project_progress') }}</h2>
             <p>{{ __('messages.track_project_phases') }}</p>
         </div>
-        @can('projects', 'create')
+        @can('phases', 'create')
             <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
                 <i class="fas fa-plus"></i>
                 {{ __('messages.create_phase') }}
@@ -857,6 +857,16 @@
                 input.style.width = '100%';
                 input.style.maxWidth = '300px';
                 input.id = fieldId + '_input';
+                    
+                // Set maxlength based on field
+                const maxLengths = {
+                    'projectName': 255,
+                    'companyName': 255,
+                    'projectType': 100,
+                    'projectLocation': 500
+                };
+                input.maxLength = maxLengths[fieldId] || 255;
+                
                 fieldElement.innerHTML = '';
                 fieldElement.appendChild(input);
             } else if (type === 'dropdown') {

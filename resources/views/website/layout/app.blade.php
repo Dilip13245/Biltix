@@ -28,6 +28,9 @@
   <!-- RESPONSIVE CSS -->
   <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
   
+  <!-- CUSTOM FILTER DROPDOWN CSS -->
+  <link rel="stylesheet" href="{{ asset('website/css/custom-filter-dropdown.css') }}" />
+  
   <!-- RTL CSS -->
   <link rel="stylesheet" href="{{ asset('website/css/rtl-auto.css') }}" />
   
@@ -81,6 +84,7 @@
   
   <!-- Universal Auth System -->
   <script src="{{ asset('website/js/universal-auth.js') }}"></script>
+  <script src="{{ asset('website/js/profile-image-sync.js') }}"></script>
   
   <!-- Firebase Web Push Notifications -->
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
@@ -242,6 +246,9 @@
       });
     });
   </script>
+  
+  <!-- Custom Filter Dropdown -->
+  <script src="{{ asset('website/js/custom-filter-dropdown.js') }}"></script>
   
   @include('website.layout.auth-check')
   @include('website.layout.user-info')
