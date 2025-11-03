@@ -67,8 +67,8 @@
   <script src="{{ asset('website/js/confirmation-modal.js') }}"></script>
   <script src="{{ asset('website/js/permissions.js') }}"></script>
   
-  <!-- SIMPLE DRAWING LIBRARY -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
+  <!-- FABRIC.JS - Advanced Canvas Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
   
   <!-- API Client Scripts -->
   <script src="{{ asset('website/js/api-config.js') }}"></script>

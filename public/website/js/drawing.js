@@ -1,11 +1,16 @@
-// Simple HTML5 Canvas Drawing System
-let canvas, ctx, isDrawing = false;
+// Advanced Image Editor with Fabric.js
+let canvas, fabricCanvas;
 let currentTool = 'pen';
 let currentColor = '#ff0000';
 let currentSize = 3;
 let backgroundImage = null;
 let drawingHistory = [];
 let historyStep = -1;
+let cropMode = false;
+let cropRect = null;
+let isDrawing = false;
+let drawingObject = null;
+let startX, startY;
 
 let drawingConfig = {
     title: 'Drawing',
@@ -16,7 +21,7 @@ let drawingConfig = {
 
 let currentFiles = [];
 let currentFileIndex = 0;
-let fileBackgrounds = []; // Store background for each file
+let fileBackgrounds = [];
 
 function initializeDrawing(config = {}) {
     drawingConfig = { ...drawingConfig, ...config };
@@ -25,68 +30,66 @@ function initializeDrawing(config = {}) {
     document.getElementById('saveButtonText').textContent = drawingConfig.saveButtonText;
     
     canvas = document.getElementById('canvas');
-    ctx = canvas.getContext('2d');
     
-    // Set canvas size
-    canvas.width = 800;
-    canvas.height = 600;
+    if (fabricCanvas) {
+        fabricCanvas.dispose();
+    }
     
-    // Make canvas responsive
-    canvas.style.maxWidth = '100%';
-    canvas.style.height = 'auto';
+    fabricCanvas = new fabric.Canvas('canvas', {
+        isDrawingMode: false,
+        width: 800,
+        height: 600,
+        backgroundColor: '#ffffff'
+    });
     
-    // Set initial background
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
+    fabricCanvas.freeDrawingBrush.color = currentColor;
+    fabricCanvas.freeDrawingBrush.width = currentSize;
     
-    // Save initial state
+    fabricCanvas.on('object:modified', () => saveState());
+    fabricCanvas.on('path:created', () => saveState());
+    fabricCanvas.on('selection:created', handleSelection);
+    fabricCanvas.on('selection:updated', handleSelection);
+    fabricCanvas.on('selection:cleared', () => {
+        document.getElementById('deleteBtn')?.classList.add('d-none');
+    });
+    
+    // Zoom with mouse wheel
+    fabricCanvas.on('mouse:wheel', function(opt) {
+        const delta = opt.e.deltaY;
+        let zoom = fabricCanvas.getZoom();
+        zoom *= 0.999 ** delta;
+        if (zoom > 5) zoom = 5;
+        if (zoom < 0.5) zoom = 0.5;
+        fabricCanvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+        opt.e.preventDefault();
+        opt.e.stopPropagation();
+    });
+    
     saveState();
     
-    // Add event listeners for mouse
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseout', stopDrawing);
-    canvas.addEventListener('click', handleCanvasClick);
-    
-    // Add touch support for mobile
-    canvas.addEventListener('touchstart', handleTouch);
-    canvas.addEventListener('touchmove', handleTouch);
-    canvas.addEventListener('touchend', handleTouchEnd);
-    
-    // Set up save button
     const saveBtn = document.getElementById('saveDrawingBtn');
     saveBtn.onclick = function() {
         if (drawingConfig.onSave) {
             if (currentFiles.length > 1) {
-                // Save current file first
                 saveCurrentFile();
-                
-                // Return mixed data: drawings for modified files, original files for unmodified
-                const allImageData = currentFiles.map((fileData, index) => {
-                    if (fileData.imageData) {
-                        // File has drawing, return the drawing
-                        return fileData.imageData;
-                    } else {
-                        // File has no drawing, return original file
-                        return fileData.file;
-                    }
+                const allImageData = currentFiles.map((fileData) => {
+                    return fileData.imageData || fileData.file;
                 });
                 drawingConfig.onSave(allImageData);
             } else {
-                // Single file
-                const dataURL = canvas.toDataURL('image/png');
-                drawingConfig.onSave(dataURL);
+                drawingConfig.onSave(fabricCanvas.toDataURL('image/png'));
             }
         }
     };
 }
 
+function handleSelection() {
+    document.getElementById('deleteBtn')?.classList.remove('d-none');
+}
+
 function loadMultipleFiles(files) {
-    currentFiles = Array.from(files).map(file => ({ 
-        file, 
-        imageData: null
-    }));
+    currentFiles = Array.from(files).map(file => ({ file, imageData: null }));
     currentFileIndex = 0;
     fileBackgrounds = new Array(currentFiles.length).fill(null);
     
@@ -99,39 +102,42 @@ function loadMultipleFiles(files) {
 }
 
 function loadImageToCanvas(file) {
-    if (!canvas) return;
+    if (!fabricCanvas) return;
     
     const reader = new FileReader();
     reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-            // Clear canvas
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        fabric.Image.fromURL(e.target.result, function(img) {
+            fabricCanvas.clear();
+            fabricCanvas.backgroundColor = '#ffffff';
+            drawingHistory = [];
+            historyStep = -1;
             
-            // Calculate scaling
-            const scaleX = canvas.width / img.width;
-            const scaleY = canvas.height / img.height;
-            const scale = Math.min(scaleX, scaleY);
+            const scale = Math.min(
+                fabricCanvas.width / img.width,
+                fabricCanvas.height / img.height
+            );
             
-            const scaledWidth = img.width * scale;
-            const scaledHeight = img.height * scale;
-            const x = (canvas.width - scaledWidth) / 2;
-            const y = (canvas.height - scaledHeight) / 2;
+            img.scale(scale);
+            img.set({
+                left: (fabricCanvas.width - img.width * scale) / 2,
+                top: (fabricCanvas.height - img.height * scale) / 2,
+                selectable: false,
+                evented: false,
+                lockMovementX: true,
+                lockMovementY: true
+            });
             
-            // Draw image
-            ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+            fabricCanvas.add(img);
+            fabricCanvas.sendToBack(img);
+            fabricCanvas.renderAll();
             
-            // Store background image for current file
-            backgroundImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            backgroundImage = img;
             if (currentFiles.length > 0) {
-                fileBackgrounds[currentFileIndex] = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                fileBackgrounds[currentFileIndex] = img;
             }
             
-            // Save state
             saveState();
-        };
-        img.src = e.target.result;
+        });
     };
     reader.readAsDataURL(file);
 }
@@ -140,22 +146,23 @@ function loadCurrentFile() {
     if (currentFiles.length === 0) return;
     
     const currentFileData = currentFiles[currentFileIndex];
+    drawingHistory = [];
+    historyStep = -1;
     
     if (currentFileData.imageData) {
-        // Load saved image data
-        const img = new Image();
-        img.onload = function() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
+        fabric.Image.fromURL(currentFileData.imageData, function(img) {
+            fabricCanvas.clear();
+            fabricCanvas.setBackgroundImage(img, fabricCanvas.renderAll.bind(fabricCanvas), {
+                scaleX: fabricCanvas.width / img.width,
+                scaleY: fabricCanvas.height / img.height
+            });
             
-            // Restore background for this file
             if (fileBackgrounds[currentFileIndex]) {
                 backgroundImage = fileBackgrounds[currentFileIndex];
             }
-        };
-        img.src = currentFileData.imageData;
+            saveState();
+        });
     } else {
-        // Load fresh file
         loadImageToCanvas(currentFileData.file);
     }
     
@@ -189,33 +196,14 @@ function nextFile() {
 
 function saveCurrentFile() {
     if (currentFiles.length > 0) {
-        // Only save if there are actual drawings on the canvas
-        const currentBackground = fileBackgrounds[currentFileIndex];
-        if (currentBackground) {
-            // Check if canvas has been modified from original background
-            const currentCanvasData = canvas.toDataURL();
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canvas.width;
-            tempCanvas.height = canvas.height;
-            const tempCtx = tempCanvas.getContext('2d');
-            tempCtx.putImageData(currentBackground, 0, 0);
-            const originalData = tempCanvas.toDataURL();
-            
-            // Only save if canvas is different from original
-            if (currentCanvasData !== originalData) {
-                currentFiles[currentFileIndex].imageData = currentCanvasData;
-            } else {
-                // No drawing, keep original file
-                currentFiles[currentFileIndex].imageData = null;
-            }
-        } else {
-            currentFiles[currentFileIndex].imageData = canvas.toDataURL();
-        }
+        currentFiles[currentFileIndex].imageData = fabricCanvas.toDataURL();
     }
 }
 
 function setTool(tool) {
     currentTool = tool;
+    exitCropMode();
+    
     document.querySelectorAll('.btn-outline-primary').forEach(btn => btn.classList.remove('active'));
     
     const mobileBtn = document.getElementById(tool + 'Tool');
@@ -224,159 +212,217 @@ function setTool(tool) {
     if (mobileBtn) mobileBtn.classList.add('active');
     if (desktopBtn) desktopBtn.classList.add('active');
     
-    // Update cursor
-    canvas.style.cursor = tool === 'pen' ? 'crosshair' : 'pointer';
+    fabricCanvas.isDrawingMode = (tool === 'pen');
+    fabricCanvas.selection = (tool === 'select');
+    
+    fabricCanvas.off('mouse:down');
+    fabricCanvas.off('mouse:move');
+    fabricCanvas.off('mouse:up');
+    
+    if (tool === 'pen') {
+        fabricCanvas.defaultCursor = 'crosshair';
+    } else if (tool === 'select') {
+        fabricCanvas.defaultCursor = 'default';
+    } else if (tool === 'text') {
+        fabricCanvas.defaultCursor = 'text';
+        fabricCanvas.on('mouse:down', handleTextClick);
+    } else {
+        fabricCanvas.defaultCursor = 'crosshair';
+        fabricCanvas.on('mouse:down', startDrawingShape);
+        fabricCanvas.on('mouse:move', drawShape);
+        fabricCanvas.on('mouse:up', finishDrawingShape);
+    }
 }
 
-function startDrawing(e) {
-    if (currentTool !== 'pen') return;
+function startDrawingShape(o) {
+    if (o.target) return;
     
     isDrawing = true;
-    const coords = getCanvasCoordinates(e);
+    const pointer = fabricCanvas.getPointer(o.e);
+    startX = pointer.x;
+    startY = pointer.y;
     
-    ctx.beginPath();
-    ctx.moveTo(coords.x, coords.y);
-}
-
-function draw(e) {
-    if (!isDrawing || currentTool !== 'pen') return;
+    if (currentTool === 'circle') {
+        drawingObject = new fabric.Circle({
+            left: startX,
+            top: startY,
+            radius: 1,
+            fill: 'transparent',
+            stroke: currentColor,
+            strokeWidth: currentSize,
+            selectable: false,
+            evented: false
+        });
+    } else if (currentTool === 'rectangle') {
+        drawingObject = new fabric.Rect({
+            left: startX,
+            top: startY,
+            width: 1,
+            height: 1,
+            fill: 'transparent',
+            stroke: currentColor,
+            strokeWidth: currentSize,
+            selectable: false,
+            evented: false
+        });
+    } else if (currentTool === 'line') {
+        drawingObject = new fabric.Line([startX, startY, startX, startY], {
+            stroke: currentColor,
+            strokeWidth: currentSize,
+            selectable: false,
+            evented: false
+        });
+    } else if (currentTool === 'arrow') {
+        drawingObject = new fabric.Line([startX, startY, startX, startY], {
+            stroke: currentColor,
+            strokeWidth: currentSize,
+            selectable: false,
+            evented: false
+        });
+    }
     
-    const coords = getCanvasCoordinates(e);
-    
-    ctx.lineWidth = currentSize;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = currentColor;
-    
-    ctx.lineTo(coords.x, coords.y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(coords.x, coords.y);
-}
-
-function stopDrawing() {
-    if (isDrawing) {
-        isDrawing = false;
-        saveState();
+    if (drawingObject) {
+        fabricCanvas.add(drawingObject);
     }
 }
 
-function handleTouch(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
-                                     e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
-        clientX: touch.clientX,
-        clientY: touch.clientY
-    });
-    canvas.dispatchEvent(mouseEvent);
-}
-
-function handleTouchEnd(e) {
-    e.preventDefault();
+function drawShape(o) {
+    if (!isDrawing || !drawingObject) return;
     
-    // Handle drawing end
-    stopDrawing();
+    const pointer = fabricCanvas.getPointer(o.e);
     
-    // Handle shape creation for non-pen tools
-    if (currentTool !== 'pen' && e.changedTouches && e.changedTouches[0]) {
-        const touch = e.changedTouches[0];
-        const coords = getCanvasCoordinates({
-            clientX: touch.clientX,
-            clientY: touch.clientY
+    if (currentTool === 'circle') {
+        const radius = Math.sqrt(Math.pow(pointer.x - startX, 2) + Math.pow(pointer.y - startY, 2)) / 2;
+        drawingObject.set({
+            radius: radius,
+            left: startX - radius,
+            top: startY - radius
         });
+    } else if (currentTool === 'rectangle') {
+        const width = pointer.x - startX;
+        const height = pointer.y - startY;
         
-        switch(currentTool) {
-            case 'circle':
-                drawCircle(coords.x, coords.y);
-                break;
-            case 'arrow':
-                drawArrow(coords.x, coords.y);
-                break;
-            case 'text':
-                addText(coords.x, coords.y);
-                break;
+        if (width < 0) {
+            drawingObject.set({ left: pointer.x });
+        }
+        if (height < 0) {
+            drawingObject.set({ top: pointer.y });
         }
         
+        drawingObject.set({
+            width: Math.abs(width),
+            height: Math.abs(height)
+        });
+    } else if (currentTool === 'line' || currentTool === 'arrow') {
+        drawingObject.set({
+            x2: pointer.x,
+            y2: pointer.y
+        });
+    }
+    
+    fabricCanvas.renderAll();
+}
+
+function finishDrawingShape() {
+    if (!isDrawing) return;
+    
+    isDrawing = false;
+    
+    if (drawingObject) {
+        if (currentTool === 'arrow') {
+            const line = drawingObject;
+            const angle = Math.atan2(line.y2 - line.y1, line.x2 - line.x1);
+            const headlen = 15;
+            
+            const triangle = new fabric.Triangle({
+                left: line.x2,
+                top: line.y2,
+                width: headlen,
+                height: headlen,
+                fill: currentColor,
+                angle: (angle * 180 / Math.PI) + 90,
+                originX: 'center',
+                originY: 'center'
+            });
+            
+            fabricCanvas.remove(drawingObject);
+            const group = new fabric.Group([line, triangle]);
+            fabricCanvas.add(group);
+            group.setCoords();
+            drawingObject = group;
+        } else {
+            drawingObject.setCoords();
+        }
+        
+        drawingObject.set({ 
+            selectable: true,
+            evented: true,
+            hasControls: true,
+            hasBorders: true
+        });
+        
+        fabricCanvas.renderAll();
+        saveState();
+        drawingObject = null;
+        
+        setTool('select');
+    }
+}
+
+function handleTextClick(o) {
+    if (o.target) return;
+    
+    const pointer = fabricCanvas.getPointer(o.e);
+    const text = prompt('Enter text:');
+    
+    if (text && text.trim()) {
+        const textObj = new fabric.IText(text, {
+            left: pointer.x,
+            top: pointer.y,
+            fill: currentColor,
+            fontSize: 20,
+            fontFamily: 'Arial'
+        });
+        fabricCanvas.add(textObj);
         saveState();
     }
 }
 
-function getCanvasCoordinates(e) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    return {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY
-    };
-}
-
-function handleCanvasClick(e) {
-    if (currentTool === 'pen') return;
-    
-    const coords = getCanvasCoordinates(e);
-    
-    switch(currentTool) {
-        case 'circle':
-            drawCircle(coords.x, coords.y);
-            break;
-        case 'arrow':
-            drawArrow(coords.x, coords.y);
-            break;
-        case 'text':
-            addText(coords.x, coords.y);
-            break;
-    }
-    
-    saveState();
-}
-
-function drawCircle(x, y) {
-    ctx.beginPath();
-    ctx.arc(x, y, 30, 0, 2 * Math.PI);
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = currentSize;
-    ctx.stroke();
-}
-
-function drawArrow(x, y) {
-    const endX = x + 60;
-    const endY = y;
-    
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(endX, endY);
-    ctx.lineTo(endX - 10, endY - 5);
-    ctx.moveTo(endX, endY);
-    ctx.lineTo(endX - 10, endY + 5);
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth = currentSize;
-    ctx.stroke();
-}
-
-function addText(x, y) {
-    const text = prompt('Enter text:');
-    if (text && text.trim()) {
-        ctx.font = '16px Arial';
-        ctx.fillStyle = currentColor;
-        ctx.textBaseline = 'top';
+function updateColor(e) {
+    const picker = e ? e.target : (document.getElementById('colorPicker') || document.getElementById('colorPickerDesktop'));
+    if (picker) {
+        currentColor = picker.value;
         
-        // Handle multi-line text
-        const lines = text.split('\n');
-        lines.forEach((line, index) => {
-            ctx.fillText(line, x, y + (index * 20));
+        if (fabricCanvas && fabricCanvas.freeDrawingBrush) {
+            fabricCanvas.freeDrawingBrush.color = currentColor;
+        }
+        
+        // Sync both color pickers
+        document.querySelectorAll('#colorPicker, #colorPickerDesktop').forEach(p => {
+            if (p !== picker) p.value = currentColor;
         });
     }
 }
 
-function updateColor() {
-    const colorPicker = document.getElementById('colorPicker') || document.getElementById('colorPickerDesktop');
-    currentColor = colorPicker ? colorPicker.value : '#ff0000';
-}
-
-function updateSize() {
-    const brushSize = document.getElementById('brushSize');
+function updateSize(e) {
+    const brushSize = e ? e.target : document.getElementById('brushSize');
     currentSize = brushSize ? parseInt(brushSize.value) : 3;
+    
+    const sizeDisplay = document.getElementById('brushSizeValue');
+    if (sizeDisplay) {
+        sizeDisplay.textContent = currentSize;
+    }
+    
+    if (brushSize) {
+        const min = parseInt(brushSize.min) || 1;
+        const max = parseInt(brushSize.max) || 20;
+        const percentage = ((currentSize - min) / (max - min)) * 100;
+        brushSize.style.background = `linear-gradient(to right, #0d6efd 0%, #0d6efd ${percentage}%, #dee2e6 ${percentage}%, #dee2e6 100%)`;
+    }
+    
+    if (fabricCanvas && fabricCanvas.freeDrawingBrush) {
+        fabricCanvas.freeDrawingBrush.width = currentSize;
+    }
 }
 
 function saveState() {
@@ -384,48 +430,149 @@ function saveState() {
     if (historyStep < drawingHistory.length) {
         drawingHistory.length = historyStep;
     }
-    drawingHistory.push(canvas.toDataURL());
+    drawingHistory.push(JSON.stringify(fabricCanvas.toJSON()));
 }
 
 function undoLastAction() {
-    console.log('Undo called');
-    
     if (historyStep > 0) {
         historyStep--;
-        const previousState = drawingHistory[historyStep];
-        
-        if (previousState) {
-            const img = new Image();
-            img.onload = function() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-                console.log('Undo successful - restored previous state');
-            };
-            img.src = previousState;
-        }
-    } else {
-        console.log('No more actions to undo');
+        fabricCanvas.loadFromJSON(drawingHistory[historyStep], function() {
+            fabricCanvas.renderAll();
+        });
     }
 }
 
 function clearCanvas() {
-    console.log('Clear canvas called');
+    fabricCanvas.clear();
+    fabricCanvas.backgroundColor = '#ffffff';
     
-    // Use background for current file if available
-    const currentBackground = fileBackgrounds[currentFileIndex] || backgroundImage;
-    
-    if (currentBackground) {
-        // Restore background image only
-        ctx.putImageData(currentBackground, 0, 0);
-        console.log('Background restored for file', currentFileIndex);
-    } else {
-        // Clear to white background
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        console.log('Canvas cleared to white');
+    if (backgroundImage) {
+        fabricCanvas.add(backgroundImage);
+        fabricCanvas.sendToBack(backgroundImage);
     }
     
+    fabricCanvas.renderAll();
     saveState();
+}
+
+function deleteSelected() {
+    const activeObjects = fabricCanvas.getActiveObjects();
+    if (activeObjects.length) {
+        fabricCanvas.discardActiveObject();
+        activeObjects.forEach(obj => fabricCanvas.remove(obj));
+        fabricCanvas.renderAll();
+        saveState();
+    }
+}
+
+function enterCropMode() {
+    if (cropMode) return;
+    
+    cropMode = true;
+    fabricCanvas.isDrawingMode = false;
+    fabricCanvas.selection = false;
+    
+    fabricCanvas.forEachObject(obj => {
+        obj.selectable = false;
+        obj.evented = false;
+    });
+    
+    cropRect = new fabric.Rect({
+        left: 100,
+        top: 100,
+        width: 600,
+        height: 400,
+        fill: 'rgba(0,0,0,0.3)',
+        stroke: '#fff',
+        strokeWidth: 2,
+        strokeDashArray: [5, 5],
+        selectable: true,
+        hasControls: true,
+        hasBorders: true
+    });
+    
+    fabricCanvas.add(cropRect);
+    fabricCanvas.setActiveObject(cropRect);
+    fabricCanvas.renderAll();
+    
+    document.getElementById('cropControls')?.classList.remove('d-none');
+}
+
+function exitCropMode() {
+    if (!cropMode) return;
+    
+    cropMode = false;
+    
+    if (cropRect) {
+        fabricCanvas.remove(cropRect);
+        cropRect = null;
+    }
+    
+    fabricCanvas.forEachObject(obj => {
+        if (obj !== backgroundImage) {
+            obj.selectable = true;
+            obj.evented = true;
+        }
+    });
+    
+    fabricCanvas.selection = true;
+    fabricCanvas.renderAll();
+    document.getElementById('cropControls')?.classList.add('d-none');
+}
+
+function applyCrop() {
+    if (!cropRect) return;
+    
+    const left = cropRect.left;
+    const top = cropRect.top;
+    const width = cropRect.width * cropRect.scaleX;
+    const height = cropRect.height * cropRect.scaleY;
+    
+    const croppedDataURL = fabricCanvas.toDataURL({
+        left: left,
+        top: top,
+        width: width,
+        height: height
+    });
+    
+    fabricCanvas.clear();
+    fabricCanvas.setWidth(width);
+    fabricCanvas.setHeight(height);
+    
+    fabric.Image.fromURL(croppedDataURL, function(img) {
+        fabricCanvas.setBackgroundImage(img, fabricCanvas.renderAll.bind(fabricCanvas));
+        exitCropMode();
+        saveState();
+    });
+}
+
+
+
+function flipHorizontal() {
+    const activeObject = fabricCanvas.getActiveObject();
+    if (activeObject) {
+        activeObject.set('flipX', !activeObject.flipX);
+        fabricCanvas.renderAll();
+        saveState();
+    }
+}
+
+function flipVertical() {
+    const activeObject = fabricCanvas.getActiveObject();
+    if (activeObject) {
+        activeObject.set('flipY', !activeObject.flipY);
+        fabricCanvas.renderAll();
+        saveState();
+    }
+}
+
+function rotateObject(angle) {
+    const activeObject = fabricCanvas.getActiveObject();
+    if (activeObject) {
+        activeObject.rotate((activeObject.angle || 0) + angle);
+        fabricCanvas.renderAll();
+        saveState();
+    }
 }
 
 function openDrawingModal(config) {
@@ -454,32 +601,60 @@ function openDrawingModal(config) {
         initializeDrawing(config);
         setTool('pen');
         
-        // Add event listeners
         const colorPickers = document.querySelectorAll('#colorPicker, #colorPickerDesktop');
         const brushSize = document.getElementById('brushSize');
         
         colorPickers.forEach(picker => {
+            picker.addEventListener('input', updateColor);
             picker.addEventListener('change', updateColor);
         });
         
         if (brushSize) {
             brushSize.addEventListener('input', updateSize);
+            brushSize.addEventListener('change', updateSize);
         }
         
-        // Initialize color and size
-        updateColor();
-        updateSize();
+        if (colorPickers.length > 0) {
+            currentColor = colorPickers[0].value;
+            if (fabricCanvas.freeDrawingBrush) {
+                fabricCanvas.freeDrawingBrush.color = currentColor;
+            }
+        }
+        
+        if (brushSize) {
+            currentSize = parseInt(brushSize.value);
+            const sizeDisplay = document.getElementById('brushSizeValue');
+            if (sizeDisplay) {
+                sizeDisplay.textContent = currentSize;
+            }
+            if (fabricCanvas.freeDrawingBrush) {
+                fabricCanvas.freeDrawingBrush.width = currentSize;
+            }
+        }
         
     }, { once: true });
 }
 
-// Make functions globally accessible
+// Global functions
 window.clearCanvas = clearCanvas;
 window.undoLastAction = undoLastAction;
-window.undoLast = undoLastAction; // Alias for backward compatibility
+window.undoLast = undoLastAction;
 window.setTool = setTool;
 window.previousFile = previousFile;
 window.nextFile = nextFile;
 window.openDrawingModal = openDrawingModal;
 window.loadMultipleFiles = loadMultipleFiles;
 window.loadImageToCanvas = loadImageToCanvas;
+window.deleteSelected = deleteSelected;
+window.enterCropMode = enterCropMode;
+window.exitCropMode = exitCropMode;
+window.applyCrop = applyCrop;
+
+window.flipHorizontal = flipHorizontal;
+window.flipVertical = flipVertical;
+window.rotateObject = rotateObject;
+window.resetZoom = function() {
+    fabricCanvas.setZoom(1);
+    fabricCanvas.viewportTransform = [1, 0, 0, 1, 0, 0];
+    fabricCanvas.renderAll();
+};
