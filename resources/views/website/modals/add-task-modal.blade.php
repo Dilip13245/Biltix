@@ -88,7 +88,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="addTaskForm" class="btn orange_btn">
+        <button type="submit" form="addTaskForm" class="btn orange_btn" id="addTaskSubmitBtn">
           {{ __("messages.next") }} <i class="fas fa-arrow-right ms-2"></i>
         </button>
       </div>
@@ -96,5 +96,26 @@
   </div>
 </div>
 
+<script>
+// Reset modal button when modal is hidden
+document.getElementById('addTaskModal')?.addEventListener('hidden.bs.modal', function() {
+    const form = document.getElementById('addTaskForm');
+    const btn = document.getElementById('addTaskSubmitBtn');
+    
+    if (form) form.reset();
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '{{ __("messages.next") }} <i class="fas fa-arrow-right ms-2"></i>';
+    }
+});
 
+// Reset button text when modal is shown
+document.getElementById('addTaskModal')?.addEventListener('show.bs.modal', function() {
+    const btn = document.getElementById('addTaskSubmitBtn');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '{{ __("messages.next") }} <i class="fas fa-arrow-right ms-2"></i>';
+    }
+});
+</script>
 

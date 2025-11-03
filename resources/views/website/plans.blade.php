@@ -845,7 +845,7 @@
             } finally {
                 isUploading = false;
                 // Reset both buttons
-                const uploadBtn = document.getElementById('uploadPlanBtn');
+                const uploadBtn = document.getElementById('uploadPlanSubmitBtn');
                 const drawingBtn = document.getElementById('saveDrawingBtn');
                 if (uploadBtn) {
                     uploadBtn.disabled = false;
@@ -906,7 +906,7 @@
                     console.log('Form submitted');
 
                     // Protect button - early return if already processing
-                    const btn = document.getElementById('uploadPlanBtn');
+                    const btn = document.getElementById('uploadPlanSubmitBtn');
                     if (btn && btn.disabled) {
                         console.log('Button already disabled, preventing duplicate submission');
                         e.stopImmediatePropagation();
@@ -957,8 +957,7 @@
                         // Reset button when going to drawing modal (user can still cancel)
                         if (btn) {
                             btn.disabled = false;
-                            btn.innerHTML =
-                                '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                            btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
                         }
 
                         // Open drawing modal for images
@@ -1033,11 +1032,10 @@
                 } finally {
                     isUploading = false;
                     // Reset button
-                    const btn = document.getElementById('uploadPlanBtn');
+                    const btn = document.getElementById('uploadPlanSubmitBtn');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML =
-                        '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
                     }
                 }
             }

@@ -268,18 +268,25 @@
                 const response = await api.getFileCategories();
                 const select = document.getElementById('categorySelect');
                 
-                if (response.code === 200 && response.data) {
+                if (response.code === 200 && response.data && select) {
                     select.innerHTML = '<option value="">{{ __('messages.select_category') }}</option>';
                     response.data.forEach(category => {
-                        select.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+                        const option = document.createElement('option');
+                        option.value = category.id || '';
+                        option.textContent = category.name || '';
+                        select.appendChild(option);
                     });
                 } else {
-                    select.innerHTML = '<option value="1">{{ __('messages.general') }}</option>';
+                    if (select) {
+                        select.innerHTML = '<option value="1">{{ __('messages.general') }}</option>';
+                    }
                 }
             } catch (error) {
                 console.error('Failed to load categories:', error);
                 const select = document.getElementById('categorySelect');
-                select.innerHTML = '<option value="1">{{ __('messages.general') }}</option>';
+                if (select) {
+                    select.innerHTML = '<option value="1">{{ __('messages.general') }}</option>';
+                }
             }
         }
         

@@ -4,8 +4,15 @@
 
 @section('content')
     <style>
-        select.searchable-select { opacity: 0; transition: opacity 0.2s; }
-        select.searchable-select.initialized, .searchable-dropdown { opacity: 1; }
+        select.searchable-select {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        select.searchable-select.initialized,
+        .searchable-dropdown {
+            opacity: 1;
+        }
     </style>
     <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
@@ -42,13 +49,19 @@
                                     <form class="serchBar position-relative serchBar2">
                                         @if (app()->getLocale() == 'ar')
                                             <input class="form-control" type="search" id="searchInput"
-                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-left: 45px; padding-right: 15px;" maxlength="100">
-                                            <span class="search_icon" style="left: 15px; right: auto; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search"
+                                                dir="auto" style="padding-left: 45px; padding-right: 15px;"
+                                                maxlength="100">
+                                            <span class="search_icon"
+                                                style="left: 15px; right: auto; pointer-events: none;"><img
+                                                    src="{{ asset('website/images/icons/search.svg') }}"
                                                     alt="search"></span>
                                         @else
                                             <input class="form-control" type="search" id="searchInput"
-                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search" dir="auto" style="padding-right: 45px;" maxlength="100">
-                                            <span class="search_icon" style="right: 15px; pointer-events: none;"><img src="{{ asset('website/images/icons/search.svg') }}"
+                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search"
+                                                dir="auto" style="padding-right: 45px;" maxlength="100">
+                                            <span class="search_icon" style="right: 15px; pointer-events: none;"><img
+                                                    src="{{ asset('website/images/icons/search.svg') }}"
                                                     alt="search"></span>
                                         @endif
                                     </form>
@@ -71,30 +84,25 @@
     <script>
         let allSnags = [];
         let allUsers = [];
-        
+
         function getProjectIdFromUrl() {
             const pathParts = window.location.pathname.split('/');
             const projectIndex = pathParts.indexOf('project');
             return projectIndex !== -1 && pathParts[projectIndex + 1] ? pathParts[projectIndex + 1] : 1;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Check if API is available before loading
             if (typeof api !== 'undefined' && api.getSnags) {
                 loadSnags();
+                await loadUsers();
+                await loadPhases();
                 setupFilters();
                 setupAddSnagForm();
-                setupModalUserLoading();
             } else {
                 console.error('API not available');
                 showError('{{ __('messages.api_not_available') }}');
             }
-            
-            // Initialize searchable dropdowns
-            if (typeof initSearchableDropdowns === 'function') {
-                initSearchableDropdowns();
-            }
-            document.querySelectorAll('.searchable-select').forEach(el => el.classList.add('initialized'));
         });
 
         async function loadSnags() {
@@ -134,48 +142,66 @@
             `;
         }
 
-        function setupModalUserLoading() {
-            const addSnagModal = document.getElementById('addSnagModal');
-            if (addSnagModal) {
-                addSnagModal.addEventListener('show.bs.modal', async function() {
-                    try {
-                        // Check if api is available
-                        if (typeof api === 'undefined' || typeof api.getAllUsers !== 'function') {
-                            console.error('API client not loaded or getAllUsers function not available');
-                            return;
-                        }
-                        
-                        // Load users
-                        const usersResponse = await api.getAllUsers();
-                        const assignedSelect = document.getElementById('assignedTo');
-                        
-                        if (usersResponse.code === 200 && assignedSelect) {
-                            assignedSelect.innerHTML = '<option value="">{{ __("messages.select_user") }}</option>';
-                            usersResponse.data.forEach(user => {
-                                assignedSelect.innerHTML += `<option value="${user.id}">${user.name}</option>`;
-                            });
-                        }
-
-                        // Load phases
-                        const phasesResponse = await api.listPhases({ project_id: getProjectIdFromUrl() });
-                        const phaseSelect = document.getElementById('phaseSelect');
-                        
-                        if (phasesResponse.code === 200 && phaseSelect) {
-                            phaseSelect.innerHTML = '<option value="">{{ __("messages.select_phase") }}</option>';
-                            phasesResponse.data.forEach(phase => {
-                                phaseSelect.innerHTML += `<option value="${phase.id}">${phase.title || phase.name}</option>`;
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Error loading modal data:', error);
-                    }
+        async function loadUsers() {
+            try {
+                const response = await api.getProjectTeamMembers({
+                    project_id: getProjectIdFromUrl(),
+                    user_id: {{ auth()->id() ?? 1 }}
                 });
+
+                if (response.code === 200) {
+                    const users = response.data || [];
+                    const assignedToSelect = document.getElementById('assignedTo');
+
+                    if (assignedToSelect) {
+                        assignedToSelect.innerHTML = '<option value="">{{ __('messages.select_user') }}</option>';
+
+                        users.forEach(user => {
+                            const option = document.createElement('option');
+                            option.value = user.id;
+                            option.textContent = user.name + (user.role_in_project ? ` (${user.role_in_project})` : '');
+                            assignedToSelect.appendChild(option);
+                        });
+
+
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading project team members:', error);
+            }
+        }
+
+        async function loadPhases() {
+            try {
+                const response = await api.listPhases({
+                    project_id: getProjectIdFromUrl()
+                });
+
+                if (response.code === 200) {
+                    const phases = response.data || [];
+                    const phaseSelect = document.getElementById('phaseSelect');
+
+                    if (phaseSelect) {
+                        phaseSelect.innerHTML = '<option value="">{{ __('messages.select_phase') }}</option>';
+
+                        phases.forEach(phase => {
+                            const option = document.createElement('option');
+                            option.value = phase.id;
+                            option.textContent = phase.title || phase.name;
+                            phaseSelect.appendChild(option);
+                        });
+
+
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading phases:', error);
             }
         }
 
         function displaySnags(snags) {
             const container = document.getElementById('snagsContainer');
-            
+
             if (snags.length === 0) {
                 container.style.display = 'flex';
                 container.style.justifyContent = 'center';
@@ -190,7 +216,7 @@
                 `;
                 return;
             }
-            
+
             // Reset container styles for grid layout
             container.style.display = '';
             container.style.justifyContent = '';
@@ -199,10 +225,10 @@
 
             container.innerHTML = snags.map(snag => {
                 const statusBadge = getStatusBadge(snag.status);
-                const imageDisplay = snag.image_urls && snag.image_urls.length > 0 
-                    ? `<img src="${snag.image_urls[0]}" alt="Snag" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">` 
-                    : `<span class="stat-icon bg2 ms-0"><i class="fas fa-exclamation-triangle" style="color: #F58D2E;"></i></span>`;
-                
+                const imageDisplay = snag.image_urls && snag.image_urls.length > 0 ?
+                    `<img src="${snag.image_urls[0]}" alt="Snag" style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;">` :
+                    `<span class="stat-icon bg2 ms-0"><i class="fas fa-exclamation-triangle" style="color: #F58D2E;"></i></span>`;
+
                 return `
                     <div class="CustOm_Card wow fadeInUp">
                         <div class="carD-details p-4">
@@ -237,12 +263,20 @@
 
         function getStatusBadge(status) {
             const statusMap = {
-                'todo': { class: 'badge5' },
-                'in_progress': { class: 'badge4' },
-                'complete': { class: 'badge1' },
-                'approve': { class: 'badge1' }
+                'todo': {
+                    class: 'badge5'
+                },
+                'in_progress': {
+                    class: 'badge4'
+                },
+                'complete': {
+                    class: 'badge1'
+                },
+                'approve': {
+                    class: 'badge1'
+                }
             };
-            
+
             const statusInfo = statusMap[status.toLowerCase()] || statusMap['todo'];
             return `<span class="badge ${statusInfo.class}">${status}</span>`;
         }
@@ -261,7 +295,7 @@
 
             const filtered = allSnags.filter(snag => {
                 const matchesStatus = statusValue === 'all' || snag.status.toLowerCase() === statusValue;
-                const matchesSearch = !searchValue || 
+                const matchesSearch = !searchValue ||
                     snag.title.toLowerCase().includes(searchValue) ||
                     snag.description.toLowerCase().includes(searchValue) ||
                     snag.location.toLowerCase().includes(searchValue);
@@ -277,13 +311,13 @@
             if (addSnagForm) {
                 addSnagForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    
+
                     const fileInput = document.getElementById('snagPhotos');
-                    
+
                     if (fileInput.files && fileInput.files.length > 0) {
                         // Store files and open drawing modal
                         window.selectedFiles = fileInput.files;
-                        
+
                         openDrawingModal({
                             title: 'Image Markup',
                             saveButtonText: 'Save Snag',
@@ -292,7 +326,7 @@
                                 saveSnagWithMarkup(imageData);
                             }
                         });
-                        
+
                         // Load images after modal is shown
                         document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
                             if (window.selectedFiles.length === 1) {
@@ -300,7 +334,9 @@
                             } else {
                                 loadMultipleFiles(window.selectedFiles);
                             }
-                        }, { once: true });
+                        }, {
+                            once: true
+                        });
                     } else {
                         // No images, direct API call
                         saveSnagWithoutMarkup();
@@ -312,23 +348,23 @@
         async function saveSnagWithMarkup(imageData) {
             try {
                 const formData = new FormData();
-                
+
                 formData.append('user_id', {{ auth()->id() ?? 1 }});
                 formData.append('project_id', getProjectIdFromUrl());
                 formData.append('title', document.getElementById('snagTitle').value);
                 formData.append('description', document.getElementById('description').value);
                 formData.append('location', document.getElementById('location').value);
-                
+
                 const phaseId = document.getElementById('phaseSelect').value;
                 if (phaseId) {
                     formData.append('phase_id', phaseId);
                 }
-                
+
                 const assignedTo = document.getElementById('assignedTo').value;
                 if (assignedTo) {
                     formData.append('assigned_to', assignedTo);
                 }
-                
+
                 // Convert markup to blob and append
                 if (Array.isArray(imageData)) {
                     imageData.forEach((data, index) => {
@@ -350,10 +386,10 @@
                     // Close modals
                     const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
                     if (drawingModal) drawingModal.hide();
-                    
+
                     const addSnagModal = bootstrap.Modal.getInstance(document.getElementById('addSnagModal'));
                     if (addSnagModal) addSnagModal.hide();
-                    
+
                     toastr.success('Snag with markup saved successfully!');
                     document.getElementById('addSnagForm').reset();
                     loadSnags();
@@ -372,20 +408,20 @@
                 const originalText = createBtn.innerHTML;
                 createBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
                 createBtn.disabled = true;
-                
+
                 const formData = new FormData();
-                
+
                 formData.append('user_id', {{ auth()->id() ?? 1 }});
                 formData.append('project_id', getProjectIdFromUrl());
                 formData.append('title', document.getElementById('snagTitle').value);
                 formData.append('description', document.getElementById('description').value);
                 formData.append('location', document.getElementById('location').value);
-                
+
                 const phaseId = document.getElementById('phaseSelect').value;
                 if (phaseId) {
                     formData.append('phase_id', phaseId);
                 }
-                
+
                 const assignedTo = document.getElementById('assignedTo').value;
                 if (assignedTo) {
                     formData.append('assigned_to', assignedTo);
@@ -396,7 +432,7 @@
                 if (response.code === 200) {
                     const addSnagModal = bootstrap.Modal.getInstance(document.getElementById('addSnagModal'));
                     if (addSnagModal) addSnagModal.hide();
-                    
+
                     toastr.success('Snag created successfully!');
                     document.getElementById('addSnagForm').reset();
                     loadSnags();
@@ -408,7 +444,7 @@
                 toastr.error('Failed to create snag');
             } finally {
                 const createBtn = document.getElementById('createSnagBtn');
-                createBtn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}';
+                createBtn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __('messages.create_snag') }}';
                 createBtn.disabled = false;
             }
         }
@@ -418,7 +454,7 @@
             if (dataURL instanceof File) {
                 return dataURL;
             }
-            
+
             const arr = dataURL.split(',');
             const mime = arr[0].match(/:(.*?);/)[1];
             const bstr = atob(arr[1]);
@@ -427,16 +463,21 @@
             while (n--) {
                 u8arr[n] = bstr.charCodeAt(n);
             }
-            return new Blob([u8arr], { type: mime });
+            return new Blob([u8arr], {
+                type: mime
+            });
         }
 
         async function viewSnagDetails(snagId) {
             try {
                 const modal = new bootstrap.Modal(document.getElementById('snagDetailsModal'));
                 modal.show();
-                
-                const response = await api.getSnagDetails({ snag_id: snagId, user_id: {{ auth()->id() ?? 1 }} });
-                
+
+                const response = await api.getSnagDetails({
+                    snag_id: snagId,
+                    user_id: {{ auth()->id() ?? 1 }}
+                });
+
                 if (response.code === 200) {
                     displaySnagDetails(response.data);
                 } else {
@@ -451,7 +492,7 @@
                 console.error('Error loading snag details:', error);
             }
         }
-        
+
         function displaySnagDetails(snag) {
             const currentUserId = {{ auth()->id() ?? 1 }};
             const isAssignedUser = snag.assigned_to_id && parseInt(snag.assigned_to_id) === parseInt(currentUserId);
@@ -459,27 +500,27 @@
             const isApproved = snag.status.toLowerCase() === 'approve';
             const canComment = !isApproved;
             const hasCommented = snag.has_comment || false;
-            
-            const imagesHtml = snag.image_urls && snag.image_urls.length > 0 
-                ? `<div class="card B_shadow h-100">
+
+            const imagesHtml = snag.image_urls && snag.image_urls.length > 0 ?
+                `<div class="card B_shadow h-100">
                      <div class="card-body">
                          <h6 class="fw-semibold black_color mb-3"><i class="fas fa-images orange_color me-2"></i>{{ __('messages.images') }}</h6>
                          <div class="row g-2">
                            ${snag.image_urls.map(url => `
-                             <div class="col-6">
-                               <img src="${url}" alt="Snag" class="img-fluid rounded cursor-pointer" style="height: 120px; width: 100%; object-fit: cover;" onclick="window.open('${url}', '_blank')">
-                             </div>
-                           `).join('')}
+                                 <div class="col-6">
+                                   <img src="${url}" alt="Snag" class="img-fluid rounded cursor-pointer" style="height: 120px; width: 100%; object-fit: cover;" onclick="window.open('${url}', '_blank')">
+                                 </div>
+                               `).join('')}
                          </div>
                      </div>
-                   </div>` 
-                : `<div class="card B_shadow h-100">
+                   </div>` :
+                `<div class="card B_shadow h-100">
                      <div class="card-body text-center">
                          <i class="fas fa-image fa-3x text-muted mb-3"></i>
                          <p class="text-muted mb-0">{{ __('messages.no_images_uploaded') }}</p>
                      </div>
                    </div>`;
-            
+
             document.getElementById('snagDetailsContent').innerHTML = `
                 <!-- Snag Header -->
                 <div class="card B_shadow mb-4">
@@ -501,10 +542,10 @@
                                     ${isApproved ? '<option value="approve">{{ __('messages.approve') }}</option>' : ''}
                                 </select>
                                 ${isCompleted && isAssignedUser && !isApproved ? `
-                                    <button class="btn btn-success" onclick="resolveSnag(${snag.id})">
-                                        <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
-                                    </button>
-                                ` : ''}
+                                        <button class="btn btn-success" onclick="resolveSnag(${snag.id})">
+                                            <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
+                                        </button>
+                                    ` : ''}
                             </div>
                         </div>
                     </div>
@@ -525,11 +566,11 @@
                                     <p class="mb-0">${snag.description || 'No description provided'}</p>
                                 </div>
                                 ${snag.assigned_to ? `
-                                    <div class="mb-0">
-                                        <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
-                                        <p class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>${snag.assigned_to}</p>
-                                    </div>
-                                ` : ''}
+                                        <div class="mb-0">
+                                            <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
+                                            <p class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>${snag.assigned_to}</p>
+                                        </div>
+                                    ` : ''}
                             </div>
                         </div>
                     </div>
@@ -548,89 +589,92 @@
                         </h6>
                         
                         ${snag.comment ? `
-                            <div class="comment-item border rounded p-3 mb-3 bg-light">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 12px;">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div>
-                                            <small class="fw-medium black_color">{{ __('messages.comment') }}</small>
-                                            <br>
-                                            <small class="text-muted">${snag.date}</small>
+                                <div class="comment-item border rounded p-3 mb-3 bg-light">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 12px;">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div>
+                                                <small class="fw-medium black_color">{{ __('messages.comment') }}</small>
+                                                <br>
+                                                <small class="text-muted">${snag.date}</small>
+                                            </div>
                                         </div>
                                     </div>
+                                    <p class="mb-0 ms-5">${snag.comment}</p>
                                 </div>
-                                <p class="mb-0 ms-5">${snag.comment}</p>
-                            </div>
-                        ` : `
-                            <div class="text-center py-4">
-                                <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
-                                <p class="text-muted mb-0">{{ __('messages.no_comments_yet') }}</p>
-                            </div>
-                        `}
+                            ` : `
+                                <div class="text-center py-4">
+                                    <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">{{ __('messages.no_comments_yet') }}</p>
+                                </div>
+                            `}
                         
                         ${canComment && !hasCommented && isAssignedUser ? `
-                            <div class="mt-4 pt-3 border-top" id="commentSection">
-                                <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
-                                <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
-                                <button class="btn orange_btn" onclick="addComment(${snag.id})">
-                                    <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
-                                </button>
-                            </div>
-                        ` : ''}
+                                <div class="mt-4 pt-3 border-top" id="commentSection">
+                                    <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
+                                    <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
+                                    <button class="btn orange_btn" onclick="addComment(${snag.id})">
+                                        <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
+                                    </button>
+                                </div>
+                            ` : ''}
                         ${!isAssignedUser && !isApproved ? `
-                            <div class="alert alert-info mt-3">
-                                <i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}
-                            </div>
-                        ` : ''}
+                                <div class="alert alert-info mt-3">
+                                    <i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}
+                                </div>
+                            ` : ''}
                     </div>
                 </div>
             `;
-            
+
             setTimeout(() => {
                 const statusSelect = document.getElementById('snagStatusSelect');
                 if (statusSelect) {
                     statusSelect.value = snag.status.toLowerCase();
                 }
             }, 100);
-            
+
             window.currentSnagDetails = snag;
         }
-        
+
         function getStatusBadgeClass(status) {
             const statusMap = {
                 'todo': 'badge5',
-                'in_progress': 'badge4', 
+                'in_progress': 'badge4',
                 'complete': 'badge1',
                 'approve': 'badge1'
             };
             return statusMap[status.toLowerCase()] || 'badge5';
         }
-        
+
         async function addComment(snagId) {
             const commentText = document.getElementById('commentText').value.trim();
             if (!commentText) {
                 toastr.warning('{{ __('messages.please_enter_comment') }}');
                 return;
             }
-            
+
             try {
                 const response = await api.updateSnag({
                     snag_id: snagId,
                     user_id: {{ auth()->id() ?? 1 }},
                     comment: commentText
                 });
-                
+
                 if (response.code === 200) {
                     toastr.success('{{ __('messages.comment_added_success') }}');
-                    
+
                     // Refresh snag details to show new comment
-                    const detailsResponse = await api.getSnagDetails({ snag_id: snagId, user_id: {{ auth()->id() ?? 1 }} });
+                    const detailsResponse = await api.getSnagDetails({
+                        snag_id: snagId,
+                        user_id: {{ auth()->id() ?? 1 }}
+                    });
                     if (detailsResponse.code === 200) {
                         displaySnagDetails(detailsResponse.data);
                     }
-                    
+
                     loadSnags();
                 } else {
                     toastr.error('{{ __('messages.failed_add_comment') }}');
@@ -640,14 +684,14 @@
                 toastr.error('{{ __('messages.failed_add_comment') }}');
             }
         }
-        
+
         async function resolveSnag(snagId) {
             try {
                 const response = await api.resolveSnag({
                     snag_id: snagId,
                     user_id: {{ auth()->id() ?? 1 }}
                 });
-                
+
                 if (response.code === 200) {
                     toastr.success('{{ __('messages.snag_resolved_success') }}');
                     bootstrap.Modal.getInstance(document.getElementById('snagDetailsModal')).hide();
@@ -676,12 +720,12 @@
             `;
         }
 
-        
+
         async function changeSnagStatus() {
             if (!window.currentSnagDetails) return;
-            
+
             const newStatus = document.getElementById('snagStatusSelect').value;
-            
+
             try {
                 const response = await api.updateSnag({
                     snag_id: window.currentSnagDetails.id,
@@ -703,7 +747,6 @@
                 document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
             }
         }
-
     </script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>
 

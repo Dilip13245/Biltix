@@ -52,11 +52,11 @@
       <div class="modal-footer" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
         @if(app()->getLocale() == 'ar')
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
-          <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanBtn">
+          <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanSubmitBtn">
             {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
           </button>
         @else
-          <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanBtn">
+          <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanSubmitBtn">
             {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
           </button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
@@ -70,21 +70,21 @@
 // Reset modal when it's hidden
 document.getElementById('uploadPlanModal')?.addEventListener('hidden.bs.modal', function() {
     const form = document.getElementById('uploadPlanForm');
-    const btn = document.getElementById('uploadPlanBtn');
+    const btn = document.getElementById('uploadPlanSubmitBtn');
     
     if (form) form.reset();
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '{{ __('messages.upload_plan') }} <i class="fas fa-upload ms-2"></i>';
+        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
     }
 });
 
 // Reset button text when modal is shown
 document.getElementById('uploadPlanModal')?.addEventListener('show.bs.modal', function() {
-    const btn = document.getElementById('uploadPlanBtn');
+    const btn = document.getElementById('uploadPlanSubmitBtn');
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '{{ __('messages.upload_plan') }} <i class="fas fa-upload ms-2"></i>';
+        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
     }
 });
 </script>

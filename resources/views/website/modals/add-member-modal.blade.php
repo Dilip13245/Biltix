@@ -67,10 +67,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const response = await api.getAllUsers();
         const memberSelect = document.getElementById('memberSelect');
         
-        if (response.code === 200 && memberSelect) {
+        if (response.code === 200 && memberSelect && response.data) {
           memberSelect.innerHTML = '<option value="">{{ __("messages.select_user") }}</option>';
           response.data.forEach(user => {
-            memberSelect.innerHTML += `<option value="${user.id}" data-role="${user.role}">${user.name}</option>`;
+            const option = document.createElement('option');
+            option.value = user.id || '';
+            if (user.role) {
+              option.setAttribute('data-role', user.role);
+            }
+            option.textContent = user.name || '';
+            memberSelect.appendChild(option);
           });
           
           // Initialize searchable dropdown after loading options
@@ -97,6 +103,20 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         roleDisplay.value = '';
       }
+    });
+  }
+  
+  // Reset modal button when modal is hidden
+  if (addMemberModal) {
+    addMemberModal.addEventListener('hidden.bs.modal', function() {
+        const form = document.getElementById('addMemberForm');
+        const btn = document.getElementById('memberSubmitBtn');
+        
+        if (form) form.reset();
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-user-plus me-2"></i>{{ __("messages.add_member") }}';
+        }
     });
   }
 });

@@ -60,7 +60,7 @@
                             <div class="dropdown">
                                 <a href="#" class="d-flex align-items-center gap-2 gap-md-3" type="button"
                                     data-bs-toggle="dropdown">
-                                    <img src="{{ asset('website/images/icons/avtar.svg') }}" alt="user img"
+                                    <img src="{{ asset('website/images/icons/avatar.jpg') }}" alt="user img"
                                         class="User_iMg">
                                     <span class="{{ is_rtl() ? 'text-start' : 'text-end' }}">
                                         <h6 class="fs14 fw-medium black_color">

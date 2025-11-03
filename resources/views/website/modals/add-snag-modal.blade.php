@@ -80,3 +80,26 @@
     </div>
   </div>
 </div>
+
+<script>
+// Reset modal button when modal is hidden
+document.getElementById('addSnagModal')?.addEventListener('hidden.bs.modal', function() {
+    const form = document.getElementById('addSnagForm');
+    const btn = document.getElementById('createSnagBtn');
+    
+    if (form) form.reset();
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}';
+    }
+});
+
+// Reset button text when modal is shown
+document.getElementById('addSnagModal')?.addEventListener('show.bs.modal', function() {
+    const btn = document.getElementById('createSnagBtn');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}';
+    }
+});
+</script>

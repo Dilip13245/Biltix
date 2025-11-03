@@ -9,6 +9,7 @@
             opacity: 0;
             transition: opacity 0.2s;
         }
+
         select.searchable-select.initialized,
         .searchable-dropdown {
             opacity: 1;
@@ -97,27 +98,19 @@
         }
 
         // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             currentProjectId = getProjectIdFromUrl();
             currentUserId = window.UniversalAuth ? UniversalAuth.getUserId() : {{ auth()->id() ?? 1 }};
 
-            // Load tasks, users and phases
+            // Load tasks
             loadTasks();
-            loadUsers();
-            loadPhases();
+
+            // Load users and phases first, then initialize dropdowns
+            await loadUsers();
+            await loadPhases();
 
             // Setup event listeners
             setupEventListeners();
-            
-            // Initialize searchable dropdowns immediately
-            if (typeof initSearchableDropdowns === 'function') {
-                initSearchableDropdowns();
-            }
-            
-            // Mark as initialized
-            document.querySelectorAll('.searchable-select').forEach(el => {
-                el.classList.add('initialized');
-            });
         });
 
         function setupEventListeners() {
@@ -169,9 +162,12 @@
                         users.forEach(user => {
                             const option = document.createElement('option');
                             option.value = user.id;
-                            option.textContent = user.name + (user.role_in_project ? ` (${user.role_in_project})` : '');
+                            option.textContent = user.name + (user.role_in_project ?
+                                ` (${user.role_in_project})` : '');
                             assignedToSelect.appendChild(option);
                         });
+
+
                     }
                 }
             } catch (error) {
@@ -181,7 +177,9 @@
 
         async function loadPhases() {
             try {
-                const response = await api.listPhases({ project_id: currentProjectId });
+                const response = await api.listPhases({
+                    project_id: currentProjectId
+                });
 
                 if (response.code === 200) {
                     const phases = response.data || [];
@@ -196,6 +194,8 @@
                             option.textContent = phase.title || phase.name;
                             phaseSelect.appendChild(option);
                         });
+
+
                     }
                 }
             } catch (error) {
@@ -314,10 +314,22 @@
 
         function getPriorityBadge(priority) {
             const priorityMap = {
-                'low': { class: 'bg-success', icon: 'fas fa-arrow-down' },
-                'medium': { class: 'bg-warning', icon: 'fas fa-minus' },
-                'high': { class: 'bg-danger', icon: 'fas fa-arrow-up' },
-                'critical': { class: 'bg-dark', icon: 'fas fa-exclamation-triangle' }
+                'low': {
+                    class: 'bg-success',
+                    icon: 'fas fa-arrow-down'
+                },
+                'medium': {
+                    class: 'bg-warning',
+                    icon: 'fas fa-minus'
+                },
+                'high': {
+                    class: 'bg-danger',
+                    icon: 'fas fa-arrow-up'
+                },
+                'critical': {
+                    class: 'bg-dark',
+                    icon: 'fas fa-exclamation-triangle'
+                }
             };
 
             const config = priorityMap[priority] || priorityMap['medium'];
@@ -424,7 +436,7 @@
             const isAssignedUser = task.assigned_to && parseInt(task.assigned_to) === parseInt(currentUserId);
             const isCompleted = task.status === 'complete' || task.status === 'approve';
             const isApproved = task.status === 'approve';
-            
+
             console.log('Task assignment check:', {
                 taskAssignedTo: task.assigned_to,
                 currentUserId: currentUserId,
@@ -466,11 +478,12 @@
             if (!isAssignedUser && !isCompleted) {
                 const modalBody = document.querySelector('#taskDetailsModal .modal-body');
                 let restrictionMessage = modalBody.querySelector('.task-restriction-message');
-                
+
                 if (!restrictionMessage) {
                     restrictionMessage = document.createElement('div');
                     restrictionMessage.className = 'alert alert-info task-restriction-message';
-                    restrictionMessage.innerHTML = '<i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}';
+                    restrictionMessage.innerHTML =
+                        '<i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}';
                     modalBody.insertBefore(restrictionMessage, modalBody.firstChild);
                 }
             } else {
@@ -656,9 +669,9 @@
 
         async function changeTaskStatus() {
             if (!window.currentTaskDetails) return;
-            
+
             const newStatus = document.getElementById('taskStatusSelect').value;
-            
+
             try {
                 const response = await api.updateTaskStatus({
                     task_id: window.currentTaskDetails.id,
@@ -667,7 +680,8 @@
                 });
 
                 if (response.code === 200) {
-                    document.getElementById('taskDetailStatus').textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace('_', ' ');
+                    document.getElementById('taskDetailStatus').textContent = newStatus.charAt(0).toUpperCase() +
+                        newStatus.slice(1).replace('_', ' ');
                     window.currentTaskDetails.status = newStatus;
                     loadTasks();
                     toastr.success(response.message || '{{ __('messages.task_updated_successfully') }}');
@@ -810,6 +824,57 @@
         if (typeof api === 'undefined' || typeof api.getAllUsers !== 'function') {
             console.error('API client not loaded properly');
         }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const modal = document.getElementById('addSnagModal');
+            if (!modal) {
+                console.warn("addSnagModal not found.");
+                return;
+            }
+
+            modal.addEventListener('shown.bs.modal', async function() {
+                const select = document.getElementById('assignedTo');
+                if (!select) {
+                    console.warn("assignedTo select not found inside modal.");
+                    return;
+                }
+
+                // Prevent reloading if already populated
+                if (select.options.length > 1) return;
+
+                try {
+                    const response = await api.getAllUsers(); // 👈 aapka API function
+                    if (response.code === 200 && Array.isArray(response.data)) {
+                        select.innerHTML =
+                        '<option value="">{{ __('messages.select_user') }}</option>';
+
+                        response.data.forEach(user => {
+                            const opt = document.createElement("option");
+                            opt.value = user.id;
+                            opt.textContent = user.name;
+                            select.appendChild(opt);
+                        });
+
+                        // Initialize SearchableDropdown safely
+                        if (window.SearchableDropdown) {
+                            if (!select.searchableDropdown) {
+                                select.searchableDropdown = new SearchableDropdown(select);
+                            } else {
+                                select.searchableDropdown.updateOptions();
+                            }
+                        }
+
+                        // Smooth fade-in effect
+                        select.classList.add("initialized");
+                    } else {
+                        console.warn("User API returned invalid data", response);
+                    }
+                } catch (error) {
+                    console.error("Error loading users:", error);
+                }
+            });
+        });
     </script>
 
 @endsection

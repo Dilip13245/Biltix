@@ -55,7 +55,8 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="fw-semibold black_color mb-0">{{ __('messages.previous_inspections') }}</h5>
                             <div class="dropdown">
-                                <button class="btn filter-btn d-flex align-items-center px-3 py-2 bg4" type="button" data-bs-toggle="dropdown">
+                                <button class="btn filter-btn d-flex align-items-center px-3 py-2 bg4" type="button"
+                                    data-bs-toggle="dropdown">
                                     <svg width="17" height="14" viewBox="0 0 17 14" class="me-2" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path
@@ -65,7 +66,8 @@
                                     <span class="text-black">{{ __('messages.filter') }}</span>
                                 </button>
                                 <ul class="dropdown-menu" style="min-width: 200px; z-index: 1050;" id="categoryFilterMenu">
-                                    <li><a class="dropdown-item active" href="#" data-value="all">{{ __('messages.all_categories') }}</a></li>
+                                    <li><a class="dropdown-item active" href="#"
+                                            data-value="all">{{ __('messages.all_categories') }}</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -121,13 +123,17 @@
 
                     // Load phases
                     try {
-                        const response = await api.listPhases({ project_id: projectId });
+                        const response = await api.listPhases({
+                            project_id: projectId
+                        });
                         const phaseSelect = document.getElementById('phaseSelect');
-                        
+
                         if (response.code === 200 && phaseSelect) {
-                            phaseSelect.innerHTML = '<option value="">{{ __("messages.select_phase") }}</option>';
+                            phaseSelect.innerHTML =
+                                '<option value="">{{ __('messages.select_phase') }}</option>';
                             response.data.forEach(phase => {
-                                phaseSelect.innerHTML += `<option value="${phase.id}">${phase.title || phase.name}</option>`;
+                                phaseSelect.innerHTML +=
+                                    `<option value="${phase.id}">${phase.title || phase.name}</option>`;
                             });
                         }
                     } catch (error) {
@@ -239,16 +245,16 @@
         function setupCategoryFilterHandlers() {
             const menu = document.getElementById('categoryFilterMenu');
             if (!menu) return;
-            
+
             menu.addEventListener('click', function(e) {
                 if (e.target.classList.contains('dropdown-item')) {
                     e.preventDefault();
                     const value = e.target.getAttribute('data-value');
-                    
+
                     // Update active state
                     menu.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
                     e.target.classList.add('active');
-                    
+
                     filterInspections(value);
                 }
             });
@@ -264,7 +270,7 @@
                 <li><a class="dropdown-item active" href="#" data-value="all">{{ __('messages.all_categories') }}</a></li>
                 ${categories.map(cat => `<li><a class="dropdown-item" href="#" data-value="${cat}">${cat}</a></li>`).join('')}
             `;
-            
+
             setupCategoryFilterHandlers();
         }
 
@@ -307,7 +313,7 @@
             if (dataURL instanceof File) {
                 return dataURL;
             }
-            
+
             // Handle base64 strings
             if (typeof dataURL === 'string' && dataURL.includes(',')) {
                 const arr = dataURL.split(',');
@@ -318,9 +324,11 @@
                 while (n--) {
                     u8arr[n] = bstr.charCodeAt(n);
                 }
-                return new Blob([u8arr], { type: mime });
+                return new Blob([u8arr], {
+                    type: mime
+                });
             }
-            
+
             // Return as-is if not a recognized format
             return dataURL;
         }

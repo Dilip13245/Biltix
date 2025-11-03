@@ -66,7 +66,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
-        <button type="submit" form="uploadFileForm" class="btn orange_btn" id="uploadFileBtn">
+        <button type="submit" form="uploadFileForm" class="btn orange_btn" id="uploadFileSubmitBtn">
           {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
         </button>
       </div>
@@ -75,20 +75,37 @@
 </div>
 
 <script>
+// Reset modal when it's hidden
+document.getElementById('uploadFileModal')?.addEventListener('hidden.bs.modal', function() {
+    const form = document.getElementById('uploadFileForm');
+    const btn = document.getElementById('uploadFileSubmitBtn');
+    
+    if (form) form.reset();
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+    }
+});
+
+// Reset button text when modal is shown
+document.getElementById('uploadFileModal')?.addEventListener('show.bs.modal', function() {
+    const btn = document.getElementById('uploadFileSubmitBtn');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+    }
+});
+
 function protectUploadFileButton() {
-  var btn = document.getElementById('uploadFileBtn');
+  var btn = document.getElementById('uploadFileSubmitBtn');
   if (btn && !btn.disabled) {
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-    setTimeout(function() {
-      btn.disabled = false;
-      btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
-    }, 5000);
   }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  var btn = document.getElementById('uploadFileBtn');
+  var btn = document.getElementById('uploadFileSubmitBtn');
   if (btn) {
     btn.addEventListener('click', protectUploadFileButton);
   }
