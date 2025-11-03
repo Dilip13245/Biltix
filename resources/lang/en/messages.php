@@ -1127,6 +1127,13 @@ return [
     'no_notifications_desc' => 'You\'re all caught up! Check back later for new updates.',
     'file_too_large' => 'File is too large',
     'max_size_5mb' => 'Maximum file size is 5MB',
+    
+    // Transform tools
+    'transform' => 'Transform',
+    'rotate_left' => 'Rotate Left',
+    'rotate_right' => 'Rotate Right',
+    'flip_horizontal' => 'Flip Horizontal',
+    'flip_vertical' => 'Flip Vertical',
 ];
 
 

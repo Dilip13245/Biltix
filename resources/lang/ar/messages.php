@@ -1072,4 +1072,11 @@ return [
     'file_too_large' => 'الملف كبير جداً',
     'max_size_5mb' => 'الحد الأقصى لحجم الملف هو 5 ميجابايت',
     'loading_files' => 'جاري تحميل الملفات',
+    
+    // Transform tools
+    'transform' => 'تحويل',
+    'rotate_left' => 'تدوير لليسار',
+    'rotate_right' => 'تدوير لليمين',
+    'flip_horizontal' => 'قلب أفقي',
+    'flip_vertical' => 'قلب عمودي',
 ];

@@ -565,7 +565,6 @@ class AuthController extends Controller
                 'company_name' => 'nullable|string|max:255',
                 'designation' => 'nullable|string|max:255',
                 'password' => 'nullable|min:6',
-                'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
 
             if ($validator->fails()) {
@@ -586,7 +585,6 @@ class AuthController extends Controller
             if ($request->filled('designation')) $user->designation = $request->designation;
 
             if ($request->hasFile('profile_image')) {
-                // Delete old image if exists
                 if ($user->profile_image) {
                     FileHelper::deleteFile('profile/' . $user->profile_image);
                 }

@@ -308,12 +308,11 @@
     <div class="position-fixed top-0 {{ is_rtl() ? 'start-0' : 'end-0' }} p-3" style="z-index: 1050;">
         <div class="dropdown">
             <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <i class="fas fa-globe {{ margin_end(1) }}"></i>
                 <span>{{ is_rtl() ? 'العربية' : 'English' }}</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">🇺🇸 English</a></li>
-                <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">🇸🇦 العربية</a></li>
+                <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">English</a></li>
+                <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
             </ul>
         </div>
     </div>

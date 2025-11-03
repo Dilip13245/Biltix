@@ -101,6 +101,7 @@ return [
         'phase_not_found' => 'المرحلة غير موجودة',
         'timeline_retrieved' => 'تم استرداد الجدول الزمني بنجاح',
         'phase_progress_updated' => 'تم تحديث تقدم المرحلة بنجاح',
+        'only_creator_can_delete' => 'يمكن لمنشئ المشروع فقط حذف هذا المشروع',
     ],
     'inspections' => [
         'created_success' => 'تم إنشاء التفتيش بنجاح',

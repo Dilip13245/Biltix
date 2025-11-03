@@ -102,6 +102,7 @@ return [
         'phase_not_found' => 'Phase not found',
         'timeline_retrieved' => 'Timeline retrieved successfully',
         'phase_progress_updated' => 'Phase progress updated successfully',
+        'only_creator_can_delete' => 'Only project creator can delete this project',
     ],
     'inspections' => [
         'created_success' => 'Inspection created successfully',

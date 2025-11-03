@@ -394,6 +394,10 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            if ($project->created_by != $user_id) {
+                return $this->toJsonEnc([], trans('api.projects.only_creator_can_delete'), Config::get('constant.ERROR'));
+            }
+
             $project->is_deleted = true;
             $project->save();
 

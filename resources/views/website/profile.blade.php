@@ -46,13 +46,13 @@
                             <div class="dropdown">
                                 <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown">
-                                    <i class="fas fa-globe {{ margin_end(2) }}"></i>
+                                    {{-- <i class="fas fa-globe {{ margin_end(2) }}"></i> --}}
                                     <span>{{ is_rtl() ? 'العربية' : 'English' }}</span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">🇺🇸
+                                    <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">
                                             English</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">🇸🇦
+                                    <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">
                                             العربية</a></li>
                                 </ul>
                             </div>
