@@ -192,6 +192,13 @@
     font-size: 0.9rem;
   }
 
+  /* Match orange_btn responsive padding for clear/secondary buttons */
+  .btn-secondary[style*="padding: 0.7rem 1.5rem"],
+  .btn-secondary[style*='padding: 0.7rem 1.5rem'] {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem;
+  }
+
   .carD-details {
     padding: 1rem;
   }
@@ -276,6 +283,13 @@
     font-size: 0.8rem;
   }
 
+  /* Match orange_btn responsive padding for clear/secondary buttons */
+  .btn-secondary[style*="padding: 0.7rem 1.5rem"],
+  .btn-secondary[style*='padding: 0.7rem 1.5rem'] {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.8rem;
+  }
+
   .content-header p {
     font-size: 0.9rem;
   }
@@ -338,6 +352,13 @@
 
   .orange_btn {
     padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  /* Match orange_btn responsive padding for clear/secondary buttons */
+  .btn-secondary[style*="padding: 0.7rem 1.5rem"],
+  .btn-secondary[style*='padding: 0.7rem 1.5rem'] {
+    padding: 0.4rem 0.6rem !important;
     font-size: 0.75rem;
   }
 
