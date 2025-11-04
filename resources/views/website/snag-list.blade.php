@@ -561,7 +561,7 @@
                                     ${isApproved ? '<option value="approve">{{ __('messages.approve') }}</option>' : ''}
                                 </select>
                                 ${isCompleted && isAssignedUser && !isApproved ? `
-                                        <button class="btn btn-success" onclick="resolveSnag(${snag.id})">
+                                        <button class="btn btn-success api-action-btn" onclick="resolveSnag(${snag.id})">
                                             <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
                                         </button>
                                     ` : ''}
@@ -634,7 +634,7 @@
                                 <div class="mt-4 pt-3 border-top" id="commentSection">
                                     <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
                                     <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
-                                    <button class="btn orange_btn" onclick="addComment(${snag.id})">
+                                    <button class="btn orange_btn api-action-btn" onclick="addComment(${snag.id})">
                                         <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
                                     </button>
                                 </div>

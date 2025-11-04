@@ -46,6 +46,7 @@ return [
     'project_progress' => 'تقدم المشروع',
     'project_files' => 'ملفات المشروع',
     'project_gallery' => 'معرض المشروع',
+    'gallery' => 'المعرض',
     'team_members' => 'أعضاء الفريق',
     'team' => 'الفريق',
     'safety_checklist' => 'قائمة السلامة',

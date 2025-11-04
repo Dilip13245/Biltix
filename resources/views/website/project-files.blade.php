@@ -245,7 +245,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-                            <button type="button" class="btn orange_btn" onclick="proceedWithUpload()">{{ __('messages.upload') }}</button>
+                            <button type="button" class="btn orange_btn api-action-btn" onclick="proceedWithUpload()">{{ __('messages.upload') }}</button>
                         </div>
                     </div>
                 </div>
@@ -904,7 +904,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-                            <button type="button" class="btn orange_btn" onclick="createFolder()">{{ __('messages.create') }}</button>
+                            <button type="button" class="btn orange_btn api-action-btn" onclick="createFolder()">{{ __('messages.create') }}</button>
                         </div>
                     </div>
                 </div>
@@ -1115,7 +1115,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" onclick="clearFilters()">{{ __('messages.clear') }}</button>
-                                <button type="button" class="btn orange_btn" onclick="applyFilters()">{{ __('messages.apply') }}</button>
+                                <button type="button" class="btn orange_btn api-action-btn" onclick="applyFilters()">{{ __('messages.apply') }}</button>
                             </div>
                         </div>
                     </div>
@@ -1152,27 +1152,27 @@
                             ` + headerHTML + `
                             <div class="modal-body p-0">
                                 <div class="list-group list-group-flush">
-                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4" onclick="applySorting('name', 'asc')">
+                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4 api-action-btn" onclick="applySorting('name', 'asc')">
                                         <i class="fas fa-sort-alpha-down ` + (isRtl ? 'ms-2' : 'me-2') + ` text-primary"></i>
                                         <span>{{ __('messages.name_a_z') }}</span>
                                     </button>
-                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4" onclick="applySorting('name', 'desc')">
+                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4 api-action-btn" onclick="applySorting('name', 'desc')">
                                         <i class="fas fa-sort-alpha-up ` + (isRtl ? 'ms-2' : 'me-2') + ` text-primary"></i>
                                         <span>{{ __('messages.name_z_a') }}</span>
                                     </button>
-                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4" onclick="applySorting('created_at', 'desc')">
+                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4 api-action-btn" onclick="applySorting('created_at', 'desc')">
                                         <i class="fas fa-calendar-alt ` + (isRtl ? 'ms-2' : 'me-2') + ` text-success"></i>
                                         <span>{{ __('messages.newest_first') }}</span>
                                     </button>
-                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4" onclick="applySorting('created_at', 'asc')">
+                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4 api-action-btn" onclick="applySorting('created_at', 'asc')">
                                         <i class="fas fa-calendar-alt ` + (isRtl ? 'ms-2' : 'me-2') + ` text-muted"></i>
                                         <span>{{ __('messages.oldest_first') }}</span>
                                     </button>
-                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4" onclick="applySorting('file_size', 'desc')">
+                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4 api-action-btn" onclick="applySorting('file_size', 'desc')">
                                         <i class="fas fa-weight-hanging ` + (isRtl ? 'ms-2' : 'me-2') + ` text-warning"></i>
                                         <span>{{ __('messages.largest_first') }}</span>
                                     </button>
-                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4" onclick="applySorting('file_size', 'asc')">
+                                    <button class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4 api-action-btn" onclick="applySorting('file_size', 'asc')">
                                         <i class="fas fa-feather-alt ` + (isRtl ? 'ms-2' : 'me-2') + ` text-info"></i>
                                         <span>{{ __('messages.smallest_first') }}</span>
                                     </button>

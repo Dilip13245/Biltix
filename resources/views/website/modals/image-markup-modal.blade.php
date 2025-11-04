@@ -70,7 +70,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">Cancel</button>
-        <button type="button" class="btn orange_btn" onclick="saveMarkup()">
+        <button type="button" class="btn orange_btn api-action-btn" onclick="saveMarkup()">
           Save & Continue
         </button>
       </div>

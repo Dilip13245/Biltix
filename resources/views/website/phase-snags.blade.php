@@ -383,15 +383,7 @@
 
                         // Protect button
                         const submitBtn = document.getElementById('createSnagBtn');
-                        if (submitBtn && !submitBtn.disabled) {
-                            submitBtn.disabled = true;
-                            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-                            setTimeout(function() {
-                                submitBtn.disabled = false;
-                                submitBtn.innerHTML =
-                                    '<i class="fas fa-save me-2"></i>{{ __('messages.create_snag') }}';
-                            }, 5000);
-                        } else {
+                        if (submitBtn && submitBtn.disabled) {
                             return;
                         }
 
@@ -425,6 +417,25 @@
                             saveSnagWithoutMarkup();
                         }
                     });
+                }
+            }
+
+            // Reset form submission function
+            function resetFormSubmission(formId) {
+                const form = document.getElementById(formId);
+                if (form) {
+                    // Find the submit button
+                    const submitBtn = form.querySelector('button[type="submit"]') || document.getElementById('createSnagBtn');
+                    if (submitBtn) {
+                        // Use the global releaseButton function if available
+                        if (typeof window.releaseButton === 'function') {
+                            window.releaseButton(submitBtn);
+                        } else {
+                            // Fallback: manually reset button
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '{{ __('messages.create_snag') }}';
+                        }
+                    }
                 }
             }
 
@@ -473,23 +484,26 @@
                         document.getElementById('addSnagForm').reset();
                         loadSnags();
                     } else {
-                        resetFormSubmission('addSnagForm');
+                        // Use the global releaseButton function if available
+                        const createBtn = document.getElementById('createSnagBtn');
+                        if (createBtn && typeof window.releaseButton === 'function') {
+                            window.releaseButton(createBtn);
+                        }
                         toastr.error('Failed to create snag: ' + response.message);
                     }
                 } catch (error) {
                     console.error('Error creating snag:', error);
-                    resetFormSubmission('addSnagForm');
+                    // Use the global releaseButton function if available
+                    const createBtn = document.getElementById('createSnagBtn');
+                    if (createBtn && typeof window.releaseButton === 'function') {
+                        window.releaseButton(createBtn);
+                    }
                     toastr.error('Failed to create snag');
                 }
             }
 
             async function saveSnagWithoutMarkup() {
                 try {
-                    const createBtn = document.getElementById('createSnagBtn');
-                    const originalText = createBtn.innerHTML;
-                    createBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
-                    createBtn.disabled = true;
-
                     const formData = new FormData();
 
                     formData.append('user_id', {{ auth()->id() ?? 1 }});
@@ -513,18 +527,28 @@
                         toastr.success('Snag created successfully!');
                         document.getElementById('addSnagForm').reset();
                         loadSnags();
+                        
+                        // Use the global releaseButton function if available
+                        const createBtn = document.getElementById('createSnagBtn');
+                        if (createBtn && typeof window.releaseButton === 'function') {
+                            window.releaseButton(createBtn);
+                        }
                     } else {
-                        resetFormSubmission('addSnagForm');
+                        // Use the global releaseButton function if available
+                        const createBtn = document.getElementById('createSnagBtn');
+                        if (createBtn && typeof window.releaseButton === 'function') {
+                            window.releaseButton(createBtn);
+                        }
                         toastr.error('Failed to create snag: ' + response.message);
                     }
                 } catch (error) {
                     console.error('Error creating snag:', error);
-                    resetFormSubmission('addSnagForm');
-                    toastr.error('Failed to create snag');
-                } finally {
+                    // Use the global releaseButton function if available
                     const createBtn = document.getElementById('createSnagBtn');
-                    createBtn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __('messages.create_snag') }}';
-                    createBtn.disabled = false;
+                    if (createBtn && typeof window.releaseButton === 'function') {
+                        window.releaseButton(createBtn);
+                    }
+                    toastr.error('Failed to create snag');
                 }
             }
 
@@ -639,7 +663,7 @@
                                     ${isApproved ? '<option value="approve">{{ __('messages.approve') }}</option>' : ''}
                                 </select>
                                 ${isCompleted && isAssignedUser && !isApproved ? `
-                                                    <button class="btn btn-success" onclick="resolveSnag(${snag.id})">
+                                                    <button class="btn btn-success api-action-btn" onclick="resolveSnag(${snag.id})">
                                                         <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
                                                     </button>
                                                 ` : ''}
@@ -712,7 +736,7 @@
                                             <div class="mt-4 pt-3 border-top" id="commentSection">
                                                 <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
                                                 <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
-                                                <button class="btn orange_btn" onclick="addComment(${snag.id})">
+                                                <button class="btn orange_btn api-action-btn" onclick="addComment(${snag.id})">
                                                     <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
                                                 </button>
                                             </div>

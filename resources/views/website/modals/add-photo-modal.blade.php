@@ -71,7 +71,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="addPhotoForm" class="btn orange_btn" id="addPhotoBtn">
+        <button type="submit" form="addPhotoForm" class="btn orange_btn api-action-btn" id="addPhotoBtn">
           {{ __("messages.upload_photo") }}s
         </button>
       </div>

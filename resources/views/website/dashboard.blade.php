@@ -558,8 +558,10 @@
                                     <span id="currentLang">{{ is_rtl() ? 'العربية' : 'English' }}</span>
                                 </button>
                                 <ul class="custom-header-dropdown-menu" id="langDropdownMenu">
-                                    <li><a class="custom-header-dropdown-item" href="{{ route('lang.switch', 'en') }}">English</a></li>
-                                    <li><a class="custom-header-dropdown-item" href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
+                                    <li><a class="custom-header-dropdown-item"
+                                            href="{{ route('lang.switch', 'en') }}">English</a></li>
+                                    <li><a class="custom-header-dropdown-item"
+                                            href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
                                 </ul>
                             </div>
 
@@ -581,7 +583,8 @@
                                 <div class="notification-dropdown" id="notificationDropdown" style="display: none;">
                                     <div class="notification-header">
                                         <span class="fw-bold">{{ __('messages.notifications') }}</span>
-                                        <button class="btn btn-sm btn-danger" onclick="deleteAllNotifications()"
+                                        <button class="btn btn-sm btn-danger api-action-btn"
+                                            onclick="deleteAllNotifications()"
                                             style="font-size: 11px; padding: 4px 8px;">{{ __('messages.delete_all') }}</button>
                                     </div>
                                     <div class="notification-body" id="notificationList">
@@ -707,22 +710,25 @@
                         @endcan
                         <!-- Status Filter Dropdown - Standalone Implementation -->
                         <div class="status-filter-dropdown" id="statusFilterDropdown">
-                            <button class="btn btn-outline-secondary d-flex align-items-center gap-2 status-filter-btn" 
+                            <button class="btn btn-outline-secondary d-flex align-items-center gap-2 status-filter-btn"
                                 type="button" id="statusFilterBtn">
                                 <i class="fas fa-filter"></i>
                                 <span id="statusFilterText">{{ __('messages.all_status') }}</span>
                                 <i class="fas fa-chevron-down status-filter-arrow"></i>
                             </button>
                             <div class="status-filter-menu" id="statusFilterMenu">
-                                <div class="status-filter-option" data-value="all" data-text="{{ __('messages.all_status') }}">
+                                <div class="status-filter-option" data-value="all"
+                                    data-text="{{ __('messages.all_status') }}">
                                     <i class="fas fa-list text-secondary"></i>
                                     <span>{{ __('messages.all_status') }}</span>
                                 </div>
-                                <div class="status-filter-option" data-value="active" data-text="{{ __('messages.active') }}">
+                                <div class="status-filter-option" data-value="active"
+                                    data-text="{{ __('messages.active') }}">
                                     <i class="fas fa-play-circle text-success"></i>
                                     <span>{{ __('messages.active') }}</span>
                                 </div>
-                                <div class="status-filter-option" data-value="completed" data-text="{{ __('messages.completed') }}">
+                                <div class="status-filter-option" data-value="completed"
+                                    data-text="{{ __('messages.completed') }}">
                                     <i class="fas fa-check-circle text-primary"></i>
                                     <span>{{ __('messages.completed') }}</span>
                                 </div>
@@ -840,10 +846,14 @@
                                                     name="type" placeholder="{{ __('messages.select_type') }}"
                                                     required autocomplete="off" maxlength="50">
                                                 <i class="fas fa-chevron-down dropdown-arrow"></i>
-                                                @if(!is_rtl())
-                                                    <i class="fas fa-times clear-selection d-none" id="clearTypeSelection" style="position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;" onclick="clearTypeSelection()"></i>
+                                                @if (!is_rtl())
+                                                    <i class="fas fa-times clear-selection d-none" id="clearTypeSelection"
+                                                        style="position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;"
+                                                        onclick="clearTypeSelection()"></i>
                                                 @else
-                                                    <i class="fas fa-times clear-selection d-none" id="clearTypeSelection" style="position: absolute; left: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;" onclick="clearTypeSelection()"></i>
+                                                    <i class="fas fa-times clear-selection d-none" id="clearTypeSelection"
+                                                        style="position: absolute; left: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;"
+                                                        onclick="clearTypeSelection()"></i>
                                                 @endif
                                                 <div class="dropdown-options" id="typeDropdown">
                                                     <div class="dropdown-option" data-value="{{ __('messages.villa') }}">
@@ -989,7 +999,8 @@
                         <button type="button" class="btn orange_btn" id="nextBtn" onclick="changeStep(1)">
                             {{ __('messages.next') }}
                         </button>
-                        <button type="submit" form="createProjectForm" class="btn orange_btn d-none" id="submitBtn">
+                        <button type="submit" form="createProjectForm" class="btn orange_btn api-action-btn d-none"
+                            id="submitBtn">
                             <i class="fas fa-plus me-2"></i>{{ __('messages.create') }}
                         </button>
                     </div>
@@ -1271,7 +1282,7 @@
                                 <div class="dropdown" style="flex-shrink: 0;">
                                     <i class="fas fa-ellipsis-v" style="color: #4A90E2; cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); deleteProjectFromDashboard(${project.id});"><i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}</a></li>
+                                        <li><a class="dropdown-item text-danger api-action-btn" href="#" onclick="event.preventDefault(); deleteProjectFromDashboard(${project.id});"><i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -1383,22 +1394,22 @@
                     langBtn.addEventListener('click', function(e) {
                         e.stopPropagation();
                         e.preventDefault();
-                        
+
                         const isActive = langWrapper.classList.contains('active');
-                        
+
                         // Close status filter dropdown if open
                         const statusFilter = document.getElementById('statusFilterDropdown');
                         if (statusFilter) {
                             statusFilter.classList.remove('active');
                         }
-                        
+
                         // Close all other language dropdowns (if any)
                         document.querySelectorAll('.custom-header-dropdown.active').forEach(d => {
                             if (d !== langWrapper) {
                                 d.classList.remove('active');
                             }
                         });
-                        
+
                         // Toggle current dropdown
                         if (isActive) {
                             langWrapper.classList.remove('active');
@@ -1414,13 +1425,13 @@
                     if (langWrapper && langWrapper.contains(e.target)) {
                         return;
                     }
-                    
+
                     // If clicking on notification wrapper or status filter dropdown, don't interfere
-                    if (e.target.closest('.notification-wrapper') || 
+                    if (e.target.closest('.notification-wrapper') ||
                         e.target.closest('.status-filter-dropdown')) {
                         return;
                     }
-                    
+
                     // Close language dropdown if clicking outside
                     if (langWrapper) {
                         langWrapper.classList.remove('active');
@@ -1442,22 +1453,22 @@
                 filterBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     e.preventDefault();
-                    
+
                     const isActive = filterDropdown.classList.contains('active');
-                    
+
                     // Close language dropdown if open
                     const langWrapper = document.getElementById('langDropdownWrapper');
                     if (langWrapper) {
                         langWrapper.classList.remove('active');
                     }
-                    
+
                     // Close all other status filter dropdowns (if any)
                     document.querySelectorAll('.status-filter-dropdown.active').forEach(d => {
                         if (d !== filterDropdown) {
                             d.classList.remove('active');
                         }
                     });
-                    
+
                     // Toggle filter dropdown
                     if (isActive) {
                         filterDropdown.classList.remove('active');
@@ -1472,13 +1483,13 @@
                         e.stopPropagation();
                         const value = this.getAttribute('data-value');
                         const text = this.getAttribute('data-text');
-                        
+
                         // Update button text
                         document.getElementById('statusFilterText').textContent = text;
-                        
+
                         // Close dropdown immediately
                         filterDropdown.classList.remove('active');
-                        
+
                         // Call filter function
                         if (typeof window.setStatusFilter === 'function') {
                             window.setStatusFilter(value, text);
@@ -1492,13 +1503,13 @@
                     if (filterDropdown.contains(e.target)) {
                         return;
                     }
-                    
+
                     // If clicking on notification wrapper or language dropdown, don't interfere
-                    if (e.target.closest('.notification-wrapper') || 
+                    if (e.target.closest('.notification-wrapper') ||
                         e.target.closest('.custom-header-dropdown')) {
                         return;
                     }
-                    
+
                     // Close the status filter dropdown
                     filterDropdown.classList.remove('active');
                 }, true); // Capture phase - runs before bubbling phase
@@ -1589,7 +1600,7 @@
                     if (this.readOnly) {
                         return;
                     }
-                    
+
                     // If input becomes empty, remove readonly state
                     if (!this.value.trim()) {
                         this.readOnly = false;
@@ -1599,7 +1610,7 @@
                             clearTypeBtn.classList.add('d-none');
                         }
                     }
-                    
+
                     // Filter options
                     const filter = this.value.toLowerCase();
                     const options = typeDropdown.querySelectorAll('.dropdown-option');
@@ -1648,7 +1659,8 @@
 
                 // Close dropdown when clicking outside
                 document.addEventListener('click', function(e) {
-                    if (!typeInput.contains(e.target) && !typeDropdown.contains(e.target) && !clearTypeBtn?.contains(e.target)) {
+                    if (!typeInput.contains(e.target) && !typeDropdown.contains(e.target) && !clearTypeBtn
+                        ?.contains(e.target)) {
                         typeDropdown.classList.remove('show');
                     }
                 });
@@ -1909,7 +1921,7 @@
 
                 // Reset form
                 document.getElementById('createProjectForm').reset();
-                
+
                 // Reset type input readonly state
                 const typeInput = document.getElementById('type');
                 if (typeInput) {
@@ -2089,21 +2101,21 @@
                                 ${Array.from(input.files).map((file, index) => {
                                     const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                     return `
-                                                                <div class="col-12">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
-                                                                            onchange="toggleFileDescription('${containerId}', ${index})">
-                                                                        <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
-                                                                            <i class="${fileIcon} me-2"></i>
-                                                                            <span class="text-truncate">${file.name}</span>
-                                                                        </label>
+                                                                    <div class="col-12">
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
+                                                                                onchange="toggleFileDescription('${containerId}', ${index})">
+                                                                            <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
+                                                                                <i class="${fileIcon} me-2"></i>
+                                                                                <span class="text-truncate">${file.name}</span>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
+                                                                            <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
+                                                                                placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
-                                                                        <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
-                                                                            placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                            `;
+                                                                `;
                                 }).join('')}
                             </div>
                         `;
@@ -2333,7 +2345,7 @@
 
                         showToast(apiResponse.message || @json(__('messages.project_created_with_markup')), 'success');
                         document.getElementById('createProjectForm').reset();
-                        
+
                         // Reset type input readonly state
                         const typeInputReset = document.getElementById('type');
                         if (typeInputReset) {
@@ -2392,7 +2404,7 @@
 
                         showToast(response.message || 'Project created successfully!', 'success');
                         document.getElementById('createProjectForm').reset();
-                        
+
                         // Reset type input readonly state
                         const typeInputReset = document.getElementById('type');
                         if (typeInputReset) {
@@ -2483,8 +2495,7 @@
     <script src="{{ asset('website/js/toastr-config.js') }}"></script>
 
     <!-- SIMPLE DRAWING LIBRARY -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.7/signature_pad.umd.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
     <script src="{{ asset('website/js/custom.js') }}"></script>
     <script src="{{ asset('website/js/button-protection.js') }}"></script>
     <script src="{{ asset('website/js/api-config.js') }}"></script>

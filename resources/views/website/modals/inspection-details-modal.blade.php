@@ -85,10 +85,10 @@
                         <div class="card mb-3" id="inspection-images-card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h6 class="mb-0">{{ __('messages.images') }}</h6>
-                                <button type="button" class="btn btn-sm btn-primary" id="upload-image-btn"
-                                    onclick="openDrawingModalForImages()">
-                                    {{ __('messages.upload_photo') }}
-                                </button>
+                                    <button type="button" class="btn btn-sm btn-primary api-action-btn" id="upload-image-btn"
+                                        onclick="openDrawingModalForImages()">
+                                        {{ __('messages.upload_photo') }}
+                                    </button>
                             </div>
                             <div class="card-body">
                                 <input type="file" id="image-upload-input" accept="image/*" multiple
@@ -123,7 +123,7 @@
                                     <div class="mb-3">
                                         <textarea class="form-control" id="inspection-comment" rows="4" placeholder="{{ __('messages.add_comment') }}"></textarea>
                                     </div>
-                                    <button type="button" class="btn btn-primary btn-sm w-100" id="comment-btn"
+                                    <button type="button" class="btn btn-primary btn-sm w-100 api-action-btn" id="comment-btn"
                                         onclick="updateInspectionComment()">
                                         {{ __('messages.add_comment') }}
                                     </button>
@@ -138,7 +138,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-grid gap-2">
-                                    <button type="button" class="btn btn-success" id="mark-complete-btn"
+                                    <button type="button" class="btn btn-success api-action-btn" id="mark-complete-btn"
                                         onclick="markInspectionComplete()">
                                         {{ __('messages.mark_as_completed') }}
                                     </button>

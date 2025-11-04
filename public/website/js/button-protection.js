@@ -1,4 +1,4 @@
-// Simple Global Button Protection - Allow first click, block duplicates
+// Simple Global Button Protection - Only protect buttons with api-action-btn class
 (function() {
     'use strict';
     
@@ -11,6 +11,26 @@
         const icons = clone.querySelectorAll('i, svg, img');
         icons.forEach(icon => icon.remove());
         return clone.textContent.trim() || 'Loading...';
+    }
+    
+    // Check if button should be protected
+    function shouldProtectButton(btn) {
+        // Only protect buttons with api-action-btn class
+        if (!btn.classList.contains('api-action-btn')) {
+            return false;
+        }
+        
+        // Exclude buttons with data-no-protect attribute
+        if (btn.hasAttribute('data-no-protect')) {
+            return false;
+        }
+        
+        // Exclude buttons that open modals
+        if (btn.hasAttribute('data-bs-toggle') && btn.getAttribute('data-bs-toggle') === 'modal') {
+            return false;
+        }
+        
+        return true;
     }
     
     // Protect any button manually
@@ -46,10 +66,15 @@
         }
     };
     
-    // Auto-protect on click - allow first, block rest
+    // Auto-protect on click - only for api-action-btn buttons
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('button');
         if (!btn) return;
+        
+        // Only protect buttons with api-action-btn class
+        if (!shouldProtectButton(btn)) {
+            return;
+        }
         
         // Get click count
         const count = clickCounts.get(btn) || 0;

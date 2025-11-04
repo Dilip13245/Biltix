@@ -52,11 +52,11 @@
       <div class="modal-footer" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
         @if(app()->getLocale() == 'ar')
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-          <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanSubmitBtn">
+          <button type="submit" form="uploadPlanForm" class="btn orange_btn api-action-btn" id="uploadPlanSubmitBtn">
             {{ __('messages.next') }}
           </button>
         @else
-          <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanSubmitBtn">
+          <button type="submit" form="uploadPlanForm" class="btn orange_btn api-action-btn" id="uploadPlanSubmitBtn">
             {{ __('messages.next') }}
           </button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>

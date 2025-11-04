@@ -255,7 +255,7 @@
                                     </div>
                                     @can('projects', 'delete')
                                         <div class="ms-auto mt-3 mt-md-0">
-                                            <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2"
+                                            <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2 api-action-btn"
                                                 onclick="deleteProject()">
                                                 <i class="fas fa-trash"></i> {{ __('messages.delete_project') }}
                                             </button>
@@ -576,7 +576,7 @@
 
                 // Create save button
                 const saveBtn = document.createElement('button');
-                saveBtn.className = 'btn btn-sm btn-success';
+                saveBtn.className = 'btn btn-sm btn-success api-action-btn';
                 saveBtn.id = 'saveProjectBtn';
                 saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
                 saveBtn.onclick = saveProjectChanges;
@@ -1039,7 +1039,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">Cancel</button>
-                        <button type="submit" form="createPhaseForm" class="btn orange_btn">
+                        <button type="submit" form="createPhaseForm" class="btn orange_btn api-action-btn">
                             <i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}
                         </button>
                     </div>
@@ -1668,7 +1668,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-                        <button type="button" class="btn orange_btn" onclick="saveMilestone()">
+                        <button type="button" class="btn orange_btn api-action-btn" onclick="saveMilestone()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.save') }}
                         </button>
                     </div>
@@ -1697,7 +1697,7 @@
                             <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
                                 <i class="fas fa-times me-2"></i>{{ __('messages.cancel') }}
                             </button>
-                            <button type="button" class="btn btn-danger px-4" id="confirmDeleteBtn"
+                            <button type="button" class="btn btn-danger px-4 api-action-btn" id="confirmDeleteBtn"
                                 onclick="confirmDeleteProject()">
                                 <i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}
                             </button>
@@ -1722,7 +1722,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">Cancel</button>
-                        <button type="button" class="btn orange_btn" onclick="saveActivitiesUpdate()">
+                        <button type="button" class="btn orange_btn api-action-btn" onclick="saveActivitiesUpdate()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
                         </button>
                     </div>
@@ -1745,7 +1745,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">Cancel</button>
-                        <button type="button" class="btn orange_btn" onclick="saveManpowerUpdate()">
+                        <button type="button" class="btn orange_btn api-action-btn" onclick="saveManpowerUpdate()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
                         </button>
                     </div>
@@ -1768,7 +1768,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">Cancel</button>
-                        <button type="button" class="btn orange_btn" onclick="saveSafetyUpdate()">
+                        <button type="button" class="btn orange_btn api-action-btn" onclick="saveSafetyUpdate()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
                         </button>
                     </div>

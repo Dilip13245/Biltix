@@ -43,7 +43,7 @@
             </div>
             
             <!-- Download Button -->
-            <button class="btn btn-sm orange_btn me-4" onclick="downloadPlan()">
+            <button class="btn btn-sm orange_btn me-4 api-action-btn" onclick="downloadPlan()">
               <span class="d-none d-sm-inline">{{ __('messages.download') }}</span>
             </button>
             
@@ -117,7 +117,7 @@
               
               <div class="mt-3">
                 <textarea class="form-control form-control-sm" rows="2" placeholder="{{ __('messages.add_comment_placeholder') }}" id="planComment"></textarea>
-                <button class="btn btn-sm orange_btn mt-2 w-100" onclick="addPlanComment()">
+                <button class="btn btn-sm orange_btn mt-2 w-100 api-action-btn" onclick="addPlanComment()">
                   <i class="fas fa-comment me-1"></i>{{ __('messages.add_comment') }}
                 </button>
               </div>

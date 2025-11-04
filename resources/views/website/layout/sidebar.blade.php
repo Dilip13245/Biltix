@@ -75,7 +75,7 @@
       <li class="nav-item">
         <a href="{{ route('website.project.gallery', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.gallery') ? 'active' : '' }}">
           <i class="fas fa-camera"></i>
-          <span>{{ __('messages.project_gallery') }}</span>
+          <span>{{ __('messages.gallery') }}</span>
         </a>
       </li>
       @endcan

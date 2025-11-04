@@ -1,6 +1,6 @@
 @extends('website.layout.app')
 
-@section('title', 'Project Gallery')
+@section('title', 'Gallery')
 
 @section('content')
     <div class="content-header border-0 shadow-none mb-4">

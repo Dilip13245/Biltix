@@ -91,7 +91,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-semibold black_color mb-0"><i class="fas fa-images orange_color me-2"></i>{{ __('messages.images') }}</h6>
-                                    <button type="button" class="btn btn-sm orange_btn" id="addImagesBtn" onclick="addNewImages()" title="Add new images">
+                                    <button type="button" class="btn btn-sm orange_btn api-action-btn" id="addImagesBtn" onclick="addNewImages()" title="Add new images">
                                         {{ __('messages.add') }}
                                     </button>
                                 </div>
@@ -106,7 +106,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
-                <button class="btn btn-success" onclick="markAsResolved()" id="resolveBtn">
+                <button class="btn btn-success api-action-btn" onclick="markAsResolved()" id="resolveBtn">
                     {{ __('messages.mark_resolved') }}
                 </button>
             </div>

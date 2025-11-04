@@ -179,7 +179,7 @@
                                 </div>
                                 @can('projects', 'delete')
                                     <div class="ms-auto mt-3 mt-md-0">
-                                        <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2"
+                                        <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2 api-action-btn"
                                             onclick="deleteProject()">
                                             <i class="fas fa-trash"></i> {{ __('messages.delete_project') }}
                                         </button>
@@ -239,7 +239,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-3 d-flex gap-2">
-                                    <button class="btn btn-success" onclick="saveLocationEdit()">
+                                    <button class="btn btn-success api-action-btn" onclick="saveLocationEdit()">
                                         <i class="fas fa-save {{ margin_end(1) }}"></i>{{ __('messages.save') }}
                                     </button>
                                     <button class="btn btn-secondary" onclick="cancelLocationEdit()">
@@ -932,7 +932,7 @@
 
             // Create save button
             const saveBtn = document.createElement('button');
-            saveBtn.className = 'btn btn-sm btn-success';
+            saveBtn.className = 'btn btn-sm btn-success api-action-btn';
             saveBtn.id = 'saveProjectBtn';
             saveBtn.innerHTML = '<i class="fas fa-save me-1"></i>{{ __('messages.save') }}';
             saveBtn.onclick = saveProjectChanges;
@@ -1332,7 +1332,7 @@
             // Create save and cancel buttons
             const saveBtn = document.createElement('button');
             saveBtn.innerHTML = '<i class="fas fa-check"></i>';
-            saveBtn.className = 'btn btn-success btn-sm ms-2';
+            saveBtn.className = 'btn btn-success btn-sm ms-2 api-action-btn';
 
             const cancelBtn = document.createElement('button');
             cancelBtn.innerHTML = '<i class="fas fa-times"></i>';
@@ -1573,7 +1573,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         style="padding: 0.7rem 1.5rem;">Cancel</button>
-                    <button type="submit" form="createPhaseForm" class="btn orange_btn">
+                    <button type="submit" form="createPhaseForm" class="btn orange_btn api-action-btn">
                         <i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}
                     </button>
                 </div>

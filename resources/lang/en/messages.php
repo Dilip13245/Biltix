@@ -36,6 +36,7 @@ return [
     'project_dashboard' => 'Project Dashboard',
     'project_files' => 'Project Files',
     'project_gallery' => 'Project Gallery',
+    'gallery' => 'Gallery',
     'project_progress' => 'Project Progress',
     'safety_checklist' => 'Safety Checklist',
     'snag_list' => 'Snag List',

@@ -13,7 +13,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control form-control-lg" id="searchInput"
                             placeholder="{{ __('messages.search_by_project') }}" autofocus maxlength="100">
-                        <button class="btn orange_btn" type="button" onclick="performSearch()">
+                        <button class="btn orange_btn api-action-btn" type="button" onclick="performSearch()">
                             {{ __('messages.search') }}
                         </button>
                     </div>
@@ -207,7 +207,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" style="background-color: gray; border-color: gray; padding: 0.7rem 1.5rem;"
                     data-bs-dismiss="modal">{{ __('messages.close') }}</button>
-                <button type="button" class="btn orange_btn" onclick="clearSearch()">
+                <button type="button" class="btn orange_btn api-action-btn" onclick="clearSearch()">
                     {{ __('messages.clear_filters') }}
                 </button>
             </div>
