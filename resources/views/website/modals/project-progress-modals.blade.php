@@ -51,7 +51,7 @@
             <div class="modal-footer p-2">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                 <button type="button" class="btn btn-sm orange_btn" onclick="saveActivity()">
-                    <i class="fas fa-save {{ margin_end(1) }}"></i><span id="activitiesSaveBtn">{{ __('messages.save') }}</span>
+                    <span id="activitiesSaveBtn">{{ __('messages.save') }}</span>
                 </button>
             </div>
         </div>
@@ -120,7 +120,7 @@
             <div class="modal-footer p-2">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                 <button type="button" class="btn btn-sm orange_btn" onclick="saveManpower()">
-                    <i class="fas fa-save {{ margin_end(1) }}"></i><span id="manpowerSaveBtn">{{ __('messages.save') }}</span>
+                    <span id="manpowerSaveBtn">{{ __('messages.save') }}</span>
                 </button>
             </div>
         </div>
@@ -180,7 +180,7 @@
             <div class="modal-footer p-2">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                 <button type="button" class="btn btn-sm orange_btn" onclick="saveSafetyItem()">
-                    <i class="fas fa-save {{ margin_end(1) }}"></i><span id="safetySaveBtn">{{ __('messages.save') }}</span>
+                    <span id="safetySaveBtn">{{ __('messages.save') }}</span>
                 </button>
             </div>
         </div>

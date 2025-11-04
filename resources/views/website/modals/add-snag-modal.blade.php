@@ -85,7 +85,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
         <button type="submit" form="addSnagForm" class="btn orange_btn" id="createSnagBtn">
-          <i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}
+          {{ __("messages.create_snag") }}
         </button>
       </div>
     </div>
@@ -101,7 +101,7 @@ document.getElementById('addSnagModal')?.addEventListener('hidden.bs.modal', fun
     if (form) form.reset();
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}';
+        btn.innerHTML = '{{ __("messages.create_snag") }}';
     }
 });
 
@@ -110,7 +110,7 @@ document.getElementById('addSnagModal')?.addEventListener('show.bs.modal', funct
     const btn = document.getElementById('createSnagBtn');
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-save me-2"></i>{{ __("messages.create_snag") }}';
+        btn.innerHTML = '{{ __("messages.create_snag") }}';
     }
 });
 </script>

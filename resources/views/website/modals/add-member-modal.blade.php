@@ -50,7 +50,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
         <button type="submit" form="addMemberForm" class="btn orange_btn" id="memberSubmitBtn">
-          <i class="fas fa-user-plus me-2"></i>{{ __("messages.add_member") }}
+          {{ __("messages.add_member") }}
         </button>
       </div>
     </div>
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (form) form.reset();
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-user-plus me-2"></i>{{ __("messages.add_member") }}';
+            btn.innerHTML = '{{ __("messages.add_member") }}';
         }
     });
   }

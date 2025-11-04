@@ -14,7 +14,7 @@
                         <input type="text" class="form-control form-control-lg" id="searchInput"
                             placeholder="{{ __('messages.search_by_project') }}" autofocus maxlength="100">
                         <button class="btn orange_btn" type="button" onclick="performSearch()">
-                            <i class="fas fa-search"></i>
+                            {{ __('messages.search') }}
                         </button>
                     </div>
                 </div>
@@ -205,10 +205,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn orange_btn" style="background-color: gray"
+                <button type="button" class="btn btn-secondary" style="background-color: gray; border-color: gray; padding: 0.7rem 1.5rem;"
                     data-bs-dismiss="modal">{{ __('messages.close') }}</button>
                 <button type="button" class="btn orange_btn" onclick="clearSearch()">
-                    <i class="fas fa-times {{ margin_end(2) }}"></i>{{ __('messages.clear_filters') }}
+                    {{ __('messages.clear_filters') }}
                 </button>
             </div>
         </div>

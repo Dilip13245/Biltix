@@ -44,8 +44,7 @@
             
             <!-- Download Button -->
             <button class="btn btn-sm orange_btn me-4" onclick="downloadPlan()">
-              <i class="fas fa-download"></i>
-              <span class="d-none d-sm-inline ms-1">{{ __('messages.download') }}</span>
+              <span class="d-none d-sm-inline">{{ __('messages.download') }}</span>
             </button>
             
             <!-- Close Button -->

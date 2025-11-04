@@ -87,7 +87,7 @@
                                 <h6 class="mb-0">{{ __('messages.images') }}</h6>
                                 <button type="button" class="btn btn-sm btn-primary" id="upload-image-btn"
                                     onclick="openDrawingModalForImages()">
-                                    <i class="fas fa-plus"></i> {{ __('messages.upload_photo') }}
+                                    {{ __('messages.upload_photo') }}
                                 </button>
                             </div>
                             <div class="card-body">
@@ -140,14 +140,14 @@
                                 <div class="d-grid gap-2">
                                     <button type="button" class="btn btn-success" id="mark-complete-btn"
                                         onclick="markInspectionComplete()">
-                                        <i class="fas fa-check"></i> {{ __('messages.mark_as_completed') }}
+                                        {{ __('messages.mark_as_completed') }}
                                     </button>
                                     <button type="button" class="btn btn-success" id="completed-btn" disabled
                                         style="display: none;">
-                                        <i class="fas fa-check"></i> {{ __('messages.completed') }}
+                                        {{ __('messages.completed') }}
                                     </button>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                        <i class="fas fa-times"></i> {{ __('messages.close') }}
+                                        {{ __('messages.close') }}
                                     </button>
                                 </div>
                             </div>

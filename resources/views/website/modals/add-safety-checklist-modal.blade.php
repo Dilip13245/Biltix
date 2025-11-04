@@ -79,7 +79,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
         <button type="submit" form="addSafetyChecklistForm" class="btn orange_btn" id="safetyChecklistBtn">
-          <i class="fas fa-plus {{ margin_end(2) }}"></i>{{ __('messages.create_checklist') }}
+          {{ __('messages.create_checklist') }}
         </button>
       </div>
     </div>
@@ -111,7 +111,7 @@ function protectSafetyChecklistButton() {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
     setTimeout(function() {
       btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-plus {{ margin_end(2) }}"></i>{{ __('messages.create_checklist') }}';
+      btn.innerHTML = '{{ __('messages.create_checklist') }}';
     }, 5000);
   }
 }
