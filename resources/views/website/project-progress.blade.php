@@ -1574,7 +1574,7 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                         style="padding: 0.7rem 1.5rem;">Cancel</button>
                     <button type="submit" form="createPhaseForm" class="btn orange_btn api-action-btn">
-                        <i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}
+                        {{ __('messages.create_phase') }}
                     </button>
                 </div>
             </div>

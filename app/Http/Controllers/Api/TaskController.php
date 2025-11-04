@@ -188,7 +188,7 @@ class TaskController extends Controller
                 $query->where('assigned_to', $assigned_to);
             }
 
-            $tasks = $query->with(['images', 'assignedUser'])->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
+            $tasks = $query->with(['images', 'assignedUser', 'phase:id,title'])->orderBy('created_at', 'desc')->paginate($limit, ['*'], 'page', $page);
 
             $tasksData = collect($tasks->items())->map(function ($task) {
                 $task->images = $task->images->map(function ($image) {
@@ -196,6 +196,9 @@ class TaskController extends Controller
                     return $image;
                 });
                 $task->assigned_user_name = $task->assignedUser ? $task->assignedUser->name : null;
+                $task->phase_id = $task->phase_id;
+                $task->phase_title = $task->phase ? $task->phase->title : null;
+                unset($task->phase);
                 return $task;
             });
 

@@ -154,7 +154,8 @@ class InspectionController extends Controller
                     return $image;
                 });
                 $inspection->created_by_name = $inspection->createdBy ? $inspection->createdBy->name : null;
-                $inspection->phase_name = $inspection->phase ? $inspection->phase->title : null;
+                $inspection->phase_id = $inspection->phase_id;
+                $inspection->phase_title = $inspection->phase ? $inspection->phase->title : null;
                 unset($inspection->createdBy, $inspection->phase);
                 return $inspection;
             });

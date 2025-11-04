@@ -167,7 +167,7 @@ class SnagController extends Controller
             $page = $request->input('page', 1);
             $limit = $request->input('limit', 10);
 
-            $query = Snag::with(['reporter:id,name', 'assignedUser:id,name'])
+            $query = Snag::with(['reporter:id,name', 'assignedUser:id,name', 'phase:id,title'])
                 ->where('is_active', 1)->where('is_deleted', 0);
 
             if ($project_id) {
@@ -205,6 +205,8 @@ class SnagController extends Controller
                     'date' => $snag->created_at->format('jS M, Y'),
                     'image_urls' => $imageUrls,
                     'comment' => $snag->comment,
+                    'phase_id' => $snag->phase_id,
+                    'phase_title' => $snag->phase ? $snag->phase->title : null,
                 ];
             });
 
