@@ -363,6 +363,149 @@
             display: block;
         }
 
+        /* Language Dropdown - Custom Header Dropdown */
+        .custom-header-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .custom-header-dropdown-btn {
+            position: relative;
+        }
+
+        .custom-header-dropdown-btn::after {
+            content: '';
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: middle;
+            border-top: 4px solid;
+            border-right: 4px solid transparent;
+            border-bottom: 0;
+            border-left: 4px solid transparent;
+            transition: transform 0.2s ease;
+        }
+
+        .custom-header-dropdown.active .custom-header-dropdown-btn::after {
+            transform: rotate(180deg);
+        }
+
+        [dir="rtl"] .custom-header-dropdown-btn::after {
+            margin-left: 0;
+            margin-right: 8px;
+        }
+
+        .custom-header-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            min-width: 100%;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            list-style: none;
+            padding: 4px 0;
+            margin: 0;
+        }
+
+        .custom-header-dropdown.active .custom-header-dropdown-menu {
+            display: block;
+        }
+
+        .custom-header-dropdown-item {
+            display: block;
+            padding: 8px 16px;
+            color: #212529;
+            text-decoration: none;
+            transition: background-color 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .custom-header-dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        .custom-header-dropdown-item:focus {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        /* Status Filter Dropdown - Standalone */
+        .status-filter-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .status-filter-btn {
+            position: relative;
+            padding: 8px 16px;
+        }
+
+        .status-filter-arrow {
+            font-size: 10px;
+            margin-left: 4px;
+            transition: transform 0.2s ease;
+        }
+
+        .status-filter-dropdown.active .status-filter-arrow {
+            transform: rotate(180deg);
+        }
+
+        [dir="rtl"] .status-filter-arrow {
+            margin-left: 0;
+            margin-right: 4px;
+        }
+
+        .status-filter-menu {
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            min-width: 180px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            padding: 4px 0;
+            margin: 0;
+        }
+
+        [dir="rtl"] .status-filter-menu {
+            right: auto;
+            left: 0;
+        }
+
+        .status-filter-dropdown.active .status-filter-menu {
+            display: block;
+        }
+
+        .status-filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+            color: #212529;
+        }
+
+        .status-filter-option:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-filter-option i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .status-filter-option span {
+            flex: 1;
+        }
+
         .dropdown-option {
             padding: 10px 12px;
             cursor: pointer;
@@ -398,15 +541,15 @@
                                 class="Head_title fw-bold ms-3 fs24 d-none d-lg-inline-block">{{ __('messages.project_dashboard') }}</span>
                         </a>
                         <div class=" d-flex align-items-center justify-content-end gap-md-4 gap-3 w-100 flex-wrap ">
-                            <!-- Language Toggle -->
-                            <div class="dropdown">
-                                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown">
+                            <!-- Language Toggle - Custom Dropdown -->
+                            <div class="custom-header-dropdown" id="langDropdownWrapper">
+                                <button class="btn btn-outline-primary btn-sm custom-header-dropdown-btn" type="button"
+                                    id="langDropdownBtn">
                                     <span id="currentLang">{{ is_rtl() ? 'العربية' : 'English' }}</span>
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{{ route('lang.switch', 'en') }}">English</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
+                                <ul class="custom-header-dropdown-menu" id="langDropdownMenu">
+                                    <li><a class="custom-header-dropdown-item" href="{{ route('lang.switch', 'en') }}">English</a></li>
+                                    <li><a class="custom-header-dropdown-item" href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
                                 </ul>
                             </div>
 
@@ -552,27 +695,28 @@
                                 {{ __('messages.new_project') }}
                             </button>
                         @endcan
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
-                                type="button" id="statusFilterDropdown" data-bs-toggle="dropdown"
-                                aria-expanded="false">
+                        <!-- Status Filter Dropdown - Standalone Implementation -->
+                        <div class="status-filter-dropdown" id="statusFilterDropdown">
+                            <button class="btn btn-outline-secondary d-flex align-items-center gap-2 status-filter-btn" 
+                                type="button" id="statusFilterBtn">
                                 <i class="fas fa-filter"></i>
                                 <span id="statusFilterText">{{ __('messages.all_status') }}</span>
+                                <i class="fas fa-chevron-down status-filter-arrow"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="statusFilterDropdown">
-                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"
-                                        onclick="setStatusFilter('all', '{{ __('messages.all_status') }}')"><i
-                                            class="fas fa-list text-secondary"></i>{{ __('messages.all_status') }}</a>
-                                </li>
-                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"
-                                        onclick="setStatusFilter('active', '{{ __('messages.active') }}')"><i
-                                            class="fas fa-play-circle text-success"></i>{{ __('messages.active') }}</a>
-                                </li>
-                                <li><a class="dropdown-item d-flex align-items-center gap-2" href="#"
-                                        onclick="setStatusFilter('completed', '{{ __('messages.completed') }}')"><i
-                                            class="fas fa-check-circle text-primary"></i>{{ __('messages.completed') }}</a>
-                                </li>
-                            </ul>
+                            <div class="status-filter-menu" id="statusFilterMenu">
+                                <div class="status-filter-option" data-value="all" data-text="{{ __('messages.all_status') }}">
+                                    <i class="fas fa-list text-secondary"></i>
+                                    <span>{{ __('messages.all_status') }}</span>
+                                </div>
+                                <div class="status-filter-option" data-value="active" data-text="{{ __('messages.active') }}">
+                                    <i class="fas fa-play-circle text-success"></i>
+                                    <span>{{ __('messages.active') }}</span>
+                                </div>
+                                <div class="status-filter-option" data-value="completed" data-text="{{ __('messages.completed') }}">
+                                    <i class="fas fa-check-circle text-primary"></i>
+                                    <span>{{ __('messages.completed') }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1215,6 +1359,150 @@
 
         // Filter functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Custom Header Dropdowns Handler (Language only)
+            function initCustomHeaderDropdowns() {
+                // Initialize Language Dropdown
+                const langBtn = document.getElementById('langDropdownBtn');
+                const langWrapper = document.getElementById('langDropdownWrapper');
+                const langMenu = document.getElementById('langDropdownMenu');
+
+                if (langBtn && langWrapper && langMenu) {
+                    langBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        
+                        const isActive = langWrapper.classList.contains('active');
+                        
+                        // Close status filter dropdown if open
+                        const statusFilter = document.getElementById('statusFilterDropdown');
+                        if (statusFilter) {
+                            statusFilter.classList.remove('active');
+                        }
+                        
+                        // Close all other language dropdowns (if any)
+                        document.querySelectorAll('.custom-header-dropdown.active').forEach(d => {
+                            if (d !== langWrapper) {
+                                d.classList.remove('active');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        if (isActive) {
+                            langWrapper.classList.remove('active');
+                        } else {
+                            langWrapper.classList.add('active');
+                        }
+                    });
+                }
+
+                // Close dropdowns when clicking outside - use capture phase
+                document.addEventListener('click', function(e) {
+                    // If clicking inside the language dropdown, don't close it
+                    if (langWrapper && langWrapper.contains(e.target)) {
+                        return;
+                    }
+                    
+                    // If clicking on notification wrapper or status filter dropdown, don't interfere
+                    if (e.target.closest('.notification-wrapper') || 
+                        e.target.closest('.status-filter-dropdown')) {
+                        return;
+                    }
+                    
+                    // Close language dropdown if clicking outside
+                    if (langWrapper) {
+                        langWrapper.classList.remove('active');
+                    }
+                }, true); // Capture phase - runs before bubbling phase
+            }
+
+            // Status Filter Dropdown - Standalone Handler
+            function initStatusFilterDropdown() {
+                const filterBtn = document.getElementById('statusFilterBtn');
+                const filterDropdown = document.getElementById('statusFilterDropdown');
+                const filterMenu = document.getElementById('statusFilterMenu');
+
+                if (!filterBtn || !filterDropdown || !filterMenu) {
+                    return;
+                }
+
+                // Button click handler
+                filterBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    
+                    const isActive = filterDropdown.classList.contains('active');
+                    
+                    // Close language dropdown if open
+                    const langWrapper = document.getElementById('langDropdownWrapper');
+                    if (langWrapper) {
+                        langWrapper.classList.remove('active');
+                    }
+                    
+                    // Close all other status filter dropdowns (if any)
+                    document.querySelectorAll('.status-filter-dropdown.active').forEach(d => {
+                        if (d !== filterDropdown) {
+                            d.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle filter dropdown
+                    if (isActive) {
+                        filterDropdown.classList.remove('active');
+                    } else {
+                        filterDropdown.classList.add('active');
+                    }
+                });
+
+                // Option click handlers
+                filterMenu.querySelectorAll('.status-filter-option').forEach(option => {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const value = this.getAttribute('data-value');
+                        const text = this.getAttribute('data-text');
+                        
+                        // Update button text
+                        document.getElementById('statusFilterText').textContent = text;
+                        
+                        // Close dropdown immediately
+                        filterDropdown.classList.remove('active');
+                        
+                        // Call filter function
+                        if (typeof window.setStatusFilter === 'function') {
+                            window.setStatusFilter(value, text);
+                        }
+                    });
+                });
+
+                // Close when clicking outside - use capture phase to run first
+                document.addEventListener('click', function(e) {
+                    // If clicking inside the status filter dropdown, don't close it
+                    if (filterDropdown.contains(e.target)) {
+                        return;
+                    }
+                    
+                    // If clicking on notification wrapper or language dropdown, don't interfere
+                    if (e.target.closest('.notification-wrapper') || 
+                        e.target.closest('.custom-header-dropdown')) {
+                        return;
+                    }
+                    
+                    // Close the status filter dropdown
+                    filterDropdown.classList.remove('active');
+                }, true); // Capture phase - runs before bubbling phase
+            }
+
+            // Initialize dropdowns
+            initCustomHeaderDropdowns();
+            initStatusFilterDropdown();
+
+            // Ensure Bootstrap dropdowns are properly initialized (for profile dropdown)
+            if (typeof bootstrap !== 'undefined') {
+                // Initialize all Bootstrap dropdowns
+                document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function(dropdownToggle) {
+                    new bootstrap.Dropdown(dropdownToggle);
+                });
+            }
+
             // Custom Combo Dropdown Handler
             const typeInput = document.getElementById('type');
             const typeDropdown = document.getElementById('typeDropdown');
@@ -1295,9 +1583,13 @@
 
             // Add setStatusFilter function to global scope
             window.setStatusFilter = function(value, text) {
-                document.getElementById('statusFilterText').textContent = text;
+                const filterTextEl = document.getElementById('statusFilterText');
+                if (filterTextEl) {
+                    filterTextEl.textContent = text;
+                }
                 loadProjects(value, true);
             };
+
 
             // Infinite scroll implementation
             let scrollTimeout;
