@@ -51,15 +51,15 @@
       </div>
       <div class="modal-footer" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
         @if(app()->getLocale() == 'ar')
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
           <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanSubmitBtn">
-            {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
+            {{ __('messages.next') }}
           </button>
         @else
           <button type="submit" form="uploadPlanForm" class="btn orange_btn" id="uploadPlanSubmitBtn">
-            {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
+            {{ __('messages.next') }}
           </button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
         @endif
       </div>
     </div>
@@ -75,7 +75,7 @@ document.getElementById('uploadPlanModal')?.addEventListener('hidden.bs.modal', 
     if (form) form.reset();
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+        btn.innerHTML = '{{ __('messages.next') }}';
     }
 });
 
@@ -84,7 +84,7 @@ document.getElementById('uploadPlanModal')?.addEventListener('show.bs.modal', fu
     const btn = document.getElementById('uploadPlanSubmitBtn');
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+        btn.innerHTML = '{{ __('messages.next') }}';
     }
 });
 </script>

@@ -87,9 +87,9 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("messages.cancel") }}</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
         <button type="submit" form="addTaskForm" class="btn orange_btn" id="addTaskSubmitBtn">
-          {{ __("messages.next") }} <i class="fas fa-arrow-right ms-2"></i>
+          {{ __("messages.next") }}
         </button>
       </div>
     </div>
@@ -105,7 +105,7 @@ document.getElementById('addTaskModal')?.addEventListener('hidden.bs.modal', fun
     if (form) form.reset();
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '{{ __("messages.next") }} <i class="fas fa-arrow-right ms-2"></i>';
+        btn.innerHTML = '{{ __("messages.next") }}';
     }
 });
 
@@ -114,7 +114,7 @@ document.getElementById('addTaskModal')?.addEventListener('show.bs.modal', funct
     const btn = document.getElementById('addTaskSubmitBtn');
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '{{ __("messages.next") }} <i class="fas fa-arrow-right ms-2"></i>';
+        btn.innerHTML = '{{ __("messages.next") }}';
     }
 });
 </script>

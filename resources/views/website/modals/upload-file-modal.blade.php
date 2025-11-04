@@ -65,9 +65,9 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
         <button type="submit" form="uploadFileForm" class="btn orange_btn" id="uploadFileSubmitBtn">
-          {{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>
+          {{ __('messages.next') }}
         </button>
       </div>
     </div>
@@ -83,7 +83,7 @@ document.getElementById('uploadFileModal')?.addEventListener('hidden.bs.modal', 
     if (form) form.reset();
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+        btn.innerHTML = '{{ __('messages.next') }}';
     }
 });
 
@@ -92,7 +92,7 @@ document.getElementById('uploadFileModal')?.addEventListener('show.bs.modal', fu
     const btn = document.getElementById('uploadFileSubmitBtn');
     if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+        btn.innerHTML = '{{ __('messages.next') }}';
     }
 });
 

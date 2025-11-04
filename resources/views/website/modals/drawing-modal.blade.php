@@ -192,7 +192,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"
-                    data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                    data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                 <button type="button" class="btn orange_btn" id="saveDrawingBtn">
                     <i class="fas fa-save {{ margin_end(2) }}"></i><span
                         id="saveButtonText">{{ __('messages.save') }}</span>

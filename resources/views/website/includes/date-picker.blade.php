@@ -180,67 +180,113 @@
         justify-content: center;
     }
 
-    .datepicker-select {
+    /* Custom Dropdown Styles - Matching Website Design */
+    .datepicker-dropdown-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .datepicker-dropdown-trigger {
         font-weight: 600;
         font-size: 14px;
-        color: #2d3748 !important;
+        color: #2d3748;
         background: #ffffff;
         border: 1.5px solid #e8ecf4;
         border-radius: 8px;
-        padding: 6px 8px;
+        padding: 6px 12px;
         cursor: pointer;
         transition: all 0.2s ease;
         outline: none;
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23718096' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: {{ is_rtl() ? 'left 8px center' : 'right 8px center' }};
-        padding-{{ is_rtl() ? 'left' : 'right' }}: 26px;
-    }
-
-    .datepicker-select.month-select {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         min-width: 110px;
+        position: relative;
     }
 
-    .datepicker-select.year-select {
+    .datepicker-dropdown-trigger.year-trigger {
         min-width: 75px;
-        max-height: 36px;
-        overflow-y: auto;
     }
 
-    .datepicker-select:hover {
+    .datepicker-dropdown-trigger:hover {
         border-color: #F58D2E;
         background-color: #fffbf7;
         box-shadow: 0 2px 8px rgba(245, 141, 46, 0.15);
     }
 
-    .datepicker-select:focus {
+    .datepicker-dropdown-trigger.active {
         border-color: #F58D2E;
         background-color: #ffffff;
         box-shadow: 0 0 0 3px rgba(245, 141, 46, 0.1);
     }
 
-    .datepicker-select option {
-        padding: 6px 10px;
+
+    .datepicker-dropdown-options {
+        position: absolute;
+        top: calc(100% + 4px);
+        {{ is_rtl() ? 'right: 0;' : 'left: 0;' }}
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 1001;
+        display: none;
+        min-width: 100%;
+        max-height: 240px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .datepicker-dropdown-options.year-options {
+        max-height: 280px; /* Show ~10 years with scroll */
+    }
+
+    .datepicker-dropdown-options.show {
+        display: block;
+    }
+
+    .datepicker-dropdown-option {
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: background-color 0.2s;
         font-size: 13px;
         font-weight: 500;
-        color: #2d3748 !important;
-        background: #ffffff !important;
+        color: #2d3748;
+        white-space: nowrap;
     }
 
-    .datepicker-select option:hover {
-        background: #fff5f0 !important;
-        color: #F58D2E !important;
+    .datepicker-dropdown-option:hover {
+        background-color: #f8f9fa;
     }
 
-    .datepicker-select option:checked,
-    .datepicker-select option:focus,
-    .datepicker-select option[selected] {
-        background: #F58D2E !important;
-        color: #ffffff !important;
+    .datepicker-dropdown-option.selected {
+        background-color: #fff5f0;
+        color: #F58D2E;
         font-weight: 600;
+    }
+
+    /* Scrollbar styling */
+    .datepicker-dropdown-options::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .datepicker-dropdown-options::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .datepicker-dropdown-options::-webkit-scrollbar-thumb {
+        background: #F58D2E;
+        border-radius: 4px;
+    }
+
+    .datepicker-dropdown-options::-webkit-scrollbar-thumb:hover {
+        background: #e07a1f;
+    }
+
+    [dir="rtl"] .datepicker-dropdown-options {
+        left: auto;
+        right: 0;
     }
 
     .datepicker-grid {
@@ -448,19 +494,52 @@
             @endif
             
             html += '<div class="datepicker-month">';
-            html += '<select class="datepicker-select month-select" onchange="window.calendarChangeMonth_{{ $id }}(this.value)">';
-            months.forEach((m, i) => {
-                html += '<option value="' + i + '"' + (i === month ? ' selected' : '') + '>' + m + '</option>';
-            });
-            html += '</select>';
             
-            html += '<select class="datepicker-select year-select" size="1" onchange="window.calendarChangeYear_{{ $id }}(this.value)">';
+            // Month Dropdown - Custom Design
+            html += '<div class="datepicker-dropdown-wrapper">';
+            html += '<div class="datepicker-dropdown-trigger month-trigger" onclick="window.toggleDatepickerDropdown_{{ $id }}(\'month\')">';
+            html += '<span>' + months[month] + '</span>';
+            html += '</div>';
+            html += '<div class="datepicker-dropdown-options month-options" id="monthOptions_{{ $id }}">';
+            months.forEach((m, i) => {
+                html += '<div class="datepicker-dropdown-option' + (i === month ? ' selected' : '') + '" onclick="window.selectDatepickerMonth_{{ $id }}(' + i + ')">' + m + '</div>';
+            });
+            html += '</div>';
+            html += '</div>';
+            
+            // Year Dropdown - Custom Design with infinite scroll
+            html += '<div class="datepicker-dropdown-wrapper">';
+            html += '<div class="datepicker-dropdown-trigger year-trigger" onclick="window.toggleDatepickerDropdown_{{ $id }}(\'year\')">';
+            html += '<span>' + year + '</span>';
+            html += '</div>';
+            html += '<div class="datepicker-dropdown-options year-options" id="yearOptions_{{ $id }}" onscroll="window.handleYearScroll_{{ $id }}(this)">';
             const startYear = 1990;
             const endYear = today.getFullYear() + 50;
-            for (let y = startYear; y <= endYear; y++) {
-                html += '<option value="' + y + '"' + (y === year ? ' selected' : '') + '>' + y + '</option>';
+            
+            // Render initial 20 years centered around current year for better scroll experience
+            const currentYearIndex = year - startYear;
+            let startIndex = Math.max(0, currentYearIndex - 10);
+            let endIndex = Math.min(startIndex + 20, endYear - startYear + 1);
+            
+            // Store range for infinite scroll
+            window.yearRange_{{ $id }} = {
+                startIndex: startIndex,
+                endIndex: endIndex,
+                startYear: startYear,
+                endYear: endYear,
+                totalYears: endYear - startYear + 1,
+                currentYear: year
+            };
+            
+            // Render years
+            for (let i = startIndex; i < endIndex; i++) {
+                const y = startYear + i;
+                html += '<div class="datepicker-dropdown-option' + (y === year ? ' selected' : '') + '" data-year-index="' + i + '" onclick="window.selectDatepickerYear_{{ $id }}(' + y + ')">' + y + '</div>';
             }
-            html += '</select>';
+            
+            html += '</div>';
+            html += '</div>';
+            
             html += '</div>';
             
             @if (is_rtl())
@@ -508,6 +587,179 @@
         window.calendarNext_{{ $id }} = function() {
             currentDate.setMonth(currentDate.getMonth() + 1);
             renderCalendar();
+        };
+
+        // Custom Dropdown Functions
+        window.toggleDatepickerDropdown_{{ $id }} = function(type) {
+            const monthTrigger = content.querySelector('.month-trigger');
+            const yearTrigger = content.querySelector('.year-trigger');
+            const monthOptions = content.querySelector('.month-options');
+            const yearOptions = content.querySelector('.year-options');
+            
+            // Close all dropdowns first
+            if (monthOptions) monthOptions.classList.remove('show');
+            if (yearOptions) yearOptions.classList.remove('show');
+            if (monthTrigger) monthTrigger.classList.remove('active');
+            if (yearTrigger) yearTrigger.classList.remove('active');
+            
+            // Open clicked dropdown
+            if (type === 'month') {
+                if (monthOptions && monthTrigger) {
+                    monthOptions.classList.toggle('show');
+                    monthTrigger.classList.toggle('active');
+                    // Scroll to current month when opening (only dropdown scroll, not page)
+                    if (monthOptions.classList.contains('show')) {
+                        setTimeout(() => {
+                            const currentMonth = currentDate.getMonth();
+                            const selectedOption = monthOptions.querySelector('.selected');
+                            if (selectedOption) {
+                                const optionTop = selectedOption.offsetTop;
+                                const optionHeight = selectedOption.offsetHeight;
+                                const containerHeight = monthOptions.clientHeight;
+                                monthOptions.scrollTop = optionTop - (containerHeight / 2) + (optionHeight / 2);
+                            } else {
+                                // If selected not found, find current month option
+                                const monthOptionsList = monthOptions.querySelectorAll('.datepicker-dropdown-option');
+                                if (monthOptionsList[currentMonth]) {
+                                    const option = monthOptionsList[currentMonth];
+                                    const optionTop = option.offsetTop;
+                                    const optionHeight = option.offsetHeight;
+                                    const containerHeight = monthOptions.clientHeight;
+                                    monthOptions.scrollTop = optionTop - (containerHeight / 2) + (optionHeight / 2);
+                                }
+                            }
+                        }, 50);
+                    }
+                }
+            } else if (type === 'year') {
+                if (yearOptions && yearTrigger) {
+                    yearOptions.classList.toggle('show');
+                    yearTrigger.classList.toggle('active');
+                    // Scroll to current year when opening (only dropdown scroll, not page)
+                    if (yearOptions.classList.contains('show')) {
+                        setTimeout(() => {
+                            const currentYear = currentDate.getFullYear();
+                            const selectedOption = yearOptions.querySelector('.selected');
+                            if (selectedOption) {
+                                const optionTop = selectedOption.offsetTop;
+                                const optionHeight = selectedOption.offsetHeight;
+                                const containerHeight = yearOptions.clientHeight;
+                                yearOptions.scrollTop = optionTop - (containerHeight / 2) + (optionHeight / 2);
+                            } else {
+                                // If selected not found, find current year option
+                                if (window.yearRange_{{ $id }}) {
+                                    const yearIndex = currentYear - window.yearRange_{{ $id }}.startYear;
+                                    const currentYearOption = yearOptions.querySelector('[data-year-index="' + yearIndex + '"]');
+                                    if (currentYearOption) {
+                                        const optionTop = currentYearOption.offsetTop;
+                                        const optionHeight = currentYearOption.offsetHeight;
+                                        const containerHeight = yearOptions.clientHeight;
+                                        yearOptions.scrollTop = optionTop - (containerHeight / 2) + (optionHeight / 2);
+                                    }
+                                }
+                            }
+                        }, 50);
+                    }
+                }
+            }
+        };
+
+        window.selectDatepickerMonth_{{ $id }} = function(month) {
+            currentDate.setMonth(parseInt(month));
+            // Update selected option
+            const options = content.querySelectorAll('.month-options .datepicker-dropdown-option');
+            options.forEach((opt, i) => {
+                opt.classList.toggle('selected', i === month);
+            });
+            // Close dropdown
+            const monthTrigger = content.querySelector('.month-trigger');
+            const monthOptions = content.querySelector('.month-options');
+            if (monthOptions) monthOptions.classList.remove('show');
+            if (monthTrigger) monthTrigger.classList.remove('active');
+            renderCalendar();
+        };
+
+        window.selectDatepickerYear_{{ $id }} = function(year) {
+            currentDate.setFullYear(parseInt(year));
+            // Close dropdown
+            const yearTrigger = content.querySelector('.year-trigger');
+            const yearOptions = content.querySelector('.year-options');
+            if (yearOptions) yearOptions.classList.remove('show');
+            if (yearTrigger) yearTrigger.classList.remove('active');
+            renderCalendar();
+        };
+
+        // Infinite scroll handler for year dropdown
+        window.handleYearScroll_{{ $id }} = function(element) {
+            if (!window.yearRange_{{ $id }}) return;
+            
+            const range = window.yearRange_{{ $id }};
+            const scrollTop = element.scrollTop;
+            const scrollHeight = element.scrollHeight;
+            const clientHeight = element.clientHeight;
+            const threshold = 50; // pixels from edge to trigger load
+            
+            // Prevent multiple simultaneous loads
+            if (element.dataset.loading === 'true') return;
+            
+            // Load more years when scrolling near top
+            if (scrollTop < threshold && range.startIndex > 0) {
+                element.dataset.loading = 'true';
+                const loadCount = 20;
+                const newStartIndex = Math.max(0, range.startIndex - loadCount);
+                
+                // Get existing options
+                const existingOptions = Array.from(element.querySelectorAll('.datepicker-dropdown-option'));
+                const firstOption = existingOptions[0];
+                const currentScrollTop = element.scrollTop;
+                const currentYear = currentDate.getFullYear();
+                
+                // Prepend new years
+                let html = '';
+                for (let i = newStartIndex; i < range.startIndex; i++) {
+                    const y = range.startYear + i;
+                    html += '<div class="datepicker-dropdown-option' + (y === currentYear ? ' selected' : '') + '" data-year-index="' + i + '" onclick="window.selectDatepickerYear_{{ $id }}(' + y + ')">' + y + '</div>';
+                }
+                
+                // Insert before first option
+                if (firstOption) {
+                    firstOption.insertAdjacentHTML('beforebegin', html);
+                } else {
+                    element.innerHTML = html + element.innerHTML;
+                }
+                
+                // Update range
+                range.startIndex = newStartIndex;
+                
+                // Restore scroll position (adjust for new content)
+                const optionHeight = 38; // approximate height per option
+                const newScrollTop = currentScrollTop + (range.startIndex - newStartIndex) * optionHeight;
+                element.scrollTop = newScrollTop;
+                
+                element.dataset.loading = 'false';
+            }
+            
+            // Load more years when scrolling near bottom
+            if (scrollTop + clientHeight > scrollHeight - threshold && range.endIndex < range.totalYears) {
+                element.dataset.loading = 'true';
+                const loadCount = 20;
+                const newEndIndex = Math.min(range.endIndex + loadCount, range.totalYears);
+                const currentYear = currentDate.getFullYear();
+                
+                // Append new years
+                let html = '';
+                for (let i = range.endIndex; i < newEndIndex; i++) {
+                    const y = range.startYear + i;
+                    html += '<div class="datepicker-dropdown-option' + (y === currentYear ? ' selected' : '') + '" data-year-index="' + i + '" onclick="window.selectDatepickerYear_{{ $id }}(' + y + ')">' + y + '</div>';
+                }
+                
+                element.insertAdjacentHTML('beforeend', html);
+                
+                // Update range
+                range.endIndex = newEndIndex;
+                
+                element.dataset.loading = 'false';
+            }
         };
 
         window.calendarChangeMonth_{{ $id }} = function(month) {
@@ -608,6 +860,25 @@
         // Prevent calendar from closing when clicking inside
         content.addEventListener('click', function(e) {
             e.stopPropagation();
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!content.contains(e.target)) {
+                const monthOptions = content.querySelector('.month-options');
+                const yearOptions = content.querySelector('.year-options');
+                const monthTrigger = content.querySelector('.month-trigger');
+                const yearTrigger = content.querySelector('.year-trigger');
+                
+                if (monthOptions && !monthOptions.contains(e.target) && !monthTrigger?.contains(e.target)) {
+                    monthOptions.classList.remove('show');
+                    monthTrigger?.classList.remove('active');
+                }
+                if (yearOptions && !yearOptions.contains(e.target) && !yearTrigger?.contains(e.target)) {
+                    yearOptions.classList.remove('show');
+                    yearTrigger?.classList.remove('active');
+                }
+            }
         });
 
         // Initialize with existing value

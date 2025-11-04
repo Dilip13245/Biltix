@@ -1,6 +1,6 @@
 @extends('website.layout.app')
 
-@section('title', 'Team Members')
+@section('title', 'Team')
 
 @section('content')
     <style>
@@ -9,11 +9,11 @@
     </style>
     <div class="content-header border-0 shadow-none mb-4 d-flex align-items-center justify-content-between gap-2 flex-wrap">
         <div>
-            <h2>{{ __('messages.team_members') }}</h2>
+            <h2>{{ __('messages.team') }}</h2>
             <p>{{ __('messages.view_team_details') }}</p>
         </div>
         <div class="gallery-filters d-flex align-items-center gap-3 flex-wrap">
-            <form class="serchBar position-relative serchBar2">
+            {{-- <form class="serchBar position-relative serchBar2">
                 <input class="form-control pe-5" type="search" placeholder="{{ __('messages.search_members') }}"
                     aria-label="Search" id="searchInput" maxlength="100">
                 <span class="search_icon position-absolute" style="right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none;">
@@ -44,7 +44,7 @@
                         </select>
                     </li>
                 </ul>
-            </div>
+            </div> --}}
             @can('team', 'create')
                 <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addMemberModal" onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
                     <i class="fas fa-plus"></i>
@@ -167,7 +167,7 @@
 
             loadTeamMembers();
             setupAddMemberForm();
-            setupSearchAndFilter();
+            // setupSearchAndFilter();
             
             if (typeof initSearchableDropdowns === 'function') {
                 initSearchableDropdowns();
@@ -407,7 +407,7 @@
             `;
         }
 
-        function setupSearchAndFilter() {
+        {{-- function setupSearchAndFilter() {
             const searchInput = document.getElementById('searchInput');
             const roleFilter = document.getElementById('roleFilter');
             
@@ -440,7 +440,7 @@
             });
 
             renderTeamMembers(filteredMembers);
-        }
+        } --}}
 
         async function editMember(memberId) {
             // Implementation for editing member

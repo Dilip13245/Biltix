@@ -11,7 +11,6 @@
             </div>
             <input type="file" id="photoUploadInput" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(this)">
             <button class="btn orange_btn py-2 px-md-4" onclick="document.getElementById('photoUploadInput').click()">
-                <i class="fas fa-arrow-up me-2"></i>
                 {{ __('messages.upload_photos') }}
             </button>
         </div>

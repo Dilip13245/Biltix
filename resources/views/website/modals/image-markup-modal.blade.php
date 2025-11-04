@@ -69,7 +69,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">Cancel</button>
         <button type="button" class="btn orange_btn" onclick="saveMarkup()">
           <i class="fas fa-save me-2"></i>Save & Continue
         </button>

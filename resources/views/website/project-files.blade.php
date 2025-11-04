@@ -139,7 +139,6 @@
                                         <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png,.gif,.txt"
                                             style="display: none;" onchange="handleFileUpload(this)">
                                         <button class="btn btn-sm orange_btn" onclick="document.getElementById('fileUploadInput').click()">
-                                            <i class="fas fa-arrow-up me-2"></i>
                                             {{ __('messages.upload_file') }}
                                         </button>
                                     @endcan
@@ -245,7 +244,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                             <button type="button" class="btn orange_btn" onclick="proceedWithUpload()">{{ __('messages.upload') }}</button>
                         </div>
                     </div>
@@ -904,7 +903,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                             <button type="button" class="btn orange_btn" onclick="createFolder()">{{ __('messages.create') }}</button>
                         </div>
                     </div>

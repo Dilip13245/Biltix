@@ -605,7 +605,7 @@
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
                 setTimeout(function() {
                     btn.disabled = false;
-                    btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                    btn.innerHTML = '{{ __('messages.next') }}';
                 }, 5000);
             }
 

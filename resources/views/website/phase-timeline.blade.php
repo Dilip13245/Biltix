@@ -35,12 +35,12 @@
                 <h2>{{ __('messages.project_progress') }}</h2>
                 <p>{{ __('messages.track_project_phases') }}</p>
             </div>
-            @can('phases', 'create')
+            {{-- @can('phases', 'create')
                 <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
                     <i class="fas fa-plus"></i>
                     {{ __('messages.create_phase') }}
                 </button>
-            @endcan
+            @endcan --}}
         </div>
         <div class="px-md-4">
             <div class="container-fluid">
@@ -769,11 +769,11 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${activities.map(activity => `
-                                                <li class="d-flex align-items-center mb-2">
-                                                  <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                                  <span class="flex-grow-1 text-wrap">${activity.description}</span>
-                                                </li>
-                                              `).join('')}
+                                                        <li class="d-flex align-items-center mb-2">
+                                                          <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                                          <span class="flex-grow-1 text-wrap">${activity.description}</span>
+                                                        </li>
+                                                      `).join('')}
     </ul>
   `;
             }
@@ -814,13 +814,13 @@
       <table class="table table-borderless mb-0">
         <tbody>
           ${items.map(item => `
-                                                    <tr>
-                                                      <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
-                                                      <td class="text-end">
-                                                        <span class="text-primary fw-semibold">${item.count}</span>
-                                                      </td>
-                                                    </tr>
-                                                  `).join('')}
+                                                            <tr>
+                                                              <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
+                                                              <td class="text-end">
+                                                                <span class="text-primary fw-semibold">${item.count}</span>
+                                                              </td>
+                                                            </tr>
+                                                          `).join('')}
         </tbody>
       </table>
     </div>
@@ -861,15 +861,15 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${items.map(item => `
-                                                <li class="mb-2">
-                                                  <div class="d-flex align-items-center p-3 rounded bg4">
-                                                    <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
-                                                      <i class="fas fa-check-circle"></i>
-                                                    </span>
-                                                    <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
-                                                  </div>
-                                                </li>
-                                              `).join('')}
+                                                        <li class="mb-2">
+                                                          <div class="d-flex align-items-center p-3 rounded bg4">
+                                                            <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
+                                                              <i class="fas fa-check-circle"></i>
+                                                            </span>
+                                                            <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
+                                                          </div>
+                                                        </li>
+                                                      `).join('')}
     </ul>
   `;
             }
@@ -1037,7 +1037,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            style="padding: 0.7rem 1.5rem;">Cancel</button>
                         <button type="submit" form="createPhaseForm" class="btn orange_btn">
                             <i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}
                         </button>
@@ -1293,7 +1294,7 @@
 
                 container.innerHTML = phases.map((phase, index) => {
                     const totalDays = phase.milestones ? phase.milestones.reduce((sum, m) => sum + (m.days || 0), 0) :
-                    0;
+                        0;
                     const extensionDays = phase.total_extension_days || 0;
                     const progress = phase.time_progress || 0;
 
@@ -1329,13 +1330,13 @@
                                         <span><i class="fas fa-calendar me-1"></i>${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</span>
                                     </div>
                                     ${extensionDays > 0 ? `
-                                                <div class="mt-1">
-                                                    <small class="text-warning">
-                                                        <i class="fas fa-info-circle me-1"></i>
-                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                                    </small>
-                                                </div>
-                                            ` : ''}
+                                                        <div class="mt-1">
+                                                            <small class="text-warning">
+                                                                <i class="fas fa-info-circle me-1"></i>
+                                                                Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                            </small>
+                                                        </div>
+                                                    ` : ''}
                                 </div>
                             </div>
                             <div class="timeline-milestones ps-5">
@@ -1343,58 +1344,58 @@
                                     const isExtended = milestone.is_extended;
                                     const isOverdue = milestone.is_overdue;
                                     return `
-                                                <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
-                                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                                        <div class="d-flex align-items-center gap-2">
-                                                            <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
-                                                            <span class="${isOverdue ? 'text-danger fw-medium' : ''}">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
-                                                            ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : ''}
+                                                        <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
+                                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                <div class="d-flex align-items-center gap-2">
+                                                                    <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
+                                                                    <span class="${isOverdue ? 'text-danger fw-medium' : ''}">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
+                                                                    ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : ''}
+                                                                </div>
+                                                                <div class="text-muted small">
+                                                                    ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex align-items-center gap-2 mt-2">
+                                                                <span class="text-muted small">Extend:</span>
+                                                                <div class="input-group" style="width: 80px;">
+                                                                    <input type="number" class="form-control form-control-sm" 
+                                                                        style="font-size: 11px; text-align: center;" 
+                                                                        value="${milestone.extension_days || 0}" 
+                                                                        min="0" max="999" 
+                                                                        id="ext_${milestone.id}" 
+                                                                        onchange="extendMilestone(${milestone.id})">
+                                                                    <span class="input-group-text" style="font-size: 10px; padding: 2px 4px;">d</span>
+                                                                </div>
+                                                                <div class="btn-group" role="group">
+                                                                    <button class="btn btn-outline-secondary btn-sm" 
+                                                                        style="font-size: 10px; padding: 2px 6px;" 
+                                                                        onclick="quickExtend(${milestone.id}, 1)">+1</button>
+                                                                    <button class="btn btn-outline-secondary btn-sm" 
+                                                                        style="font-size: 10px; padding: 2px 6px;" 
+                                                                        onclick="quickExtend(${milestone.id}, 7)">+7</button>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="text-muted small">
-                                                            ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
-                                                        </div>
-                                                    </div>
-                                                    <div class="d-flex align-items-center gap-2 mt-2">
-                                                        <span class="text-muted small">Extend:</span>
-                                                        <div class="input-group" style="width: 80px;">
-                                                            <input type="number" class="form-control form-control-sm" 
-                                                                style="font-size: 11px; text-align: center;" 
-                                                                value="${milestone.extension_days || 0}" 
-                                                                min="0" max="999" 
-                                                                id="ext_${milestone.id}" 
-                                                                onchange="extendMilestone(${milestone.id})">
-                                                            <span class="input-group-text" style="font-size: 10px; padding: 2px 4px;">d</span>
-                                                        </div>
-                                                        <div class="btn-group" role="group">
-                                                            <button class="btn btn-outline-secondary btn-sm" 
-                                                                style="font-size: 10px; padding: 2px 6px;" 
-                                                                onclick="quickExtend(${milestone.id}, 1)">+1</button>
-                                                            <button class="btn btn-outline-secondary btn-sm" 
-                                                                style="font-size: 10px; padding: 2px 6px;" 
-                                                                onclick="quickExtend(${milestone.id}, 7)">+7</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `;
+                                                    `;
                                 }).join('') : '<div class="text-muted small">No milestones defined</div>'}
                                 ${extensionDays > 0 ? `
-                                            <div class="mt-2">
-                                                <small class="text-warning">
-                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                    Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
-                                                </small>
-                                            </div>
-                                        ` : ''}
+                                                    <div class="mt-2">
+                                                        <small class="text-warning">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                                            Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
+                                                        </small>
+                                                    </div>
+                                                ` : ''}
                                 <div class="mt-2 d-flex gap-1 flex-wrap">
                                     <small class="text-muted me-2">Quick extend:</small>
                                     ${phase.milestones && phase.milestones.length === 1 ? `
-                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                    onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
-                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                    onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
-                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                    onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
-                                            ` : ''}
+                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                            onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
+                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                            onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
+                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                            onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
+                                                    ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -1665,8 +1666,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                         <button type="button" class="btn orange_btn" onclick="saveMilestone()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.save') }}
                         </button>
@@ -1719,7 +1720,8 @@
                         <div id="activitiesUpdateContainer"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            style="padding: 0.7rem 1.5rem;">Cancel</button>
                         <button type="button" class="btn orange_btn" onclick="saveActivitiesUpdate()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
                         </button>
@@ -1741,7 +1743,8 @@
                         <div id="manpowerUpdateContainer"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            style="padding: 0.7rem 1.5rem;">Cancel</button>
                         <button type="button" class="btn orange_btn" onclick="saveManpowerUpdate()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
                         </button>
@@ -1763,7 +1766,8 @@
                         <div id="safetyUpdateContainer"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            style="padding: 0.7rem 1.5rem;">Cancel</button>
                         <button type="button" class="btn orange_btn" onclick="saveSafetyUpdate()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
                         </button>
@@ -1988,13 +1992,13 @@
                 for (let i = 0; i < categoryInputs.length; i++) {
                     const category = categoryInputs[i].value.trim();
                     const count = countInputs[i].value.trim();
-                    
+
                     if (!category) {
                         toastr.error('Category is required');
                         categoryInputs[i].focus();
                         return;
                     }
-                    
+
                     if (!count || count === '' || isNaN(count) || parseInt(count) < 0) {
                         toastr.error('Count is required and must be a valid number');
                         countInputs[i].focus();
@@ -2237,7 +2241,7 @@
             // Save Functions
             async function saveActivitiesUpdate() {
                 const descInputs = Array.from(document.querySelectorAll('input[name="activity_description[]"]'));
-                
+
                 // Validate descriptions
                 for (let input of descInputs) {
                     if (!input.value.trim()) {
@@ -2252,7 +2256,8 @@
                     }
                 }
 
-                const ids = Array.from(document.querySelectorAll('input[name="activity_id[]"]')).map(input => parseInt(input.value));
+                const ids = Array.from(document.querySelectorAll('input[name="activity_id[]"]')).map(input => parseInt(input
+                    .value));
                 const descriptions = descInputs.map(input => input.value.trim());
 
                 const activities = ids.map((id, index) => ({
@@ -2279,24 +2284,24 @@
             async function saveManpowerUpdate() {
                 const categoryInputs = Array.from(document.querySelectorAll('input[name="manpower_category[]"]'));
                 const countInputs = Array.from(document.querySelectorAll('input[name="manpower_count[]"]'));
-                
+
                 // Validate all fields
                 for (let i = 0; i < categoryInputs.length; i++) {
                     const category = categoryInputs[i].value.trim();
                     const count = countInputs[i].value.trim();
-                    
+
                     if (!category) {
                         toastr.error('Category is required');
                         categoryInputs[i].focus();
                         return;
                     }
-                    
+
                     if (category.length > 50) {
                         toastr.error('Category must be less than 50 characters');
                         categoryInputs[i].focus();
                         return;
                     }
-                    
+
                     if (!count || count === '' || isNaN(count) || parseInt(count) < 0) {
                         toastr.error('Count is required and must be a valid number');
                         countInputs[i].focus();
@@ -2310,7 +2315,8 @@
                     }
                 }
 
-                const ids = Array.from(document.querySelectorAll('input[name="manpower_id[]"]')).map(input => parseInt(input.value));
+                const ids = Array.from(document.querySelectorAll('input[name="manpower_id[]"]')).map(input => parseInt(input
+                    .value));
                 const categories = categoryInputs.map(input => input.value.trim());
                 const counts = countInputs.map(input => parseInt(input.value));
 
@@ -2338,7 +2344,7 @@
 
             async function saveSafetyUpdate() {
                 const itemInputs = Array.from(document.querySelectorAll('input[name="safety_item[]"]'));
-                
+
                 // Validate safety items
                 for (let input of itemInputs) {
                     if (!input.value.trim()) {
@@ -2353,7 +2359,8 @@
                     }
                 }
 
-                const ids = Array.from(document.querySelectorAll('input[name="safety_id[]"]')).map(input => parseInt(input.value));
+                const ids = Array.from(document.querySelectorAll('input[name="safety_id[]"]')).map(input => parseInt(input
+                    .value));
                 const items = itemInputs.map(input => input.value.trim());
 
                 const safety_items = ids.map((id, index) => ({

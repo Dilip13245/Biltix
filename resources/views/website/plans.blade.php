@@ -10,7 +10,6 @@
         </div>
         <button class="btn orange_btn" data-bs-toggle="modal" data-bs-target="#uploadPlanModal" data-permission="plans:upload"
             id="uploadPlanBtn" style="display: none;">
-            <i class="fas fa-arrow-up"></i>
             {{ __('messages.upload_plan') }}
         </button>
     </div>
@@ -849,7 +848,7 @@
                 const drawingBtn = document.getElementById('saveDrawingBtn');
                 if (uploadBtn) {
                     uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                    uploadBtn.innerHTML = '{{ __('messages.next') }}';
                 }
                 if (drawingBtn) {
                     drawingBtn.disabled = false;
@@ -957,7 +956,7 @@
                         // Reset button when going to drawing modal (user can still cancel)
                         if (btn) {
                             btn.disabled = false;
-                            btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                            btn.innerHTML = '{{ __('messages.next') }}';
                         }
 
                         // Open drawing modal for images
@@ -1035,7 +1034,7 @@
                     const btn = document.getElementById('uploadPlanSubmitBtn');
                     if (btn) {
                         btn.disabled = false;
-                        btn.innerHTML = '{{ __('messages.next') }} <i class="fas fa-arrow-right ms-2"></i>';
+                        btn.innerHTML = '{{ __('messages.next') }}';
                     }
                 }
             }

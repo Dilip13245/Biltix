@@ -131,7 +131,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.cancel') }}</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
         <button type="submit" form="createProjectForm" class="btn orange_btn">
           <i class="fas fa-plus me-2"></i>{{ __('messages.create') }}
         </button>

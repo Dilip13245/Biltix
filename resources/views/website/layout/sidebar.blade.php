@@ -93,7 +93,7 @@
       <li class="nav-item">
         <a href="{{ route('website.project.team-members', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.team-members') ? 'active' : '' }}">
           <i class="fas fa-users"></i>
-          <span>{{ __('messages.team_members') }}</span>
+          <span>{{ __('messages.team') }}</span>
         </a>
       </li>
       @endcan

@@ -314,6 +314,16 @@
         }
 
         /* Custom Combo Dropdown */
+        .clear-selection {
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .clear-selection:hover {
+            color: #F58D2E !important;
+            transform: translateY(-50%) scale(1.1);
+        }
+
         .custom-combo-dropdown {
             position: relative;
         }
@@ -830,6 +840,11 @@
                                                     name="type" placeholder="{{ __('messages.select_type') }}"
                                                     required autocomplete="off" maxlength="50">
                                                 <i class="fas fa-chevron-down dropdown-arrow"></i>
+                                                @if(!is_rtl())
+                                                    <i class="fas fa-times clear-selection d-none" id="clearTypeSelection" style="position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;" onclick="clearTypeSelection()"></i>
+                                                @else
+                                                    <i class="fas fa-times clear-selection d-none" id="clearTypeSelection" style="position: absolute; left: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;" onclick="clearTypeSelection()"></i>
+                                                @endif
                                                 <div class="dropdown-options" id="typeDropdown">
                                                     <div class="dropdown-option" data-value="{{ __('messages.villa') }}">
                                                         {{ __('messages.villa') }}</div>
@@ -969,12 +984,10 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                         <button type="button" class="btn orange_btn d-none" id="prevBtn" onclick="changeStep(-1)">
-                            <i
-                                class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }} {{ is_rtl() ? 'ms-2' : 'me-2' }}"></i>{{ __('messages.previous') }}
+                            {{ __('messages.previous') }}
                         </button>
                         <button type="button" class="btn orange_btn" id="nextBtn" onclick="changeStep(1)">
-                            {{ __('messages.next') }}<i
-                                class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-right' }} {{ is_rtl() ? 'me-2' : 'ms-2' }}"></i>
+                            {{ __('messages.next') }}
                         </button>
                         <button type="submit" form="createProjectForm" class="btn orange_btn d-none" id="submitBtn">
                             <i class="fas fa-plus me-2"></i>{{ __('messages.create') }}
@@ -1506,15 +1519,88 @@
             // Custom Combo Dropdown Handler
             const typeInput = document.getElementById('type');
             const typeDropdown = document.getElementById('typeDropdown');
+            const clearTypeBtn = document.getElementById('clearTypeSelection');
+
+            // Function to clear type selection
+            window.clearTypeSelection = function() {
+                if (typeInput) {
+                    typeInput.readOnly = false;
+                    typeInput.value = '';
+                    typeInput.style.cursor = 'text';
+                    typeInput.style.backgroundColor = '';
+                    if (clearTypeBtn) {
+                        clearTypeBtn.classList.add('d-none');
+                    }
+                    // Show all options again
+                    if (typeDropdown) {
+                        typeDropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                            option.style.display = 'block';
+                        });
+                    }
+                }
+            };
 
             if (typeInput && typeDropdown) {
+                // Check if input already has a value and make it readonly
+                if (typeInput.value) {
+                    typeInput.readOnly = true;
+                    typeInput.style.cursor = 'pointer';
+                    typeInput.style.backgroundColor = '#f8f9fa';
+                    if (clearTypeBtn) {
+                        clearTypeBtn.classList.remove('d-none');
+                    }
+                }
+
                 // Show dropdown on input click
                 typeInput.addEventListener('click', function() {
-                    typeDropdown.classList.toggle('show');
+                    typeDropdown.classList.add('show');
                 });
 
-                // Filter options on input
+                // Prevent typing when readonly (selected from dropdown)
+                typeInput.addEventListener('keydown', function(e) {
+                    if (this.readOnly) {
+                        // Allow only backspace/delete to clear selection
+                        if (e.key === 'Backspace' || e.key === 'Delete') {
+                            e.preventDefault();
+                            window.clearTypeSelection();
+                        } else {
+                            // Prevent all other keys when readonly
+                            e.preventDefault();
+                        }
+                    }
+                });
+
+                // Prevent typing when readonly
+                typeInput.addEventListener('keypress', function(e) {
+                    if (this.readOnly) {
+                        e.preventDefault();
+                    }
+                });
+
+                // Prevent paste when readonly
+                typeInput.addEventListener('paste', function(e) {
+                    if (this.readOnly) {
+                        e.preventDefault();
+                    }
+                });
+
+                // Monitor input value changes to detect manual clearing
                 typeInput.addEventListener('input', function() {
+                    if (this.readOnly) {
+                        return;
+                    }
+                    
+                    // If input becomes empty, remove readonly state
+                    if (!this.value.trim()) {
+                        this.readOnly = false;
+                        this.style.cursor = 'text';
+                        this.style.backgroundColor = '';
+                        if (clearTypeBtn) {
+                            clearTypeBtn.classList.add('d-none');
+                        }
+                    }
+                    
+                    // Filter options
                     const filter = this.value.toLowerCase();
                     const options = typeDropdown.querySelectorAll('.dropdown-option');
 
@@ -1534,13 +1620,35 @@
                 typeDropdown.querySelectorAll('.dropdown-option').forEach(option => {
                     option.addEventListener('click', function() {
                         typeInput.value = this.getAttribute('data-value');
+                        typeInput.readOnly = true;
+                        typeInput.style.cursor = 'pointer';
+                        typeInput.style.backgroundColor = '#f8f9fa';
+                        if (clearTypeBtn) {
+                            clearTypeBtn.classList.remove('d-none');
+                        }
                         typeDropdown.classList.remove('show');
                     });
                 });
 
+                // Reset readonly state when form is reset
+                const createProjectForm = document.getElementById('createProjectForm');
+                if (createProjectForm) {
+                    createProjectForm.addEventListener('reset', function() {
+                        typeInput.readOnly = false;
+                        typeInput.style.cursor = 'text';
+                        typeInput.style.backgroundColor = '';
+                        if (clearTypeBtn) {
+                            clearTypeBtn.classList.add('d-none');
+                        }
+                        typeDropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                            option.style.display = 'block';
+                        });
+                    });
+                }
+
                 // Close dropdown when clicking outside
                 document.addEventListener('click', function(e) {
-                    if (!typeInput.contains(e.target) && !typeDropdown.contains(e.target)) {
+                    if (!typeInput.contains(e.target) && !typeDropdown.contains(e.target) && !clearTypeBtn?.contains(e.target)) {
                         typeDropdown.classList.remove('show');
                     }
                 });
@@ -1801,6 +1909,14 @@
 
                 // Reset form
                 document.getElementById('createProjectForm').reset();
+                
+                // Reset type input readonly state
+                const typeInput = document.getElementById('type');
+                if (typeInput) {
+                    typeInput.readOnly = false;
+                    typeInput.style.cursor = 'text';
+                    typeInput.style.backgroundColor = '';
+                }
 
                 // Clear validation errors
                 document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
@@ -2217,6 +2333,14 @@
 
                         showToast(apiResponse.message || @json(__('messages.project_created_with_markup')), 'success');
                         document.getElementById('createProjectForm').reset();
+                        
+                        // Reset type input readonly state
+                        const typeInputReset = document.getElementById('type');
+                        if (typeInputReset) {
+                            typeInputReset.readOnly = false;
+                            typeInputReset.style.cursor = 'text';
+                            typeInputReset.style.backgroundColor = '';
+                        }
                         setTimeout(() => location.reload(), 1500);
                     } else {
                         showToast(apiResponse.message || 'Failed to create project', 'error');
@@ -2268,6 +2392,14 @@
 
                         showToast(response.message || 'Project created successfully!', 'success');
                         document.getElementById('createProjectForm').reset();
+                        
+                        // Reset type input readonly state
+                        const typeInputReset = document.getElementById('type');
+                        if (typeInputReset) {
+                            typeInputReset.readOnly = false;
+                            typeInputReset.style.cursor = 'text';
+                            typeInputReset.style.backgroundColor = '';
+                        }
                         setTimeout(() => location.reload(), 1500);
                     } else {
                         showToast(response.message || 'Failed to create project', 'error');
