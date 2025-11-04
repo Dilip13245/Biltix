@@ -1813,7 +1813,7 @@
                         <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
                             <i class="fas fa-times me-2"></i>{{ __('messages.cancel') }}
                         </button>
-                        <button type="button" class="btn btn-danger px-4" id="confirmDeleteBtn"
+                        <button type="button" class="btn btn-danger px-4 api-action-btn" id="confirmDeleteBtn"
                             onclick="confirmDeleteProject()">
                             <i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}
                         </button>
