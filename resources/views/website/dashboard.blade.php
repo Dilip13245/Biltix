@@ -1277,7 +1277,7 @@
                         <div class="card-body p-3">
                             <div class="d-flex align-items-start justify-content-between mb-3">
                                 <a href="/website/project/${project.id}/plans" class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px;">
-                                    <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word;" title="${project.project_title}">${project.project_title}</h6>
+                                    <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
                                 </a>
                                 <div class="dropdown" style="flex-shrink: 0;">
                                     <i class="fas fa-ellipsis-v" style="color: #4A90E2; cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -1292,9 +1292,9 @@
                                     <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
                                     <span class="text-muted ms-2" style="font-size: 14px;">${project.type || 'N/A'}</span>
                                 </div>
-                                <div class="mb-2">
-                                    <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
-                                    <span class="text-muted ms-2" style="font-size: 14px;">${project.project_location || 'N/A'}</span>
+                                <div class="mb-2 d-flex align-items-start" style="min-width: 0;">
+                                    <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; width: 20px; flex-shrink: 0;"></i>
+                                    <span class="text-muted ms-2" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;" title="${project.project_location || 'N/A'}">${project.project_location || 'N/A'}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
                                     <div>

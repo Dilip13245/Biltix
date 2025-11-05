@@ -380,6 +380,14 @@
                 if (addSnagForm) {
                     addSnagForm.addEventListener('submit', function(e) {
                         e.preventDefault();
+                        e.stopPropagation();
+
+                        // Validate form first
+                        if (typeof validateSnagForm === 'function') {
+                            if (!validateSnagForm()) {
+                                return false;
+                            }
+                        }
 
                         // Protect button
                         const submitBtn = document.getElementById('createSnagBtn');

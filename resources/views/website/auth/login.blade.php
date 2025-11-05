@@ -59,6 +59,10 @@
             .auth-card {
                 padding: 20px;
             }
+            .btn-signin {
+                font-size: 14px;
+                height: 44px;
+            }
         }
         .logo-container {
             text-align: center;
@@ -144,7 +148,7 @@
             padding: 0;
             font-size: 16px;
             font-weight: 600;
-            width: 334px;
+            width: 100%;
             height: 48px;
             color: white;
             margin-top: 24px;

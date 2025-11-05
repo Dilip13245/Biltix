@@ -330,6 +330,13 @@
             if (addSnagForm) {
                 addSnagForm.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    
+                    // Validate form first
+                    if (typeof validateSnagForm === 'function') {
+                        if (!validateSnagForm()) {
+                            return false;
+                        }
+                    }
 
                     const fileInput = document.getElementById('snagPhotos');
 

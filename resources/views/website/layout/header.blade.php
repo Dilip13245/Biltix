@@ -66,6 +66,76 @@
     50% { opacity: 0.5; }
     100% { opacity: 1; }
 }
+
+/* Language Dropdown - Custom Header Dropdown */
+.custom-header-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.custom-header-dropdown-btn {
+    position: relative;
+}
+
+.custom-header-dropdown-btn::after {
+    content: '';
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: middle;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-bottom: 0;
+    border-left: 4px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.custom-header-dropdown.active .custom-header-dropdown-btn::after {
+    transform: rotate(180deg);
+}
+
+[dir="rtl"] .custom-header-dropdown-btn::after {
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+.custom-header-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 100%;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: none;
+    list-style: none;
+    padding: 4px 0;
+    margin: 0;
+}
+
+.custom-header-dropdown.active .custom-header-dropdown-menu {
+    display: block;
+}
+
+.custom-header-dropdown-item {
+    display: block;
+    padding: 8px 16px;
+    color: #212529;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+    white-space: nowrap;
+}
+
+.custom-header-dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.custom-header-dropdown-item:focus {
+    background-color: #f8f9fa;
+    color: #212529;
+}
 </style>
 <header class="project-header">
   <div class="container-fluid">
@@ -96,12 +166,18 @@
           
 
           
-          <!-- Language Switcher -->
-          <div class="language-switcher">
-            <select onchange="window.location.href='{{ route('lang.switch', '') }}/'+this.value" class="form-select form-select-sm language-select" style="width: auto; min-width: 100px;">
-              <option value="en" {{ !is_rtl() ? 'selected' : '' }}>{{ __('messages.english') }}</option>
-              <option value="ar" {{ is_rtl() ? 'selected' : '' }}>{{ __('messages.arabic') }}</option>
-            </select>
+          <!-- Language Toggle - Custom Dropdown -->
+          <div class="custom-header-dropdown" id="langDropdownWrapper">
+            <button class="btn btn-outline-primary btn-sm custom-header-dropdown-btn" type="button"
+              id="langDropdownBtn">
+              <span id="currentLang">{{ is_rtl() ? 'العربية' : 'English' }}</span>
+            </button>
+            <ul class="custom-header-dropdown-menu" id="langDropdownMenu">
+              <li><a class="custom-header-dropdown-item"
+                  href="{{ route('lang.switch', 'en') }}">English</a></li>
+              <li><a class="custom-header-dropdown-item"
+                  href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
+            </ul>
           </div>
           
           <!-- Mobile Menu Toggle Button -->
@@ -113,3 +189,58 @@
     </div>
   </div>
 </header>
+
+<script>
+// Custom Header Dropdowns Handler (Language only)
+(function() {
+    function initCustomHeaderDropdowns() {
+        // Initialize Language Dropdown
+        const langBtn = document.getElementById('langDropdownBtn');
+        const langWrapper = document.getElementById('langDropdownWrapper');
+        const langMenu = document.getElementById('langDropdownMenu');
+
+        if (langBtn && langWrapper && langMenu) {
+            langBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+
+                const isActive = langWrapper.classList.contains('active');
+
+                // Close all other language dropdowns (if any)
+                document.querySelectorAll('.custom-header-dropdown.active').forEach(d => {
+                    if (d !== langWrapper) {
+                        d.classList.remove('active');
+                    }
+                });
+
+                // Toggle current dropdown
+                if (isActive) {
+                    langWrapper.classList.remove('active');
+                } else {
+                    langWrapper.classList.add('active');
+                }
+            });
+        }
+
+        // Close dropdowns when clicking outside - use capture phase
+        document.addEventListener('click', function(e) {
+            // If clicking inside the language dropdown, don't close it
+            if (langWrapper && langWrapper.contains(e.target)) {
+                return;
+            }
+
+            // Close language dropdown if clicking outside
+            if (langWrapper) {
+                langWrapper.classList.remove('active');
+            }
+        }, true); // Capture phase - runs before bubbling phase
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCustomHeaderDropdowns);
+    } else {
+        initCustomHeaderDropdowns();
+    }
+})();
+</script>

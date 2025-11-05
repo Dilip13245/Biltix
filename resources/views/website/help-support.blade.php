@@ -25,13 +25,12 @@
                             </h5>
                         </div>
                         <div class="card-body p-md-4">
-                            <form id="supportForm">
+                            <form id="supportForm" novalidate>
                                 @csrf
                                 <div class="mb-3">
                                     <label for="fullName"
                                         class="form-label fw-medium">{{ __('messages.full_name') }}</label>
                                     <input type="text" class="form-control Input_control" id="fullName" name="full_name"
-                                        required placeholder="{{ __('messages.enter_full_name') }}"
                                         style="{{ is_rtl() ? 'text-align: right;' : '' }}">
                                 </div>
 
@@ -39,13 +38,13 @@
                                     <label for="email"
                                         class="form-label fw-medium">{{ __('messages.email_address') }}</label>
                                     <input type="email" class="form-control Input_control" id="email" name="email"
-                                        required placeholder="{{ __('messages.enter_email_address') }}"
+                                        placeholder="{{ __('messages.enter_email_address') }}"
                                         style="{{ is_rtl() ? 'text-align: right;' : '' }}">
                                 </div>
 
                                 <div class="mb-4">
                                     <label for="message" class="form-label fw-medium">{{ __('messages.message') }}</label>
-                                    <textarea class="form-control Input_control" id="message" name="message" rows="4" required
+                                    <textarea class="form-control Input_control" id="message" name="message" rows="4"
                                         placeholder="{{ __('messages.describe_issue_detail') }}" style="{{ is_rtl() ? 'text-align: right;' : '' }}"></textarea>
                                 </div>
 
@@ -110,12 +109,71 @@
     </style>
 
     <script>
+        // Validation function
+        function validateSupportForm() {
+            const form = document.getElementById('supportForm');
+            if (!form) return false;
+            
+            let isValid = true;
+            
+            // Clear previous errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+            
+            // Validate full name
+            const fullName = form.querySelector('#fullName');
+            if (!fullName.value.trim()) {
+                showFieldError(fullName, '{{ __('messages.full_name') }} is required');
+                isValid = false;
+            }
+            
+            // Validate email
+            const email = form.querySelector('#email');
+            if (!email.value.trim()) {
+                showFieldError(email, '{{ __('messages.email_address') }} is required');
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+                showFieldError(email, 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            // Validate message
+            const message = form.querySelector('#message');
+            if (!message.value.trim()) {
+                showFieldError(message, '{{ __('messages.message') }} is required');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Please fill in all required fields.');
+                } else {
+                    alert('Please fill in all required fields.');
+                }
+            }
+            
+            return isValid;
+        }
+
+        function showFieldError(field, message) {
+            field.classList.add('is-invalid');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback';
+            errorDiv.textContent = message;
+            field.parentElement.appendChild(errorDiv);
+        }
+
         // Support Form Handler
         document.addEventListener('DOMContentLoaded', function() {
             const supportForm = document.getElementById('supportForm');
             if (supportForm) {
                 supportForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
+
+                    // Validate form first
+                    if (!validateSupportForm()) {
+                        return false;
+                    }
 
                     // Show loading state
                     const submitBtn = document.getElementById('supportBtn');

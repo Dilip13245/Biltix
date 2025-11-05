@@ -546,6 +546,13 @@
 
         async function handleTaskSubmit(e) {
             e.preventDefault();
+            
+            // Validate form first
+            if (typeof validateTaskForm === 'function') {
+                if (!validateTaskForm()) {
+                    return false;
+                }
+            }
 
             const fileInput = document.getElementById('taskImages');
 

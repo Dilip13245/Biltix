@@ -29,11 +29,11 @@
         @endif
       </div>
       <div class="modal-body">
-        <form id="addTaskForm" class="protected-form">
+        <form id="addTaskForm" class="protected-form" novalidate>
           @csrf
           <div class="mb-3">
             <label for="taskName" class="form-label fw-medium">{{ __("messages.task_name") }}</label>
-            <input type="text" class="form-control Input_control" id="taskName" name="task_name" required
+            <input type="text" class="form-control Input_control" id="taskName" name="task_name"
               placeholder="{{ __("messages.enter_task_name") }}" maxlength="100">
           </div>
 
@@ -45,14 +45,14 @@
 
           <div class="mb-3" id="phaseSelectContainer">
             <label for="phaseSelect" class="form-label fw-medium">{{ __("messages.phase") }}</label>
-            <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id" required>
+            <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id">
               <option value="">{{ __("messages.select_phase") }}</option>
             </select>
           </div>
 
           <div class="mb-3">
             <label for="assignedTo" class="form-label fw-medium">{{ __("messages.assign_to") }}</label>
-            <select class="form-select Input_control searchable-select" id="assignedTo" name="assigned_to" required>
+            <select class="form-select Input_control searchable-select" id="assignedTo" name="assigned_to">
               <option value="">{{ __("messages.select_user") }}</option>
             </select>
           </div>
@@ -88,7 +88,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="addTaskForm" class="btn orange_btn api-action-btn" id="addTaskSubmitBtn">
+        <button type="button" class="btn orange_btn api-action-btn" id="addTaskSubmitBtn">
           {{ __("messages.next") }}
         </button>
       </div>
@@ -97,12 +97,151 @@
 </div>
 
 <script>
+// Validation function
+function validateTaskForm() {
+    const form = document.getElementById('addTaskForm');
+    if (!form) return false;
+    
+    let isValid = true;
+    
+    // Clear previous errors
+    form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+    
+    // Validate task name
+    const taskName = form.querySelector('#taskName');
+    if (!taskName.value.trim()) {
+        showFieldError(taskName, '{{ __("messages.task_name") }} is required');
+        isValid = false;
+    }
+    
+    // Validate phase - skip if field is hidden (phase-specific pages)
+    const phaseSelect = form.querySelector('#phaseSelect');
+    const phaseContainer = form.querySelector('#phaseSelectContainer');
+    // Check if phase field is visible (hidden on phase-specific pages)
+    let isPhaseFieldVisible = true;
+    if (phaseContainer) {
+        const inlineStyle = phaseContainer.style.display;
+        const computedStyle = window.getComputedStyle(phaseContainer).display;
+        isPhaseFieldVisible = inlineStyle !== 'none' && computedStyle !== 'none';
+    }
+    
+    if (isPhaseFieldVisible && phaseSelect && !phaseSelect.value) {
+        showFieldError(phaseSelect, '{{ __("messages.phase") }} is required');
+        isValid = false;
+    }
+    
+    // Validate assigned to
+    const assignedTo = form.querySelector('#assignedTo');
+    if (!assignedTo.value) {
+        showFieldError(assignedTo, '{{ __("messages.assign_to") }} is required');
+        isValid = false;
+    }
+    
+    // Validate due date
+    const dueDate = form.querySelector('#dueDate');
+    if (!dueDate.value) {
+        showFieldError(dueDate, '{{ __("messages.due_date") }} is required');
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        showToast('Please fill in all required fields.', 'error');
+    }
+    
+    return isValid;
+}
+
+function showToast(message, type) {
+    if (typeof toastr !== 'undefined') {
+        toastr[type || 'error'](message);
+    } else if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: type === 'success' ? 'success' : 'error',
+            title: message,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+    } else {
+        alert(message);
+    }
+}
+
+function showFieldError(field, message) {
+    field.classList.add('is-invalid');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'invalid-feedback';
+    errorDiv.style.display = 'block';
+    errorDiv.style.width = '100%';
+    errorDiv.textContent = message;
+    
+    // For date picker fields, append after the wrapper (field ke niche)
+    if (field.classList.contains('modern-datepicker-input')) {
+        const wrapper = field.closest('.modern-datepicker-wrapper');
+        if (wrapper) {
+            // Remove any existing error message for this field
+            const existingError = wrapper.parentElement?.querySelector('.invalid-feedback');
+            if (existingError) existingError.remove();
+            
+            // Insert error message after the wrapper using insertAdjacentElement
+            wrapper.insertAdjacentElement('afterend', errorDiv);
+        } else {
+            field.parentElement.appendChild(errorDiv);
+        }
+    } else {
+        // Remove any existing error message for this field
+        const existingError = field.parentElement?.querySelector('.invalid-feedback');
+        if (existingError) existingError.remove();
+        
+        field.parentElement.appendChild(errorDiv);
+    }
+}
+
+// Form submit handler - handle both form submit and button click
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('addTaskForm');
+    const submitBtn = document.getElementById('addTaskSubmitBtn');
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!validateTaskForm()) {
+                return false;
+            }
+            // If validation passes, allow form submission to continue
+            // (the actual submission logic is handled elsewhere)
+        });
+    }
+    
+    // Also handle button click
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const form = document.getElementById('addTaskForm');
+            if (form && typeof validateTaskForm === 'function') {
+                if (validateTaskForm()) {
+                    // Validation passed, trigger form submit
+                    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                }
+            }
+        });
+    }
+});
+
 // Reset modal button when modal is hidden
 document.getElementById('addTaskModal')?.addEventListener('hidden.bs.modal', function() {
     const form = document.getElementById('addTaskForm');
     const btn = document.getElementById('addTaskSubmitBtn');
     
-    if (form) form.reset();
+    if (form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+    }
     if (btn) {
         btn.disabled = false;
         btn.innerHTML = '{{ __("messages.next") }}';

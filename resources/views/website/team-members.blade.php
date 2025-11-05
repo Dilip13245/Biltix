@@ -285,6 +285,13 @@
         async function handleMemberSubmit(e) {
             e.preventDefault();
             
+            // Validate form first
+            if (typeof validateMemberForm === 'function') {
+                if (!validateMemberForm()) {
+                    return false;
+                }
+            }
+            
             // Protect button
             const submitBtn = document.getElementById('memberSubmitBtn');
             if (submitBtn) protectMemberButton(submitBtn);

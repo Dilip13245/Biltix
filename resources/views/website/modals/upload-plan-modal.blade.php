@@ -23,7 +23,7 @@
         @endif
       </div>
       <div class="modal-body">
-        <form id="uploadPlanForm" enctype="multipart/form-data">
+        <form id="uploadPlanForm" enctype="multipart/form-data" novalidate>
           @csrf
           <div class="row d-none">
             <div class="col-md-6 mb-3">
@@ -41,7 +41,7 @@
           <div class="mb-3">
             <label for="planFiles" class="form-label fw-medium">{{ __('messages.plan_files') }}</label>
             <input type="file" class="form-control Input_control" id="planFiles" name="files[]" 
-              multiple required accept=".pdf,.dwg,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx">
+              multiple accept=".pdf,.dwg,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx">
             <div class="form-text">
               <i class="fas fa-info-circle me-1"></i>
               {{ __('messages.plan_files_help') }}
@@ -52,11 +52,11 @@
       <div class="modal-footer" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
         @if(app()->getLocale() == 'ar')
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-          <button type="submit" form="uploadPlanForm" class="btn orange_btn api-action-btn" id="uploadPlanSubmitBtn">
+          <button type="button" class="btn orange_btn api-action-btn" id="uploadPlanSubmitBtn">
             {{ __('messages.next') }}
           </button>
         @else
-          <button type="submit" form="uploadPlanForm" class="btn orange_btn api-action-btn" id="uploadPlanSubmitBtn">
+          <button type="button" class="btn orange_btn api-action-btn" id="uploadPlanSubmitBtn">
             {{ __('messages.next') }}
           </button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
@@ -67,12 +67,86 @@
 </div>
 
 <script>
+// Validation function
+function validatePlanForm() {
+    const form = document.getElementById('uploadPlanForm');
+    if (!form) return false;
+    
+    let isValid = true;
+    
+    // Clear previous errors
+    form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+    
+    // Validate files
+    const planFiles = form.querySelector('#planFiles');
+    if (!planFiles.files || planFiles.files.length === 0) {
+        showFieldError(planFiles, '{{ __('messages.plan_files') }} is required');
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        if (typeof showToast !== 'undefined') {
+            showToast('Please select at least one plan file.', 'error');
+        } else if (typeof toastr !== 'undefined') {
+            toastr.error('Please select at least one plan file.');
+        } else {
+            alert('Please select at least one plan file.');
+        }
+    }
+    
+    return isValid;
+}
+
+function showFieldError(field, message) {
+    field.classList.add('is-invalid');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'invalid-feedback';
+    errorDiv.textContent = message;
+    field.parentElement.appendChild(errorDiv);
+}
+
+// Form submit handler - handle both form submit and button click
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('uploadPlanForm');
+    const submitBtn = document.getElementById('uploadPlanSubmitBtn');
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!validatePlanForm()) {
+                return false;
+            }
+        });
+    }
+    
+    // Also handle button click
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const form = document.getElementById('uploadPlanForm');
+            if (form && typeof validatePlanForm === 'function') {
+                if (validatePlanForm()) {
+                    // Validation passed, trigger form submit
+                    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                }
+            }
+        });
+    }
+});
+
 // Reset modal when it's hidden
 document.getElementById('uploadPlanModal')?.addEventListener('hidden.bs.modal', function() {
     const form = document.getElementById('uploadPlanForm');
     const btn = document.getElementById('uploadPlanSubmitBtn');
     
-    if (form) form.reset();
+    if (form) {
+        form.reset();
+        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+    }
     if (btn) {
         btn.disabled = false;
         btn.innerHTML = '{{ __('messages.next') }}';

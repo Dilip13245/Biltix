@@ -13,7 +13,7 @@
 <div class="modern-datepicker-wrapper position-relative">
     <div class="modern-datepicker-input-group">
         <input type="text" id="{{ $id }}" name="{{ $name }}" value="{{ $value }}"
-            placeholder="{{ $placeholder }}" class="modern-datepicker-input" {{ $required ? 'required' : '' }}
+            placeholder="{{ $placeholder }}" class="modern-datepicker-input"
             {{ is_rtl() ? 'dir=rtl' : '' }} readonly>
         <div class="modern-datepicker-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

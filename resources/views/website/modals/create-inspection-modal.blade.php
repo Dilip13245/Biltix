@@ -29,21 +29,21 @@
         @endif
       </div>
       <div class="modal-body">
-        <form id="createInspectionForm" class="protected-form">
+        <form id="createInspectionForm" class="protected-form" novalidate>
           @csrf
           <input type="hidden" name="user_id" value="{{ auth()->id() }}">
           <input type="hidden" id="modalProjectId" name="project_id" value="1">
           
           <div class="mb-3" id="phaseSelectContainer">
             <label for="phaseSelect" class="form-label fw-medium">{{ __("messages.phase") }}</label>
-            <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id" required>
+            <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id">
               <option value="">{{ __("messages.select_phase") }}</option>
             </select>
           </div>
           
           <div class="mb-3">
             <label for="category" class="form-label fw-medium">{{ __("messages.category") }}</label>
-            <select class="form-select Input_control searchable-select" id="category" name="category" required>
+            <select class="form-select Input_control searchable-select" id="category" name="category">
               <option value="">{{ __("messages.select_category") }}</option>
               <option value="structural">{{ __("messages.structural") }}</option>
               <option value="electrical">{{ __("messages.electrical") }}</option>
@@ -58,7 +58,7 @@
 
           <div class="mb-3">
             <label for="description" class="form-label fw-medium">{{ __("messages.description") }}</label>
-            <textarea class="form-control Input_control" id="description" name="description" rows="3" required
+            <textarea class="form-control Input_control" id="description" name="description" rows="3"
               placeholder="{{ __("messages.provide_detailed_description") }}" maxlength="1000"></textarea>
           </div>
 
@@ -67,7 +67,7 @@
             <div id="checklistContainer">
               <div class="input-group mb-2">
                 <input type="text" class="form-control Input_control" name="checklist_items[]" 
-                  placeholder="{{ __("messages.enter_checklist_item") }}" required maxlength="200">
+                  placeholder="{{ __("messages.enter_checklist_item") }}" maxlength="200">
                 <button type="button" class="btn btn-outline-danger" onclick="removeChecklistItem(this)">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -88,7 +88,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
-        <button type="submit" form="createInspectionForm" class="btn orange_btn api-action-btn" id="inspectionSubmitBtn">
+        <button type="button" class="btn orange_btn api-action-btn" id="inspectionSubmitBtn">
           {{ __("messages.create_inspection") }}
         </button>
       </div>
@@ -103,7 +103,7 @@ function addChecklistItem() {
   newItem.className = 'input-group mb-2';
   newItem.innerHTML = `
     <input type="text" class="form-control Input_control" name="checklist_items[]" 
-      placeholder="{{ __("messages.enter_checklist_item") }}" required maxlength="200">
+      placeholder="{{ __("messages.enter_checklist_item") }}" maxlength="200">
     <button type="button" class="btn btn-outline-danger" onclick="removeChecklistItem(this)">
       <i class="fas fa-trash"></i>
     </button>
@@ -185,15 +185,15 @@ document.addEventListener('DOMContentLoaded', function() {
   if (createInspectionForm) {
     createInspectionForm.addEventListener('submit', function(e) {
       e.preventDefault();
+      e.stopPropagation();
+      
+      // Validate form first
+      if (!validateInspectionForm()) {
+        return false;
+      }
       
       // Protect button
       if (submitBtn) protectButton(submitBtn);
-      
-      // Validate form
-      if (!validateInspectionForm()) {
-        resetFormSubmission('createInspectionForm');
-        return;
-      }
       
       const fileInput = document.getElementById('images');
       
@@ -223,6 +223,21 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         // No images selected - call API directly
         submitInspectionWithoutImages();
+      }
+    });
+  }
+  
+  // Also handle button click
+  if (submitBtn) {
+    submitBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const form = document.getElementById('createInspectionForm');
+      if (form && typeof validateInspectionForm === 'function') {
+        if (validateInspectionForm()) {
+          // Validation passed, trigger form submit
+          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        }
       }
     });
   }
@@ -415,9 +430,24 @@ function closeModalsAndReload() {
 
 function validateInspectionForm() {
   const form = document.getElementById('createInspectionForm');
+  if (!form) return false;
+  
+  const phaseSelect = document.getElementById('phaseSelect');
+  const phaseContainer = document.getElementById('phaseSelectContainer');
+  // Check if phase field is visible (hidden on phase-specific pages)
+  // Check both inline style and computed style
+  let isPhaseFieldVisible = true;
+  if (phaseContainer) {
+    const inlineStyle = phaseContainer.style.display;
+    const computedStyle = window.getComputedStyle(phaseContainer).display;
+    isPhaseFieldVisible = inlineStyle !== 'none' && computedStyle !== 'none';
+  }
+  const phaseId = phaseSelect ? phaseSelect.value.trim() : '';
+  
   const category = form.category.value.trim();
   const description = form.description.value.trim();
-  const checklistItems = Array.from(form.querySelectorAll('input[name="checklist_items[]"]'))
+  const checklistInputs = Array.from(form.querySelectorAll('input[name="checklist_items[]"]'));
+  const checklistItems = checklistInputs
     .map(input => input.value.trim())
     .filter(value => value);
   
@@ -426,19 +456,52 @@ function validateInspectionForm() {
   
   let isValid = true;
   
+  // Validate phase only if field is visible
+  if (isPhaseFieldVisible && !phaseId) {
+    showFieldError('phaseSelect', '{{ __("messages.phase") }} is required');
+    isValid = false;
+  }
+  
+  // Validate category
   if (!category) {
     showFieldError('category', getValidationMessage('category_required'));
     isValid = false;
   }
   
+  // Validate description
   if (!description) {
     showFieldError('description', getValidationMessage('description_required'));
     isValid = false;
   }
   
+  // Validate checklist items - at least one non-empty item required
   if (checklistItems.length === 0) {
-    showFieldError('checklist_items', getValidationMessage('checklist_required'));
+    // Show error on first checklist input
+    const firstChecklistInput = checklistInputs[0];
+    if (firstChecklistInput) {
+      firstChecklistInput.classList.add('is-invalid');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'invalid-feedback';
+      errorDiv.textContent = getValidationMessage('checklist_required');
+      firstChecklistInput.parentElement.appendChild(errorDiv);
+    }
     isValid = false;
+  }
+  
+  // Validate individual checklist items (show error on empty ones if there are multiple)
+  checklistInputs.forEach((input, index) => {
+    if (!input.value.trim() && checklistItems.length > 0) {
+      // Only show error if there are other non-empty items
+      input.classList.add('is-invalid');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'invalid-feedback';
+      errorDiv.textContent = 'Checklist item cannot be empty';
+      input.parentElement.appendChild(errorDiv);
+    }
+  });
+  
+  if (!isValid) {
+    showToast('error', 'Please fill in all required fields.');
   }
   
   return isValid;
@@ -456,7 +519,20 @@ function showFieldError(fieldName, message) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'invalid-feedback';
     errorDiv.textContent = message;
-    field.parentNode.appendChild(errorDiv);
+    
+    // For date picker fields, append after the wrapper
+    if (field.classList.contains('modern-datepicker-input')) {
+        const wrapper = field.closest('.modern-datepicker-wrapper');
+        if (wrapper && wrapper.parentElement) {
+            // Insert error message after the wrapper
+            wrapper.parentElement.insertBefore(errorDiv, wrapper.nextSibling);
+        } else {
+            field.parentNode.appendChild(errorDiv);
+        }
+    } else {
+        // For select fields, append to parent
+        field.parentNode.appendChild(errorDiv);
+    }
   }
 }
 
@@ -472,6 +548,21 @@ function getValidationMessage(key) {
 function resetSubmitButton() {
   resetFormSubmission('createInspectionForm');
 }
+
+// Reset modal when hidden
+document.getElementById('createInspectionModal')?.addEventListener('hidden.bs.modal', function() {
+  const form = document.getElementById('createInspectionForm');
+  const btn = document.getElementById('inspectionSubmitBtn');
+  
+  if (form) {
+    form.reset();
+    clearValidationErrors();
+  }
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = '{{ __("messages.create_inspection") }}';
+  }
+});
 
 function showToast(type, message) {
   if (typeof toastr !== 'undefined') {
