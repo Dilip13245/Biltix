@@ -39,31 +39,30 @@
     <div class="content_wraper F_poppins">
         <header class="project-header">
             <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-12 d-flex align-items-center justify-content-between gap-2">
-                        <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-outline-primary" onclick="history.back()">
-                                <i class="fas fa-arrow-left"></i>
-                            </button>
-                            <h4 class="mb-0">{{ __('messages.snag_list') }}</h4>
+                <div class="row align-items-start">
+                    <div class="col-12">
+                        <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="btn btn-outline-primary" onclick="history.back()">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <div>
+                                    <h4 class="mb-1">{{ __('messages.snag_list') }}</h4>
+                                    <p class="text-muted small mb-0">{{ __('messages.view_manage_snags') }}</p>
+                                </div>
+                            </div>
+                            @can('snags', 'create')
+                                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal"
+                                    onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
+                                    <i class="fas fa-plus"></i>
+                                    {{ __('messages.add_new_snag') }}
+                                </button>
+                            @endcan
                         </div>
                     </div>
                 </div>
             </div>
         </header>
-        <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
-            <div>
-                <h2>{{ __('messages.snag_list') }}</h2>
-                <p>{{ __('messages.view_manage_snags') }}</p>
-            </div>
-            @can('snags', 'create')
-                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addSnagModal"
-                    onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
-                    <i class="fas fa-plus"></i>
-                    {{ __('messages.add_new_snag') }}
-                </button>
-            @endcan
-        </div>
         <section class="px-md-4">
             <div class="container-fluid ">
                 <div class="row  wow fadeInUp" data-wow-delay="0.9s">

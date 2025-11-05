@@ -18,31 +18,30 @@
     <div class="content_wraper F_poppins">
         <header class="project-header">
             <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-12 d-flex align-items-center justify-content-between gap-2">
-                        <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-outline-primary" onclick="history.back()">
-                                <i class="fas fa-arrow-left"></i>
-                            </button>
-                            <h4 class="mb-0">{{ __('messages.project_timeline') }}</h4>
+                <div class="row align-items-start">
+                    <div class="col-12">
+                        <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="btn btn-outline-primary" onclick="history.back()">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <div>
+                                    <h4 class="mb-1">{{ __('messages.project_timeline') }}</h4>
+                                    <p class="text-muted small mb-0">{{ __('messages.track_project_phases') }}</p>
+                                </div>
+                            </div>
+                            {{-- @can('phases', 'create')
+                                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
+                                    <i class="fas fa-plus"></i>
+                                    {{ __('messages.create_phase') }}
+                                </button>
+                            @endcan --}}
                         </div>
                     </div>
                 </div>
             </div>
         </header>
-        <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
-            <div class="mt-4">
-                <h2>{{ __('messages.project_progress') }}</h2>
-                <p>{{ __('messages.track_project_phases') }}</p>
-            </div>
-            {{-- @can('phases', 'create')
-                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
-                    <i class="fas fa-plus"></i>
-                    {{ __('messages.create_phase') }}
-                </button>
-            @endcan --}}
-        </div>
-        <div class="px-md-4">
+        <section class="px-md-4">
             <div class="container-fluid">
                 <!-- Commented out original stats cards
             <div class="row g-4">
@@ -365,7 +364,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
         <script>
             let currentProjectId = getProjectIdFromUrl();
             let currentUserId = {{ auth()->id() ?? 1 }};

@@ -29,53 +29,64 @@
     <div class="content_wraper F_poppins">
         <header class="project-header">
             <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-12 d-flex align-items-center justify-content-between gap-2">
-                        <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-outline-primary" onclick="history.back()">
-                                <i class="fas fa-arrow-left"></i>
-                            </button>
-                            <h4 class="mb-0">{{ __('messages.tasks') }}</h4>
+                <div class="row align-items-start">
+                    <div class="col-12">
+                        <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="btn btn-outline-primary" onclick="history.back()">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <div>
+                                    <h4 class="mb-1">{{ __('messages.tasks') }}</h4>
+                                    <p class="text-muted small mb-0">{{ __('messages.manage_track_tasks') }}</p>
+                                </div>
+                            </div>
+                            @can('tasks', 'create')
+                                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal"
+                                    onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
+                                    <i class="fas fa-plus"></i>
+                                    {{ __('messages.add_new_task') }}
+                                </button>
+                            @endcan
                         </div>
                     </div>
                 </div>
             </div>
         </header>
-        <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
-            <div>
-                <h2>{{ __('messages.tasks') }}</h2>
-                <p>{{ __('messages.manage_track_tasks') }}</p>
+        <section class="px-md-4">
+            <div class="container-fluid">
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="card B_shadow">
+                            <div class="card-body px-md-3 py-md-3">
+                                <div class="d-flex align-items-center gap-2 gap-md-3 flex-wrap">
+                                    <form class="serchBar position-relative serchBar2 flex-grow-1" style="min-width: 200px;">
+                                        <input class="form-control" type="search" placeholder="{{ __('messages.search_task_name') }}"
+                                            aria-label="Search" dir="auto" style="padding-right: 45px;" maxlength="100">
+                                        <span class="search_icon" style="right: 15px; pointer-events: none;"><img
+                                                src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
+                                    </form>
+                                    <select class="form-select w-auto searchable-select" id="statusFilter" style="min-width: 150px;">
+                                        <option value="">{{ __('messages.all_status') }}</option>
+                                        <option value="todo">{{ __('messages.todo') }}</option>
+                                        <option value="in_progress">{{ __('messages.in_progress') }}</option>
+                                        <option value="complete">{{ __('messages.complete') }}</option>
+                                        <option value="approve">{{ __('messages.approve') }}</option>
+                                    </select>
+                                    <select class="form-select w-auto searchable-select" id="priorityFilter" style="min-width: 150px;">
+                                        <option value="">{{ __('messages.all_priorities') }}</option>
+                                        <option value="low">{{ __('messages.low') }}</option>
+                                        <option value="medium">{{ __('messages.medium') }}</option>
+                                        <option value="high">{{ __('messages.high') }}</option>
+                                        <option value="critical">{{ __('messages.critical') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex align-items-center gap-2 gap-md-3 flex-wrap">
-                <form class="serchBar position-relative serchBar2">
-                    <input class="form-control" type="search" placeholder="{{ __('messages.search_task_name') }}"
-                        aria-label="Search" dir="auto" style="padding-right: 45px;" maxlength="100">
-                    <span class="search_icon" style="right: 15px; pointer-events: none;"><img
-                            src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
-                </form>
-                <select class="form-select w-auto searchable-select" id="statusFilter">
-                    <option value="">{{ __('messages.all_status') }}</option>
-                    <option value="todo">{{ __('messages.todo') }}</option>
-                    <option value="in_progress">{{ __('messages.in_progress') }}</option>
-                    <option value="complete">{{ __('messages.complete') }}</option>
-                    <option value="approve">{{ __('messages.approve') }}</option>
-                </select>
-                <select class="form-select w-auto searchable-select" id="priorityFilter">
-                    <option value="">{{ __('messages.all_priorities') }}</option>
-                    <option value="low">{{ __('messages.low') }}</option>
-                    <option value="medium">{{ __('messages.medium') }}</option>
-                    <option value="high">{{ __('messages.high') }}</option>
-                    <option value="critical">{{ __('messages.critical') }}</option>
-                </select>
-                @can('tasks', 'create')
-                    <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal"
-                        onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
-                        <i class="fas fa-plus"></i>
-                        {{ __('messages.add_new_task') }}
-                    </button>
-                @endcan
-            </div>
-        </div>
+        </section>
         <section class="px-md-4">
             <div class="container-fluid">
                 <div class="row gy-4 card_wraPper" id="tasksContainer">

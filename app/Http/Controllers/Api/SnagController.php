@@ -300,12 +300,19 @@ class SnagController extends Controller
                 return $this->toJsonEnc([], trans('api.snags.not_assigned_to_user'), Config::get('constant.FORBIDDEN'));
             }
 
+            // Track old status for notification
+            $oldStatus = $snag->status;
+            $statusChanged = false;
+            
             // Update fields if provided
             if ($request->filled('title')) $snag->title = $request->title;
             if ($request->filled('description')) $snag->description = $request->description;
             if ($request->filled('location')) $snag->location = $request->location;
             if ($request->filled('assigned_to')) $snag->assigned_to = $request->assigned_to;
-            if ($request->filled('status')) $snag->status = $request->status;
+            if ($request->filled('status')) {
+                $snag->status = $request->status;
+                $statusChanged = ($oldStatus != $request->status);
+            }
             if ($request->filled('comment')) $snag->comment = $request->comment;
             
             // Handle image uploads
@@ -322,25 +329,67 @@ class SnagController extends Controller
             
             // Send notification for snag update
             $project = \App\Models\Project::find($snag->project_id);
-            $updater = \App\Models\User::find($user_id);
+            $updater = \App\Models\User::find($request->user_id);
             if ($project && $updater) {
                 $recipients = [];
-                if ($snag->reported_by && $snag->reported_by != $user_id) $recipients[] = $snag->reported_by;
-                if ($snag->assigned_to && $snag->assigned_to != $user_id && !in_array($snag->assigned_to, $recipients)) $recipients[] = $snag->assigned_to;
+                if ($snag->reported_by && $snag->reported_by != $request->user_id) $recipients[] = $snag->reported_by;
+                if ($snag->assigned_to && $snag->assigned_to != $request->user_id && !in_array($snag->assigned_to, $recipients)) $recipients[] = $snag->assigned_to;
                 
                 if (!empty($recipients)) {
-                    NotificationHelper::send(
-                        $recipients,
-                        'snag_updated',
-                        'Snag Updated',
-                        "{$updater->name} updated snag '{$snag->title}'",
-                        [
-                            'snag_id' => $snag->id,
-                            'project_id' => $project->id,
-                            'action_url' => "/snags/{$snag->id}"
-                        ],
-                        'low'
-                    );
+                    // Send specific notification for status change
+                    if ($statusChanged) {
+                        NotificationHelper::send(
+                            $recipients,
+                            'snag_status_changed',
+                            'Snag Status Updated',
+                            "{$updater->name} changed snag '{$snag->title}' status to {$snag->status}",
+                            [
+                                'snag_id' => $snag->id,
+                                'snag_title' => $snag->title,
+                                'old_status' => $oldStatus,
+                                'new_status' => $snag->status,
+                                'changed_by' => $request->user_id,
+                                'changed_by_name' => $updater->name,
+                                'project_id' => $project->id,
+                                'action_url' => "/snags/{$snag->id}"
+                            ],
+                            'medium'
+                        );
+                        
+                        // Team notification (excluding changer, reporter, and assigned user)
+                        NotificationHelper::sendToProjectTeam(
+                            $snag->project_id,
+                            'snag_status_changed',
+                            'Snag Status Updated',
+                            "{$updater->name} changed snag '{$snag->title}' status to {$snag->status}",
+                            [
+                                'snag_id' => $snag->id,
+                                'snag_title' => $snag->title,
+                                'old_status' => $oldStatus,
+                                'new_status' => $snag->status,
+                                'changed_by' => $request->user_id,
+                                'changed_by_name' => $updater->name,
+                                'project_id' => $snag->project_id,
+                                'action_url' => "/snags/{$snag->id}"
+                            ],
+                            'low',
+                            [$request->user_id, $snag->reported_by, $snag->assigned_to]
+                        );
+                    } else {
+                        // Generic update notification for other changes
+                        NotificationHelper::send(
+                            $recipients,
+                            'snag_updated',
+                            'Snag Updated',
+                            "{$updater->name} updated snag '{$snag->title}'",
+                            [
+                                'snag_id' => $snag->id,
+                                'project_id' => $project->id,
+                                'action_url' => "/snags/{$snag->id}"
+                            ],
+                            'low'
+                        );
+                    }
                 }
             }
             

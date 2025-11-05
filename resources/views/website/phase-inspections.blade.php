@@ -18,23 +18,25 @@
     <div class="content_wraper F_poppins">
         <header class="project-header">
             <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-12 d-flex align-items-center justify-content-between gap-2">
-                        <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-outline-primary" onclick="history.back()">
-                                <i class="fas fa-arrow-left"></i>
-                            </button>
-                            <h4 class="mb-0">{{ __('messages.inspections') }}</h4>
+                <div class="row align-items-start">
+                    <div class="col-12">
+                        <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="btn btn-outline-primary" onclick="history.back()">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <div>
+                                    <h4 class="mb-1">{{ __('messages.inspections') }}</h4>
+                                    <p class="text-muted small mb-0">{{ __('messages.manage_track_inspections') }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
-        <div class="content-header">
-            <h2>{{ __('messages.inspections') }}</h2>
-            <p>{{ __('messages.manage_track_inspections') }}</p>
-        </div>
-        <div class="container-fluid ">
+        <section class="px-md-4">
+            <div class="container-fluid">
             {{-- <div class="row  px-md-4 wow fadeInUp" data-wow-delay="0.9s">
     <!-- Quick Stats -->
     <div class=" col-12 col-lg-6 mb-4">
@@ -144,7 +146,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
         @include('website.modals.create-inspection-modal')
         @include('website.modals.inspection-details-modal')
         @include('website.modals.drawing-modal')
