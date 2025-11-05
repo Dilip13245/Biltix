@@ -1,6 +1,6 @@
 <!-- Activities Modal -->
 <div class="modal fade" id="activitiesModal" tabindex="-1" aria-labelledby="activitiesModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <style>
@@ -12,6 +12,18 @@
                     }
                     #activitiesModal .modal-header {
                         position: relative !important;
+                    }
+                    @media (max-width: 576px) {
+                        #activitiesModal .modal-dialog {
+                            margin: 0.5rem;
+                        }
+                        #activitiesModal .d-flex.gap-2 {
+                            flex-direction: column;
+                        }
+                        #activitiesModal .d-flex.gap-2 button {
+                            width: 100%;
+                            min-width: auto;
+                        }
                     }
                 </style>
                 @if(app()->getLocale() == 'ar')
@@ -28,27 +40,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 @endif
             </div>
-            <div class="modal-body p-3">
+            <div class="modal-body">
                 <form id="activitiesForm">
                     <input type="hidden" id="activityId" name="activity_id">
-                    <div id="modalActivitiesContainer">
-                        <div class="activity-field mb-2">
-                            <label class="form-label small fw-medium mb-1">{{ __('messages.description') }}</label>
-                            <div class="input-group input-group-sm">
-                                <input type="text" class="form-control form-control-sm" name="description[]" 
-                                    placeholder="{{ __('messages.enter_activity_description') }}" required>
-                                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">{{ __('messages.description') }}</label>
+                        <div id="modalActivitiesContainer">
+                            <div class="activity-field mb-2">
+                                <input type="text" class="form-control Input_control" name="description[]" 
+                                    placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
                             </div>
                         </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" id="addMoreActivityBtn" class="btn btn-outline-primary btn-sm" onclick="addActivityField()" style="min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.add_more') }}
+                            </button>
+                            <button type="button" id="removeLastActivityBtn" class="btn btn-outline-danger btn-sm" onclick="removeLastActivityField()" style="display:none; min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.remove') }}
+                            </button>
+                        </div>
                     </div>
-                    <button type="button" id="addMoreActivityBtn" class="btn btn-outline-primary btn-sm" onclick="addActivityField()">
-                        <i class="fas fa-plus {{ margin_end(1) }}"></i>{{ __('messages.add_more') }}
-                    </button>
                 </form>
             </div>
-            <div class="modal-footer p-2">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                 <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveActivity()">
                     <span id="activitiesSaveBtn">{{ __('messages.save') }}</span>
@@ -60,7 +74,7 @@
 
 <!-- Manpower Equipment Modal -->
 <div class="modal fade" id="manpowerModal" tabindex="-1" aria-labelledby="manpowerModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <style>
@@ -72,6 +86,25 @@
                     }
                     #manpowerModal .modal-header {
                         position: relative !important;
+                    }
+                    @media (max-width: 576px) {
+                        #manpowerModal .modal-dialog {
+                            margin: 0.5rem;
+                        }
+                        #manpowerModal .manpower-field .row > div {
+                            flex: 0 0 100%;
+                            max-width: 100%;
+                        }
+                        #manpowerModal .manpower-field .row > div:first-child {
+                            margin-bottom: 0.5rem;
+                        }
+                        #manpowerModal .d-flex.gap-2 {
+                            flex-direction: column;
+                        }
+                        #manpowerModal .d-flex.gap-2 button {
+                            width: 100%;
+                            min-width: auto;
+                        }
                     }
                 </style>
                 @if(app()->getLocale() == 'ar')
@@ -88,36 +121,37 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 @endif
             </div>
-            <div class="modal-body p-3">
+            <div class="modal-body">
                 <form id="manpowerForm">
                     <input type="hidden" id="manpowerId" name="item_id">
-                    <div id="modalManpowerContainer">
-                        <div class="manpower-field mb-2">
-                            <div class="row g-2">
-                                <div class="col-7">
-                                    <label class="form-label small fw-medium mb-1">{{ __('messages.category') }}</label>
-                                    <input type="text" class="form-control form-control-sm" name="category[]" 
-                                        placeholder="{{ __('messages.enter_category') }}" required>
-                                </div>
-                                <div class="col-3">
-                                    <label class="form-label small fw-medium mb-1">{{ __('messages.count') }}</label>
-                                    <input type="number" class="form-control form-control-sm" name="count[]" 
-                                        placeholder="0" min="0" required>
-                                </div>
-                                <div class="col-2 d-flex align-items-end">
-                                    <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)" style="display:none;">
-                                        <i class="fas fa-times"></i>
-                                    </button>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">{{ __('messages.manpower_equipment') }}</label>
+                        <div id="modalManpowerContainer">
+                            <div class="manpower-field mb-2">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <input type="text" class="form-control Input_control" name="category[]" 
+                                            placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="number" class="form-control Input_control" name="count[]" 
+                                            placeholder="{{ __('messages.count') }}" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" id="addMoreManpowerBtn" class="btn btn-outline-primary btn-sm" onclick="addManpowerField()" style="min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.add_more') }}
+                            </button>
+                            <button type="button" id="removeLastManpowerBtn" class="btn btn-outline-danger btn-sm" onclick="removeLastManpowerField()" style="display:none; min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.remove') }}
+                            </button>
+                        </div>
                     </div>
-                    <button type="button" id="addMoreManpowerBtn" class="btn btn-outline-primary btn-sm" onclick="addManpowerField()">
-                        <i class="fas fa-plus {{ margin_end(1) }}"></i>{{ __('messages.add_more') }}
-                    </button>
                 </form>
             </div>
-            <div class="modal-footer p-2">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                 <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveManpower()">
                     <span id="manpowerSaveBtn">{{ __('messages.save') }}</span>
@@ -129,7 +163,7 @@
 
 <!-- Safety Items Modal -->
 <div class="modal fade" id="safetyModal" tabindex="-1" aria-labelledby="safetyModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <style>
@@ -141,6 +175,18 @@
                     }
                     #safetyModal .modal-header {
                         position: relative !important;
+                    }
+                    @media (max-width: 576px) {
+                        #safetyModal .modal-dialog {
+                            margin: 0.5rem;
+                        }
+                        #safetyModal .d-flex.gap-2 {
+                            flex-direction: column;
+                        }
+                        #safetyModal .d-flex.gap-2 button {
+                            width: 100%;
+                            min-width: auto;
+                        }
                     }
                 </style>
                 @if(app()->getLocale() == 'ar')
@@ -157,27 +203,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 @endif
             </div>
-            <div class="modal-body p-3">
+            <div class="modal-body">
                 <form id="safetyForm">
                     <input type="hidden" id="safetyId" name="item_id">
-                    <div id="modalSafetyContainer">
-                        <div class="safety-field mb-2">
-                            <label class="form-label small fw-medium mb-1">{{ __('messages.checklist_item') }}</label>
-                            <div class="input-group input-group-sm">
-                                <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
-                                    placeholder="{{ __('messages.enter_safety_item') }}" required>
-                                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">{{ __('messages.checklist_item') }}</label>
+                        <div id="modalSafetyContainer">
+                            <div class="safety-field mb-2">
+                                <input type="text" class="form-control Input_control" name="checklist_item[]" 
+                                    placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
                             </div>
                         </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" id="addMoreSafetyBtn" class="btn btn-outline-primary btn-sm" onclick="addSafetyField()" style="min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.add_more') }}
+                            </button>
+                            <button type="button" id="removeLastSafetyBtn" class="btn btn-outline-danger btn-sm" onclick="removeLastSafetyField()" style="display:none; min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.remove') }}
+                            </button>
+                        </div>
                     </div>
-                    <button type="button" id="addMoreSafetyBtn" class="btn btn-outline-primary btn-sm" onclick="addSafetyField()">
-                        <i class="fas fa-plus {{ margin_end(1) }}"></i>{{ __('messages.add_more') }}
-                    </button>
                 </form>
             </div>
-            <div class="modal-footer p-2">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                 <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveSafetyItem()">
                     <span id="safetySaveBtn">{{ __('messages.save') }}</span>
@@ -186,7 +234,6 @@
         </div>
     </div>
 </div>
-
 <script>
 // Modal Functions
 function openActivitiesModal() {
@@ -194,6 +241,14 @@ function openActivitiesModal() {
     document.getElementById('activitiesSaveBtn').textContent = '{{ __("messages.save") }}';
     document.getElementById('activitiesForm').reset();
     document.getElementById('activityId').value = '';
+    const container = document.getElementById('modalActivitiesContainer');
+    container.innerHTML = `
+        <div class="activity-field mb-2">
+            <input type="text" class="form-control Input_control" name="description[]" 
+                placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
+        </div>
+    `;
+    document.getElementById('removeLastActivityBtn').style.display = 'none';
     new bootstrap.Modal(document.getElementById('activitiesModal')).show();
 }
 
@@ -202,6 +257,22 @@ function openManpowerModal() {
     document.getElementById('manpowerSaveBtn').textContent = '{{ __("messages.save") }}';
     document.getElementById('manpowerForm').reset();
     document.getElementById('manpowerId').value = '';
+    const container = document.getElementById('modalManpowerContainer');
+    container.innerHTML = `
+        <div class="manpower-field mb-2">
+            <div class="row">
+                <div class="col-7">
+                    <input type="text" class="form-control Input_control" name="category[]" 
+                        placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
+                </div>
+                <div class="col-5">
+                    <input type="number" class="form-control Input_control" name="count[]" 
+                        placeholder="{{ __('messages.count') }}" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('removeLastManpowerBtn').style.display = 'none';
     new bootstrap.Modal(document.getElementById('manpowerModal')).show();
 }
 
@@ -210,6 +281,14 @@ function openSafetyModal() {
     document.getElementById('safetySaveBtn').textContent = '{{ __("messages.save") }}';
     document.getElementById('safetyForm').reset();
     document.getElementById('safetyId').value = '';
+    const container = document.getElementById('modalSafetyContainer');
+    container.innerHTML = `
+        <div class="safety-field mb-2">
+            <input type="text" class="form-control Input_control" name="checklist_item[]" 
+                placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
+        </div>
+    `;
+    document.getElementById('removeLastSafetyBtn').style.display = 'none';
     new bootstrap.Modal(document.getElementById('safetyModal')).show();
 }
 
@@ -241,79 +320,77 @@ function editSafetyItem(id, item) {
 
 // Dynamic Field Functions
 function addActivityField() {
-    const container = document.getElementById('activitiesContainer');
+    const container = document.getElementById('modalActivitiesContainer');
     const fieldDiv = document.createElement('div');
-    fieldDiv.className = 'activity-field mb-3';
+    fieldDiv.className = 'activity-field mb-2';
     fieldDiv.innerHTML = `
-        <div class="d-flex">
-            <textarea class="form-control" name="description[]" rows="3" 
-                placeholder="{{ __('messages.enter_activity_description') }}" required></textarea>
-            <button type="button" class="btn btn-danger {{ margin_start(2) }} remove-field" onclick="removeField(this)">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
+        <input type="text" class="form-control Input_control" name="description[]" 
+            placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
     `;
     container.appendChild(fieldDiv);
-    updateRemoveButtons('activitiesContainer');
+    updateRemoveButton('removeLastActivityBtn', container);
+}
+
+function removeLastActivityField() {
+    const container = document.getElementById('modalActivitiesContainer');
+    if (container.children.length > 1) {
+        container.removeChild(container.lastChild);
+        updateRemoveButton('removeLastActivityBtn', container);
+    }
 }
 
 function addManpowerField() {
-    const container = document.getElementById('manpowerContainer');
+    const container = document.getElementById('modalManpowerContainer');
     const fieldDiv = document.createElement('div');
-    fieldDiv.className = 'manpower-field mb-3';
+    fieldDiv.className = 'manpower-field mb-2';
     fieldDiv.innerHTML = `
         <div class="row">
-            <div class="col-md-6">
-                <input type="text" class="form-control" name="category[]" 
-                    placeholder="{{ __('messages.enter_category') }}" required>
+            <div class="col-7">
+                <input type="text" class="form-control Input_control" name="category[]" 
+                    placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
             </div>
-            <div class="col-md-4">
-                <input type="number" class="form-control" name="count[]" 
-                    placeholder="{{ __('messages.enter_count') }}" min="0" required>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="button" class="btn btn-danger remove-field" onclick="removeField(this)">
-                    <i class="fas fa-trash"></i>
-                </button>
+            <div class="col-5">
+                <input type="number" class="form-control Input_control" name="count[]" 
+                    placeholder="{{ __('messages.count') }}" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
             </div>
         </div>
     `;
     container.appendChild(fieldDiv);
-    updateRemoveButtons('manpowerContainer');
+    updateRemoveButton('removeLastManpowerBtn', container);
+}
+
+function removeLastManpowerField() {
+    const container = document.getElementById('modalManpowerContainer');
+    if (container.children.length > 1) {
+        container.removeChild(container.lastChild);
+        updateRemoveButton('removeLastManpowerBtn', container);
+    }
 }
 
 function addSafetyField() {
-    const container = document.getElementById('safetyContainer');
+    const container = document.getElementById('modalSafetyContainer');
     const fieldDiv = document.createElement('div');
-    fieldDiv.className = 'safety-field mb-3';
+    fieldDiv.className = 'safety-field mb-2';
     fieldDiv.innerHTML = `
-        <div class="d-flex">
-            <textarea class="form-control" name="checklist_item[]" rows="3" 
-                placeholder="{{ __('messages.enter_safety_item') }}" required></textarea>
-            <button type="button" class="btn btn-danger {{ margin_start(2) }} remove-field" onclick="removeField(this)">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
+        <input type="text" class="form-control Input_control" name="checklist_item[]" 
+            placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
     `;
     container.appendChild(fieldDiv);
-    updateRemoveButtons('safetyContainer');
+    updateRemoveButton('removeLastSafetyBtn', container);
 }
 
-function removeField(button) {
-    const fieldDiv = button.closest('.activity-field, .manpower-field, .safety-field');
-    const container = fieldDiv.parentNode;
-    fieldDiv.remove();
-    updateRemoveButtons(container.id);
+function removeLastSafetyField() {
+    const container = document.getElementById('modalSafetyContainer');
+    if (container.children.length > 1) {
+        container.removeChild(container.lastChild);
+        updateRemoveButton('removeLastSafetyBtn', container);
+    }
 }
 
-function updateRemoveButtons(containerId) {
-    const container = document.getElementById(containerId);
-    const fields = container.children;
-    for (let i = 0; i < fields.length; i++) {
-        const removeBtn = fields[i].querySelector('.remove-field');
-        if (removeBtn) {
-            removeBtn.style.display = fields.length > 1 ? 'block' : 'none';
-        }
+function updateRemoveButton(buttonId, container) {
+    const removeBtn = document.getElementById(buttonId);
+    if (removeBtn) {
+        removeBtn.style.display = container.children.length > 1 ? 'inline-block' : 'none';
     }
 }
 

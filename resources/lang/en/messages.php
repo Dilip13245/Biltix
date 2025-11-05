@@ -1003,6 +1003,7 @@ return [
     'confirm_delete_project' => 'Are you sure you want to delete this project?',
     'project_deletion_functionality' => 'Project deletion functionality would be implemented here',
     'add_more' => 'Add More',
+    'remove' => 'Remove',
     'activities_saved_successfully' => 'activities saved successfully',
     'manpower_items_saved_successfully' => 'manpower items saved successfully',
     'safety_items_saved_successfully' => 'safety items saved successfully',

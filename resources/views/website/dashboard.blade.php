@@ -209,18 +209,85 @@
             padding-left: 0.75rem !important;
         }
 
-        /* Move validation icon to avoid overlap with calendar icon */
+        /* Move validation icon to avoid overlap with calendar icon - REMOVED: No icon, only border */
         [dir="rtl"] .vanilla-calendar-wrapper .is-invalid {
-            background-position: left 0.5rem center !important;
             padding-left: 3.5rem !important;
             padding-right: 0.75rem !important;
+            border-color: #dc3545 !important;
         }
 
         [dir="ltr"] .vanilla-calendar-wrapper .is-invalid {
-            background-position: right 2.5rem center !important;
-            padding-right: 2.25rem !important;
+            padding-right: 2.5rem !important;
+            padding-left: 0.75rem !important;
+            border-color: #dc3545 !important;
+        }
+
+        /* Modern date picker validation styling - ensure border color matches other fields */
+        .modern-datepicker-wrapper input.is-invalid,
+        .modern-datepicker-input.is-invalid,
+        .modern-datepicker-input-group input.is-invalid {
+            border-color: #dc3545 !important;
+            border-width: 1px !important;
+            border-style: solid !important;
+        }
+
+        [dir="rtl"] .modern-datepicker-wrapper input.is-invalid,
+        [dir="rtl"] .modern-datepicker-input.is-invalid,
+        [dir="rtl"] .modern-datepicker-input-group input.is-invalid {
+            border-color: #dc3545 !important;
+            border-width: 1px !important;
+            border-style: solid !important;
+        }
+
+        /* Ensure date picker wrapper border also shows validation - override 2px border */
+        .modern-datepicker-wrapper:has(input.is-invalid) .modern-datepicker-input,
+        .modern-datepicker-wrapper:has(.modern-datepicker-input.is-invalid) .modern-datepicker-input,
+        .modern-datepicker-input-group:has(input.is-invalid) .modern-datepicker-input {
+            border: 1px solid #dc3545 !important;
+        }
+
+        /* All form inputs red border on validation */
+        .form-control.is-invalid,
+        .Input_control.is-invalid,
+        input.is-invalid,
+        select.is-invalid,
+        textarea.is-invalid {
+            border-color: #dc3545 !important;
+            background-image: none !important;
+            padding-right: 0.75rem !important;
             padding-left: 0.75rem !important;
         }
+
+        [dir="rtl"] .form-control.is-invalid,
+        [dir="rtl"] .Input_control.is-invalid,
+        [dir="rtl"] input.is-invalid,
+        [dir="rtl"] select.is-invalid,
+        [dir="rtl"] textarea.is-invalid {
+            padding-right: 0.75rem !important;
+            padding-left: 0.75rem !important;
+        }
+
+        /* Override Bootstrap validation icon for form-select - remove validation icon, keep dropdown arrow only */
+        .form-select.is-invalid:not([multiple]):not([size]),
+        .form-select.is-invalid:not([multiple])[size="1"],
+        select.is-invalid:not([multiple]):not([size]),
+        select.is-invalid:not([multiple])[size="1"] {
+            --bs-form-select-bg-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+            background-position: var(--bs-form-select-bg-position) !important;
+            background-size: 16px 12px !important;
+            padding-right: 3rem !important;
+        }
+
+        [dir="rtl"] .form-select.is-invalid:not([multiple]):not([size]),
+        [dir="rtl"] .form-select.is-invalid:not([multiple])[size="1"],
+        [dir="rtl"] select.is-invalid:not([multiple]):not([size]),
+        [dir="rtl"] select.is-invalid:not([multiple])[size="1"] {
+            --bs-form-select-bg-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+            padding-right: 0.75rem !important;
+            padding-left: 3rem !important;
+        }
+
+        /* No validation icon, only red border */
 
         /* Google Maps Styles */
         #map {
@@ -351,6 +418,69 @@
         [dir="rtl"] .custom-combo-dropdown input {
             padding-right: 0.75rem;
             padding-left: 35px;
+        }
+
+        /* Validation icon positioning for custom-combo-dropdown - Fix overlapping */
+        .custom-combo-dropdown input.is-invalid {
+            padding-right: 35px;
+            border-color: #dc3545;
+        }
+
+        [dir="rtl"] .custom-combo-dropdown input.is-invalid {
+            padding-right: 0.75rem;
+            padding-left: 35px;
+        }
+
+        /* Adjust clear icon position when validation is present - no icon, so keep original position */
+        .custom-combo-dropdown:has(input.is-invalid) .clear-selection {
+            right: 35px !important;
+        }
+
+        [dir="rtl"] .custom-combo-dropdown:has(input.is-invalid) .clear-selection {
+            left: 35px !important;
+            right: auto !important;
+        }
+
+        /* Keep dropdown arrow in place */
+        .custom-combo-dropdown .dropdown-arrow {
+            right: 12px;
+            z-index: 5;
+        }
+
+        [dir="rtl"] .custom-combo-dropdown .dropdown-arrow {
+            left: 12px;
+            right: auto;
+        }
+
+        /* When validation present, keep clear icon at original position */
+        .custom-combo-dropdown input.is-invalid ~ .clear-selection {
+            right: 35px !important;
+        }
+
+        [dir="rtl"] .custom-combo-dropdown input.is-invalid ~ .clear-selection {
+            left: 35px !important;
+            right: auto !important;
+        }
+
+        /* Project location field validation - no icon, only border */
+        .map-search-wrapper input.is-invalid {
+            padding-right: 40px;
+            border-color: #dc3545;
+        }
+
+        [dir="rtl"] .map-search-wrapper input.is-invalid {
+            padding-right: 0.75rem;
+            padding-left: 40px;
+        }
+
+        /* Keep search icon at original position when validation is present */
+        .map-search-wrapper:has(input.is-invalid) .map-search-icon {
+            right: 12px !important;
+        }
+
+        [dir="rtl"] .map-search-wrapper:has(input.is-invalid) .map-search-icon {
+            left: 12px !important;
+            right: auto !important;
         }
 
         .dropdown-options {
@@ -840,7 +970,7 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="type"
-                                                class="form-label fw-medium">{{ __('messages.project_type_example') }}</label>
+                                                class="form-label fw-medium">{{ __('messages.project_type_example') }} *</label>
                                             <div class="custom-combo-dropdown position-relative">
                                                 <input type="text" class="form-control Input_control" id="type"
                                                     name="type" placeholder="{{ __('messages.select_type') }}"
@@ -1539,8 +1669,18 @@
                     typeInput.value = '';
                     typeInput.style.cursor = 'text';
                     typeInput.style.backgroundColor = '';
+                    typeInput.classList.remove('is-invalid');
                     if (clearTypeBtn) {
                         clearTypeBtn.classList.add('d-none');
+                        // Reset clear icon position
+                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                        if (isRTL) {
+                            clearTypeBtn.style.left = '35px';
+                            clearTypeBtn.style.right = 'auto';
+                        } else {
+                            clearTypeBtn.style.right = '35px';
+                            clearTypeBtn.style.left = 'auto';
+                        }
                     }
                     // Show all options again
                     if (typeDropdown) {
@@ -1634,8 +1774,18 @@
                         typeInput.readOnly = true;
                         typeInput.style.cursor = 'pointer';
                         typeInput.style.backgroundColor = '#f8f9fa';
+                        typeInput.classList.remove('is-invalid');
+                        // Reset clear icon position when value is selected
                         if (clearTypeBtn) {
                             clearTypeBtn.classList.remove('d-none');
+                            const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                            if (isRTL) {
+                                clearTypeBtn.style.left = '35px';
+                                clearTypeBtn.style.right = 'auto';
+                            } else {
+                                clearTypeBtn.style.right = '35px';
+                                clearTypeBtn.style.left = 'auto';
+                            }
                         }
                         typeDropdown.classList.remove('show');
                     });
@@ -1676,6 +1826,9 @@
                 const startDateInput = document.getElementById('project_start_date');
                 if (startDateInput) {
                     startDateInput.addEventListener('change', function() {
+                        // Clear validation when date is selected
+                        this.classList.remove('is-invalid');
+                        
                         if (this.value) {
                             // Parse date string directly to avoid timezone issues
                             const dateParts = this.value.split('-');
@@ -1690,10 +1843,67 @@
                             const dueDateInput = document.getElementById('project_due_date');
                             if (dueDateInput) {
                                 dueDateInput.value = '';
+                                dueDateInput.classList.remove('is-invalid');
                                 window.dueDateMinDate = nextDay;
                                 window.dueDateStartMonth =
                                     nextDay; // Set calendar to open at this month
                             }
+                        }
+                    });
+                }
+
+                // Clear validation for due date when selected
+                const dueDateInput = document.getElementById('project_due_date');
+                if (dueDateInput) {
+                    dueDateInput.addEventListener('change', function() {
+                        this.classList.remove('is-invalid');
+                    });
+                    // Also listen for input events for modern date picker
+                    dueDateInput.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                }
+
+                // Clear validation for type field when value changes
+                const typeInput = document.getElementById('type');
+                if (typeInput) {
+                    typeInput.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            this.classList.remove('is-invalid');
+                            // Reset clear icon position
+                            const clearIcon = document.getElementById('clearTypeSelection');
+                            if (clearIcon) {
+                                const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                                if (isRTL) {
+                                    clearIcon.style.left = '35px';
+                                    clearIcon.style.right = 'auto';
+                                } else {
+                                    clearIcon.style.right = '35px';
+                                    clearIcon.style.left = 'auto';
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Also listen for modern date picker custom events
+                document.addEventListener('dateSelected', function(e) {
+                    if (e.detail && e.detail.fieldId) {
+                        const field = document.getElementById(e.detail.fieldId);
+                        if (field) {
+                            field.classList.remove('is-invalid');
+                        }
+                    }
+                });
+
+                // Clear validation for location when value changes
+                const locationInput = document.getElementById('project_location');
+                if (locationInput) {
+                    locationInput.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            this.classList.remove('is-invalid');
                         }
                     });
                 }
@@ -1864,18 +2074,77 @@
             };
 
             function validateStep(step) {
-                const requiredFields = document.querySelectorAll(
-                    `#step${step} input[required], #step${step} select[required]`);
+                const form = document.getElementById('createProjectForm');
                 let isValid = true;
 
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        field.classList.add('is-invalid');
-                        isValid = false;
-                    } else {
-                        field.classList.remove('is-invalid');
+                // Clear previous errors
+                form.querySelectorAll('.is-invalid').forEach(el => {
+                    el.classList.remove('is-invalid');
+                    // Reset clear icon position
+                    const clearIcon = document.getElementById('clearTypeSelection');
+                    if (clearIcon && el.id === 'type') {
+                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                        if (isRTL) {
+                            clearIcon.style.left = '35px';
+                            clearIcon.style.right = 'auto';
+                        } else {
+                            clearIcon.style.right = '35px';
+                            clearIcon.style.left = 'auto';
+                        }
                     }
                 });
+
+                if (step === 1) {
+                    // Validate Step 1 fields - only check visible fields
+                    const projectTitle = document.getElementById('project_title');
+                    const contractorName = document.getElementById('contractor_name');
+                    
+                    // Check if contractor_name field is visible
+                    const contractorNameContainer = contractorName ? contractorName.closest('.col-md-6') : null;
+                    const isContractorNameVisible = contractorNameContainer ? 
+                        window.getComputedStyle(contractorNameContainer).display !== 'none' && 
+                        contractorNameContainer.style.display !== 'none' : false;
+
+                    if (!projectTitle.value.trim()) {
+                        projectTitle.classList.add('is-invalid');
+                        isValid = false;
+                    }
+
+                    // Only validate contractor_name if it's visible
+                    if (isContractorNameVisible && contractorName && !contractorName.value.trim()) {
+                        contractorName.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                } else if (step === 2) {
+                    // Validate Step 2 fields
+                    const type = document.getElementById('type');
+                    const projectStartDate = document.getElementById('project_start_date');
+                    const projectDueDate = document.getElementById('project_due_date');
+                    const projectLocation = document.getElementById('project_location');
+
+                    if (!type.value.trim()) {
+                        type.classList.add('is-invalid');
+                        isValid = false;
+                    }
+
+                    if (!projectStartDate.value.trim()) {
+                        projectStartDate.classList.add('is-invalid');
+                        isValid = false;
+                    }
+
+                    if (!projectDueDate.value.trim()) {
+                        projectDueDate.classList.add('is-invalid');
+                        isValid = false;
+                    }
+
+                    if (!projectLocation.value.trim()) {
+                        projectLocation.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                } else if (step === 3) {
+                    // Step 3 validation (file uploads are optional)
+                    // No validation needed
+                }
 
                 if (!isValid) {
                     showToast('Please fill in all required fields.', 'error');
@@ -1932,6 +2201,12 @@
 
                 // Clear validation errors
                 document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                
+                // Clear date picker validation
+                const startDate = document.getElementById('project_start_date');
+                const dueDate = document.getElementById('project_due_date');
+                if (startDate) startDate.classList.remove('is-invalid');
+                if (dueDate) dueDate.classList.remove('is-invalid');
 
                 // Reset map and location
                 document.getElementById('project_location').value = '';

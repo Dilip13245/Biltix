@@ -283,16 +283,16 @@
                     <div class="col-12 col-lg-6 mb-4 mb-lg-0">
                         <div class="card h-100 B_shadow">
                             <div class="card-body p-md-4">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                                     <h5 class="fw-semibold black_color mb-0">{{ __('messages.ongoing_activities') }}
                                     </h5>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-sm btn-outline-primary"
+                                        <button class="btn btn-sm btn-outline-success"
                                             onclick="openActivitiesModal()">
-                                            <i class="fas fa-plus"></i> {{ __('messages.add_new') }}
+                                            {{ __('messages.add_new') }}
                                         </button>
-                                        <button class="btn btn-sm orange_btn" onclick="openActivitiesUpdateModal()">
-                                            <i class="fas fa-edit"></i> {{ __('messages.update') }}
+                                        <button class="btn btn-sm btn-success" onclick="openActivitiesUpdateModal()">
+                                            {{ __('messages.update') }}
                                         </button>
                                     </div>
                                 </div>
@@ -309,15 +309,15 @@
                     <div class="col-12 col-lg-6">
                         <div class="card h-100 B_shadow">
                             <div class="card-body p-md-4">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                                     <h5 class="fw-semibold black_color mb-0">{{ __('messages.manpower_equipment') }}
                                     </h5>
                                     <div class="d-flex gap-2">
                                         <button class="btn btn-sm btn-outline-primary" onclick="openManpowerModal()">
-                                            <i class="fas fa-plus"></i> {{ __('messages.add_new') }}
+                                            {{ __('messages.add_new') }}
                                         </button>
-                                        <button class="btn btn-sm orange_btn" onclick="openManpowerUpdateModal()">
-                                            <i class="fas fa-edit"></i> {{ __('messages.update') }}
+                                        <button class="btn btn-sm btn-primary" onclick="openManpowerUpdateModal()">
+                                            {{ __('messages.update') }}
                                         </button>
                                     </div>
                                 </div>
@@ -343,13 +343,13 @@
                                             class="btn btn-primary d-flex align-items-center gap-2 btnsm">
                                             <i class="fas fa-eye"></i> {{ __('messages.view_checklist') }}
                                         </a> --}}
-                                        <button class="btn btn-primary d-flex align-items-center gap-2 btnsm"
+                                        <button class="btn btn-sm btn-outline-danger"
                                             onclick="openSafetyModal()">
-                                            <i class="fas fa-plus"></i> {{ __('messages.add_new') }}
+                                            {{ __('messages.add_new') }}
                                         </button>
-                                        <button class="btn orange_btn d-flex align-items-center gap-2 btnsm"
+                                        <button class="btn btn-sm btn-danger"
                                             onclick="openSafetyUpdateModal()">
-                                            <i class="fas fa-edit"></i> {{ __('messages.update') }}
+                                            {{ __('messages.update') }}
                                         </button>
                                     </div>
                                 </div>
@@ -1321,17 +1321,17 @@
                                     <div class="timeline-dot bg-primary"></div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h5 class="mb-0 fw-semibold">${phase.title}</h5>
+                                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                                        <h5 class="mb-0 fw-semibold text-wrap">${phase.title}</h5>
                                         <span class="badge ${badgeClass}">${badgeText}</span>
                                     </div>
                                     <div class="text-muted small mb-1">${Math.round(progress)}% Time Progress</div>
-                                    <div class="d-flex align-items-center gap-3 text-muted small">
+                                    <div class="d-flex align-items-center gap-3 text-muted small flex-wrap">
                                         <span><i class="fas fa-calendar me-1"></i>${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</span>
                                     </div>
                                     ${extensionDays > 0 ? `
                                                         <div class="mt-1">
-                                                            <small class="text-warning">
+                                                            <small class="text-warning text-wrap d-inline-block">
                                                                 <i class="fas fa-info-circle me-1"></i>
                                                                 Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
                                                             </small>
@@ -1345,19 +1345,19 @@
                                     const isOverdue = milestone.is_overdue;
                                     return `
                                                         <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
-                                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                <div class="d-flex align-items-center gap-2">
-                                                                    <i class="fas fa-circle text-primary" style="font-size: 8px;"></i>
-                                                                    <span class="${isOverdue ? 'text-danger fw-medium' : ''}">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
-                                                                    ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : ''}
+                                                            <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                                                                <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                                                    <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
+                                                                    <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
+                                                                    ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
                                                                 </div>
-                                                                <div class="text-muted small">
+                                                                <div class="text-muted small" style="flex-shrink: 0;">
                                                                     ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
                                                                 </div>
                                                             </div>
-                                                            <div class="d-flex align-items-center gap-2 mt-2">
+                                                            <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
                                                                 <span class="text-muted small">Extend:</span>
-                                                                <div class="input-group" style="width: 80px;">
+                                                                <div class="input-group" style="width: 80px; flex-shrink: 0;">
                                                                     <input type="number" class="form-control form-control-sm" 
                                                                         style="font-size: 11px; text-align: center;" 
                                                                         value="${milestone.extension_days || 0}" 
@@ -1611,6 +1611,273 @@
                 hyphens: auto;
                 max-width: 100%;
             }
+
+            /* Button Size Consistency - All 6 buttons */
+            .row.mt-4 .btn-sm {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+                height: auto;
+                min-height: 2.25rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1.2;
+            }
+
+            /* Mobile Responsive Styles - Cards Section */
+            @media (max-width: 575px) {
+                .row.mt-4 .col-12.col-lg-6 {
+                    margin-bottom: 1rem !important;
+                }
+
+                .card-body.p-md-4 {
+                    padding: 1rem !important;
+                }
+
+                .d-flex.justify-content-between.align-items-center.mb-3 {
+                    flex-direction: column;
+                    align-items: flex-start !important;
+                    gap: 0.75rem;
+                }
+
+                .d-flex.justify-content-between.align-items-center.mb-3 .d-flex.gap-2 {
+                    width: 100%;
+                    justify-content: flex-start;
+                    flex-wrap: wrap;
+                }
+
+                .d-flex.justify-content-between.align-items-center.mb-3 h5 {
+                    width: 100%;
+                    margin-bottom: 0;
+                }
+
+                .d-flex.flex-wrap.justify-content-between.align-items-center.mb-3.gap-2 {
+                    flex-direction: column;
+                    align-items: flex-start !important;
+                }
+
+                .d-flex.flex-wrap.justify-content-between.align-items-center.mb-3.gap-2 .d-flex {
+                    width: 100%;
+                    justify-content: flex-start;
+                    flex-wrap: wrap;
+                }
+
+                .d-flex.flex-wrap.justify-content-between.align-items-center.mb-3.gap-2 h5 {
+                    width: 100%;
+                    margin-bottom: 0;
+                }
+
+                .btn-sm {
+                    font-size: 0.8rem;
+                    padding: 0.4rem 0.75rem;
+                    white-space: nowrap;
+                    height: auto;
+                    min-height: 2rem;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    line-height: 1.2;
+                }
+
+                #activitiesContainer,
+                #manpowerContainer,
+                #safetyContainer {
+                    min-height: 150px;
+                }
+
+                #activitiesContainer .text-center,
+                #manpowerContainer .text-center,
+                #safetyContainer .text-center {
+                    padding: 2rem 0.5rem !important;
+                }
+
+                #activitiesContainer .fas.fa-tasks,
+                #manpowerContainer .fas.fa-users,
+                #safetyContainer .fas.fa-shield-alt {
+                    font-size: 2.5rem !important;
+                }
+
+                #activitiesContainer p,
+                #manpowerContainer p,
+                #safetyContainer p {
+                    font-size: 0.9rem;
+                    margin-top: 0.5rem;
+                }
+            }
+
+            @media (max-width: 375px) {
+                .d-flex.justify-content-between.align-items-center.mb-3 .d-flex.gap-2,
+                .d-flex.flex-wrap.justify-content-between.align-items-center.mb-3.gap-2 .d-flex {
+                    flex-direction: column;
+                    width: 100%;
+                }
+
+                .btn-sm {
+                    width: 100%;
+                    justify-content: center;
+                    margin-bottom: 0.25rem;
+                }
+
+                .btn-sm:last-child {
+                    margin-bottom: 0;
+                }
+            }
+
+            /* Mobile Responsive Styles - Timeline Section */
+            @media (max-width: 575px) {
+                .content-header {
+                    flex-direction: column;
+                    align-items: flex-start !important;
+                    gap: 1rem !important;
+                    padding: 1rem 0.75rem !important;
+                }
+
+                .content-header h2 {
+                    font-size: 1.25rem;
+                    margin-bottom: 0.25rem;
+                }
+
+                .content-header p {
+                    font-size: 0.85rem;
+                    margin-bottom: 0;
+                }
+
+                .px-md-4 {
+                    padding-left: 0.75rem !important;
+                    padding-right: 0.75rem !important;
+                }
+
+                .row.gy-3.gx-5 {
+                    --bs-gutter-x: 1rem !important;
+                }
+
+                .timeline-marker {
+                    margin-right: 0.75rem !important;
+                    margin-left: 0 !important;
+                    flex-shrink: 0;
+                }
+
+                .timeline-milestones {
+                    padding-left: 2rem !important;
+                    padding-right: 0 !important;
+                }
+
+                [dir="rtl"] .timeline-milestones {
+                    padding-right: 2rem !important;
+                    padding-left: 0 !important;
+                }
+
+                .timeline-phase .d-flex.align-items-center {
+                    flex-wrap: wrap;
+                    gap: 0.5rem;
+                }
+
+                .timeline-phase h5 {
+                    font-size: 1rem;
+                    word-wrap: break-word;
+                }
+
+                .milestone-item {
+                    padding: 0.75rem !important;
+                    margin-bottom: 0.75rem !important;
+                }
+
+                .milestone-item .d-flex.justify-content-between {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    align-items: flex-start !important;
+                }
+
+                .milestone-item .input-group {
+                    width: 100% !important;
+                    max-width: 120px;
+                }
+
+                .milestone-item .btn-group {
+                    flex-wrap: wrap;
+                    gap: 0.25rem;
+                }
+
+                .milestone-item .text-muted.small {
+                    margin-top: 0.5rem;
+                }
+
+                .d-flex.justify-content-between.align-items-start.mb-3.mb-md-4 {
+                    flex-direction: column;
+                    align-items: flex-start !important;
+                    gap: 0.75rem;
+                }
+
+                .d-flex.justify-content-between.align-items-start.mb-3.mb-md-4 button {
+                    width: 100%;
+                    font-size: 0.875rem;
+                }
+
+                .d-flex.flex-wrap.gap-2 {
+                    flex-direction: column;
+                    gap: 0.5rem !important;
+                }
+
+                .d-flex.flex-wrap.gap-2 button {
+                    width: 100%;
+                    justify-content: center;
+                    font-size: 0.875rem;
+                    padding: 0.5rem 1rem;
+                }
+
+                .project-header {
+                    padding: 0.75rem 1rem !important;
+                }
+
+                .project-header h4 {
+                    font-size: 1rem;
+                }
+
+                .project-header .btn {
+                    padding: 0.375rem 0.75rem;
+                    font-size: 0.875rem;
+                }
+            }
+
+            @media (max-width: 375px) {
+                .content-header {
+                    padding: 0.75rem 0.5rem !important;
+                }
+
+                .px-md-4 {
+                    padding-left: 0.5rem !important;
+                    padding-right: 0.5rem !important;
+                }
+
+                .card-body.p-md-4 {
+                    padding: 0.75rem !important;
+                }
+
+                .timeline-milestones {
+                    padding-left: 1.5rem !important;
+                }
+
+                [dir="rtl"] .timeline-milestones {
+                    padding-right: 1.5rem !important;
+                }
+
+                .timeline-marker {
+                    margin-right: 0.5rem !important;
+                }
+
+                .milestone-item {
+                    padding: 0.5rem !important;
+                }
+
+                .timeline-phase h5 {
+                    font-size: 0.9rem;
+                }
+
+                .d-flex.flex-wrap.gap-2 button {
+                    font-size: 0.8rem;
+                    padding: 0.4rem 0.75rem;
+                }
+            }
         </style>
 
         <!-- Add Milestone Modal -->
@@ -1783,21 +2050,14 @@
                 document.getElementById('activitiesSaveBtn').textContent = '{{ __('messages.save') }}';
                 document.getElementById('activitiesForm').reset();
                 document.getElementById('activityId').value = '';
-                // Reset to single field
                 const container = document.getElementById('modalActivitiesContainer');
                 container.innerHTML = `
         <div class="activity-field mb-2">
-            <label class="form-label small fw-medium mb-1">{{ __('messages.description') }}</label>
-            <div class="input-group input-group-sm">
-                <input type="text" class="form-control form-control-sm" name="description[]" 
-                    placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
-                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+            <input type="text" class="form-control Input_control" name="description[]" 
+                placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
         </div>
     `;
-                document.getElementById('addMoreActivityBtn').style.display = 'inline-block';
+                document.getElementById('removeLastActivityBtn').style.display = 'none';
                 new bootstrap.Modal(document.getElementById('activitiesModal')).show();
             }
 
@@ -1806,30 +2066,22 @@
                 document.getElementById('manpowerSaveBtn').textContent = '{{ __('messages.save') }}';
                 document.getElementById('manpowerForm').reset();
                 document.getElementById('manpowerId').value = '';
-                // Reset to single field
                 const container = document.getElementById('modalManpowerContainer');
                 container.innerHTML = `
         <div class="manpower-field mb-2">
-            <div class="row g-2">
+            <div class="row">
                 <div class="col-7">
-                    <label class="form-label small fw-medium mb-1">{{ __('messages.category') }}</label>
-                    <input type="text" class="form-control form-control-sm" name="category[]" 
+                    <input type="text" class="form-control Input_control" name="category[]" 
                         placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
                 </div>
-                <div class="col-3">
-                    <label class="form-label small fw-medium mb-1">{{ __('messages.count') }}</label>
-                    <input type="number" class="form-control form-control-sm" name="count[]" 
-                        placeholder="0" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
-                </div>
-                <div class="col-2 d-flex align-items-end">
-                    <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)" style="display:none;">
-                        <i class="fas fa-times"></i>
-                    </button>
+                <div class="col-5">
+                    <input type="number" class="form-control Input_control" name="count[]" 
+                        placeholder="{{ __('messages.count') }}" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
                 </div>
             </div>
         </div>
     `;
-                document.getElementById('addMoreManpowerBtn').style.display = 'inline-block';
+                document.getElementById('removeLastManpowerBtn').style.display = 'none';
                 new bootstrap.Modal(document.getElementById('manpowerModal')).show();
             }
 
@@ -1838,21 +2090,14 @@
                 document.getElementById('safetySaveBtn').textContent = '{{ __('messages.save') }}';
                 document.getElementById('safetyForm').reset();
                 document.getElementById('safetyId').value = '';
-                // Reset to single field
                 const container = document.getElementById('modalSafetyContainer');
                 container.innerHTML = `
         <div class="safety-field mb-2">
-            <label class="form-label small fw-medium mb-1">{{ __('messages.checklist_item') }}</label>
-            <div class="input-group input-group-sm">
-                <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
-                    placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
-                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+            <input type="text" class="form-control Input_control" name="checklist_item[]" 
+                placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
         </div>
     `;
-                document.getElementById('addMoreSafetyBtn').style.display = 'inline-block';
+                document.getElementById('removeLastSafetyBtn').style.display = 'none';
                 new bootstrap.Modal(document.getElementById('safetyModal')).show();
             }
 
@@ -1860,77 +2105,75 @@
             function addActivityField() {
                 const container = document.getElementById('modalActivitiesContainer');
                 const fieldDiv = document.createElement('div');
-                fieldDiv.className = 'activity-field mb-3';
+                fieldDiv.className = 'activity-field mb-2';
                 fieldDiv.innerHTML = `
-        <div class="input-group input-group-sm">
-            <input type="text" class="form-control form-control-sm" name="description[]" 
-                placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
-            <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+        <input type="text" class="form-control Input_control" name="description[]" 
+            placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
     `;
                 container.appendChild(fieldDiv);
-                updateRemoveButtons('modalActivitiesContainer');
+                updateRemoveButton('removeLastActivityBtn', container);
+            }
+
+            function removeLastActivityField() {
+                const container = document.getElementById('modalActivitiesContainer');
+                if (container.children.length > 1) {
+                    container.removeChild(container.lastChild);
+                    updateRemoveButton('removeLastActivityBtn', container);
+                }
             }
 
             function addManpowerField() {
                 const container = document.getElementById('modalManpowerContainer');
                 const fieldDiv = document.createElement('div');
-                fieldDiv.className = 'manpower-field mb-3';
+                fieldDiv.className = 'manpower-field mb-2';
                 fieldDiv.innerHTML = `
-        <div class="row g-2">
+        <div class="row">
             <div class="col-7">
-                <input type="text" class="form-control form-control-sm" name="category[]" 
+                <input type="text" class="form-control Input_control" name="category[]" 
                     placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
             </div>
-            <div class="col-3">
-                <input type="number" class="form-control form-control-sm" name="count[]" 
-                    placeholder="0" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
-            </div>
-            <div class="col-2 d-flex align-items-end">
-                <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)">
-                    <i class="fas fa-times"></i>
-                </button>
+            <div class="col-5">
+                <input type="number" class="form-control Input_control" name="count[]" 
+                    placeholder="{{ __('messages.count') }}" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
             </div>
         </div>
     `;
                 container.appendChild(fieldDiv);
-                updateRemoveButtons('modalManpowerContainer');
+                updateRemoveButton('removeLastManpowerBtn', container);
+            }
+
+            function removeLastManpowerField() {
+                const container = document.getElementById('modalManpowerContainer');
+                if (container.children.length > 1) {
+                    container.removeChild(container.lastChild);
+                    updateRemoveButton('removeLastManpowerBtn', container);
+                }
             }
 
             function addSafetyField() {
                 const container = document.getElementById('modalSafetyContainer');
                 const fieldDiv = document.createElement('div');
-                fieldDiv.className = 'safety-field mb-3';
+                fieldDiv.className = 'safety-field mb-2';
                 fieldDiv.innerHTML = `
-        <div class="input-group input-group-sm">
-            <input type="text" class="form-control form-control-sm" name="checklist_item[]" 
-                placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
-            <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+        <input type="text" class="form-control Input_control" name="checklist_item[]" 
+            placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
     `;
                 container.appendChild(fieldDiv);
-                updateRemoveButtons('modalSafetyContainer');
+                updateRemoveButton('removeLastSafetyBtn', container);
             }
 
-            function removeField(button) {
-                const fieldDiv = button.closest('.activity-field, .manpower-field, .safety-field');
-                const container = fieldDiv.parentNode;
-                fieldDiv.remove();
-                updateRemoveButtons(container.id);
+            function removeLastSafetyField() {
+                const container = document.getElementById('modalSafetyContainer');
+                if (container.children.length > 1) {
+                    container.removeChild(container.lastChild);
+                    updateRemoveButton('removeLastSafetyBtn', container);
+                }
             }
 
-            function updateRemoveButtons(containerId) {
-                const container = document.getElementById(containerId);
-                const fields = container.children;
-                for (let i = 0; i < fields.length; i++) {
-                    const removeBtn = fields[i].querySelector('.remove-field');
-                    if (removeBtn) {
-                        removeBtn.style.display = fields.length > 1 ? 'block' : 'none';
-                    }
+            function updateRemoveButton(buttonId, container) {
+                const removeBtn = document.getElementById(buttonId);
+                if (removeBtn) {
+                    removeBtn.style.display = container.children.length > 1 ? 'inline-block' : 'none';
                 }
             }
 
@@ -2120,18 +2363,12 @@
                 // Set the first input field value
                 const container = document.getElementById('modalActivitiesContainer');
                 container.innerHTML = `
-        <div class="activity-field mb-3">
-            <label class="form-label small fw-medium mb-1">{{ __('messages.description') }}</label>
-            <div class="input-group input-group-sm">
-                <input type="text" class="form-control form-control-sm" name="description[]" 
-                    value="${description}" placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
-                <button type="button" class="btn btn-sm btn-outline-danger remove-field" onclick="removeField(this)" style="display:none;">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+        <div class="activity-field mb-2">
+            <input type="text" class="form-control Input_control" name="description[]" 
+                value="${description}" placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
         </div>
     `;
-
+                document.getElementById('removeLastActivityBtn').style.display = 'none';
                 document.getElementById('addMoreActivityBtn').style.display = 'none';
                 new bootstrap.Modal(document.getElementById('activitiesModal')).show();
             }
@@ -2144,27 +2381,20 @@
                 // Set the first input field values
                 const container = document.getElementById('modalManpowerContainer');
                 container.innerHTML = `
-        <div class="manpower-field mb-3">
-            <div class="row g-2">
+        <div class="manpower-field mb-2">
+            <div class="row">
                 <div class="col-7">
-                    <label class="form-label small fw-medium mb-1">{{ __('messages.category') }}</label>
-                    <input type="text" class="form-control form-control-sm" name="category[]" 
+                    <input type="text" class="form-control Input_control" name="category[]" 
                         value="${category}" placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
                 </div>
-                <div class="col-3">
-                    <label class="form-label small fw-medium mb-1">{{ __('messages.count') }}</label>
-                    <input type="number" class="form-control form-control-sm" name="count[]" 
-                        value="${count}" placeholder="0" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
-                </div>
-                <div class="col-2 d-flex align-items-end">
-                    <button type="button" class="btn btn-sm btn-outline-danger w-100 remove-field" onclick="removeField(this)" style="display:none;">
-                        <i class="fas fa-times"></i>
-                    </button>
+                <div class="col-5">
+                    <input type="number" class="form-control Input_control" name="count[]" 
+                        value="${count}" placeholder="{{ __('messages.count') }}" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
                 </div>
             </div>
         </div>
     `;
-
+                document.getElementById('removeLastManpowerBtn').style.display = 'none';
                 document.getElementById('addMoreManpowerBtn').style.display = 'none';
                 new bootstrap.Modal(document.getElementById('manpowerModal')).show();
             }

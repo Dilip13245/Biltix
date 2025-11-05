@@ -989,6 +989,7 @@ return [
     'confirm_delete_project' => 'هل أنت متأكد من حذف هذا المشروع؟',
     'project_deletion_functionality' => 'سيتم تنفيذ وظيفة حذف المشروع هنا',
     'add_more' => 'إضافة المزيد',
+    'remove' => 'إزالة',
     'activities_saved_successfully' => 'تم حفظ الأنشطة بنجاح',
     'manpower_items_saved_successfully' => 'تم حفظ عناصر القوى العاملة بنجاح',
     'safety_items_saved_successfully' => 'تم حفظ عناصر السلامة بنجاح',

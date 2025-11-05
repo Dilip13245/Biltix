@@ -784,10 +784,21 @@
             calendar.style.display = 'none';
             renderCalendar();
 
+            // Dispatch change event for validation clearing
             const changeEvent = new Event('change', {
                 bubbles: true
             });
             input.dispatchEvent(changeEvent);
+
+            // Also dispatch custom event for validation clearing
+            const customEvent = new CustomEvent('dateSelected', {
+                bubbles: true,
+                detail: {
+                    fieldId: input.id,
+                    date: formattedDate
+                }
+            });
+            input.dispatchEvent(customEvent);
         };
 
         function showCalendar() {
