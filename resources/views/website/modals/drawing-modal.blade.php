@@ -91,12 +91,19 @@
 
                         <!-- Brush Size -->
                         <div class="mb-3 d-none d-md-block">
-                            <label for="brushSize" class="form-label fw-medium">{{ __('messages.brush_size') }}: <span id="brushSizeValue">3</span></label>
-                            <input type="range" class="form-range" id="brushSize" min="1" max="20"
-                                value="3" style="background: linear-gradient(to right, #0d6efd 0%, #0d6efd 15%, #dee2e6 15%, #dee2e6 100%);">
-                            <div class="d-flex justify-content-between">
-                                <small>1</small>
-                                <small>20</small>
+                            <label class="form-label fw-medium mb-2">{{ __('messages.brush_size') }}</label>
+                            <div class="position-relative mb-2">
+                                <div class="bg-secondary" style="height: 2px; border-radius: 2px; position: relative; margin: 15px 0;">
+                                    <div id="brushSizeDot" class="bg-primary rounded-circle position-absolute" 
+                                         style="width: 16px; height: 16px; top: -7px; left: 15%; transform: translateX(-50%); cursor: pointer; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></div>
+                                </div>
+                                <input type="range" class="form-range position-absolute" id="brushSize" min="1" max="20"
+                                    value="3" style="top: 0; left: 0; width: 100%; opacity: 0; cursor: pointer; height: 30px;">
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">1</small>
+                                <span class="fw-semibold text-dark"><span id="brushSizeValue">3</span>px</span>
+                                <small class="text-muted">20</small>
                             </div>
                         </div>
 
@@ -117,28 +124,6 @@
                         </div>
 
 
-
-                        <!-- Transform -->
-                        <div class="mb-3 d-none d-md-block">
-                            <label class="form-label fw-medium">{{ __('messages.transform') }}</label>
-                            <div class="d-flex gap-1 mb-2">
-                                <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="rotateObject(-90)" title="{{ __('messages.rotate_left') }}">
-                                    <i class="fas fa-undo"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="rotateObject(90)" title="{{ __('messages.rotate_right') }}">
-                                    <i class="fas fa-redo"></i>
-                                </button>
-                            </div>
-                            <div class="d-flex gap-1">
-                                <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="flipHorizontal()" title="{{ __('messages.flip_horizontal') }}">
-                                    <i class="fas fa-arrows-alt-h"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="flipVertical()" title="{{ __('messages.flip_vertical') }}">
-                                    <i class="fas fa-arrows-alt-v"></i>
-                                </button>
-                            </div>
-                        </div>
-
                         <!-- File Navigation -->
                         <div class="mb-3" id="fileNavigation" style="display: none;">
                             <label class="form-label fw-medium">{{ __('messages.files') }}</label>
@@ -158,21 +143,21 @@
 
                         <!-- Actions -->
                         <div class="mb-2 mb-md-3">
-                            <div class="d-flex gap-2 d-md-block"
-                                style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
-                                <button type="button" class="btn btn-danger btn-sm flex-fill mb-2 d-none" id="deleteBtn"
+                            <div class="d-none" id="deleteBtnWrapper">
+                                <button type="button" class="btn btn-danger btn-sm w-100 mb-2" id="deleteBtn"
                                     onclick="deleteSelected()">
-                                    <i class="fas fa-trash d-md-none"></i><i
-                                        class="fas fa-trash {{ margin_end(2) }} d-none d-md-inline"></i><span
-                                        class="d-none d-md-inline">Delete</span>
+                                    <i class="fas fa-trash {{ margin_end(2) }}"></i>Delete
                                 </button>
-                                <button type="button" class="btn btn-info btn-sm flex-fill mb-2"
+                            </div>
+                            <div class="d-flex gap-2"
+                                style="{{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
+                                <button type="button" class="btn btn-info btn-sm flex-fill"
                                     onclick="undoLastAction()">
                                     <i class="fas fa-undo d-md-none"></i><i
                                         class="fas fa-undo {{ margin_end(2) }} d-none d-md-inline"></i><span
                                         class="d-none d-md-inline">{{ __('messages.undo') }}</span>
                                 </button>
-                                <button type="button" class="btn btn-warning btn-sm flex-fill mb-0"
+                                <button type="button" class="btn btn-warning btn-sm flex-fill"
                                     onclick="clearCanvas()">
                                     <i class="fas fa-eraser d-md-none"></i><i
                                         class="fas fa-eraser {{ margin_end(2) }} d-none d-md-inline"></i><span
