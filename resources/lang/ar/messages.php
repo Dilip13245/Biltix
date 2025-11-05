@@ -647,6 +647,7 @@ return [
     'hospital' => 'مستشفى',
     'next' => 'التالي',
     'previous' => 'السابق',
+    'proceed' => 'متابعة',
     'drag_drop_or_click' => 'اسحب وأفلت الملفات هنا أو انقر للتصفح',
     'markup_project_files' => 'تعليم ملفات المشروع',
     'save' => 'حفظ',

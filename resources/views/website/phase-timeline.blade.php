@@ -238,17 +238,47 @@
                                                 </svg>
                                                 {{ __('messages.timeline') }}
                                             </button>
-                                            <button
-                                                onclick="window.location.href='/website/project/'+currentProjectId+'/daily-logs'"
-                                                class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
-                                                <svg width="15" height="16" viewBox="0 0 15 16"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M3.23438 1V2H1.73438C0.90625 2 0.234375 2.67188 0.234375 3.5V5H14.2344V3.5C14.2344 2.67188 13.5625 2 12.7344 2H11.2344V1C11.2344 0.446875 10.7875 0 10.2344 0C9.68125 0 9.23438 0.446875 9.23438 1V2H5.23438V1C5.23438 0.446875 4.7875 0 4.23438 0C3.68125 0 3.23438 0.446875 3.23438 1ZM14.2344 6H0.234375V14.5C0.234375 15.3281 0.90625 16 1.73438 16H12.7344C13.5625 16 14.2344 15.3281 14.2344 14.5V6Z"
-                                                        fill="#4477C4" />
-                                                </svg>
-                                                <span id="currentDateBtn"></span>
-                                            </button>
+                                            <div class="position-relative d-inline-block">
+                                                <style>
+                                                    #timelineDatePickerWrapper .modern-datepicker-input {
+                                                        position: absolute;
+                                                        opacity: 0;
+                                                        width: 0;
+                                                        height: 0;
+                                                        padding: 0;
+                                                        border: 0;
+                                                        pointer-events: none;
+                                                    }
+                                                    #timelineDatePickerWrapper .modern-datepicker-icon {
+                                                        display: none;
+                                                    }
+                                                    #timelineDatePickerWrapper .modern-datepicker-calendar {
+                                                        position: fixed !important;
+                                                        z-index: 1060 !important;
+                                                    }
+                                                </style>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white"
+                                                    id="datePickerBtn">
+                                                    <svg width="15" height="16" viewBox="0 0 15 16"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M3.23438 1V2H1.73438C0.90625 2 0.234375 2.67188 0.234375 3.5V5H14.2344V3.5C14.2344 2.67188 13.5625 2 12.7344 2H11.2344V1C11.2344 0.446875 10.7875 0 10.2344 0C9.68125 0 9.23438 0.446875 9.23438 1V2H5.23438V1C5.23438 0.446875 4.7875 0 4.23438 0C3.68125 0 3.23438 0.446875 3.23438 1ZM14.2344 6H0.234375V14.5C0.234375 15.3281 0.90625 16 1.73438 16H12.7344C13.5625 16 14.2344 15.3281 14.2344 14.5V6Z"
+                                                            fill="#4477C4" />
+                                                    </svg>
+                                                    <span id="currentDateBtn"></span>
+                                                </button>
+                                                <div id="timelineDatePickerWrapper" style="position: absolute; top: 0; left: 0; width: 0; height: 0; overflow: visible;">
+                                                    @include('website.includes.date-picker', [
+                                                        'id' => 'timelineDatePicker',
+                                                        'name' => 'timeline_date',
+                                                        'placeholder' => __('messages.select_date'),
+                                                        'value' => date('Y-m-d'),
+                                                        'required' => false
+                                                    ])
+                                                </div>
+                                            </div>
 
                                         </div>
                                     </div>
@@ -286,11 +316,12 @@
                                     <h5 class="fw-semibold black_color mb-0">{{ __('messages.ongoing_activities') }}
                                     </h5>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-sm btn-outline-success"
+                                        <button class="btn btn-sm btn-outline-success" id="addActivityBtn"
                                             onclick="openActivitiesModal()">
                                             {{ __('messages.add_new') }}
                                         </button>
-                                        <button class="btn btn-sm btn-success" onclick="openActivitiesUpdateModal()">
+                                        <button class="btn btn-sm btn-success" id="updateActivityBtn"
+                                            onclick="openActivitiesUpdateModal()">
                                             {{ __('messages.update') }}
                                         </button>
                                     </div>
@@ -312,10 +343,12 @@
                                     <h5 class="fw-semibold black_color mb-0">{{ __('messages.manpower_equipment') }}
                                     </h5>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="openManpowerModal()">
+                                        <button class="btn btn-sm btn-outline-primary" id="addManpowerBtn"
+                                            onclick="openManpowerModal()">
                                             {{ __('messages.add_new') }}
                                         </button>
-                                        <button class="btn btn-sm btn-primary" onclick="openManpowerUpdateModal()">
+                                        <button class="btn btn-sm btn-primary" id="updateManpowerBtn"
+                                            onclick="openManpowerUpdateModal()">
                                             {{ __('messages.update') }}
                                         </button>
                                     </div>
@@ -342,11 +375,11 @@
                                             class="btn btn-primary d-flex align-items-center gap-2 btnsm">
                                             <i class="fas fa-eye"></i> {{ __('messages.view_checklist') }}
                                         </a> --}}
-                                        <button class="btn btn-sm btn-outline-danger"
+                                        <button class="btn btn-sm btn-outline-danger" id="addSafetyBtn"
                                             onclick="openSafetyModal()">
                                             {{ __('messages.add_new') }}
                                         </button>
-                                        <button class="btn btn-sm btn-danger"
+                                        <button class="btn btn-sm btn-danger" id="updateSafetyBtn"
                                             onclick="openSafetyUpdateModal()">
                                             {{ __('messages.update') }}
                                         </button>
@@ -387,19 +420,168 @@
                 }
             }
 
+            // Helper function to get local date string (YYYY-MM-DD) from Date object or UTC string
+            function getLocalDateString(utcDateString) {
+                if (!utcDateString) return null;
+                // Create date object from UTC string
+                const date = new Date(utcDateString);
+                // Get local date components
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            // Helper function to get today's date in local timezone
+            function getTodayLocalDateString() {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            
+            // Selected date for filtering (default: today in local timezone)
+            let selectedDate = getTodayLocalDateString();
+            
+            // Store data availability for selected date
+            let hasActivitiesData = false;
+            let hasManpowerData = false;
+            let hasSafetyData = false;
+            
+            // Function to toggle add buttons visibility based on selected date
+            function toggleAddButtonsVisibility() {
+                const today = getTodayLocalDateString();
+                const isToday = selectedDate === today;
+                
+                const addActivityBtn = document.getElementById('addActivityBtn');
+                const addManpowerBtn = document.getElementById('addManpowerBtn');
+                const addSafetyBtn = document.getElementById('addSafetyBtn');
+                
+                if (addActivityBtn) {
+                    addActivityBtn.style.display = isToday ? 'inline-block' : 'none';
+                }
+                if (addManpowerBtn) {
+                    addManpowerBtn.style.display = isToday ? 'inline-block' : 'none';
+                }
+                if (addSafetyBtn) {
+                    addSafetyBtn.style.display = isToday ? 'inline-block' : 'none';
+                }
+            }
+            
+            // Function to toggle update buttons visibility based on data availability
+            function toggleUpdateButtonsVisibility() {
+                const updateActivityBtn = document.getElementById('updateActivityBtn');
+                const updateManpowerBtn = document.getElementById('updateManpowerBtn');
+                const updateSafetyBtn = document.getElementById('updateSafetyBtn');
+                
+                if (updateActivityBtn) {
+                    updateActivityBtn.style.display = hasActivitiesData ? 'inline-block' : 'none';
+                }
+                if (updateManpowerBtn) {
+                    updateManpowerBtn.style.display = hasManpowerData ? 'inline-block' : 'none';
+                }
+                if (updateSafetyBtn) {
+                    updateSafetyBtn.style.display = hasSafetyData ? 'inline-block' : 'none';
+                }
+            }
+            
             // Load all data on page load
             document.addEventListener('DOMContentLoaded', function() {
                 // Set current date on button
-                const currentDateBtn = document.getElementById('currentDateBtn');
-                if (currentDateBtn) {
-                    const today = new Date();
-                    const options = {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    };
-                    currentDateBtn.textContent = today.toLocaleDateString('en-US', options);
-                }
+                updateDateButton(selectedDate);
+                // Toggle add buttons visibility
+                toggleAddButtonsVisibility();
+                
+                // Setup date picker - use custom date picker
+                const datePickerBtn = document.getElementById('datePickerBtn');
+                
+                // Wait a bit for the date picker to be fully initialized
+                setTimeout(function() {
+                    const datePickerInput = document.getElementById('timelineDatePicker');
+                    const datePickerWrapper = datePickerInput?.closest('.modern-datepicker-wrapper');
+                    const datePickerIcon = datePickerWrapper?.querySelector('.modern-datepicker-icon');
+                    
+                    if (datePickerInput) {
+                        // Set initial value
+                        datePickerInput.value = selectedDate;
+                        
+                        // Listen for date changes from custom date picker
+                        datePickerInput.addEventListener('change', function() {
+                            selectedDate = this.value;
+                            updateDateButton(selectedDate);
+                            toggleAddButtonsVisibility();
+                            // Reload all filtered data
+                            loadActivities();
+                            loadManpowerEquipment();
+                            loadSafetyItems();
+                        });
+                        
+                        // Also listen for custom dateSelected event
+                        datePickerInput.addEventListener('dateSelected', function(e) {
+                            if (e.detail && e.detail.date) {
+                                selectedDate = e.detail.date;
+                                updateDateButton(selectedDate);
+                                toggleAddButtonsVisibility();
+                                // Reload all filtered data
+                                loadActivities();
+                                loadManpowerEquipment();
+                                loadSafetyItems();
+                            }
+                        });
+                    }
+                    
+                    // Open custom date picker when button is clicked
+                    if (datePickerBtn) {
+                        datePickerBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            // Position calendar relative to button
+                            const buttonRect = datePickerBtn.getBoundingClientRect();
+                            const calendar = document.getElementById('timelineDatePicker_calendar');
+                            if (calendar && datePickerInput) {
+                                // Update date picker input value to current selectedDate (local date) before opening
+                                // This ensures calendar reads the correct date when it opens
+                                datePickerInput.value = selectedDate;
+                                
+                                // Small delay to ensure value is set before calendar opens
+                                setTimeout(function() {
+                                    // Trigger the date picker
+                                    if (datePickerIcon) {
+                                        datePickerIcon.click();
+                                    } else if (datePickerInput) {
+                                        datePickerInput.click();
+                                    }
+                                }, 10);
+                                
+                                // Adjust calendar position after it opens
+                                setTimeout(function() {
+                                    if (calendar && calendar.style.display !== 'none') {
+                                        const calendarContent = calendar.querySelector('.datepicker-content');
+                                        if (calendarContent) {
+                                            // Position calendar below button
+                                            const spaceBelow = window.innerHeight - buttonRect.bottom;
+                                            const calendarHeight = 450;
+                                            
+                                            if (spaceBelow < calendarHeight && buttonRect.top > calendarHeight) {
+                                                // Position above button
+                                                calendar.style.top = (buttonRect.top - calendarHeight - 10) + 'px';
+                                                calendar.style.left = buttonRect.left + 'px';
+                                                calendar.classList.add('position-top');
+                                            } else {
+                                                // Position below button
+                                                calendar.style.top = (buttonRect.bottom + 10) + 'px';
+                                                calendar.style.left = buttonRect.left + 'px';
+                                                calendar.classList.add('position-bottom');
+                                            }
+                                        }
+                                    }
+                                }, 50);
+                            }
+                        });
+                    }
+                }, 100);
 
                 loadProjectData();
                 loadActivities();
@@ -407,6 +589,19 @@
                 loadSafetyItems();
                 renderPhaseProgressFromServer();
             });
+            
+            function updateDateButton(dateString) {
+                const currentDateBtn = document.getElementById('currentDateBtn');
+                if (currentDateBtn && dateString) {
+                    const date = new Date(dateString);
+                    const options = {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    };
+                    currentDateBtn.textContent = date.toLocaleDateString('en-US', options);
+                }
+            }
 
             // Project data and edit functionality
             let currentProjectData = null;
@@ -752,22 +947,36 @@
 
             function renderActivities(activities) {
                 const container = document.getElementById('activitiesContainer');
-                if (activities.length === 0) {
+                
+                // Filter activities by selected date (convert UTC to local timezone)
+                const filteredActivities = activities.filter(activity => {
+                    if (!activity.created_at) return false;
+                    const activityDate = getLocalDateString(activity.created_at);
+                    return activityDate === selectedDate;
+                });
+                
+                // Update data availability flag
+                hasActivitiesData = filteredActivities.length > 0;
+                toggleUpdateButtonsVisibility();
+                
+                if (filteredActivities.length === 0) {
                     container.innerHTML = `
       <div class="text-center py-3 text-muted">
         <i class="fas fa-tasks fa-2x mb-2"></i>
         <p>{{ __('messages.no_activities_found') }}</p>
       </div>
     `;
+                    // Clear current activities when no data
+                    window.currentActivities = [];
                     return;
                 }
 
-                // Store activities globally for bulk update
-                window.currentActivities = activities;
+                // Store filtered activities globally for bulk update
+                window.currentActivities = filteredActivities;
 
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
-      ${activities.map(activity => `
+      ${filteredActivities.map(activity => `
                                                         <li class="d-flex align-items-center mb-2">
                                                           <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
                                                           <span class="flex-grow-1 text-wrap">${activity.description}</span>
@@ -795,24 +1004,38 @@
 
             function renderManpowerEquipment(items) {
                 const container = document.getElementById('manpowerContainer');
-                if (items.length === 0) {
+                
+                // Filter manpower by selected date (convert UTC to local timezone)
+                const filteredItems = items.filter(item => {
+                    if (!item.created_at) return false;
+                    const itemDate = getLocalDateString(item.created_at);
+                    return itemDate === selectedDate;
+                });
+                
+                // Update data availability flag
+                hasManpowerData = filteredItems.length > 0;
+                toggleUpdateButtonsVisibility();
+                
+                if (filteredItems.length === 0) {
                     container.innerHTML = `
       <div class="text-center py-3 text-muted">
         <i class="fas fa-users fa-2x mb-2"></i>
         <p>{{ __('messages.no_manpower_found') }}</p>
       </div>
     `;
+                    // Clear current manpower when no data
+                    window.currentManpower = [];
                     return;
                 }
 
-                // Store manpower globally for bulk update
-                window.currentManpower = items;
+                // Store filtered manpower globally for bulk update
+                window.currentManpower = filteredItems;
 
                 container.innerHTML = `
     <div class="table-responsive">
       <table class="table table-borderless mb-0">
         <tbody>
-          ${items.map(item => `
+          ${filteredItems.map(item => `
                                                             <tr>
                                                               <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
                                                               <td class="text-end">
@@ -844,22 +1067,36 @@
 
             function renderSafetyItems(items) {
                 const container = document.getElementById('safetyContainer');
-                if (items.length === 0) {
+                
+                // Filter safety items by selected date (convert UTC to local timezone)
+                const filteredItems = items.filter(item => {
+                    if (!item.created_at) return false;
+                    const itemDate = getLocalDateString(item.created_at);
+                    return itemDate === selectedDate;
+                });
+                
+                // Update data availability flag
+                hasSafetyData = filteredItems.length > 0;
+                toggleUpdateButtonsVisibility();
+                
+                if (filteredItems.length === 0) {
                     container.innerHTML = `
       <div class="text-center py-3 text-muted">
         <i class="fas fa-shield-alt fa-2x mb-2"></i>
         <p>{{ __('messages.no_safety_items_found') }}</p>
       </div>
     `;
+                    // Clear current safety items when no data
+                    window.currentSafetyItems = [];
                     return;
                 }
 
-                // Store safety items globally for bulk update
-                window.currentSafetyItems = items;
+                // Store filtered safety items globally for bulk update
+                window.currentSafetyItems = filteredItems;
 
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
-      ${items.map(item => `
+      ${filteredItems.map(item => `
                                                         <li class="mb-2">
                                                           <div class="d-flex align-items-center p-3 rounded bg4">
                                                             <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">

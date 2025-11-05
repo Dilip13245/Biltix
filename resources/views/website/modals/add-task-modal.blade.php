@@ -38,7 +38,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="taskDescription" class="form-label fw-medium">{{ __("messages.task_description") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
+            <label for="taskDescription" class="form-label fw-medium">{{ __("messages.task_description") }}</label>
             <textarea class="form-control Input_control" id="taskDescription" name="description" rows="3"
               placeholder="{{ __("messages.brief_task_description") }}" maxlength="500"></textarea>
           </div>
@@ -60,8 +60,9 @@
           <div class="mb-3">
             <label for="taskPriority" class="form-label fw-medium">{{ __("messages.priority") }}</label>
             <select class="form-select Input_control searchable-select" id="taskPriority" name="priority">
+              <option value="">{{ __("messages.select_priority") }}</option>
               <option value="low">{{ __("messages.low") }}</option>
-              <option value="medium" selected>{{ __("messages.medium") }}</option>
+              <option value="medium">{{ __("messages.medium") }}</option>
               <option value="high">{{ __("messages.high") }}</option>
               <option value="critical">{{ __("messages.critical") }}</option>
             </select>
@@ -112,6 +113,20 @@ function validateTaskForm() {
     const taskName = form.querySelector('#taskName');
     if (!taskName.value.trim()) {
         showFieldError(taskName, '{{ __("messages.task_name") }} is required');
+        isValid = false;
+    }
+    
+    // Validate task description
+    const taskDescription = form.querySelector('#taskDescription');
+    if (!taskDescription.value.trim()) {
+        showFieldError(taskDescription, '{{ __("messages.task_description") }} is required');
+        isValid = false;
+    }
+    
+    // Validate priority
+    const taskPriority = form.querySelector('#taskPriority');
+    if (!taskPriority.value) {
+        showFieldError(taskPriority, '{{ __("messages.priority") }} is required');
         isValid = false;
     }
     

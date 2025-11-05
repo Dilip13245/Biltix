@@ -655,6 +655,7 @@ return [
     'hospital' => 'Hospital',
     'next' => 'Next',
     'previous' => 'Previous',
+    'proceed' => 'Proceed',
     'drag_drop_or_click' => 'Drag & drop files here or click to browse',
     'markup_project_files' => 'Markup Project Files',
     'save' => 'Save',

@@ -4,6 +4,93 @@
 
 @section('content')
     <style>
+        /* Upload Zone Styles (Same as Create Project Step 3) */
+        .upload-zone {
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: #F58D2E;
+            background: #fff5f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 141, 46, 0.15);
+        }
+
+        .selected-files {
+            text-align: left;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .file-item i {
+            margin-right: 8px;
+            color: #6c757d;
+        }
+
+        /* RTL Support for File Upload Modal */
+        [dir="rtl"] .file-item i {
+            margin-right: 0;
+            margin-left: 8px;
+        }
+
+        [dir="rtl"] .modal-footer {
+            flex-direction: row-reverse;
+        }
+
+        /* Responsive Styles for File Upload Modal */
+        @media (max-width: 768px) {
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+
+            .upload-zone {
+                padding: 1.5rem !important;
+            }
+
+            .upload-icon {
+                font-size: 2rem !important;
+            }
+
+            .upload-icon i {
+                font-size: 2rem !important;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .modal-footer .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .modal-footer .btn:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .upload-zone {
+                padding: 1rem !important;
+            }
+
+            .upload-icon i {
+                font-size: 1.5rem !important;
+            }
+        }
+
         /* Mobile Responsive Styles for Project Files Page */
         @media (max-width: 991px) {
             /* Content Header */
@@ -314,10 +401,8 @@
                                 </div>
                                 <div id="folderActions" style="display: none;">
                                     @can('files', 'upload')
-                                        <input type="file" id="fileUploadInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png,.gif,.txt"
-                                            style="display: none;" onchange="handleFileUpload(this)">
-                                        <button class="btn btn-sm orange_btn" onclick="document.getElementById('fileUploadInput').click()">
-                                            {{ __('messages.upload_file') }}
+                                        <button class="btn btn-sm orange_btn" onclick="openFileUploadModal()">
+                                            <i class="fas fa-cloud-upload-alt me-2"></i>{{ __('messages.upload_file') }}
                                         </button>
                                     @endcan
                                 </div>
@@ -353,36 +438,140 @@
     </section>
     @include('website.modals.drawing-modal')
     @include('website.modals.plan-viewer-modal')
+    @include('website.modals.file-notes-modal')
     <script>
-        function handleFileUpload(input) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                window.selectedFile = file;
-                
-                // Use default category and proceed directly
-                window.selectedCategoryId = 1;
-                window.selectedFileDescription = '';
-                
-                if (isImageFile(file.type)) {
-                    openDrawingModal({
-                        title: 'Add Markup to Image',
-                        saveButtonText: 'Upload File',
-                        mode: 'image',
-                        onSave: function(imageData) {
-                            uploadFileWithMarkup(imageData);
-                        }
-                    });
-                    document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
-                        loadImageToCanvas(file);
-                    }, { once: true });
-                } else {
-                    uploadFile();
-                }
-                
-                // Reset input
-                input.value = '';
+        // Open File Upload Modal
+        window.openFileUploadModal = function() {
+            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fileUploadModal'));
+            
+            // Reset modal state
+            document.getElementById('fileUploadFilesList').innerHTML = '';
+            document.getElementById('fileUploadNotesContainer').style.display = 'none';
+            document.getElementById('fileUploadNotesList').innerHTML = '';
+            document.getElementById('fileUploadMultiple').value = '';
+            
+            modal.show();
+        };
+
+        // Handle multiple file selection in modal
+        window.handleMultipleFileSelection = function(input) {
+            if (input.files && input.files.length > 0) {
+                showSelectedFilesInModal(input, 'fileUploadFilesList');
+            }
+        };
+
+        // Show selected files in modal (same as dashboard)
+        function showSelectedFilesInModal(input, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            if (input.files && input.files.length > 0) {
+                Array.from(input.files).forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+
+                    const icon = getFileIconFromName(file.name);
+                    const size = (file.size / 1024 / 1024).toFixed(2);
+
+                    fileItem.innerHTML = `
+                        <i class="${icon}"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">${file.name}</div>
+                            <small class="text-muted">${size} MB</small>
+                        </div>
+                    `;
+
+                    container.appendChild(fileItem);
+                });
+
+                // Show notes section for all files
+                showNotesForFilesInModal(input, 'fileUploadFilesList');
             }
         }
+
+        // Show smart notes section (same as dashboard)
+        function showNotesForFilesInModal(input, containerId) {
+            const notesContainer = document.getElementById('fileUploadNotesContainer');
+            const notesList = document.getElementById('fileUploadNotesList');
+
+            if (!notesContainer || !notesList) return;
+
+            // Clear previous notes
+            notesList.innerHTML = '';
+
+            // Show smart notes interface for multiple files
+            if (input.files && input.files.length > 0) {
+                notesContainer.style.display = 'block';
+
+                if (input.files.length > 3) {
+                    // Smart interface for many files
+                    const smartInterface = document.createElement('div');
+                    smartInterface.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>${input.files.length} {{ __('messages.selected_files') }}.</strong> {{ __('messages.select_files_for_description') }}:
+                        </div>
+                        <div class="row g-2" style="max-height: 200px; overflow-y: auto;">
+                            ${Array.from(input.files).map((file, index) => {
+                                const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
+                                return `
+                                    <div class="col-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="file_fileUpload_${index}" 
+                                                onchange="toggleFileDescriptionInModal('fileUpload', ${index})">
+                                            <label class="form-check-label d-flex align-items-center" for="file_fileUpload_${index}">
+                                                <i class="${fileIcon} me-2"></i>
+                                                <span class="text-truncate">${file.name}</span>
+                                            </label>
+                                        </div>
+                                        <div class="ms-4 mt-2" id="desc_fileUpload_${index}" style="display: none;">
+                                            <textarea class="form-control form-control-sm" name="file_notes_fileUpload_${index}" 
+                                                placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                    notesList.appendChild(smartInterface);
+                } else {
+                    // Regular interface for few files
+                    Array.from(input.files).forEach((file, index) => {
+                        const noteItem = document.createElement('div');
+                        noteItem.className = 'mb-3';
+                        const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' :
+                            'fas fa-file text-primary';
+                        noteItem.innerHTML = `
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="${fileIcon} me-2"></i>
+                                <span class="fw-medium">${file.name}</span>
+                            </div>
+                            <textarea class="form-control" name="file_notes_fileUpload_${index}" 
+                                placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                        `;
+                        notesList.appendChild(noteItem);
+                    });
+                }
+            } else {
+                notesContainer.style.display = 'none';
+            }
+        }
+
+        // Toggle description input for selected files (same as dashboard)
+        window.toggleFileDescriptionInModal = function(containerId, index) {
+            const checkbox = document.getElementById(`file_${containerId}_${index}`);
+            const descContainer = document.getElementById(`desc_${containerId}_${index}`);
+
+            if (checkbox.checked) {
+                descContainer.style.display = 'block';
+                const textarea = descContainer.querySelector('textarea');
+                if (textarea) textarea.focus();
+            } else {
+                descContainer.style.display = 'none';
+                const textarea = descContainer.querySelector('textarea');
+                if (textarea) textarea.value = '';
+            }
+        };
         
         function showCategorySelectionModal(file) {
             const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
@@ -509,6 +698,188 @@
         function isImageFile(fileType) {
             return fileType && (fileType.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(fileType
                 .toLowerCase()));
+        }
+
+        // File Notes Modal Functions
+        window.openFileNotesModal = function(files) {
+            window.filesForNotes = files;
+            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fileNotesModal'));
+            const notesList = document.getElementById('fileNotesList');
+            notesList.innerHTML = '';
+
+            // Load categories
+            loadFileCategoriesForNotes();
+
+            // Populate file list with notes
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'mb-3 p-3 border rounded';
+                const fileIcon = isImageFile(file.type) ? 'fas fa-image text-success' : 'fas fa-file text-primary';
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                
+                fileItem.innerHTML = `
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="${fileIcon} me-2"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">${file.name}</div>
+                            <small class="text-muted">${size} MB</small>
+                        </div>
+                    </div>
+                    <textarea class="form-control file-note-textarea" data-file-index="${index}" 
+                        placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                `;
+                notesList.appendChild(fileItem);
+            });
+
+            modal.show();
+        };
+
+
+        // Handle proceed button click
+        document.addEventListener('DOMContentLoaded', function() {
+            const proceedBtn = document.getElementById('proceedFileUploadBtn');
+            if (proceedBtn) {
+                proceedBtn.addEventListener('click', function() {
+                    const fileInput = document.getElementById('fileUploadMultiple');
+                    if (!fileInput.files || fileInput.files.length === 0) {
+                        toastr.warning('{{ __('messages.please_select_files') }}');
+                        return;
+                    }
+
+                    // Collect notes for each file
+                    const fileNotes = {};
+                    const noteInputs = document.querySelectorAll('textarea[name^="file_notes_fileUpload_"]');
+                    noteInputs.forEach(input => {
+                        if (input.value.trim()) {
+                            fileNotes[input.name] = input.value.trim();
+                        }
+                    });
+
+                    // Store files with notes
+                    const files = Array.from(fileInput.files);
+                    window.filesWithNotes = files.map((file, index) => {
+                        const noteKey = `file_notes_fileUpload_${index}`;
+                        return {
+                            file: file,
+                            note: fileNotes[noteKey] || ''
+                        };
+                    });
+
+                    // Store category (default to 1)
+                    window.selectedCategoryId = 1;
+
+                    // Close upload modal
+                    const uploadModal = bootstrap.Modal.getInstance(document.getElementById('fileUploadModal'));
+                    if (uploadModal) uploadModal.hide();
+
+                    // Process files: if image, open drawing modal; otherwise upload directly
+                    processFilesAfterModal();
+                });
+            }
+        });
+
+        function processFilesAfterModal() {
+            if (!window.filesWithNotes || window.filesWithNotes.length === 0) return;
+
+            const filesToProcess = window.filesWithNotes;
+            window.currentFileIndex = 0;
+            window.processedFiles = [];
+
+            processNextFile();
+
+            function processNextFile() {
+                if (window.currentFileIndex >= filesToProcess.length) {
+                    // All files processed, upload them
+                    uploadAllFiles();
+                    return;
+                }
+
+                const fileData = filesToProcess[window.currentFileIndex];
+                const file = fileData.file;
+                window.selectedFile = file;
+                window.selectedFileDescription = fileData.note;
+
+                if (isImageFile(file.type)) {
+                    // Open drawing modal for image
+                    openDrawingModal({
+                        title: 'Add Markup to Image',
+                        saveButtonText: 'Upload File',
+                        mode: 'image',
+                        onSave: function(imageData) {
+                            // Store processed file with markup
+                            window.processedFiles.push({
+                                file: file,
+                                note: fileData.note,
+                                markup: imageData
+                            });
+                            
+                            // Close drawing modal
+                            const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+                            if (drawingModal) drawingModal.hide();
+                            
+                            window.currentFileIndex++;
+                            processNextFile();
+                        }
+                    });
+
+                    document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
+                        loadImageToCanvas(file);
+                    }, { once: true });
+                } else {
+                    // Non-image file, add directly
+                    window.processedFiles.push({
+                        file: file,
+                        note: fileData.note,
+                        markup: null
+                    });
+                    window.currentFileIndex++;
+                    processNextFile();
+                }
+            }
+        }
+
+        async function uploadAllFiles() {
+            try {
+                const projectId = getProjectIdFromUrl();
+                const categoryId = window.selectedCategoryId || 1;
+
+                // Upload files one by one
+                for (const fileData of window.processedFiles) {
+                    const formData = new FormData();
+                    formData.append('project_id', projectId);
+                    formData.append('category_id', categoryId);
+                    if (currentFolderId) {
+                        formData.append('folder_id', currentFolderId);
+                    }
+                    if (fileData.note) {
+                        formData.append('description', fileData.note);
+                    }
+                    formData.append('files[]', fileData.file);
+                    
+                    if (fileData.markup) {
+                        formData.append('markup_data', fileData.markup);
+                    }
+
+                    await api.uploadFile(formData);
+                }
+
+                toastr.success('{{ __('messages.file_uploaded_successfully') }}');
+                
+                // Reload files
+                if (currentFolderId) {
+                    loadProjectFiles(currentFolderId);
+                } else {
+                    loadFolders();
+                }
+
+                // Clean up
+                window.filesWithNotes = null;
+                window.processedFiles = null;
+                window.selectedFile = null;
+            } catch (error) {
+                console.error('Upload error:', error);
+                toastr.error('{{ __('messages.upload_failed') }}: ' + error.message);
+            }
         }
 
         // Pagination variables
@@ -857,6 +1228,24 @@
             let filteredFiles = applyClientSideFilters(allFiles);
             filteredFiles = applyClientSideSorting(filteredFiles);
             loadFilesPage(filteredFiles, false); // Don't reset display
+        }
+
+        function getFileIconFromName(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            switch (ext) {
+                case 'pdf':
+                    return 'fas fa-file-pdf text-danger';
+                case 'docx':
+                case 'doc':
+                    return 'fas fa-file-word text-primary';
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                    return 'fas fa-file-image text-success';
+                default:
+                    return 'fas fa-file text-secondary';
+            }
         }
 
         function getFileIcon(fileType) {
