@@ -3,6 +3,184 @@
 @section('title', 'Project Files')
 
 @section('content')
+    <style>
+        /* Mobile Responsive Styles for Project Files Page */
+        @media (max-width: 991px) {
+            /* Content Header */
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            
+            .content-header > div:first-child {
+                margin-bottom: 1rem;
+            }
+            
+            .gallery-filters {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
+            /* Statistics Cards */
+            .col-12.col-lg-3.col-md-4 {
+                margin-bottom: 1rem;
+            }
+            
+            /* Folder Grid */
+            #foldersGrid .col-md-3.col-sm-4.col-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            
+            /* Content Container */
+            #contentContainer {
+                height: auto !important;
+                max-height: 60vh;
+                padding: 0 0.5rem !important;
+            }
+            
+            /* Card Body Padding */
+            .card-body.py-md-4 {
+                padding: 1rem !important;
+            }
+            
+            /* Path Header */
+            .d-flex.justify-content-between.align-items-center.px-md-4 {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 0.75rem;
+                padding: 0.75rem !important;
+            }
+            
+            /* Back Button */
+            #backBtn {
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Folder Actions */
+            #folderActions {
+                width: 100%;
+            }
+            
+            #folderActions button {
+                width: 100%;
+            }
+            
+            /* Table Responsive */
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .table-responsive table {
+                min-width: 600px;
+            }
+            
+            .table-responsive th,
+            .table-responsive td {
+                white-space: nowrap;
+                font-size: 0.875rem;
+                padding: 0.5rem !important;
+            }
+            
+            /* File Name Column */
+            .table-responsive td:first-child {
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            /* Folder Grid - Mobile */
+            #foldersGrid .col-md-3.col-sm-4.col-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            /* Folder Card */
+            .folder-card {
+                margin-bottom: 0.75rem;
+            }
+            
+            .folder-card .card-body {
+                padding: 1rem !important;
+            }
+            
+            .folder-card i.fa-folder {
+                font-size: 2rem !important;
+            }
+            
+            /* Content Container */
+            #contentContainer {
+                max-height: 50vh;
+                padding: 0.5rem !important;
+            }
+            
+            /* Create Folder Button */
+            #createFolderBtn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            /* Statistics Cards */
+            .col-12.col-lg-3.col-md-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            
+            .card-body.p-md-4 {
+                padding: 1rem !important;
+            }
+            
+            /* Table - Hide some columns on mobile */
+            .table-responsive th:nth-child(3),
+            .table-responsive td:nth-child(3),
+            .table-responsive th:nth-child(4),
+            .table-responsive td:nth-child(4) {
+                display: none;
+            }
+            
+            /* Table - Adjust file name width */
+            .table-responsive td:first-child {
+                max-width: 200px;
+            }
+            
+            /* Path Text */
+            #currentPath {
+                font-size: 1rem;
+            }
+            
+            /* Upload Button */
+            .btn-sm.orange_btn {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+        
+        @media (max-width: 375px) {
+            /* Extra Small Screens */
+            #foldersGrid {
+                gap: 0.5rem !important;
+            }
+            
+            .folder-card .card-body {
+                padding: 0.75rem !important;
+            }
+            
+            .folder-card h6 {
+                font-size: 0.875rem;
+            }
+            
+            .folder-card small {
+                font-size: 0.75rem;
+            }
+            
+            #contentContainer {
+                max-height: 45vh;
+            }
+        }
+    </style>
     <div class="content-header border-0 shadow-none mb-4 d-flex align-items-center justify-content-between gap-2 flex-wrap">
         <div>
             <h2>{{ __('messages.project_files') }}</h2>
@@ -523,7 +701,7 @@
             }
 
             const foldersHtml = folders.map(folder => `
-                <div class="col-md-3 col-sm-4 col-6">
+                <div class="col-md-3 col-sm-4 col-6 col-12">
                     <div class="card h-100 folder-card" style="cursor: pointer; border: 2px solid #4477C4;" onclick="openFolder(${folder.id}, '${folder.name}')">
                         <div class="card-body text-center p-3">
                             <i class="fas fa-folder fa-3x text-primary mb-2"></i>
