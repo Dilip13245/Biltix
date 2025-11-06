@@ -131,52 +131,113 @@ function protectButton(btn) {
   }, 30000)); // 30 seconds max timeout
 }
 
-// Allow adding new category when modal opens
-const createInspectionModal = document.getElementById('createInspectionModal');
-if (createInspectionModal) {
-  createInspectionModal.addEventListener('shown.bs.modal', function() {
-    setTimeout(() => {
-      const categorySelect = document.getElementById('category');
-      const categoryWrapper = categorySelect?.closest('.searchable-dropdown');
-      const categoryInput = categoryWrapper?.querySelector('input[type="text"]');
+// Load data when modal is shown
+if (!window.inspectionModalListenerAdded) {
+  window.inspectionModalListenerAdded = true;
+  const createInspectionModal = document.getElementById('createInspectionModal');
+  if (createInspectionModal) {
+    createInspectionModal.addEventListener('shown.bs.modal', async function() {
+      const btn = document.getElementById('inspectionSubmitBtn');
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '{{ __("messages.create_inspection") }}';
+      }
       
-      if (categoryInput && !categoryInput.hasAttribute('data-custom-listener')) {
-        categoryInput.setAttribute('data-custom-listener', 'true');
-        categoryInput.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' && this.value.trim()) {
-            e.preventDefault();
-            const newValue = this.value.trim();
-            
-            // Check if option already exists
-            const existingOption = Array.from(categorySelect.options).find(opt => 
-              opt.value.toLowerCase() === newValue.toLowerCase()
-            );
-            
-            if (!existingOption) {
-              // Add new option
-              const newOption = document.createElement('option');
-              newOption.value = newValue;
-              newOption.textContent = newValue;
-              categorySelect.appendChild(newOption);
-              
-              // Update searchable dropdown
-              if (categorySelect.searchableDropdown) {
-                categorySelect.searchableDropdown.updateOptions();
-              }
+      // Get project ID
+      const projectId = document.getElementById('modalProjectId')?.value || 
+                       (typeof getCurrentProjectId === 'function' ? getCurrentProjectId() : 
+                       (typeof getProjectIdFromUrl === 'function' ? getProjectIdFromUrl() : 1));
+      
+      // Load phases if loadPhases function exists, otherwise load directly
+      if (window.loadPhases) {
+        await window.loadPhases();
+      } else {
+        // Load phases directly
+        try {
+          const response = await api.listPhases({
+            project_id: projectId
+          });
+          const phaseSelect = document.getElementById('phaseSelect');
+          
+          if (response.code === 200 && phaseSelect) {
+            phaseSelect.innerHTML = '<option value="">{{ __("messages.select_phase") }}</option>';
+            response.data.forEach(phase => {
+              const option = document.createElement('option');
+              option.value = phase.id;
+              option.textContent = phase.title || phase.name;
+              phaseSelect.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error('Error loading phases:', error);
+        }
+      }
+      
+      // Destroy and recreate dropdowns
+      setTimeout(() => {
+        ['phaseSelect', 'category'].forEach(id => {
+          const select = document.getElementById(id);
+          if (select) {
+            // Remove old wrapper
+            const wrapper = select.closest('.searchable-dropdown');
+            if (wrapper) {
+              const parent = wrapper.parentElement;
+              parent.insertBefore(select, wrapper);
+              wrapper.remove();
+              select.style.display = '';
             }
-            
-            // Select the option
-            categorySelect.value = existingOption ? existingOption.value : newValue;
-            this.value = existingOption ? existingOption.textContent : newValue;
-            
-            if (categorySelect.searchableDropdown) {
-              categorySelect.searchableDropdown.hideDropdown();
+            // Create new instance
+            if (window.SearchableDropdown) {
+              select.searchableDropdown = new SearchableDropdown(select);
             }
           }
         });
-      }
-    }, 300);
-  });
+        
+        // Allow adding new category when modal opens
+        setTimeout(() => {
+          const categorySelect = document.getElementById('category');
+          const categoryWrapper = categorySelect?.closest('.searchable-dropdown');
+          const categoryInput = categoryWrapper?.querySelector('input[type="text"]');
+          
+          if (categoryInput && !categoryInput.hasAttribute('data-custom-listener')) {
+            categoryInput.setAttribute('data-custom-listener', 'true');
+            categoryInput.addEventListener('keydown', function(e) {
+              if (e.key === 'Enter' && this.value.trim()) {
+                e.preventDefault();
+                const newValue = this.value.trim();
+                
+                // Check if option already exists
+                const existingOption = Array.from(categorySelect.options).find(opt => 
+                  opt.value.toLowerCase() === newValue.toLowerCase()
+                );
+                
+                if (!existingOption) {
+                  // Add new option
+                  const newOption = document.createElement('option');
+                  newOption.value = newValue;
+                  newOption.textContent = newValue;
+                  categorySelect.appendChild(newOption);
+                  
+                  // Update searchable dropdown
+                  if (categorySelect.searchableDropdown) {
+                    categorySelect.searchableDropdown.updateOptions();
+                  }
+                }
+                
+                // Select the option
+                categorySelect.value = existingOption ? existingOption.value : newValue;
+                this.value = existingOption ? existingOption.textContent : newValue;
+                
+                if (categorySelect.searchableDropdown) {
+                  categorySelect.searchableDropdown.hideDropdown();
+                }
+              }
+            });
+          }
+        }, 100);
+      }, 100);
+    });
+  }
 }
 
 // Form submission with API integration

@@ -22,35 +22,29 @@
                 <div class="row mb-3 g-3">
                     <div class="col-md-4">
                         <label class="form-label fw-medium">{{ __('messages.project_type') }}</label>
-                        <div class="custom-select-wrapper">
-                            <div class="custom-select-trigger" onclick="toggleCustomDropdown('searchType')">
-                                <span id="searchTypeText">{{ __('messages.all_types') }}</span>
-                                <i class="fas fa-chevron-down"></i>
+                        <div class="custom-combo-dropdown position-relative">
+                            <input type="text" class="form-control Input_control" id="searchType"
+                                placeholder="{{ __('messages.all_types') }}"
+                                autocomplete="off" maxlength="50">
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                            @if (!is_rtl())
+                                <i class="fas fa-times clear-selection d-none" id="clearSearchTypeSelection"
+                                    style="position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;"
+                                    onclick="clearSearchTypeSelection()"></i>
+                            @else
+                                <i class="fas fa-times clear-selection d-none" id="clearSearchTypeSelection"
+                                    style="position: absolute; left: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;"
+                                    onclick="clearSearchTypeSelection()"></i>
+                            @endif
+                            <div class="dropdown-options" id="searchTypeDropdown">
+                                <div class="dropdown-option" data-value="">{{ __('messages.all_types') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.villa') }}">{{ __('messages.villa') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.tower') }}">{{ __('messages.tower') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.hospital') }}">{{ __('messages.hospital') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.commercial') }}">{{ __('messages.commercial') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.residential') }}">{{ __('messages.residential') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.industrial') }}">{{ __('messages.industrial') }}</div>
                             </div>
-                            <div class="custom-select-options" id="searchTypeOptions">
-                                <div class="custom-select-option" data-value="" onclick="selectCustomOption('searchType', '', '{{ __('messages.all_types') }}')">
-                                    {{ __('messages.all_types') }}
-                                </div>
-                                <div class="custom-select-option" data-value="villa" onclick="selectCustomOption('searchType', 'villa', '{{ __('messages.villa') }}')">
-                                    {{ __('messages.villa') }}
-                                </div>
-                                <div class="custom-select-option" data-value="tower" onclick="selectCustomOption('searchType', 'tower', '{{ __('messages.tower') }}')">
-                                    {{ __('messages.tower') }}
-                                </div>
-                                <div class="custom-select-option" data-value="hospital" onclick="selectCustomOption('searchType', 'hospital', '{{ __('messages.hospital') }}')">
-                                    {{ __('messages.hospital') }}
-                                </div>
-                                <div class="custom-select-option" data-value="commercial" onclick="selectCustomOption('searchType', 'commercial', '{{ __('messages.commercial') }}')">
-                                    {{ __('messages.commercial') }}
-                                </div>
-                                <div class="custom-select-option" data-value="residential" onclick="selectCustomOption('searchType', 'residential', '{{ __('messages.residential') }}')">
-                                    {{ __('messages.residential') }}
-                                </div>
-                                <div class="custom-select-option" data-value="industrial" onclick="selectCustomOption('searchType', 'industrial', '{{ __('messages.industrial') }}')">
-                                    {{ __('messages.industrial') }}
-                                </div>
-                            </div>
-                            <input type="hidden" id="searchType" value="">
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -104,6 +98,99 @@
                 </div>
 
                 <style>
+                    /* Custom Combo Dropdown Styles */
+                    .custom-combo-dropdown {
+                        position: relative;
+                    }
+
+                    .custom-combo-dropdown .dropdown-arrow {
+                        position: absolute;
+                        right: 12px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        pointer-events: none;
+                        color: #6c757d;
+                        font-size: 12px;
+                        z-index: 5;
+                    }
+
+                    [dir="rtl"] .custom-combo-dropdown .dropdown-arrow {
+                        right: auto;
+                        left: 12px;
+                    }
+
+                    .custom-combo-dropdown input.Input_control {
+                        padding: 10px 35px 10px 12px !important;
+                        cursor: pointer;
+                        height: auto !important;
+                        min-height: 42px !important;
+                        line-height: 1.5 !important;
+                        border: 1px solid #dee2e6 !important;
+                        border-radius: 8px !important;
+                        font-size: 1rem !important;
+                        box-sizing: border-box !important;
+                    }
+
+                    [dir="rtl"] .custom-combo-dropdown input.Input_control {
+                        padding: 10px 12px 10px 35px !important;
+                    }
+
+                    .dropdown-options {
+                        position: absolute;
+                        top: 100%;
+                        left: 0;
+                        right: 0;
+                        background: white;
+                        border: 1px solid #dee2e6;
+                        border-radius: 8px;
+                        margin-top: 4px;
+                        max-height: 200px;
+                        overflow-y: auto;
+                        z-index: 1000;
+                        display: none;
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .dropdown-options.show {
+                        display: block;
+                    }
+
+                    .dropdown-option {
+                        padding: 10px 12px;
+                        cursor: pointer;
+                        transition: background-color 0.2s;
+                    }
+
+                    .dropdown-option:hover {
+                        background-color: #f8f9fa;
+                    }
+
+                    .dropdown-option.selected {
+                        background-color: #fff5f0;
+                        color: #F58D2E;
+                        font-weight: 500;
+                    }
+
+                    /* Scrollbar styling */
+                    .dropdown-options::-webkit-scrollbar {
+                        width: 6px;
+                    }
+
+                    .dropdown-options::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 4px;
+                    }
+
+                    .dropdown-options::-webkit-scrollbar-thumb {
+                        background: #F58D2E;
+                        border-radius: 4px;
+                    }
+
+                    .dropdown-options::-webkit-scrollbar-thumb:hover {
+                        background: #e07a1f;
+                    }
+
+                    /* Custom Select Wrapper (for Status and Progress) */
                     .custom-select-wrapper {
                         position: relative;
                     }
@@ -218,11 +305,13 @@
 <script>
     async function performSearch() {
         const searchTerm = document.getElementById('searchInput').value.trim();
-        const searchType = document.getElementById('searchType').value;
+        const searchTypeInput = document.getElementById('searchType');
+        const searchType = searchTypeInput ? searchTypeInput.value.trim() : '';
         const searchStatus = document.getElementById('searchStatus').value;
         const searchProgress = document.getElementById('searchProgress').value;
         
-        // Prevent search if no criteria provided
+        // Allow search if any criteria is provided (including typing in searchType)
+        // Don't prevent search if user is typing in searchType field
         if (!searchTerm && !searchType && !searchStatus && !searchProgress) {
             document.getElementById('resultsContainer').innerHTML = `
                 <div class="text-center text-muted py-4">
@@ -244,16 +333,22 @@
         try {
             const searchParams = {
                 page: 1,
-                limit: 20
+                limit: 50  // Increased limit to get more results for filtering
             };
             
-            // Send search term only, handle type filtering separately
+            // If searchType is provided, also include it in search parameter for API
+            // This way API can search in type field as well
             if (searchTerm) {
                 searchParams.search = searchTerm;
+            } else if (searchType) {
+                // If only searchType is provided, use it as search parameter
+                // API searches in type field when search parameter is provided
+                searchParams.search = searchType;
             }
             
+            // Note: searchStatus is used for status filtering
             if (searchStatus) {
-                searchParams.type = searchStatus;
+                searchParams.status = searchStatus;
             }
             
             const response = await api.getProjects(searchParams);
@@ -263,11 +358,26 @@
                 let filteredProjects = Array.isArray(response.data) ? response.data : 
                                      (Array.isArray(response.data.data) ? response.data.data : []);
                 
-                // Filter by project type if selected
-                if (searchType) {
-                    filteredProjects = filteredProjects.filter(project => 
-                        project.type && project.type.toLowerCase() === searchType.toLowerCase()
-                    );
+                // Additional client-side filtering by project type if searchType was provided
+                // This ensures exact/partial matching even if API search didn't match exactly
+                if (searchType && searchTerm) {
+                    // If both searchTerm and searchType are provided, do additional filtering
+                    filteredProjects = filteredProjects.filter(project => {
+                        if (!project.type) return false;
+                        const projectType = project.type.toLowerCase();
+                        const searchTypeLower = searchType.toLowerCase();
+                        // Exact match or contains match
+                        return projectType === searchTypeLower || projectType.includes(searchTypeLower);
+                    });
+                } else if (searchType && !searchTerm) {
+                    // If only searchType is provided, filter by type
+                    filteredProjects = filteredProjects.filter(project => {
+                        if (!project.type) return false;
+                        const projectType = project.type.toLowerCase();
+                        const searchTypeLower = searchType.toLowerCase();
+                        // Exact match or contains match
+                        return projectType === searchTypeLower || projectType.includes(searchTypeLower);
+                    });
                 }
                 
                 // Filter by progress if selected
@@ -346,11 +456,30 @@
     
     function clearSearch() {
         document.getElementById('searchInput').value = '';
-        document.getElementById('searchType').value = '';
+        
+        // Clear search type combo dropdown
+        const searchTypeInput = document.getElementById('searchType');
+        if (searchTypeInput) {
+            searchTypeInput.value = '';
+            searchTypeInput.readOnly = false;
+            searchTypeInput.style.cursor = 'text';
+            searchTypeInput.style.backgroundColor = '';
+            const clearBtn = document.getElementById('clearSearchTypeSelection');
+            if (clearBtn) {
+                clearBtn.classList.add('d-none');
+            }
+            const dropdown = document.getElementById('searchTypeDropdown');
+            if (dropdown) {
+                dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                    option.style.display = 'block';
+                    option.classList.remove('selected');
+                });
+            }
+        }
+        
         document.getElementById('searchStatus').value = '';
         document.getElementById('searchProgress').value = '';
         
-        document.getElementById('searchTypeText').textContent = '{{ __('messages.all_types') }}';
         document.getElementById('searchStatusText').textContent = '{{ __('messages.all_status') }}';
         document.getElementById('searchProgressText').textContent = '{{ __('messages.any_progress') }}';
         
@@ -407,6 +536,163 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Search Type Combo Dropdown
+        const searchTypeInput = document.getElementById('searchType');
+        const searchTypeDropdown = document.getElementById('searchTypeDropdown');
+        const clearSearchTypeBtn = document.getElementById('clearSearchTypeSelection');
+
+        // Function to clear search type selection
+        window.clearSearchTypeSelection = function() {
+            if (searchTypeInput) {
+                searchTypeInput.readOnly = false;
+                searchTypeInput.value = '';
+                searchTypeInput.style.cursor = 'text';
+                searchTypeInput.style.backgroundColor = '';
+                if (clearSearchTypeBtn) {
+                    clearSearchTypeBtn.classList.add('d-none');
+                }
+                // Show all options again
+                if (searchTypeDropdown) {
+                    searchTypeDropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                        option.style.display = 'block';
+                        option.classList.remove('selected');
+                    });
+                }
+            }
+        };
+
+        if (searchTypeInput && searchTypeDropdown) {
+            // Show dropdown on input click
+            searchTypeInput.addEventListener('click', function() {
+                searchTypeDropdown.classList.add('show');
+            });
+
+            // Prevent typing when readonly (selected from dropdown)
+            searchTypeInput.addEventListener('keydown', function(e) {
+                if (this.readOnly) {
+                    // Allow only backspace/delete to clear selection
+                    if (e.key === 'Backspace' || e.key === 'Delete') {
+                        e.preventDefault();
+                        window.clearSearchTypeSelection();
+                    } else {
+                        // Prevent all other keys when readonly
+                        e.preventDefault();
+                    }
+                }
+            });
+
+            // Prevent typing when readonly
+            searchTypeInput.addEventListener('keypress', function(e) {
+                if (this.readOnly) {
+                    e.preventDefault();
+                }
+            });
+
+            // Prevent paste when readonly
+            searchTypeInput.addEventListener('paste', function(e) {
+                if (this.readOnly) {
+                    e.preventDefault();
+                }
+            });
+
+            // Monitor input value changes to detect manual clearing
+            searchTypeInput.addEventListener('input', function() {
+                if (this.readOnly) {
+                    return;
+                }
+
+                // If input becomes empty, remove readonly state
+                if (!this.value.trim()) {
+                    this.readOnly = false;
+                    this.style.cursor = 'text';
+                    this.style.backgroundColor = '';
+                    if (clearSearchTypeBtn) {
+                        clearSearchTypeBtn.classList.add('d-none');
+                    }
+                }
+
+                // Filter options
+                const filter = this.value.toLowerCase();
+                const options = searchTypeDropdown.querySelectorAll('.dropdown-option');
+
+                options.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(filter)) {
+                        option.style.display = 'block';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+
+                // Trigger search when typing (debounced) - but only if there's a value
+                if (this.value.trim()) {
+                    clearTimeout(window.searchTypeTimeout);
+                    window.searchTypeTimeout = setTimeout(() => {
+                        performSearch();
+                    }, 500);
+                } else {
+                    // If input is cleared, also trigger search to show all results
+                    clearTimeout(window.searchTypeTimeout);
+                    window.searchTypeTimeout = setTimeout(() => {
+                        performSearch();
+                    }, 300);
+                }
+            });
+
+            // Select option on click
+            searchTypeDropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedValue = this.getAttribute('data-value');
+                    searchTypeInput.value = selectedValue;
+                    
+                    if (selectedValue) {
+                        // Make readonly when value is selected from dropdown
+                        searchTypeInput.readOnly = true;
+                        searchTypeInput.style.cursor = 'pointer';
+                        searchTypeInput.style.backgroundColor = '#f8f9fa';
+                        if (clearSearchTypeBtn) {
+                            clearSearchTypeBtn.classList.remove('d-none');
+                            const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                            if (isRTL) {
+                                clearSearchTypeBtn.style.left = '35px';
+                                clearSearchTypeBtn.style.right = 'auto';
+                            } else {
+                                clearSearchTypeBtn.style.right = '35px';
+                                clearSearchTypeBtn.style.left = 'auto';
+                            }
+                        }
+                    } else {
+                        // Empty value - allow editing
+                        searchTypeInput.readOnly = false;
+                        searchTypeInput.style.cursor = 'text';
+                        searchTypeInput.style.backgroundColor = '';
+                        if (clearSearchTypeBtn) {
+                            clearSearchTypeBtn.classList.add('d-none');
+                        }
+                    }
+                    
+                    // Update selected state
+                    searchTypeDropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    searchTypeDropdown.classList.remove('show');
+                    
+                    // Trigger search
+                    performSearch();
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchTypeInput.contains(e.target) && !searchTypeDropdown.contains(e.target) && 
+                    !clearSearchTypeBtn?.contains(e.target)) {
+                    searchTypeDropdown.classList.remove('show');
+                }
+            });
+        }
+
         let searchTimeout;
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {

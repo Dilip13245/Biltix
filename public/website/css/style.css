@@ -57,6 +57,19 @@ a {
   box-shadow: none;
 }
 
+/* Fix for all form-select elements - prevent text overlap with dropdown arrow */
+.form-select:not([multiple]):not([size]) {
+  padding-right: 2.5rem !important;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+[dir="rtl"] .form-select:not([multiple]):not([size]) {
+  padding-right: 0.75rem !important;
+  padding-left: 2.5rem !important;
+}
+
 /* ---Fonts---------------- */
 .fs30 {
   font-size: 30px;
@@ -120,10 +133,27 @@ a {
 .serchBar2 .form-control {
   padding: 9px 18px;
 }
+/* Fix for search inputs with icons - prevent text overlap */
+.serchBar2.position-relative .form-control {
+  padding-right: 45px !important;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+[dir="rtl"] .serchBar2.position-relative .form-control {
+  padding-right: 18px !important;
+  padding-left: 45px !important;
+}
 span.search_icon {
   position: absolute;
   right: 12px;
   top: 6px;
+  pointer-events: none;
+  z-index: 5;
+}
+[dir="rtl"] span.search_icon {
+  right: auto;
+  left: 12px;
 }
 .MessageBOx {
   width: 33.5px;
@@ -168,6 +198,104 @@ span.search_icon {
   padding: 15px;
   border-radius: 8px;
   background-color: white !important;
+}
+
+/* Fix modal inputs with icons */
+.modal-content .position-relative .form-control {
+  padding-right: 48px !important;
+}
+
+[dir="rtl"] .modal-content .position-relative .form-control {
+  padding-right: 15px !important;
+  padding-left: 48px !important;
+}
+
+/* Global fix for input fields with icons - prevent text overlap */
+/* Fix for inputs inside position-relative containers with icons */
+.position-relative > .form-control,
+.position-relative > input.form-control {
+  padding-right: 48px !important;
+}
+
+[dir="rtl"] .position-relative > .form-control,
+[dir="rtl"] .position-relative > input.form-control {
+  padding-right: 15px !important;
+  padding-left: 48px !important;
+}
+
+/* Fix for inputs with .input-icon sibling */
+.form-control + .input-icon,
+input.form-control + .input-icon {
+  pointer-events: none;
+}
+
+.form-control + .input-icon.clickable,
+input.form-control + .input-icon.clickable {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Fix for input-group with icons */
+.input-group .form-control {
+  padding-right: 40px !important;
+}
+
+[dir="rtl"] .input-group .form-control {
+  padding-right: 15px !important;
+  padding-left: 40px !important;
+}
+
+/* Ensure long text doesn't overlap icons */
+.form-control,
+input.form-control,
+select.form-control,
+textarea.form-control {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Specific fix for auth pages input icons */
+.position-relative .form-control:not(.searchable-select) {
+  padding-right: 48px !important;
+}
+
+[dir="rtl"] .position-relative .form-control:not(.searchable-select) {
+  padding-right: 15px !important;
+  padding-left: 48px !important;
+}
+
+/* Prevent text overflow in inputs with icons */
+.position-relative input[type="text"],
+.position-relative input[type="email"],
+.position-relative input[type="password"],
+.position-relative input[type="search"],
+.position-relative input[type="tel"],
+.position-relative input[type="number"] {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* Textarea should allow multi-line - exclude from nowrap */
+.position-relative textarea,
+textarea.form-control,
+textarea.Input_control {
+  white-space: normal !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  resize: vertical;
+}
+
+/* Ensure search inputs don't expand */
+.serchBar .form-control,
+.serchBar2 .form-control {
+  width: 100%;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .B_shadow {
   border: 1px solid #e5e7eb;
@@ -307,8 +435,17 @@ select.form-select {
   border-radius: 8px;
   padding-top: 10px;
   padding-bottom: 10px;
+  padding-right: 2.5rem !important;
   color: #000000;
   font-size: 14px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+[dir="rtl"] select.form-select {
+  padding-right: 10px !important;
+  padding-left: 2.5rem !important;
 }
 .Dashboard_sec {
   padding: 1.5rem 2rem;
@@ -1104,6 +1241,71 @@ table tr:last-child td {
 
 .Input_control {
   padding: 12px 12px;
+}
+
+/* Fix Input_control with form-select (dropdown arrow icon) */
+.Input_control.form-select,
+form-select.Input_control {
+  padding-right: 2.5rem !important;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+[dir="rtl"] .Input_control.form-select,
+[dir="rtl"] form-select.Input_control {
+  padding-right: 12px !important;
+  padding-left: 2.5rem !important;
+}
+
+/* Fix Input_control form-control inputs (excluding textarea) */
+input.Input_control.form-control {
+  padding: 12px 12px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Fix map-search-wrapper input - ensure proper padding for search icon */
+.map-search-wrapper input.Input_control.form-control {
+  padding-right: 40px !important;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+[dir="rtl"] .map-search-wrapper input.Input_control.form-control {
+  padding-right: 12px !important;
+  padding-left: 40px !important;
+}
+
+/* Fix textarea - allow multi-line, no nowrap */
+.Input_control.form-control[type="textarea"],
+.Input_control.form-control textarea,
+.Input_control textarea,
+textarea.Input_control,
+textarea.form-control.Input_control {
+  white-space: normal !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  text-overflow: clip;
+  word-wrap: break-word;
+  resize: vertical;
+}
+
+/* Fix for searchable dropdown inputs */
+.searchable-dropdown input.form-select,
+.searchable-dropdown input.Input_control {
+  padding-right: 2.5rem !important;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+[dir="rtl"] .searchable-dropdown input.form-select,
+[dir="rtl"] .searchable-dropdown input.Input_control {
+  padding-right: 12px !important;
+  padding-left: 2.5rem !important;
 }
 /* ======================== */
 .btn {

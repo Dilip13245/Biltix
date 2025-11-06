@@ -41,8 +41,9 @@
 
           <div class="mb-3">
             <label for="roleDisplay" class="form-label fw-medium">{{ __("messages.role") }}</label>
-            <input type="text" class="form-control Input_control" id="roleDisplay" name="role_in_project" readonly
+            <input type="text" class="form-control Input_control" id="roleDisplay" name="role_display" readonly
               placeholder="{{ __("messages.role_will_display_here") }}" maxlength="50">
+            <input type="hidden" id="roleInProject" name="role_in_project" value="">
           </div>
 
         </form>
@@ -94,13 +95,29 @@ document.addEventListener('DOMContentLoaded', function() {
   const memberSelect = document.getElementById('memberSelect');
   const roleDisplay = document.getElementById('roleDisplay');
   
+  // Function to format role name (e.g., project_manager -> Project Manager)
+  function formatRoleName(role) {
+    if (!role) return '';
+    // Replace underscores with spaces and capitalize each word
+    return role.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+  
   if (memberSelect && roleDisplay) {
     memberSelect.addEventListener('change', function() {
       const selectedOption = this.options[this.selectedIndex];
+      const roleInProjectField = document.getElementById('roleInProject');
       if (selectedOption.value) {
         const role = selectedOption.getAttribute('data-role');
-        roleDisplay.value = role || '';
+        // Store original role value (with underscores) in hidden field
+        if (roleInProjectField) {
+          roleInProjectField.value = role || '';
+        }
+        // Format the role before displaying
+        roleDisplay.value = formatRoleName(role) || '';
       } else {
+        if (roleInProjectField) {
+          roleInProjectField.value = '';
+        }
         roleDisplay.value = '';
       }
     });
@@ -125,9 +142,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Validate role
-    const roleDisplay = form.querySelector('#roleDisplay');
-    if (!roleDisplay.value.trim()) {
-      showFieldError(roleDisplay, '{{ __("messages.role") }} is required');
+    const roleInProject = form.querySelector('#roleInProject');
+    if (!roleInProject || !roleInProject.value.trim()) {
+      const roleDisplay = form.querySelector('#roleDisplay');
+      if (roleDisplay) {
+        showFieldError(roleDisplay, '{{ __("messages.role") }} is required');
+      }
       isValid = false;
     }
     

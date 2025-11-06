@@ -75,6 +75,8 @@ return [
         'updated_success' => 'Task updated successfully',
         'deleted_success' => 'Task deleted successfully',
         'status_changed' => 'Task status changed successfully',
+        'cannot_change_to_todo_from_in_progress' => 'Cannot change task status from "In Progress" to "Todo". Once a task is in progress, it cannot be reverted to todo.',
+        'cannot_change_from_complete' => 'Cannot change task status from "Complete". Once a task is completed, it cannot be reverted to "Todo" or "In Progress".',
         'comment_added' => 'Comment added successfully',
         'comments_retrieved' => 'Comments retrieved successfully',
         'progress_updated' => 'Progress updated successfully',

@@ -34,7 +34,7 @@
                         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
                             <div class="d-flex align-items-center gap-3">
                                 <button class="btn btn-outline-primary" onclick="history.back()">
-                                    <i class="fas fa-arrow-left"></i>
+                                    <i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }}"></i>
                                 </button>
                                 <div>
                                     <h4 class="mb-1">{{ __('messages.tasks') }}</h4>
@@ -768,6 +768,53 @@
                 return new Blob([u8arr], {
                     type: mime
                 });
+            }
+
+            async function changeTaskStatus() {
+                if (!window.currentTaskDetails) return;
+
+                const newStatus = document.getElementById('taskStatusSelect').value;
+                const currentStatus = window.currentTaskDetails.status;
+
+                // Frontend validation: prevent going backwards
+                // If status is 'in_progress', cannot change to 'todo'
+                if (currentStatus === 'in_progress' && newStatus === 'todo') {
+                    toastr.error('{{ __('messages.cannot_change_to_todo_from_in_progress') }}');
+                    document.getElementById('taskStatusSelect').value = currentStatus;
+                    return;
+                }
+                
+                // If status is 'complete', cannot change to 'todo' or 'in_progress'
+                if (currentStatus === 'complete' && (newStatus === 'todo' || newStatus === 'in_progress')) {
+                    toastr.error('{{ __('messages.cannot_change_from_complete') }}');
+                    document.getElementById('taskStatusSelect').value = currentStatus;
+                    return;
+                }
+
+                try {
+                    const response = await api.updateTaskStatus({
+                        task_id: window.currentTaskDetails.id,
+                        user_id: currentUserId,
+                        status: newStatus
+                    });
+
+                    if (response.code === 200) {
+                        document.getElementById('taskDetailStatus').textContent = newStatus.charAt(0).toUpperCase() +
+                            newStatus.slice(1).replace('_', ' ');
+                        window.currentTaskDetails.status = newStatus;
+                        loadTasks();
+                        toastr.success(response.message || '{{ __('messages.task_updated_successfully') }}');
+                    } else {
+                        // Show backend error message in toastr
+                        const errorMessage = response.message || '{{ __('messages.failed_to_update_task') }}';
+                        toastr.error(errorMessage);
+                        document.getElementById('taskStatusSelect').value = window.currentTaskDetails.status;
+                    }
+                } catch (error) {
+                    console.error('Error updating task status:', error);
+                    toastr.error(error.message || '{{ __('messages.error_updating_task') }}');
+                    document.getElementById('taskStatusSelect').value = window.currentTaskDetails.status;
+                }
             }
 
             // Task details modal functions

@@ -35,6 +35,77 @@
         #locationEditMode {
             display: none;
         }
+
+        /* Custom Combo Dropdown Styles */
+        .custom-combo-dropdown {
+            position: relative;
+        }
+
+        .custom-combo-dropdown .dropdown-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #6c757d;
+            font-size: 12px;
+            z-index: 5;
+        }
+
+        [dir="rtl"] .custom-combo-dropdown .dropdown-arrow {
+            right: auto;
+            left: 12px;
+        }
+
+        .custom-combo-dropdown input {
+            padding-right: 35px;
+            cursor: pointer;
+        }
+
+        [dir="rtl"] .custom-combo-dropdown input {
+            padding-right: 0.75rem;
+            padding-left: 35px;
+        }
+
+        .dropdown-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-options.show {
+            display: block;
+        }
+
+        .dropdown-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-option:hover {
+            background-color: #f8f9fa;
+        }
+
+        .clear-selection {
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .clear-selection:hover {
+            color: #F58D2E !important;
+            transform: translateY(-50%) scale(1.1);
+        }
     </style>
     <div class="content-header d-flex justify-content-between align-items-center gap-3 flex-wrap">
         <div>
@@ -93,7 +164,7 @@
                                                     <span id="projectName">{{ __('messages.loading') }}...</span>
                                                 </div>
                                             </div>
-                                            <div class="mb-2 mb-md-3">
+                                            <div class="mb-2 mb-md-3" style="display: none;">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.company_name') }}</span>
                                                 <div class="fw-medium">
@@ -119,14 +190,14 @@
                                                     <span id="projectType">{{ __('messages.loading') }}...</span>
                                                 </div>
                                             </div>
-                                            <div class="mb-2 mb-md-3">
+                                            <div class="mb-2 mb-md-3" style="display: none;">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.project_manager') }}</span>
                                                 <div class="fw-medium">
                                                     <span id="projectManager">{{ __('messages.loading') }}...</span>
                                                 </div>
                                             </div>
-                                            <div class="mb-2 mb-md-3">
+                                            <div class="mb-2 mb-md-3" style="display: none;">
                                                 <span
                                                     class="text-muted small black_color">{{ __('messages.site_engineer') }}</span>
                                                 <div class="fw-medium">
@@ -243,7 +314,7 @@
                                         <i class="fas fa-save {{ margin_end(1) }}"></i>{{ __('messages.save') }}
                                     </button>
                                     <button class="btn btn-secondary" onclick="cancelLocationEdit()">
-                                        <i class="fas fa-times {{ margin_end(1) }}"></i>{{ __('messages.cancel') }}
+                                        {{ __('messages.cancel') }}
                                     </button>
                                 </div>
                             </div>
@@ -830,18 +901,18 @@
             // Store original values
             originalValues = {
                 projectName: document.getElementById('projectName').textContent,
-                companyName: document.getElementById('companyName').textContent,
+                // companyName: document.getElementById('companyName').textContent, // Hidden
                 projectType: document.getElementById('projectType').textContent,
-                projectManager: document.getElementById('projectManager').textContent,
-                siteEngineer: document.getElementById('siteEngineer').textContent
+                // projectManager: document.getElementById('projectManager').textContent, // Hidden
+                // siteEngineer: document.getElementById('siteEngineer').textContent // Hidden
             };
 
             // Make fields editable
             makeFieldEditable('projectName', 'text');
-            makeFieldEditable('companyName', 'text');
-            makeFieldEditable('projectType', 'text');
-            makeFieldEditable('projectManager', 'dropdown', 'Project Manager');
-            makeFieldEditable('siteEngineer', 'dropdown', 'Site Engineer');
+            // makeFieldEditable('companyName', 'text'); // Hidden
+            makeFieldEditable('projectType', 'combo-dropdown');
+            // makeFieldEditable('projectManager', 'dropdown', 'Project Manager'); // Hidden
+            // makeFieldEditable('siteEngineer', 'dropdown', 'Site Engineer'); // Hidden
 
             // Show save and cancel buttons
             showSaveButton();
@@ -871,6 +942,145 @@
 
                 fieldElement.innerHTML = '';
                 fieldElement.appendChild(input);
+            } else if (type === 'combo-dropdown') {
+                // Create combo dropdown for project type
+                const wrapper = document.createElement('div');
+                wrapper.className = 'custom-combo-dropdown position-relative';
+                wrapper.style.width = '100%';
+                wrapper.style.maxWidth = '300px';
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentValue;
+                input.className = 'form-control Input_control';
+                input.id = fieldId + '_input';
+                input.placeholder = '{{ __('messages.select_type') }}';
+                input.autocomplete = 'off';
+                input.maxLength = 50;
+
+                const dropdownArrow = document.createElement('i');
+                dropdownArrow.className = 'fas fa-chevron-down dropdown-arrow';
+
+                const clearBtn = document.createElement('i');
+                clearBtn.className = 'fas fa-times clear-selection d-none';
+                clearBtn.id = 'clear' + fieldId.charAt(0).toUpperCase() + fieldId.slice(1) + 'Selection';
+                clearBtn.style.cssText = 'position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;';
+                if (document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl') {
+                    clearBtn.style.left = '35px';
+                    clearBtn.style.right = 'auto';
+                }
+                clearBtn.onclick = function() {
+                    input.readOnly = false;
+                    input.value = '';
+                    input.style.cursor = 'text';
+                    input.style.backgroundColor = '';
+                    clearBtn.classList.add('d-none');
+                    dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                        option.style.display = 'block';
+                    });
+                };
+
+                const dropdown = document.createElement('div');
+                dropdown.className = 'dropdown-options';
+                dropdown.id = fieldId + 'Dropdown';
+
+                // Add dropdown options
+                const options = [
+                    '{{ __('messages.villa') }}',
+                    '{{ __('messages.tower') }}',
+                    '{{ __('messages.hospital') }}',
+                    '{{ __('messages.commercial') }}',
+                    '{{ __('messages.residential') }}',
+                    '{{ __('messages.industrial') }}'
+                ];
+
+                options.forEach(optionText => {
+                    const option = document.createElement('div');
+                    option.className = 'dropdown-option';
+                    option.setAttribute('data-value', optionText);
+                    option.textContent = optionText;
+                    option.addEventListener('click', function() {
+                        input.value = this.getAttribute('data-value');
+                        input.readOnly = true;
+                        input.style.cursor = 'pointer';
+                        input.style.backgroundColor = '#f8f9fa';
+                        clearBtn.classList.remove('d-none');
+                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                        if (isRTL) {
+                            clearBtn.style.left = '35px';
+                            clearBtn.style.right = 'auto';
+                        } else {
+                            clearBtn.style.right = '35px';
+                            clearBtn.style.left = 'auto';
+                        }
+                        dropdown.classList.remove('show');
+                    });
+                    dropdown.appendChild(option);
+                });
+
+                wrapper.appendChild(input);
+                wrapper.appendChild(dropdownArrow);
+                wrapper.appendChild(clearBtn);
+                wrapper.appendChild(dropdown);
+
+                // Check if input has value and make it readonly
+                if (currentValue) {
+                    input.readOnly = true;
+                    input.style.cursor = 'pointer';
+                    input.style.backgroundColor = '#f8f9fa';
+                    clearBtn.classList.remove('d-none');
+                }
+
+                // Show dropdown on input click
+                input.addEventListener('click', function() {
+                    dropdown.classList.add('show');
+                });
+
+                // Filter options on input
+                input.addEventListener('input', function() {
+                    if (this.readOnly) return;
+
+                    if (!this.value.trim()) {
+                        this.readOnly = false;
+                        this.style.cursor = 'text';
+                        this.style.backgroundColor = '';
+                        clearBtn.classList.add('d-none');
+                    }
+
+                    const filter = this.value.toLowerCase();
+                    dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                        const text = option.textContent.toLowerCase();
+                        if (text.includes(filter)) {
+                            option.style.display = 'block';
+                        } else {
+                            option.style.display = 'none';
+                        }
+                    });
+
+                    dropdown.classList.add('show');
+                });
+
+                // Prevent typing when readonly
+                input.addEventListener('keydown', function(e) {
+                    if (this.readOnly) {
+                        if (e.key === 'Backspace' || e.key === 'Delete') {
+                            e.preventDefault();
+                            clearBtn.onclick();
+                        } else {
+                            e.preventDefault();
+                        }
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!wrapper.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+
+                fieldElement.innerHTML = '';
+                fieldElement.appendChild(wrapper);
             } else if (type === 'dropdown') {
                 const select = document.createElement('select');
                 select.className = 'form-select Input_control searchable-select';
@@ -941,7 +1151,7 @@
             const cancelBtn = document.createElement('button');
             cancelBtn.className = 'btn btn-sm btn-secondary';
             cancelBtn.id = 'cancelProjectBtn';
-            cancelBtn.innerHTML = '<i class="fas fa-times me-1"></i>{{ __('messages.cancel') }}';
+            cancelBtn.innerHTML = '{{ __('messages.cancel') }}';
             cancelBtn.onclick = cancelProjectEdit;
 
             // Add buttons to container
@@ -965,26 +1175,26 @@
 
                 // Get values from inputs
                 const projectNameInput = document.getElementById('projectName_input');
-                const companyNameInput = document.getElementById('companyName_input');
+                // const companyNameInput = document.getElementById('companyName_input'); // Hidden
                 const projectTypeInput = document.getElementById('projectType_input');
-                const projectManagerInput = document.getElementById('projectManager_input');
-                const siteEngineerInput = document.getElementById('siteEngineer_input');
+                // const projectManagerInput = document.getElementById('projectManager_input'); // Hidden
+                // const siteEngineerInput = document.getElementById('siteEngineer_input'); // Hidden
 
                 if (projectNameInput && projectNameInput.value.trim()) {
                     updateData.project_title = projectNameInput.value.trim();
                 }
-                if (companyNameInput && companyNameInput.value.trim()) {
-                    updateData.contractor_name = companyNameInput.value.trim();
-                }
+                // if (companyNameInput && companyNameInput.value.trim()) { // Hidden
+                //     updateData.contractor_name = companyNameInput.value.trim();
+                // }
                 if (projectTypeInput && projectTypeInput.value.trim()) {
                     updateData.type = projectTypeInput.value.trim();
                 }
-                if (projectManagerInput && projectManagerInput.value) {
-                    updateData.project_manager_id = projectManagerInput.value;
-                }
-                if (siteEngineerInput && siteEngineerInput.value) {
-                    updateData.technical_engineer_id = siteEngineerInput.value;
-                }
+                // if (projectManagerInput && projectManagerInput.value) { // Hidden
+                //     updateData.project_manager_id = projectManagerInput.value;
+                // }
+                // if (siteEngineerInput && siteEngineerInput.value) { // Hidden
+                //     updateData.technical_engineer_id = siteEngineerInput.value;
+                // }
 
                 const response = await api.updateProject(updateData);
 
@@ -1018,10 +1228,10 @@
 
             // Restore original values
             document.getElementById('projectName').textContent = originalValues.projectName;
-            document.getElementById('companyName').textContent = originalValues.companyName;
+            // document.getElementById('companyName').textContent = originalValues.companyName; // Hidden
             document.getElementById('projectType').textContent = originalValues.projectType;
-            document.getElementById('projectManager').textContent = originalValues.projectManager;
-            document.getElementById('siteEngineer').textContent = originalValues.siteEngineer;
+            // document.getElementById('projectManager').textContent = originalValues.projectManager; // Hidden
+            // document.getElementById('siteEngineer').textContent = originalValues.siteEngineer; // Hidden
 
             // Show edit button again
             const btn = document.getElementById('editProjectBtn');
@@ -1642,21 +1852,19 @@
                     const formData = new FormData(createPhaseForm);
                     const title = formData.get('title');
 
-                    // Collect milestones
+                    // Collect milestones - find inputs by their actual name attribute, not by index
                     const milestones = [];
                     const milestoneItems = document.querySelectorAll('.milestone-item');
 
-                    milestoneItems.forEach((item, index) => {
-                        const nameInput = item.querySelector(
-                            `input[name="milestones[${index}][milestone_name]"]`);
-                        const daysInput = item.querySelector(
-                            `input[name="milestones[${index}][days]"]`);
+                    milestoneItems.forEach((item) => {
+                        // Find inputs by their name pattern, not by index
+                        const nameInput = item.querySelector('input[name*="[milestone_name]"]');
+                        const daysInput = item.querySelector('input[name*="[days]"]');
 
                         if (nameInput && nameInput.value.trim()) {
                             milestones.push({
                                 milestone_name: nameInput.value.trim(),
-                                days: daysInput && daysInput.value ? parseInt(daysInput
-                                    .value) : null
+                                days: daysInput && daysInput.value ? parseInt(daysInput.value) : null
                             });
                         }
                     });
@@ -1809,7 +2017,7 @@
                     <p class="text-muted mb-4">{{ __('messages.delete_project_warning') }}</p>
                     <div class="d-flex gap-2 justify-content-center">
                         <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
-                            <i class="fas fa-times me-2"></i>{{ __('messages.cancel') }}
+                            {{ __('messages.cancel') }}
                         </button>
                         <button type="button" class="btn btn-danger px-4 api-action-btn" id="confirmDeleteBtn"
                             onclick="confirmDeleteProject()">

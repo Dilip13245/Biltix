@@ -288,7 +288,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    <i class="fas fa-times {{ margin_end(2) }}"></i>{{ __('auth.cancel') }}
+                                    {{ __('auth.cancel') }}
                                 </button>
                                 <button type="button" class="btn btn-success" onclick="saveProfile()">
                                     <i class="fas fa-save {{ margin_end(2) }}"></i>{{ __('auth.save_changes') }}

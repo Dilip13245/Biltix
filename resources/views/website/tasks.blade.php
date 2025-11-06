@@ -702,6 +702,22 @@
             if (!window.currentTaskDetails) return;
 
             const newStatus = document.getElementById('taskStatusSelect').value;
+            const currentStatus = window.currentTaskDetails.status;
+
+            // Frontend validation: prevent going backwards
+            // If status is 'in_progress', cannot change to 'todo'
+            if (currentStatus === 'in_progress' && newStatus === 'todo') {
+                toastr.error('{{ __('messages.cannot_change_to_todo_from_in_progress') }}');
+                document.getElementById('taskStatusSelect').value = currentStatus;
+                return;
+            }
+            
+            // If status is 'complete', cannot change to 'todo' or 'in_progress'
+            if (currentStatus === 'complete' && (newStatus === 'todo' || newStatus === 'in_progress')) {
+                toastr.error('{{ __('messages.cannot_change_from_complete') }}');
+                document.getElementById('taskStatusSelect').value = currentStatus;
+                return;
+            }
 
             try {
                 const response = await api.updateTaskStatus({
@@ -717,12 +733,14 @@
                     loadTasks();
                     toastr.success(response.message || '{{ __('messages.task_updated_successfully') }}');
                 } else {
-                    toastr.error(response.message || '{{ __('messages.failed_to_update_task') }}');
+                    // Show backend error message in toastr
+                    const errorMessage = response.message || '{{ __('messages.failed_to_update_task') }}';
+                    toastr.error(errorMessage);
                     document.getElementById('taskStatusSelect').value = window.currentTaskDetails.status;
                 }
             } catch (error) {
                 console.error('Error updating task status:', error);
-                toastr.error('{{ __('messages.error_updating_task') }}');
+                toastr.error(error.message || '{{ __('messages.error_updating_task') }}');
                 document.getElementById('taskStatusSelect').value = window.currentTaskDetails.status;
             }
         }

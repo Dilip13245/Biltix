@@ -326,12 +326,27 @@
         }
 
         .map-search-wrapper .form-control {
-            padding-right: 40px;
+            padding-right: 40px !important;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .map-search-wrapper input.Input_control.form-control {
+            padding-right: 40px !important;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
         [dir="rtl"] .map-search-wrapper .form-control {
-            padding-right: 0.75rem;
-            padding-left: 40px;
+            padding-right: 0.75rem !important;
+            padding-left: 40px !important;
+        }
+
+        [dir="rtl"] .map-search-wrapper input.Input_control.form-control {
+            padding-right: 12px !important;
+            padding-left: 40px !important;
         }
 
         .map-search-icon {
@@ -462,23 +477,30 @@
             right: auto !important;
         }
 
-        /* Project location field validation - no icon, only border */
-        .map-search-wrapper input.is-invalid {
-            padding-right: 40px;
+        /* Project location field validation - ensure proper padding */
+        .map-search-wrapper input.is-invalid,
+        .map-search-wrapper input.Input_control.form-control.is-invalid {
+            padding-right: 40px !important;
             border-color: #dc3545;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
         }
 
-        [dir="rtl"] .map-search-wrapper input.is-invalid {
-            padding-right: 0.75rem;
-            padding-left: 40px;
+        [dir="rtl"] .map-search-wrapper input.is-invalid,
+        [dir="rtl"] .map-search-wrapper input.Input_control.form-control.is-invalid {
+            padding-right: 12px !important;
+            padding-left: 40px !important;
         }
 
         /* Keep search icon at original position when validation is present */
-        .map-search-wrapper:has(input.is-invalid) .map-search-icon {
+        .map-search-wrapper:has(input.is-invalid) .map-search-icon,
+        .map-search-wrapper:has(input.Input_control.form-control.is-invalid) .map-search-icon {
             right: 12px !important;
         }
 
-        [dir="rtl"] .map-search-wrapper:has(input.is-invalid) .map-search-icon {
+        [dir="rtl"] .map-search-wrapper:has(input.is-invalid) .map-search-icon,
+        [dir="rtl"] .map-search-wrapper:has(input.Input_control.form-control.is-invalid) .map-search-icon {
             left: 12px !important;
             right: auto !important;
         }
@@ -2131,6 +2153,8 @@
                     const projectStartDate = document.getElementById('project_start_date');
                     const projectDueDate = document.getElementById('project_due_date');
                     const projectLocation = document.getElementById('project_location');
+                    const latitude = document.getElementById('latitude');
+                    const longitude = document.getElementById('longitude');
 
                     if (!type.value.trim()) {
                         type.classList.add('is-invalid');
@@ -2147,9 +2171,13 @@
                         isValid = false;
                     }
 
-                    if (!projectLocation.value.trim()) {
+                    // Check if location is selected on map (must have latitude and longitude)
+                    if (!projectLocation.value.trim() || !latitude.value || !longitude.value) {
                         projectLocation.classList.add('is-invalid');
                         isValid = false;
+                        if (!latitude.value || !longitude.value) {
+                            showToast('{{ __('messages.please_select_location') }}', 'warning');
+                        }
                     }
                 } else if (step === 3) {
                     // Step 3 validation (file uploads are optional)
@@ -2509,6 +2537,24 @@
 
             // Create project with marked up images
             async function createProjectWithMarkup(markedUpImageData) {
+                // Validate location is selected on map before submitting
+                const projectLocation = document.getElementById('project_location');
+                const latitude = document.getElementById('latitude');
+                const longitude = document.getElementById('longitude');
+
+                if (!projectLocation.value.trim() || !latitude.value || !longitude.value) {
+                    projectLocation.classList.add('is-invalid');
+                    showToast('{{ __('messages.please_select_location') }}', 'warning');
+                    
+                    // Re-enable button
+                    const btn = document.querySelector('#createProjectModal .btn.orange_btn');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-plus me-2"></i>Create Project';
+                    }
+                    return;
+                }
+
                 try {
                     // Get the stored form data
                     const formData = window.projectFormData;
@@ -2663,6 +2709,24 @@
 
             // Create project without files
             async function createProjectDirectly() {
+                // Validate location is selected on map before submitting
+                const projectLocation = document.getElementById('project_location');
+                const latitude = document.getElementById('latitude');
+                const longitude = document.getElementById('longitude');
+
+                if (!projectLocation.value.trim() || !latitude.value || !longitude.value) {
+                    projectLocation.classList.add('is-invalid');
+                    showToast('{{ __('messages.please_select_location') }}', 'warning');
+                    
+                    // Re-enable button
+                    const btn = document.querySelector('#createProjectModal .btn.orange_btn');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-plus me-2"></i>Create Project';
+                    }
+                    return;
+                }
+
                 try {
                     const formData = new FormData(document.getElementById('createProjectForm'));
 

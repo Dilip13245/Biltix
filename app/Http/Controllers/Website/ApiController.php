@@ -119,6 +119,8 @@ class ApiController extends Controller
             'user_id' => Session::get('user_id'),
             'page' => $request->get('page', 1),
             'limit' => $request->get('limit', 10),
+            'search' => $request->get('search'), // Pass search parameter
+            'type' => $request->get('status'), // Pass status/type parameter
         ]);
 
         return $this->handleApiResponse($response);

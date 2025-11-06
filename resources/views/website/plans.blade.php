@@ -798,6 +798,37 @@
             }
         }
 
+        // Helper function to convert dataURL to blob
+        function dataURLToBlob(dataURL) {
+            // If it's already a File object, return it as is
+            if (dataURL instanceof File) {
+                return dataURL;
+            }
+            
+            // If it's already a Blob, return it as is
+            if (dataURL instanceof Blob) {
+                return dataURL;
+            }
+            
+            // Handle base64 strings
+            if (typeof dataURL === 'string' && dataURL.includes(',')) {
+                const arr = dataURL.split(',');
+                const mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new Blob([u8arr], {
+                    type: mime
+                });
+            }
+            
+            // Return as-is if not a recognized format
+            return dataURL;
+        }
+
         // Upload mixed files (images with markup + documents)
         async function uploadMixedFiles(markedUpImageData) {
             if (isUploading) {
@@ -816,17 +847,34 @@
                 // Remove original files
                 formData.delete('files[]');
 
-                // Add marked up image
+                // Handle marked up images - can be single dataURL or array of dataURLs
                 if (markedUpImageData) {
-                    const response = await fetch(markedUpImageData);
-                    const blob = await response.blob();
-                    formData.append('files[]', blob, 'marked_plan.png');
+                    if (Array.isArray(markedUpImageData)) {
+                        // Multiple images - map each dataURL to its original file
+                        markedUpImageData.forEach((imageData, index) => {
+                            if (imageData) {
+                                const blob = dataURLToBlob(imageData);
+                                // Use original file name if available, otherwise generate name
+                                const originalFile = images[index];
+                                const fileName = originalFile ? originalFile.name : `marked_plan_${index + 1}.png`;
+                                formData.append('files[]', blob, fileName);
+                            }
+                        });
+                    } else {
+                        // Single image - convert dataURL to blob
+                        const blob = dataURLToBlob(markedUpImageData);
+                        const originalFile = images[0];
+                        const fileName = originalFile ? originalFile.name : 'marked_plan.png';
+                        formData.append('files[]', blob, fileName);
+                    }
                 }
 
                 // Add document files as-is
-                documents.forEach((file, index) => {
-                    formData.append('files[]', file);
-                });
+                if (documents && documents.length > 0) {
+                    documents.forEach((file, index) => {
+                        formData.append('files[]', file);
+                    });
+                }
 
                 const apiResponse = await api.uploadPlan(formData);
                 if (apiResponse.code === 200) {
@@ -840,7 +888,7 @@
                 }
             } catch (error) {
                 console.error('Upload mixed files error:', error);
-                toastr.error('{{ __('messages.failed_to_upload_plan') }}');
+                toastr.error('{{ __('messages.failed_to_upload_plan') }}: ' + error.message);
             } finally {
                 isUploading = false;
                 // Reset both buttons

@@ -88,12 +88,11 @@ class SnagResource extends Resource
             Forms\Components\Select::make('status')
                 ->label('Status')
                 ->options([
-                    'open' => 'Open',
-                    'in_progress' => 'In Progress',
-                    'resolved' => 'Resolved',
-                    'closed' => 'Closed',
+                    'todo' => 'Todo',
+                    'complete' => 'Complete',
+                    'approve' => 'Approve',
                 ])
-                ->default('open')
+                ->default('todo')
                 ->required(),
             Forms\Components\Textarea::make('comment')
                 ->label('Comment')
@@ -128,12 +127,11 @@ class SnagResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn (?string $state): string => $state ? ucfirst(str_replace('_', ' ', $state)) : 'Open')
+                    ->formatStateUsing(fn (?string $state): string => $state ? ucfirst(str_replace('_', ' ', $state)) : 'Todo')
                     ->color(fn (?string $state): string => match ($state) {
-                        'open' => 'warning',
-                        'in_progress' => 'info',
-                        'resolved' => 'success',
-                        'closed' => 'gray',
+                        'todo' => 'warning',
+                        'complete' => 'success',
+                        'approve' => 'primary',
                         default => 'warning',
                     }),
                 Tables\Columns\TextColumn::make('reporter.name')
@@ -156,10 +154,9 @@ class SnagResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
-                        'open' => 'Open',
-                        'in_progress' => 'In Progress',
-                        'resolved' => 'Resolved',
-                        'closed' => 'Closed',
+                        'todo' => 'Todo',
+                        'complete' => 'Complete',
+                        'approve' => 'Approve',
                     ]),
                 Tables\Filters\SelectFilter::make('assigned_to')
                     ->label('Assigned To')
@@ -172,10 +169,10 @@ class SnagResource extends Resource
                     ->label('Resolve')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn ($record) => $record->status !== 'resolved')
+                    ->visible(fn ($record) => $record->status !== 'complete' && $record->status !== 'approve')
                     ->action(function ($record) {
                         $record->update([
-                            'status' => 'resolved',
+                            'status' => 'complete',
                             'resolved_at' => now(),
                             'resolved_by' => auth()->id(),
                         ]);

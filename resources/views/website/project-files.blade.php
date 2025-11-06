@@ -176,6 +176,26 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+            
+            /* File Description - Allow word wrap */
+            .table-responsive td:first-child .file-description {
+                white-space: normal !important;
+                word-wrap: break-word;
+                word-break: break-word;
+                max-width: 100%;
+                display: block;
+                margin-top: 4px;
+            }
+        }
+        
+        /* Desktop - File Description Word Wrap */
+        .table-responsive td:first-child .file-description {
+            white-space: normal !important;
+            word-wrap: break-word;
+            word-break: break-word;
+            max-width: 300px;
+            display: block;
+            margin-top: 4px;
         }
         
         @media (max-width: 576px) {
@@ -782,60 +802,109 @@
             if (!window.filesWithNotes || window.filesWithNotes.length === 0) return;
 
             const filesToProcess = window.filesWithNotes;
-            window.currentFileIndex = 0;
             window.processedFiles = [];
 
-            processNextFile();
+            // Separate image files from non-image files
+            const imageFiles = [];
+            const nonImageFiles = [];
 
-            function processNextFile() {
-                if (window.currentFileIndex >= filesToProcess.length) {
-                    // All files processed, upload them
-                    uploadAllFiles();
-                    return;
+            filesToProcess.forEach(fileData => {
+                if (isImageFile(fileData.file.type)) {
+                    imageFiles.push(fileData);
+                } else {
+                    nonImageFiles.push(fileData);
                 }
+            });
 
-                const fileData = filesToProcess[window.currentFileIndex];
-                const file = fileData.file;
-                window.selectedFile = file;
-                window.selectedFileDescription = fileData.note;
+            // Add non-image files directly to processed files
+            nonImageFiles.forEach(fileData => {
+                window.processedFiles.push({
+                    file: fileData.file,
+                    note: fileData.note,
+                    markup: null
+                });
+            });
 
-                if (isImageFile(file.type)) {
-                    // Open drawing modal for image
-                    openDrawingModal({
-                        title: 'Add Markup to Image',
-                        saveButtonText: 'Upload File',
-                        mode: 'image',
-                        onSave: function(imageData) {
-                            // Store processed file with markup
+            // If there are image files, open drawing modal with all images at once
+            if (imageFiles.length > 0) {
+                // Store image files with their notes for later mapping
+                window.imageFilesWithNotes = imageFiles;
+
+                // Open drawing modal for all images
+                openDrawingModal({
+                    title: 'Add Markup to Images',
+                    saveButtonText: imageFiles.length > 1 ? 'Upload All Images' : 'Upload File',
+                    mode: 'image',
+                    onSave: function(imageDataArray) {
+                        // imageDataArray is an array when multiple files, or single data URL when one file
+                        const imageDataList = Array.isArray(imageDataArray) ? imageDataArray : [imageDataArray];
+                        
+                        // Map image data back to original files with their notes
+                        imageFiles.forEach((fileData, index) => {
+                            const imageData = imageDataList[index] || null;
                             window.processedFiles.push({
-                                file: file,
+                                file: fileData.file,
                                 note: fileData.note,
                                 markup: imageData
                             });
-                            
-                            // Close drawing modal
-                            const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
-                            if (drawingModal) drawingModal.hide();
-                            
-                            window.currentFileIndex++;
-                            processNextFile();
-                        }
-                    });
+                        });
 
-                    document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
-                        loadImageToCanvas(file);
-                    }, { once: true });
-                } else {
-                    // Non-image file, add directly
-                    window.processedFiles.push({
-                        file: file,
-                        note: fileData.note,
-                        markup: null
-                    });
-                    window.currentFileIndex++;
-                    processNextFile();
-                }
+                        // Close drawing modal
+                        const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+                        if (drawingModal) drawingModal.hide();
+
+                        // Clean up
+                        window.imageFilesWithNotes = null;
+
+                        // Upload all files
+                        uploadAllFiles();
+                    }
+                });
+
+                // Load images after modal is shown
+                document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
+                    const imageFilesArray = imageFiles.map(fd => fd.file);
+                    if (imageFilesArray.length === 1) {
+                        loadImageToCanvas(imageFilesArray[0]);
+                    } else {
+                        loadMultipleFiles(imageFilesArray);
+                    }
+                }, { once: true });
+            } else {
+                // No image files, upload directly
+                uploadAllFiles();
             }
+        }
+
+        // Helper function to convert dataURL to blob
+        function dataURLToBlob(dataURL) {
+            // If it's already a File object, return it as is
+            if (dataURL instanceof File) {
+                return dataURL;
+            }
+            
+            // If it's already a Blob, return it as is
+            if (dataURL instanceof Blob) {
+                return dataURL;
+            }
+            
+            // Handle base64 strings
+            if (typeof dataURL === 'string' && dataURL.includes(',')) {
+                const arr = dataURL.split(',');
+                const mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new Blob([u8arr], {
+                    type: mime
+                });
+            }
+            
+            // Return as-is if not a recognized format
+            return dataURL;
         }
 
         async function uploadAllFiles() {
@@ -854,10 +923,19 @@
                     if (fileData.note) {
                         formData.append('description', fileData.note);
                     }
-                    formData.append('files[]', fileData.file);
                     
-                    if (fileData.markup) {
+                    // If markup exists (and it's a dataURL string, not the original File), convert it to blob and use that
+                    if (fileData.markup && typeof fileData.markup === 'string' && fileData.markup.includes(',')) {
+                        // This is markup data (dataURL string), convert to blob
+                        const blob = dataURLToBlob(fileData.markup);
+                        // Use original file name
+                        const fileName = fileData.file.name || 'markup.png';
+                        formData.append('files[]', blob, fileName);
                         formData.append('markup_data', fileData.markup);
+                    } else {
+                        // No markup or markup is the original File object, use original file
+                        formData.append('files[]', fileData.file);
+                        // If markup exists but is a File, it means no markup was done, so don't send markup_data
                     }
 
                     await api.uploadFile(formData);
@@ -1123,9 +1201,9 @@
                         <td>
                             <div class="d-flex align-items-center gap-2">
                                 ${fileIcon}
-                                <div>
+                                <div style="flex: 1; min-width: 0;">
                                     <div class="fw-medium text-black">${file.original_name || file.name}</div>
-                                    ${file.description ? `<small class="text-muted"><i class="fas fa-info-circle me-1"></i>${file.description}</small>` : ''}
+                                    ${file.description ? `<small class="text-muted file-description"><i class="fas fa-info-circle me-1"></i>${file.description}</small>` : ''}
                                 </div>
                             </div>
                         </td>

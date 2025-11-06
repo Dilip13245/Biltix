@@ -49,14 +49,12 @@
                                         <div class="custom-filter-options" id="statusFilterOptions">
                                             <div class="custom-filter-option selected" data-value="all">{{ __('messages.all_status') }}</div>
                                             <div class="custom-filter-option" data-value="todo">{{ __('messages.todo') }}</div>
-                                            <div class="custom-filter-option" data-value="in_progress">{{ __('messages.in_progress') }}</div>
                                             <div class="custom-filter-option" data-value="complete">{{ __('messages.complete') }}</div>
                                             <div class="custom-filter-option" data-value="approve">{{ __('messages.approve') }}</div>
                                         </div>
                                         <select id="statusFilter" style="display: none;">
                                             <option value="all">{{ __('messages.all_status') }}</option>
                                             <option value="todo">{{ __('messages.todo') }}</option>
-                                            <option value="in_progress">{{ __('messages.in_progress') }}</option>
                                             <option value="complete">{{ __('messages.complete') }}</option>
                                             <option value="approve">{{ __('messages.approve') }}</option>
                                         </select>
@@ -284,9 +282,6 @@
             const statusMap = {
                 'todo': {
                     class: 'badge5'
-                },
-                'in_progress': {
-                    class: 'badge4'
                 },
                 'complete': {
                     class: 'badge1'
@@ -563,7 +558,6 @@
                             <div class="col-md-4 text-end">
                                 <select class="form-select mb-2" id="snagStatusSelect" onchange="changeSnagStatus()" ${isApproved || !isAssignedUser ? 'disabled' : ''}>
                                     <option value="todo">{{ __('messages.todo') }}</option>
-                                    <option value="in_progress">{{ __('messages.in_progress') }}</option>
                                     <option value="complete">{{ __('messages.complete') }}</option>
                                     ${isApproved ? '<option value="approve">{{ __('messages.approve') }}</option>' : ''}
                                 </select>
@@ -668,7 +662,6 @@
         function getStatusBadgeClass(status) {
             const statusMap = {
                 'todo': 'badge5',
-                'in_progress': 'badge4',
                 'complete': 'badge1',
                 'approve': 'badge1'
             };

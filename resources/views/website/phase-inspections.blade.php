@@ -23,7 +23,7 @@
                         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
                             <div class="d-flex align-items-center gap-3">
                                 <button class="btn btn-outline-primary" onclick="history.back()">
-                                    <i class="fas fa-arrow-left"></i>
+                                    <i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }}"></i>
                                 </button>
                                 <div>
                                     <h4 class="mb-1">{{ __('messages.inspections') }}</h4>

@@ -64,7 +64,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-                <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveActivity()">
+                <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveActivity()" style="padding: 0.7rem 1.5rem;">
                     <span id="activitiesSaveBtn">{{ __('messages.save') }}</span>
                 </button>
             </div>
@@ -153,7 +153,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-                <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveManpower()">
+                <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveManpower()" style="padding: 0.7rem 1.5rem;">
                     <span id="manpowerSaveBtn">{{ __('messages.save') }}</span>
                 </button>
             </div>
@@ -227,7 +227,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-                <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveSafetyItem()">
+                <button type="button" class="btn btn-sm orange_btn api-action-btn" onclick="saveSafetyItem()" style="padding: 0.7rem 1.5rem;">
                     <span id="safetySaveBtn">{{ __('messages.save') }}</span>
                 </button>
             </div>

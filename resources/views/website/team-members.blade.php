@@ -302,7 +302,7 @@
                 formData.append('user_id', currentUserId);
                 formData.append('project_id', currentProjectId);
                 formData.append('member_user_id', document.getElementById('memberSelect').value);
-                formData.append('role_in_project', document.getElementById('roleDisplay').value);
+                formData.append('role_in_project', document.getElementById('roleInProject').value);
 
                 const response = await api.addMember(formData);
 

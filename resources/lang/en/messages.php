@@ -1089,6 +1089,8 @@ return [
     'task_updated_successfully' => 'Task updated successfully',
     'failed_to_update_task' => 'Failed to update task',
     'error_updating_task' => 'Error updating task',
+    'cannot_change_to_todo_from_in_progress' => 'Cannot change task status from "In Progress" to "Todo". Once a task is in progress, it cannot be reverted to todo.',
+    'cannot_change_from_complete' => 'Cannot change task status from "Complete". Once a task is completed, it cannot be reverted to "Todo" or "In Progress".',
     'task_resolved_successfully' => 'Task marked as resolved successfully',
     'failed_to_resolve_task' => 'Failed to resolve task',
     'error_resolving_task' => 'Error resolving task',

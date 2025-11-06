@@ -24,7 +24,7 @@
                 ])
             </div>
             <button id="clearDateFilter" class="btn btn-outline-secondary btn-sm" style="display: none;">
-                <i class="fas fa-times {{ is_rtl() ? 'ms-1' : 'me-1' }}"></i>{{ __('messages.clear') }}
+                {{ __('messages.clear') }}
             </button>
             <div class="total-photos ">
                 <span>{{ __('messages.total') }}: </span>

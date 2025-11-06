@@ -605,6 +605,8 @@ class ProjectController extends Controller
                 'milestones' => 'required|array|min:1',
                 'milestones.*.milestone_name' => 'required|string|max:255',
                 'milestones.*.days' => 'required|integer|min:1',
+                'milestones.*.extension_days' => 'nullable|integer|min:0|max:3650',
+                'milestones.*.is_extended' => 'nullable|boolean',
             ]);
 
             if ($validator->fails()) {
@@ -629,12 +631,14 @@ class ProjectController extends Controller
             // Delete existing milestones
             PhaseMilestone::where('phase_id', $phase_id)->update(['is_deleted' => true]);
 
-            // Create new milestones
+            // Create new milestones, preserving extension data if provided
             foreach ($request->milestones as $milestone) {
                 PhaseMilestone::create([
                     'phase_id' => $phase_id,
                     'milestone_name' => $milestone['milestone_name'],
                     'days' => $milestone['days'],
+                    'extension_days' => isset($milestone['extension_days']) ? (int)$milestone['extension_days'] : 0,
+                    'is_extended' => isset($milestone['is_extended']) ? (bool)$milestone['is_extended'] : false,
                     'is_active' => true,
                     'is_deleted' => false
                 ]);

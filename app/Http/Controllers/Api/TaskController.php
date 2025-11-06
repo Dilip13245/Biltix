@@ -358,6 +358,18 @@ class TaskController extends Controller
             }
 
             $oldStatus = $task->status;
+            
+            // Validate status change: prevent going backwards
+            // If status is 'in_progress', cannot change to 'todo'
+            if ($oldStatus === 'in_progress' && $status === 'todo') {
+                return $this->toJsonEnc([], trans('api.tasks.cannot_change_to_todo_from_in_progress'), Config::get('constant.ERROR'));
+            }
+            
+            // If status is 'complete', cannot change to 'todo' or 'in_progress'
+            if ($oldStatus === 'complete' && ($status === 'todo' || $status === 'in_progress')) {
+                return $this->toJsonEnc([], trans('api.tasks.cannot_change_from_complete'), Config::get('constant.ERROR'));
+            }
+            
             $task->status = $status;
             if ($status === 'complete') {
                 $task->completed_at = now();

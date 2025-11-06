@@ -1034,6 +1034,8 @@ return [
     'task_updated_successfully' => 'تم تحديث المهمة بنجاح',
     'failed_to_update_task' => 'فشل في تحديث المهمة',
     'error_updating_task' => 'خطأ في تحديث المهمة',
+    'cannot_change_to_todo_from_in_progress' => 'لا يمكن تغيير حالة المهمة من "قيد التنفيذ" إلى "للقيام به". بمجرد أن تكون المهمة قيد التنفيذ، لا يمكن إرجاعها إلى "للقيام به".',
+    'cannot_change_from_complete' => 'لا يمكن تغيير حالة المهمة من "مكتمل". بمجرد اكتمال المهمة، لا يمكن إرجاعها إلى "للقيام به" أو "قيد التنفيذ".',
     'task_resolved_successfully' => 'تم وضع علامة على المهمة كمحلولة بنجاح',
     'failed_to_resolve_task' => 'فشل في حل المهمة',
     'error_resolving_task' => 'خطأ في حل المهمة',

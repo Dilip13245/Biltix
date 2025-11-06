@@ -75,7 +75,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="snagPhotos" class="form-label fw-medium">{{ __("messages.upload_images") }}</label>
+            <label for="snagPhotos" class="form-label fw-medium">{{ __("messages.upload_images") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
             <input type="file" class="form-control Input_control" id="snagPhotos" name="photos[]" 
               accept="image/*" multiple>
             <div class="form-text">{{ __("messages.upload_photos_limit") }}</div>
