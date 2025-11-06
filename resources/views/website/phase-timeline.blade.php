@@ -252,9 +252,77 @@
                                                     #timelineDatePickerWrapper .modern-datepicker-icon {
                                                         display: none;
                                                     }
+                                                    
+                                                    /* Desktop: Absolute position so calendar scrolls with page */
                                                     #timelineDatePickerWrapper .modern-datepicker-calendar {
-                                                        position: fixed !important;
+                                                        position: absolute !important;
                                                         z-index: 1060 !important;
+                                                    }
+                                                    
+                                                    /* Mobile responsive for timeline date picker only */
+                                                    @media (max-width: 768px) {
+                                                        /* Prevent body scroll when calendar is open */
+                                                        body.calendar-open {
+                                                            overflow: hidden !important;
+                                                            position: fixed !important;
+                                                            width: 100% !important;
+                                                        }
+                                                        
+                                                        #timelineDatePickerWrapper .modern-datepicker-calendar {
+                                                            position: fixed !important;
+                                                            left: 50% !important;
+                                                            right: auto !important;
+                                                            top: 50% !important;
+                                                            bottom: auto !important;
+                                                            transform: translate(-50%, -50%) !important;
+                                                            min-width: 280px !important;
+                                                            max-width: 300px !important;
+                                                            width: 90vw !important;
+                                                            z-index: 1060 !important;
+                                                        }
+                                                        
+                                                        [dir="rtl"] #timelineDatePickerWrapper .modern-datepicker-calendar {
+                                                            left: 50% !important;
+                                                            right: auto !important;
+                                                            transform: translate(-50%, -50%) !important;
+                                                        }
+                                                        
+                                                        /* Header responsive - make month/year dropdowns fit */
+                                                        #timelineDatePickerWrapper .datepicker-header {
+                                                            margin-bottom: 10px;
+                                                            padding-bottom: 8px;
+                                                            gap: 4px;
+                                                            flex-wrap: wrap;
+                                                        }
+                                                        
+                                                        #timelineDatePickerWrapper .datepicker-nav {
+                                                            width: 32px;
+                                                            height: 32px;
+                                                            font-size: 14px;
+                                                            flex-shrink: 0;
+                                                        }
+                                                        
+                                                        #timelineDatePickerWrapper .datepicker-month {
+                                                            gap: 4px;
+                                                            flex-wrap: wrap;
+                                                            justify-content: center;
+                                                            min-width: 0;
+                                                            width: 100%;
+                                                        }
+                                                        
+                                                        #timelineDatePickerWrapper .datepicker-dropdown-trigger {
+                                                            font-size: 12px;
+                                                            padding: 5px 10px;
+                                                            min-width: 90px;
+                                                        }
+                                                        
+                                                        #timelineDatePickerWrapper .datepicker-dropdown-trigger.year-trigger {
+                                                            min-width: 65px;
+                                                        }
+                                                        
+                                                        #timelineDatePickerWrapper .datepicker-content {
+                                                            padding: 12px;
+                                                        }
                                                     }
                                                 </style>
                                                 <button
@@ -486,110 +554,7 @@
                 }
             }
             
-            // Load all data on page load
-            document.addEventListener('DOMContentLoaded', function() {
-                // Set current date on button
-                updateDateButton(selectedDate);
-                // Toggle add buttons visibility
-                toggleAddButtonsVisibility();
-                
-                // Setup date picker - use custom date picker
-                const datePickerBtn = document.getElementById('datePickerBtn');
-                
-                // Wait a bit for the date picker to be fully initialized
-                setTimeout(function() {
-                    const datePickerInput = document.getElementById('timelineDatePicker');
-                    const datePickerWrapper = datePickerInput?.closest('.modern-datepicker-wrapper');
-                    const datePickerIcon = datePickerWrapper?.querySelector('.modern-datepicker-icon');
-                    
-                    if (datePickerInput) {
-                        // Set initial value
-                        datePickerInput.value = selectedDate;
-                        
-                        // Listen for date changes from custom date picker
-                        datePickerInput.addEventListener('change', function() {
-                            selectedDate = this.value;
-                            updateDateButton(selectedDate);
-                            toggleAddButtonsVisibility();
-                            // Reload all filtered data
-                            loadActivities();
-                            loadManpowerEquipment();
-                            loadSafetyItems();
-                        });
-                        
-                        // Also listen for custom dateSelected event
-                        datePickerInput.addEventListener('dateSelected', function(e) {
-                            if (e.detail && e.detail.date) {
-                                selectedDate = e.detail.date;
-                                updateDateButton(selectedDate);
-                                toggleAddButtonsVisibility();
-                                // Reload all filtered data
-                                loadActivities();
-                                loadManpowerEquipment();
-                                loadSafetyItems();
-                            }
-                        });
-                    }
-                    
-                    // Open custom date picker when button is clicked
-                    if (datePickerBtn) {
-                        datePickerBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            
-                            // Position calendar relative to button
-                            const buttonRect = datePickerBtn.getBoundingClientRect();
-                            const calendar = document.getElementById('timelineDatePicker_calendar');
-                            if (calendar && datePickerInput) {
-                                // Update date picker input value to current selectedDate (local date) before opening
-                                // This ensures calendar reads the correct date when it opens
-                                datePickerInput.value = selectedDate;
-                                
-                                // Small delay to ensure value is set before calendar opens
-                                setTimeout(function() {
-                                    // Trigger the date picker
-                                    if (datePickerIcon) {
-                                        datePickerIcon.click();
-                                    } else if (datePickerInput) {
-                                        datePickerInput.click();
-                                    }
-                                }, 10);
-                                
-                                // Adjust calendar position after it opens
-                                setTimeout(function() {
-                                    if (calendar && calendar.style.display !== 'none') {
-                                        const calendarContent = calendar.querySelector('.datepicker-content');
-                                        if (calendarContent) {
-                                            // Position calendar below button
-                                            const spaceBelow = window.innerHeight - buttonRect.bottom;
-                                            const calendarHeight = 450;
-                                            
-                                            if (spaceBelow < calendarHeight && buttonRect.top > calendarHeight) {
-                                                // Position above button
-                                                calendar.style.top = (buttonRect.top - calendarHeight - 10) + 'px';
-                                                calendar.style.left = buttonRect.left + 'px';
-                                                calendar.classList.add('position-top');
-                                            } else {
-                                                // Position below button
-                                                calendar.style.top = (buttonRect.bottom + 10) + 'px';
-                                                calendar.style.left = buttonRect.left + 'px';
-                                                calendar.classList.add('position-bottom');
-                                            }
-                                        }
-                                    }
-                                }, 50);
-                            }
-                        });
-                    }
-                }, 100);
-
-                loadProjectData();
-                loadActivities();
-                loadManpowerEquipment();
-                loadSafetyItems();
-                renderPhaseProgressFromServer();
-            });
-            
+            // Function to update date button text
             function updateDateButton(dateString) {
                 const currentDateBtn = document.getElementById('currentDateBtn');
                 if (currentDateBtn && dateString) {
@@ -602,6 +567,231 @@
                     currentDateBtn.textContent = date.toLocaleDateString('en-US', options);
                 }
             }
+            
+            // Load all data on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                // Set initial date on button
+                updateDateButton(selectedDate);
+                
+                // Toggle add buttons visibility
+                toggleAddButtonsVisibility();
+                
+                // Setup date picker
+                const datePickerBtn = document.getElementById('datePickerBtn');
+                const datePickerInput = document.getElementById('timelineDatePicker');
+                const datePickerWrapper = datePickerInput?.closest('.modern-datepicker-wrapper');
+                const datePickerIcon = datePickerWrapper?.querySelector('.modern-datepicker-icon');
+                
+                if (datePickerInput) {
+                    // Set initial value
+                    datePickerInput.value = selectedDate;
+                    
+                    // Listen for date changes
+                    datePickerInput.addEventListener('change', function() {
+                        // Save scroll position before any operations
+                        const isMobile = window.innerWidth <= 768;
+                        const savedScrollY = isMobile && document.body.classList.contains('calendar-open') 
+                            ? parseInt(document.body.dataset.scrollY || 0) 
+                            : null;
+                        
+                        // Remove calendar-open class first
+                        if (isMobile && document.body.classList.contains('calendar-open')) {
+                            document.body.classList.remove('calendar-open');
+                            document.body.style.top = '';
+                            document.body.style.position = '';
+                            document.body.style.width = '';
+                            delete document.body.dataset.scrollY;
+                        }
+                        
+                        selectedDate = this.value;
+                        updateDateButton(selectedDate);
+                        toggleAddButtonsVisibility();
+                        
+                        // Reload all filtered data
+                        Promise.all([
+                            loadActivities(),
+                            loadManpowerEquipment(),
+                            loadSafetyItems()
+                        ]).then(function() {
+                            // Restore scroll position after all async operations complete
+                            if (isMobile && savedScrollY !== null) {
+                                // Use multiple requestAnimationFrame to ensure DOM is fully updated
+                                requestAnimationFrame(function() {
+                                    requestAnimationFrame(function() {
+                                        window.scrollTo(0, savedScrollY);
+                                    });
+                                });
+                            }
+                        });
+                    });
+                    
+                    // Listen for custom dateSelected event
+                    datePickerInput.addEventListener('dateSelected', function(e) {
+                        if (e.detail && e.detail.date) {
+                            // Save scroll position before any operations
+                            const isMobile = window.innerWidth <= 768;
+                            const savedScrollY = isMobile && document.body.classList.contains('calendar-open') 
+                                ? parseInt(document.body.dataset.scrollY || 0) 
+                                : null;
+                            
+                            // Remove calendar-open class first
+                            if (isMobile && document.body.classList.contains('calendar-open')) {
+                                document.body.classList.remove('calendar-open');
+                                document.body.style.top = '';
+                                document.body.style.position = '';
+                                document.body.style.width = '';
+                                delete document.body.dataset.scrollY;
+                            }
+                            
+                            selectedDate = e.detail.date;
+                            updateDateButton(selectedDate);
+                            toggleAddButtonsVisibility();
+                            
+                            // Reload all filtered data
+                            loadActivities();
+                            loadManpowerEquipment();
+                            loadSafetyItems();
+                            
+                            // Restore scroll position after all operations complete
+                            if (isMobile && savedScrollY !== null) {
+                                // Use setTimeout to ensure it happens after any scroll-resetting operations
+                                setTimeout(function() {
+                                    window.scrollTo(0, savedScrollY);
+                                }, 100);
+                            }
+                        }
+                    });
+                }
+                
+                // Open date picker when button is clicked
+                if (datePickerBtn) {
+                    datePickerBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        if (datePickerInput) {
+                            const calendar = document.getElementById('timelineDatePicker_calendar');
+                            const buttonRect = datePickerBtn.getBoundingClientRect();
+                            const isMobile = window.innerWidth <= 768;
+                            
+                            // Update date picker input value before opening
+                            datePickerInput.value = selectedDate;
+                            
+                            // Prevent body scroll on mobile when calendar opens - save scroll position
+                            if (isMobile) {
+                                const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+                                document.body.style.top = `-${scrollY}px`;
+                                document.body.dataset.scrollY = scrollY;
+                                document.body.classList.add('calendar-open');
+                            }
+                            
+                            // Trigger the date picker
+                            setTimeout(function() {
+                                if (datePickerIcon) {
+                                    datePickerIcon.click();
+                                } else if (datePickerInput) {
+                                    datePickerInput.click();
+                                }
+                                
+                                // For desktop: Position calendar near button after it opens (relative to document, not viewport)
+                                if (!isMobile && calendar) {
+                                    setTimeout(function() {
+                                        const updatedButtonRect = datePickerBtn.getBoundingClientRect();
+                                        const wrapper = document.getElementById('timelineDatePickerWrapper');
+                                        
+                                        if (wrapper) {
+                                            // Calculate button position in document coordinates (including scroll)
+                                            const buttonTopInDocument = updatedButtonRect.top + window.scrollY;
+                                            const buttonLeftInDocument = updatedButtonRect.left + window.scrollX;
+                                            
+                                            // Get wrapper position in document coordinates
+                                            const wrapperRect = wrapper.getBoundingClientRect();
+                                            const wrapperTopInDocument = wrapperRect.top + window.scrollY;
+                                            const wrapperLeftInDocument = wrapperRect.left + window.scrollX;
+                                            
+                                            // Calculate position relative to wrapper (which is at 0,0 in its container)
+                                            const relativeTop = buttonTopInDocument - wrapperTopInDocument + updatedButtonRect.height + 8;
+                                            const relativeLeft = buttonLeftInDocument - wrapperLeftInDocument;
+                                            
+                                            calendar.style.position = 'absolute';
+                                            calendar.style.top = relativeTop + 'px';
+                                            calendar.style.left = relativeLeft + 'px';
+                                            calendar.style.right = 'auto';
+                                            calendar.style.transform = 'none';
+                                            calendar.style.zIndex = '1060';
+                                        }
+                                    }, 50);
+                                }
+                            }, 10);
+                        }
+                    });
+                }
+                
+                // Remove body scroll lock when calendar closes
+                const calendar = document.getElementById('timelineDatePicker_calendar');
+                if (calendar) {
+                    // Listen for calendar close events
+                    const observer = new MutationObserver(function(mutations) {
+                        mutations.forEach(function(mutation) {
+                            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                                const isHidden = calendar.style.display === 'none' || !calendar.style.display;
+                                if (isHidden) {
+                                    const isMobile = window.innerWidth <= 768;
+                                    if (isMobile) {
+                                        const scrollY = parseInt(document.body.dataset.scrollY || 0);
+                                        // Remove class and styles first
+                                        document.body.classList.remove('calendar-open');
+                                        document.body.style.top = '';
+                                        document.body.style.position = '';
+                                        document.body.style.width = '';
+                                        // Restore scroll position immediately
+                                        requestAnimationFrame(function() {
+                                            window.scrollTo(0, scrollY);
+                                        });
+                                        delete document.body.dataset.scrollY;
+                                    }
+                                }
+                            }
+                        });
+                    });
+                    
+                    observer.observe(calendar, {
+                        attributes: true,
+                        attributeFilter: ['style']
+                    });
+                    
+                    // Also listen for backdrop clicks
+                    document.addEventListener('click', function(e) {
+                        if (calendar && calendar.style.display !== 'none') {
+                            const calendarContent = calendar.querySelector('.datepicker-content');
+                            const backdrop = calendar.querySelector('.datepicker-backdrop');
+                            if (backdrop && e.target === backdrop) {
+                                const isMobile = window.innerWidth <= 768;
+                                if (isMobile) {
+                                    const scrollY = parseInt(document.body.dataset.scrollY || 0);
+                                    // Remove class and styles first
+                                    document.body.classList.remove('calendar-open');
+                                    document.body.style.top = '';
+                                    document.body.style.position = '';
+                                    document.body.style.width = '';
+                                    // Restore scroll position immediately
+                                    requestAnimationFrame(function() {
+                                        window.scrollTo(0, scrollY);
+                                    });
+                                    delete document.body.dataset.scrollY;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                loadProjectData();
+                loadActivities();
+                loadManpowerEquipment();
+                loadSafetyItems();
+                renderPhaseProgressFromServer();
+            });
+            
 
             // Project data and edit functionality
             let currentProjectData = null;
