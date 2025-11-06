@@ -164,14 +164,13 @@
                                                         <span id="projectName">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
-                                                {{-- <div class="mb-2 mb-md-3">
+                                                <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.company_name') }}</span>
                                                     <div class="fw-medium">
                                                         <span id="companyName">{{ __('messages.loading') }}...</span>
                                                     </div>
-                                                </div> --}}
-                                                <span id="companyName" style="display:none;"></span>
+                                                </div>
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.start_date') }}</span>
@@ -193,7 +192,7 @@
                                                         <span id="projectType">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
-                                                {{-- <div class="mb-2 mb-md-3">
+                                                <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.project_manager') }}</span>
                                                     <div class="fw-medium">
@@ -207,9 +206,7 @@
                                                     <div class="fw-medium">
                                                         <span id="siteEngineer">{{ __('messages.loading') }}...</span>
                                                     </div>
-                                                </div> --}}
-                                                <span id="projectManager" style="display:none;"></span>
-                                                <span id="siteEngineer" style="display:none;"></span>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="mt-4 d-flex flex-wrap gap-2">

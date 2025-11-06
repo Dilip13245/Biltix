@@ -234,14 +234,65 @@ function setTool(tool) {
     }
 }
 
+// function startDrawingShape(o) {
+//     if (o.target) return;
+    
+//     isDrawing = true;
+//     const pointer = fabricCanvas.getPointer(o.e);
+//     startX = pointer.x;
+//     startY = pointer.y;
+    
+//     if (currentTool === 'circle') {
+//         drawingObject = new fabric.Circle({
+//             left: startX,
+//             top: startY,
+//             radius: 1,
+//             fill: 'transparent',
+//             stroke: currentColor,
+//             strokeWidth: currentSize,
+//             selectable: false,
+//             evented: false
+//         });
+//     } else if (currentTool === 'rectangle') {
+//         drawingObject = new fabric.Rect({
+//             left: startX,
+//             top: startY,
+//             width: 1,
+//             height: 1,
+//             fill: 'transparent',
+//             stroke: currentColor,
+//             strokeWidth: currentSize,
+//             selectable: false,
+//             evented: false
+//         });
+//     } else if (currentTool === 'line') {
+//         drawingObject = new fabric.Line([startX, startY, startX, startY], {
+//             stroke: currentColor,
+//             strokeWidth: currentSize,
+//             selectable: false,
+//             evented: false
+//         });
+//     } else if (currentTool === 'arrow') {
+//         drawingObject = new fabric.Line([startX, startY, startX, startY], {
+//             stroke: currentColor,
+//             strokeWidth: currentSize,
+//             selectable: false,
+//             evented: false
+//         });
+//     }
+    
+//     if (drawingObject) {
+//         fabricCanvas.add(drawingObject);
+//     }
+// }
 function startDrawingShape(o) {
     if (o.target) return;
-    
+
     isDrawing = true;
     const pointer = fabricCanvas.getPointer(o.e);
     startX = pointer.x;
     startY = pointer.y;
-    
+
     if (currentTool === 'circle') {
         drawingObject = new fabric.Circle({
             left: startX,
@@ -265,179 +316,282 @@ function startDrawingShape(o) {
             selectable: false,
             evented: false
         });
-    } else if (currentTool === 'line') {
+    } else if (currentTool === 'line' || currentTool === 'arrow') {
+        // Center-aligned line
         drawingObject = new fabric.Line([startX, startY, startX, startY], {
             stroke: currentColor,
             strokeWidth: currentSize,
-            selectable: false,
-            evented: false
-        });
-    } else if (currentTool === 'arrow') {
-        drawingObject = new fabric.Line([startX, startY, startX, startY], {
-            stroke: currentColor,
-            strokeWidth: currentSize,
+            originX: 'center',
+            originY: 'center',
             selectable: false,
             evented: false
         });
     }
-    
+
     if (drawingObject) {
         fabricCanvas.add(drawingObject);
     }
 }
 
+// function drawShape(o) {
+//     if (!isDrawing || !drawingObject) return;
+    
+//     const pointer = fabricCanvas.getPointer(o.e);
+    
+//     if (currentTool === 'circle') {
+//         const radius = Math.sqrt(Math.pow(pointer.x - startX, 2) + Math.pow(pointer.y - startY, 2)) / 2;
+//         drawingObject.set({
+//             radius: radius,
+//             left: startX - radius,
+//             top: startY - radius
+//         });
+//     } else if (currentTool === 'rectangle') {
+//         const width = pointer.x - startX;
+//         const height = pointer.y - startY;
+        
+//         if (width < 0) {
+//             drawingObject.set({ left: pointer.x });
+//         }
+//         if (height < 0) {
+//             drawingObject.set({ top: pointer.y });
+//         }
+        
+//         drawingObject.set({
+//             width: Math.abs(width),
+//             height: Math.abs(height)
+//         });
+//     } else if (currentTool === 'line' || currentTool === 'arrow') {
+//         drawingObject.set({
+//             x2: pointer.x,
+//             y2: pointer.y
+//         });
+//     }
+    
+//     fabricCanvas.renderAll();
+// }
 function drawShape(o) {
     if (!isDrawing || !drawingObject) return;
-    
+
     const pointer = fabricCanvas.getPointer(o.e);
-    
+    const endX = pointer.x;
+    const endY = pointer.y;
+
     if (currentTool === 'circle') {
-        const radius = Math.sqrt(Math.pow(pointer.x - startX, 2) + Math.pow(pointer.y - startY, 2)) / 2;
+        const radius = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)) / 2;
         drawingObject.set({
             radius: radius,
             left: startX - radius,
             top: startY - radius
         });
     } else if (currentTool === 'rectangle') {
-        const width = pointer.x - startX;
-        const height = pointer.y - startY;
-        
-        if (width < 0) {
-            drawingObject.set({ left: pointer.x });
-        }
-        if (height < 0) {
-            drawingObject.set({ top: pointer.y });
-        }
-        
-        drawingObject.set({
-            width: Math.abs(width),
-            height: Math.abs(height)
-        });
+        const width = endX - startX;
+        const height = endY - startY;
+        if (width < 0) drawingObject.set({ left: endX });
+        if (height < 0) drawingObject.set({ top: endY });
+        drawingObject.set({ width: Math.abs(width), height: Math.abs(height) });
     } else if (currentTool === 'line' || currentTool === 'arrow') {
-        drawingObject.set({
-            x2: pointer.x,
-            y2: pointer.y
-        });
+        // Update line end coordinates in real time
+        drawingObject.set({ x2: endX, y2: endY });
     }
-    
+
     fabricCanvas.renderAll();
 }
 
+// function finishDrawingShape() {
+//     if (!isDrawing) return;
+    
+//     isDrawing = false;
+    
+//     if (drawingObject) {
+//         if (currentTool === 'arrow') {
+//             const line = drawingObject;
+//             const x1 = line.x1;
+//             const y1 = line.y1;
+//             const x2 = line.x2;
+//             const y2 = line.y2;
+            
+//             // Calculate line direction and length
+//             const dx = x2 - x1;
+//             const dy = y2 - y1;
+//             const lineLength = Math.sqrt(dx * dx + dy * dy);
+            
+//             if (lineLength < 5) {
+//                 drawingObject.setCoords();
+//                 fabricCanvas.renderAll();
+//                 saveState();
+//                 drawingObject = null;
+//                 setTool('select');
+//                 return;
+//             }
+            
+//             // Arrowhead size proportional to brush size
+//             const headlen = Math.max(10, currentSize * 2.5);
+            
+//             // Normalized direction vector (unit vector along line)
+//             const unitX = dx / lineLength;
+//             const unitY = dy / lineLength;
+            
+//             // Perpendicular vector (90° clockwise from line direction)
+//             // For a line going right, this should point down in screen coordinates
+//             const perpX = unitY;
+//             const perpY = -unitX;
+            
+//             // Arrowhead base position (line ends here, before arrowhead)
+//             // Move back by headlen along the line direction
+//             const arrowBaseX = x2 - (unitX * headlen);
+//             const arrowBaseY = y2 - (unitY * headlen);
+            
+//             // Arrowhead width (half on each side of center line)
+//             const arrowWidth = headlen * 0.5;
+            
+//             // Calculate arrowhead triangle three points:
+//             // 1. Tip at line endpoint (x2, y2)
+//             // 2. Left base point (perpendicular offset to one side)
+//             // 3. Right base point (perpendicular offset to other side)
+//             // Ensure triangle base is perfectly centered on line extension
+//             const tipX = x2;
+//             const tipY = y2;
+            
+//             // Calculate base points symmetrically around arrowBase
+//             const leftBaseX = arrowBaseX + (perpX * arrowWidth);
+//             const leftBaseY = arrowBaseY + (perpY * arrowWidth);
+//             const rightBaseX = arrowBaseX - (perpX * arrowWidth);
+//             const rightBaseY = arrowBaseY - (perpY * arrowWidth);
+            
+//             // Remove original line
+//             fabricCanvas.remove(drawingObject);
+            
+//             // Create line that ends at arrowhead base (center of base)
+//             const arrowLine = new fabric.Line([x1, y1, arrowBaseX, arrowBaseY], {
+//                 stroke: currentColor,
+//                 strokeWidth: currentSize,
+//                 selectable: false,
+//                 evented: false
+//             });
+            
+//             // Create arrowhead triangle using Polygon for better center alignment
+//             // Points: tip, left base, right base
+//             // Verify base midpoint equals arrowBase for perfect centering
+//             const baseMidX = (leftBaseX + rightBaseX) / 2;
+//             const baseMidY = (leftBaseY + rightBaseY) / 2;
+            
+//             const arrowhead = new fabric.Polygon([
+//                 {x: tipX, y: tipY},
+//                 {x: leftBaseX, y: leftBaseY},
+//                 {x: rightBaseX, y: rightBaseY}
+//             ], {
+//                 fill: currentColor,
+//                 stroke: currentColor,
+//                 strokeWidth: 0,
+//                 selectable: false,
+//                 evented: false
+//             });
+            
+//             // Group line and arrowhead - Fabric.js will automatically handle coordinate transformation
+//             const group = new fabric.Group([arrowLine, arrowhead], {
+//                 selectable: false,
+//                 evented: false
+//             });
+            
+//             fabricCanvas.add(group);
+//             fabricCanvas.renderAll();
+//             group.setCoords();
+//             drawingObject = group;
+//         } else {
+//             drawingObject.setCoords();
+//         }
+        
+//         drawingObject.set({ 
+//             selectable: true,
+//             evented: true,
+//             hasControls: true,
+//             hasBorders: true
+//         });
+        
+//         fabricCanvas.renderAll();
+//         saveState();
+//         drawingObject = null;
+        
+//         setTool('select');
+//     }
+// }
 function finishDrawingShape() {
     if (!isDrawing) return;
-    
     isDrawing = false;
-    
+
     if (drawingObject) {
         if (currentTool === 'arrow') {
             const line = drawingObject;
-            const x1 = line.x1;
-            const y1 = line.y1;
-            const x2 = line.x2;
-            const y2 = line.y2;
-            
-            // Calculate line direction and length
+            const { x1, y1, x2, y2 } = line;
+
             const dx = x2 - x1;
             const dy = y2 - y1;
             const lineLength = Math.sqrt(dx * dx + dy * dy);
-            
-            if (lineLength < 5) {
-                drawingObject.setCoords();
-                fabricCanvas.renderAll();
-                saveState();
-                drawingObject = null;
-                setTool('select');
-                return;
-            }
-            
-            // Arrowhead size proportional to brush size
+            if (lineLength < 5) return;
+
             const headlen = Math.max(10, currentSize * 2.5);
-            
-            // Normalized direction vector (unit vector along line)
             const unitX = dx / lineLength;
             const unitY = dy / lineLength;
-            
-            // Perpendicular vector (90° clockwise from line direction)
-            // For a line going right, this should point down in screen coordinates
             const perpX = unitY;
             const perpY = -unitX;
-            
-            // Arrowhead base position (line ends here, before arrowhead)
-            // Move back by headlen along the line direction
+
             const arrowBaseX = x2 - (unitX * headlen);
             const arrowBaseY = y2 - (unitY * headlen);
-            
-            // Arrowhead width (half on each side of center line)
             const arrowWidth = headlen * 0.5;
-            
-            // Calculate arrowhead triangle three points:
-            // 1. Tip at line endpoint (x2, y2)
-            // 2. Left base point (perpendicular offset to one side)
-            // 3. Right base point (perpendicular offset to other side)
-            // Ensure triangle base is perfectly centered on line extension
-            const tipX = x2;
-            const tipY = y2;
-            
-            // Calculate base points symmetrically around arrowBase
+
             const leftBaseX = arrowBaseX + (perpX * arrowWidth);
             const leftBaseY = arrowBaseY + (perpY * arrowWidth);
             const rightBaseX = arrowBaseX - (perpX * arrowWidth);
             const rightBaseY = arrowBaseY - (perpY * arrowWidth);
-            
-            // Remove original line
-            fabricCanvas.remove(drawingObject);
-            
-            // Create line that ends at arrowhead base (center of base)
+
+            fabricCanvas.remove(line);
+
             const arrowLine = new fabric.Line([x1, y1, arrowBaseX, arrowBaseY], {
                 stroke: currentColor,
                 strokeWidth: currentSize,
                 selectable: false,
-                evented: false
+                evented: false,
+                originX: 'center',
+                originY: 'center'
             });
-            
-            // Create arrowhead triangle using Polygon for better center alignment
-            // Points: tip, left base, right base
-            // Verify base midpoint equals arrowBase for perfect centering
-            const baseMidX = (leftBaseX + rightBaseX) / 2;
-            const baseMidY = (leftBaseY + rightBaseY) / 2;
-            
+
             const arrowhead = new fabric.Polygon([
-                {x: tipX, y: tipY},
-                {x: leftBaseX, y: leftBaseY},
-                {x: rightBaseX, y: rightBaseY}
+                { x: x2, y: y2 },
+                { x: leftBaseX, y: leftBaseY },
+                { x: rightBaseX, y: rightBaseY }
             ], {
                 fill: currentColor,
                 stroke: currentColor,
                 strokeWidth: 0,
                 selectable: false,
-                evented: false
+                evented: false,
+                originX: 'center',
+                originY: 'center'
             });
-            
-            // Group line and arrowhead - Fabric.js will automatically handle coordinate transformation
+
             const group = new fabric.Group([arrowLine, arrowhead], {
                 selectable: false,
-                evented: false
+                evented: false,
+                originX: 'center',
+                originY: 'center'
             });
-            
+
             fabricCanvas.add(group);
-            fabricCanvas.renderAll();
-            group.setCoords();
             drawingObject = group;
-        } else {
-            drawingObject.setCoords();
         }
-        
-        drawingObject.set({ 
+
+        drawingObject.set({
             selectable: true,
             evented: true,
             hasControls: true,
             hasBorders: true
         });
-        
+
+        drawingObject.setCoords();
         fabricCanvas.renderAll();
         saveState();
         drawingObject = null;
-        
+
         setTool('select');
     }
 }
@@ -522,7 +676,6 @@ function updateSize(e) {
         sizeDisplay.textContent = currentSize;
     }
     
-    // Update dot position on the line
     const brushSizeDot = document.getElementById('brushSizeDot');
     if (brushSize && brushSizeDot) {
         const min = parseInt(brushSize.min) || 1;
@@ -535,26 +688,25 @@ function updateSize(e) {
         fabricCanvas.freeDrawingBrush.width = currentSize;
     }
     
-    // If there's a selected object, update its stroke width
     const activeObject = fabricCanvas.getActiveObject();
     if (activeObject) {
         if (activeObject.type === 'group') {
-            // Handle arrow groups (line + triangle)
             const objects = activeObject.getObjects();
             const lineObj = objects.find(obj => obj.type === 'line');
-            const triangleObj = objects.find(obj => obj.type === 'triangle');
+            const polygonObj = objects.find(obj => obj.type === 'polygon');
             
-            if (lineObj && triangleObj) {
-                // This is an arrow - update line width and arrowhead size
+            if (lineObj && polygonObj) {
+                // Arrow: update line stroke and scale polygon
                 lineObj.set('strokeWidth', currentSize);
+                
                 const headlen = Math.max(10, currentSize * 2.5);
-                triangleObj.set({
-                    width: headlen,
-                    height: headlen
-                });
-                activeObject.setCoords();
+                const baseHeadlen = Math.max(10, 3 * 2.5);
+                const scaleRatio = headlen / baseHeadlen;
+                
+                // Reset scale to 1 first, then apply new scale
+                polygonObj.set({ scaleX: scaleRatio, scaleY: scaleRatio });
+                activeObject.addWithUpdate();
             } else {
-                // Regular group - update all objects
                 objects.forEach(obj => {
                     if (obj.type === 'line' || obj.type === 'path') {
                         obj.set('strokeWidth', currentSize);
