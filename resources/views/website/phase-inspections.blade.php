@@ -266,10 +266,10 @@
 
             function getStatusBadge(status) {
                 const statusMap = {
-                    'open': {
+                    'todo': {
                         class: 'badge3',
                         icon: 'hourglass-half',
-                        text: '{{ __('messages.pending') }}'
+                        text: '{{ __('messages.todo') }}'
                     },
                     'in_progress': {
                         class: 'badge3',
@@ -288,7 +288,7 @@
                     }
                 };
 
-                const statusInfo = statusMap[status] || statusMap['open'];
+                const statusInfo = statusMap[status] || statusMap['todo'];
                 return `<span class="badge ${statusInfo.class} d-inline-flex align-items-center gap-1">
                     <i class="fas fa-${statusInfo.icon}"></i> ${statusInfo.text}
                 </span>`;

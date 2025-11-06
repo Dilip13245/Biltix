@@ -17,7 +17,7 @@ class Inspection extends Model
     ];
     
     protected $attributes = [
-        'status' => 'open',
+        'status' => 'todo',
         'is_active' => true,
         'is_deleted' => false,
     ];

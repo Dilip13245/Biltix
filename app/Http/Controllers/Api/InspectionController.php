@@ -41,7 +41,7 @@ class InspectionController extends Controller
             $inspectionDetails->category = $request->category;
             $inspectionDetails->description = $request->description;
             $inspectionDetails->created_by = $request->user_id;
-            $inspectionDetails->status = 'open';
+            $inspectionDetails->status = 'todo';
             $inspectionDetails->is_active = true;
 
             if ($inspectionDetails->save()) {
@@ -631,10 +631,10 @@ class InspectionController extends Controller
             $project_id = $request->input('project_id');
             $user_id = $request->input('user_id');
 
-            // Get open inspection (top section)
+            // Get todo inspection (top section)
             $openInspection = Inspection::with(['checklists', 'images'])
                 ->where('project_id', $project_id)
-                ->where('status', 'open')
+                ->where('status', 'todo')
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->first();

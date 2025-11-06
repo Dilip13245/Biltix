@@ -123,12 +123,12 @@ class InspectionResource extends Resource
             Forms\Components\Select::make('status')
                 ->label(__('filament.fields.status'))
                 ->options([
-                    'open' => __('filament.options.open'),
+                    'todo' => __('filament.options.todo'),
                     'in_progress' => __('filament.options.in_progress'),
                     'completed' => __('filament.options.completed'),
                     'approved' => __('filament.options.approved'),
                 ])
-                ->default('open')
+                ->default('todo')
                 ->required(),
             Forms\Components\Hidden::make('created_by')
                 ->default(auth()->id()),
@@ -167,14 +167,14 @@ class InspectionResource extends Resource
                     ->label(__('filament.fields.status'))
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => match($state) {
-                        'open' => __('filament.options.open'),
+                        'todo' => __('filament.options.todo'),
                         'in_progress' => __('filament.options.in_progress'),
                         'completed' => __('filament.options.completed'),
                         'approved' => __('filament.options.approved'),
                         default => __('filament.options.pending')
                     })
                     ->color(fn (?string $state): string => match ($state) {
-                        'open' => 'warning',
+                        'todo' => 'warning',
                         'in_progress' => 'info',
                         'completed' => 'success',
                         'approved' => 'primary',
@@ -206,7 +206,7 @@ class InspectionResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('filament.fields.status'))
                     ->options([
-                        'open' => __('filament.options.open'),
+                        'todo' => __('filament.options.todo'),
                         'in_progress' => __('filament.options.in_progress'),
                         'completed' => __('filament.options.completed'),
                         'approved' => __('filament.options.approved'),

@@ -462,6 +462,7 @@
 
     function getStatusText(status) {
         const statusTexts = {
+            'todo': '{{ __('messages.todo') }}',
             'pending': '{{ __('messages.pending') }}',
             'in_progress': '{{ __('messages.in_progress') }}',
             'completed': '{{ __('messages.completed') }}',
@@ -472,6 +473,7 @@
 
     function getStatusClass(status) {
         const statusClasses = {
+            'todo': 'bg-warning',
             'pending': 'bg-warning',
             'in_progress': 'bg-info',
             'completed': 'bg-success',

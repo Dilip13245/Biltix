@@ -333,6 +333,7 @@ return [
         'unassigned' => 'غير معين',
         'no_phase' => 'لا توجد مرحلة',
         'open' => 'مفتوح',
+        'todo' => 'للقيام به',
         'approved' => 'معتمد',
         'structural' => 'إنشائي',
         'electrical' => 'كهربائي',

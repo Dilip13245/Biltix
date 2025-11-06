@@ -351,6 +351,7 @@ return [
         'unassigned' => 'Unassigned',
         'no_phase' => 'No Phase',
         'open' => 'Open',
+        'todo' => 'To Do',
         'approved' => 'Approved',
         'structural' => 'Structural',
         'electrical' => 'Electrical',

@@ -39,7 +39,7 @@ class SendInspectionDueReminders extends Command
         // Note: If scheduled_date field exists, use it; otherwise use created_at + reasonable timeframe
         $inspectionsQuery = Inspection::where('is_active', true)
             ->where('is_deleted', false)
-            ->where('status', 'open')
+            ->where('status', 'todo')
             ->with(['inspectedBy', 'project']);
         
         // Check if scheduled_date column exists
