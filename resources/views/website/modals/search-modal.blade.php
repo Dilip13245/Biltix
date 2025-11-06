@@ -319,9 +319,9 @@
                                 <h6 class="fw-bold mb-1">${project.project_title}</h6>
                                 <small class="text-muted">${project.type || 'Construction'} • ${project.project_location || 'N/A'}</small>
                             </div>
-                            <div class="col-md-3">
+                            {{-- <div class="col-md-3">
                                 <span class="badge ${statusClass}">${project.status}</span>
-                            </div>
+                            </div> --}}
                             {{-- <div class="col-md-3">
                                 <div class="progress" style="height: 6px;">
                                     <div class="progress-bar" style="width: ${progress}%"></div>

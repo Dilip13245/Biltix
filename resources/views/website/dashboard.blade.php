@@ -659,6 +659,16 @@
         .dropdown-option:active {
             background-color: #e9ecef;
         }
+
+        /* Fix long label text wrapping on small screens */
+        @media (max-width: 768px) {
+            #step2 .form-label {
+                font-size: 13px;
+                line-height: 1.3;
+                white-space: normal;
+                word-break: break-word;
+            }
+        }
     </style>
 
 

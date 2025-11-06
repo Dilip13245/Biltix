@@ -39,7 +39,7 @@
                     <div class="col-12 d-flex align-items-center justify-content-between gap-2">
                         <a class="navbar-brand" href="{{ route('dashboard') }}">
                             <img src="{{ asset('website/images/icons/logo.svg') }}" alt="logo" class="img-fluid">
-                            {{-- <span class="Head_title fw-bold {{ margin_start(3) }} fs24 d-none d-lg-inline-block">{{ __('auth.my_profile') }}</span> --}}
+                            <span class="Head_title fw-bold {{ margin_start(3) }} fs24 d-none d-lg-inline-block">{{ __('auth.my_profile') }}</span>
                         </a>
                         <div class="d-flex align-items-center justify-content-end gap-md-4 gap-3 w-100 flex-wrap">
                             <!-- Language Toggle -->
@@ -104,10 +104,9 @@
         <section class="Dashboard_sec">
             <div class="container-fluid">
                 <!-- Profile Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-                    <h5 class="fw-bold mb-0">{{ __('auth.my_profile') }}</h5>
+                <div class="d-flex justify-content-end align-items-center mb-4 mt-4">
                     <a href="{{ route('dashboard') }}" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-arrow-left {{ margin_end(2) }}"></i>{{ __('auth.back_to_dashboard') }}
+                        {{ __('auth.back_to_dashboard') }}
                     </a>
                 </div>
 
