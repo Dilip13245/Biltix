@@ -323,6 +323,89 @@ class ProjectProgressController extends Controller
         }
     }
 
+    // Delete Methods
+    public function deleteActivity(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'activity_id' => 'required|integer',
+            ]);
 
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $activity = ProjectActivity::where('id', $request->activity_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$activity) {
+                return $this->toJsonEnc([], trans('api.project_progress.activity_not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            $activity->update(['is_deleted' => 1]);
+
+            return $this->toJsonEnc([], trans('api.project_progress.activity_deleted_successfully'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function deleteManpowerEquipment(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'item_id' => 'required|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $item = ProjectManpowerEquipment::where('id', $request->item_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$item) {
+                return $this->toJsonEnc([], trans('api.project_progress.manpower_not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            $item->update(['is_deleted' => 1]);
+
+            return $this->toJsonEnc([], trans('api.project_progress.manpower_deleted_successfully'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function deleteSafetyItem(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'item_id' => 'required|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $item = ProjectSafetyItem::where('id', $request->item_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$item) {
+                return $this->toJsonEnc([], trans('api.project_progress.safety_item_not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            $item->update(['is_deleted' => 1]);
+
+            return $this->toJsonEnc([], trans('api.project_progress.safety_item_deleted_successfully'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
 
 }

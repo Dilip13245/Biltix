@@ -237,28 +237,45 @@
 <script>
 // Modal Functions
 function openActivitiesModal() {
-    document.getElementById('activitiesModalTitle').textContent = '{{ __("messages.add_activity") }}';
-    document.getElementById('activitiesSaveBtn').textContent = '{{ __("messages.save") }}';
-    document.getElementById('activitiesForm').reset();
-    document.getElementById('activityId').value = '';
+    const titleEl = document.getElementById('activitiesModalTitle');
+    const saveBtnSpan = document.getElementById('activitiesSaveBtn');
+    if (titleEl) titleEl.textContent = '{{ __("messages.add_activity") }}';
+    if (saveBtnSpan) saveBtnSpan.textContent = '{{ __("messages.save") }}';
+    
+    const form = document.getElementById('activitiesForm');
+    const activityId = document.getElementById('activityId');
+    if (form) form.reset();
+    if (activityId) activityId.value = '';
+    
     const container = document.getElementById('modalActivitiesContainer');
-    container.innerHTML = `
+    if (container) {
+        container.innerHTML = `
         <div class="activity-field mb-2">
             <input type="text" class="form-control Input_control" name="description[]" 
                 placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
         </div>
     `;
-    document.getElementById('removeLastActivityBtn').style.display = 'none';
+    }
+    
+    const removeBtn = document.getElementById('removeLastActivityBtn');
+    if (removeBtn) removeBtn.style.display = 'none';
     new bootstrap.Modal(document.getElementById('activitiesModal')).show();
 }
 
 function openManpowerModal() {
-    document.getElementById('manpowerModalTitle').textContent = '{{ __("messages.add_manpower_equipment") }}';
-    document.getElementById('manpowerSaveBtn').textContent = '{{ __("messages.save") }}';
-    document.getElementById('manpowerForm').reset();
-    document.getElementById('manpowerId').value = '';
+    const titleEl = document.getElementById('manpowerModalTitle');
+    const saveBtnSpan = document.getElementById('manpowerSaveBtn');
+    if (titleEl) titleEl.textContent = '{{ __("messages.add_manpower_equipment") }}';
+    if (saveBtnSpan) saveBtnSpan.textContent = '{{ __("messages.save") }}';
+    
+    const form = document.getElementById('manpowerForm');
+    const manpowerId = document.getElementById('manpowerId');
+    if (form) form.reset();
+    if (manpowerId) manpowerId.value = '';
+    
     const container = document.getElementById('modalManpowerContainer');
-    container.innerHTML = `
+    if (container) {
+        container.innerHTML = `
         <div class="manpower-field mb-2">
             <div class="row">
                 <div class="col-7">
@@ -272,49 +289,78 @@ function openManpowerModal() {
             </div>
         </div>
     `;
-    document.getElementById('removeLastManpowerBtn').style.display = 'none';
+    }
+    
+    const removeBtn = document.getElementById('removeLastManpowerBtn');
+    if (removeBtn) removeBtn.style.display = 'none';
     new bootstrap.Modal(document.getElementById('manpowerModal')).show();
 }
 
 function openSafetyModal() {
-    document.getElementById('safetyModalTitle').textContent = '{{ __("messages.add_safety_item") }}';
-    document.getElementById('safetySaveBtn').textContent = '{{ __("messages.save") }}';
-    document.getElementById('safetyForm').reset();
-    document.getElementById('safetyId').value = '';
+    const titleEl = document.getElementById('safetyModalTitle');
+    const saveBtnSpan = document.getElementById('safetySaveBtn');
+    if (titleEl) titleEl.textContent = '{{ __("messages.add_safety_item") }}';
+    if (saveBtnSpan) saveBtnSpan.textContent = '{{ __("messages.save") }}';
+    
+    const form = document.getElementById('safetyForm');
+    const safetyId = document.getElementById('safetyId');
+    if (form) form.reset();
+    if (safetyId) safetyId.value = '';
+    
     const container = document.getElementById('modalSafetyContainer');
-    container.innerHTML = `
+    if (container) {
+        container.innerHTML = `
         <div class="safety-field mb-2">
             <input type="text" class="form-control Input_control" name="checklist_item[]" 
                 placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
         </div>
     `;
-    document.getElementById('removeLastSafetyBtn').style.display = 'none';
+    }
+    
+    const removeBtn = document.getElementById('removeLastSafetyBtn');
+    if (removeBtn) removeBtn.style.display = 'none';
     new bootstrap.Modal(document.getElementById('safetyModal')).show();
 }
 
 // Edit Functions
 function editActivity(id, description) {
-    document.getElementById('activitiesModalTitle').textContent = '{{ __("messages.edit_activity") }}';
-    document.getElementById('activitiesSaveBtn').textContent = '{{ __("messages.update") }}';
-    document.getElementById('activityId').value = id;
-    document.getElementById('activityDescription').value = description;
+    const titleEl = document.getElementById('activitiesModalTitle');
+    const saveBtnSpan = document.getElementById('activitiesSaveBtn');
+    const activityIdEl = document.getElementById('activityId');
+    const activityDescEl = document.getElementById('activityDescription');
+    
+    if (titleEl) titleEl.textContent = '{{ __("messages.edit_activity") }}';
+    if (saveBtnSpan) saveBtnSpan.textContent = '{{ __("messages.update") }}';
+    if (activityIdEl) activityIdEl.value = id;
+    if (activityDescEl) activityDescEl.value = description;
     new bootstrap.Modal(document.getElementById('activitiesModal')).show();
 }
 
 function editManpower(id, category, count) {
-    document.getElementById('manpowerModalTitle').textContent = '{{ __("messages.edit_manpower_equipment") }}';
-    document.getElementById('manpowerSaveBtn').textContent = '{{ __("messages.update") }}';
-    document.getElementById('manpowerId').value = id;
-    document.getElementById('manpowerCategory').value = category;
-    document.getElementById('manpowerCount').value = count;
+    const titleEl = document.getElementById('manpowerModalTitle');
+    const saveBtnSpan = document.getElementById('manpowerSaveBtn');
+    const manpowerIdEl = document.getElementById('manpowerId');
+    const manpowerCategoryEl = document.getElementById('manpowerCategory');
+    const manpowerCountEl = document.getElementById('manpowerCount');
+    
+    if (titleEl) titleEl.textContent = '{{ __("messages.edit_manpower_equipment") }}';
+    if (saveBtnSpan) saveBtnSpan.textContent = '{{ __("messages.update") }}';
+    if (manpowerIdEl) manpowerIdEl.value = id;
+    if (manpowerCategoryEl) manpowerCategoryEl.value = category;
+    if (manpowerCountEl) manpowerCountEl.value = count;
     new bootstrap.Modal(document.getElementById('manpowerModal')).show();
 }
 
 function editSafetyItem(id, item) {
-    document.getElementById('safetyModalTitle').textContent = '{{ __("messages.edit_safety_item") }}';
-    document.getElementById('safetySaveBtn').textContent = '{{ __("messages.update") }}';
-    document.getElementById('safetyId').value = id;
-    document.getElementById('safetyItem').value = item;
+    const titleEl = document.getElementById('safetyModalTitle');
+    const saveBtnSpan = document.getElementById('safetySaveBtn');
+    const safetyIdEl = document.getElementById('safetyId');
+    const safetyItemEl = document.getElementById('safetyItem');
+    
+    if (titleEl) titleEl.textContent = '{{ __("messages.edit_safety_item") }}';
+    if (saveBtnSpan) saveBtnSpan.textContent = '{{ __("messages.update") }}';
+    if (safetyIdEl) safetyIdEl.value = id;
+    if (safetyItemEl) safetyItemEl.value = item;
     new bootstrap.Modal(document.getElementById('safetyModal')).show();
 }
 
@@ -397,19 +443,49 @@ function updateRemoveButton(buttonId, container) {
 // Save Functions
 async function saveActivity() {
     const form = document.getElementById('activitiesForm');
-    const activityId = document.getElementById('activityId').value;
+    const activityIdEl = document.getElementById('activityId');
+    const activityId = activityIdEl ? activityIdEl.value : '';
     const descriptions = Array.from(form.querySelectorAll('input[name="description[]"]'))
         .map(input => input.value.trim())
         .filter(desc => desc);
     
     if (descriptions.length === 0) {
-        alert('{{ __("messages.please_enter_description") }}');
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.please_enter_description") }}');
+        } else {
+            alert('{{ __("messages.please_enter_description") }}');
+        }
         return;
     }
     
-    const saveBtn = document.getElementById('activitiesSaveBtn');
-    const originalText = saveBtn.textContent;
-    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+    // Get the button element (parent of the span with id activitiesSaveBtn)
+    const saveBtnSpan = document.getElementById('activitiesSaveBtn');
+    const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#activitiesModal button[onclick="saveActivity()"]');
+    
+    if (!saveBtn) {
+        console.error('Save button not found');
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.error_saving_activity") }}');
+        } else {
+            alert('{{ __("messages.error_saving_activity") }}');
+        }
+        return;
+    }
+    
+    // Store original content
+    const originalContent = saveBtn.innerHTML;
+    
+    // Protect button and show loading
+    if (window.protectButton) {
+        window.protectButton(saveBtn);
+    } else {
+        saveBtn.disabled = true;
+        if (saveBtnSpan) {
+            saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+        } else {
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+        }
+    }
     
     try {
         let response;
@@ -417,32 +493,55 @@ async function saveActivity() {
             response = await api.updateActivity({
                 activity_id: activityId,
                 description: descriptions[0]
-            });
+            }, saveBtn);
         } else {
             response = await api.addActivity({
                 project_id: currentProjectId,
                 user_id: currentUserId,
                 descriptions: descriptions
-            });
+            }, saveBtn);
         }
         
         if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('activitiesModal')).hide();
-            loadActivities();
-            alert(response.message || '{{ __("messages.activities_saved_successfully") }}');
+            if (typeof loadActivities === 'function') {
+                loadActivities();
+            }
+            if (typeof toastr !== 'undefined') {
+                toastr.success(response.message || '{{ __("messages.activities_saved_successfully") }}');
+            } else {
+                alert(response.message || '{{ __("messages.activities_saved_successfully") }}');
+            }
         } else {
-            alert(response.message || '{{ __("messages.failed_to_save_activity") }}');
+            if (typeof toastr !== 'undefined') {
+                toastr.error(response.message || '{{ __("messages.failed_to_save_activity") }}');
+            } else {
+                alert(response.message || '{{ __("messages.failed_to_save_activity") }}');
+            }
         }
     } catch (error) {
-        alert('{{ __("messages.error_saving_activity") }}');
+        console.error('Error saving activity:', error);
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.error_saving_activity") }}');
+        } else {
+            alert('{{ __("messages.error_saving_activity") }}');
+        }
     } finally {
-        saveBtn.textContent = originalText;
+        // Release button if protection system is available
+        if (window.releaseButton) {
+            window.releaseButton(saveBtn);
+        } else {
+            // Fallback: restore manually
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalContent;
+        }
     }
 }
 
 async function saveManpower() {
     const form = document.getElementById('manpowerForm');
-    const itemId = document.getElementById('manpowerId').value;
+    const itemIdEl = document.getElementById('manpowerId');
+    const itemId = itemIdEl ? itemIdEl.value : '';
     const categories = Array.from(form.querySelectorAll('input[name="category[]"]')).map(input => input.value.trim());
     const counts = Array.from(form.querySelectorAll('input[name="count[]"]')).map(input => parseInt(input.value));
     
@@ -454,13 +553,42 @@ async function saveManpower() {
     }
     
     if (validItems.length === 0) {
-        alert('{{ __("messages.please_enter_valid_data") }}');
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.please_enter_valid_data") }}');
+        } else {
+            alert('{{ __("messages.please_enter_valid_data") }}');
+        }
         return;
     }
     
-    const saveBtn = document.getElementById('manpowerSaveBtn');
-    const originalText = saveBtn.textContent;
-    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+    // Get the button element (parent of the span with id manpowerSaveBtn)
+    const saveBtnSpan = document.getElementById('manpowerSaveBtn');
+    const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#manpowerModal button[onclick="saveManpower()"]');
+    
+    if (!saveBtn) {
+        console.error('Save button not found');
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.error_saving_manpower") }}');
+        } else {
+            alert('{{ __("messages.error_saving_manpower") }}');
+        }
+        return;
+    }
+    
+    // Store original content
+    const originalContent = saveBtn.innerHTML;
+    
+    // Protect button and show loading
+    if (window.protectButton) {
+        window.protectButton(saveBtn);
+    } else {
+        saveBtn.disabled = true;
+        if (saveBtnSpan) {
+            saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+        } else {
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+        }
+    }
     
     try {
         let response;
@@ -469,44 +597,96 @@ async function saveManpower() {
                 item_id: itemId,
                 category: validItems[0].category,
                 count: validItems[0].count
-            });
+            }, saveBtn);
         } else {
             response = await api.addManpowerEquipment({
                 project_id: currentProjectId,
                 user_id: currentUserId,
                 items: validItems
-            });
+            }, saveBtn);
         }
         
         if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('manpowerModal')).hide();
-            loadManpowerEquipment();
-            alert(response.message || '{{ __("messages.manpower_items_saved_successfully") }}');
+            if (typeof loadManpowerEquipment === 'function') {
+                loadManpowerEquipment();
+            }
+            if (typeof toastr !== 'undefined') {
+                toastr.success(response.message || '{{ __("messages.manpower_items_saved_successfully") }}');
+            } else {
+                alert(response.message || '{{ __("messages.manpower_items_saved_successfully") }}');
+            }
         } else {
-            alert(response.message || '{{ __("messages.failed_to_save_manpower") }}');
+            if (typeof toastr !== 'undefined') {
+                toastr.error(response.message || '{{ __("messages.failed_to_save_manpower") }}');
+            } else {
+                alert(response.message || '{{ __("messages.failed_to_save_manpower") }}');
+            }
         }
     } catch (error) {
-        alert('{{ __("messages.error_saving_manpower") }}');
+        console.error('Error saving manpower:', error);
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.error_saving_manpower") }}');
+        } else {
+            alert('{{ __("messages.error_saving_manpower") }}');
+        }
     } finally {
-        saveBtn.textContent = originalText;
+        // Release button if protection system is available
+        if (window.releaseButton) {
+            window.releaseButton(saveBtn);
+        } else {
+            // Fallback: restore manually
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalContent;
+        }
     }
 }
 
 async function saveSafetyItem() {
     const form = document.getElementById('safetyForm');
-    const itemId = document.getElementById('safetyId').value;
+    const itemIdEl = document.getElementById('safetyId');
+    const itemId = itemIdEl ? itemIdEl.value : '';
     const checklistItems = Array.from(form.querySelectorAll('input[name="checklist_item[]"]'))
         .map(input => input.value.trim())
         .filter(item => item);
     
     if (checklistItems.length === 0) {
-        alert('{{ __("messages.please_enter_safety_item") }}');
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.please_enter_safety_item") }}');
+        } else {
+            alert('{{ __("messages.please_enter_safety_item") }}');
+        }
         return;
     }
     
-    const saveBtn = document.getElementById('safetySaveBtn');
-    const originalText = saveBtn.textContent;
-    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+    // Get the button element (parent of the span with id safetySaveBtn)
+    const saveBtnSpan = document.getElementById('safetySaveBtn');
+    const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#safetyModal button[onclick="saveSafetyItem()"]');
+    
+    if (!saveBtn) {
+        console.error('Save button not found');
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.error_saving_safety_item") }}');
+        } else {
+            alert('{{ __("messages.error_saving_safety_item") }}');
+        }
+        return;
+    }
+    
+    // Store original content
+    const originalContent = saveBtn.innerHTML;
+    
+    // Protect button and show loading
+    if (window.protectButton) {
+        window.protectButton(saveBtn);
+    } else {
+        saveBtn.disabled = true;
+        if (saveBtnSpan) {
+            saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+        } else {
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __("messages.saving") }}';
+        }
+    }
     
     try {
         let response;
@@ -514,26 +694,48 @@ async function saveSafetyItem() {
             response = await api.updateSafetyItem({
                 item_id: itemId,
                 checklist_item: checklistItems[0]
-            });
+            }, saveBtn);
         } else {
             response = await api.addSafetyItem({
                 project_id: currentProjectId,
                 user_id: currentUserId,
                 checklist_items: checklistItems
-            });
+            }, saveBtn);
         }
         
         if (response.code === 200) {
             bootstrap.Modal.getInstance(document.getElementById('safetyModal')).hide();
-            loadSafetyItems();
-            alert(response.message || '{{ __("messages.safety_items_saved_successfully") }}');
+            if (typeof loadSafetyItems === 'function') {
+                loadSafetyItems();
+            }
+            if (typeof toastr !== 'undefined') {
+                toastr.success(response.message || '{{ __("messages.safety_items_saved_successfully") }}');
+            } else {
+                alert(response.message || '{{ __("messages.safety_items_saved_successfully") }}');
+            }
         } else {
-            alert(response.message || '{{ __("messages.failed_to_save_safety_item") }}');
+            if (typeof toastr !== 'undefined') {
+                toastr.error(response.message || '{{ __("messages.failed_to_save_safety_item") }}');
+            } else {
+                alert(response.message || '{{ __("messages.failed_to_save_safety_item") }}');
+            }
         }
     } catch (error) {
-        alert('{{ __("messages.error_saving_safety_item") }}');
+        console.error('Error saving safety item:', error);
+        if (typeof toastr !== 'undefined') {
+            toastr.error('{{ __("messages.error_saving_safety_item") }}');
+        } else {
+            alert('{{ __("messages.error_saving_safety_item") }}');
+        }
     } finally {
-        saveBtn.textContent = originalText;
+        // Release button if protection system is available
+        if (window.releaseButton) {
+            window.releaseButton(saveBtn);
+        } else {
+            // Fallback: restore manually
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = originalContent;
+        }
     }
 }
 </script>

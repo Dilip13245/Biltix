@@ -5,7 +5,7 @@ class ApiClient {
         this.apiKey = API_CONFIG.API_KEY;
     }
 
-    async makeRequest(endpoint, data = {}, method = 'POST') {
+    async makeRequest(endpoint, data = {}, method = 'POST', buttonElement = null) {
         const config = {
             method: method,
             headers: {
@@ -25,37 +25,53 @@ class ApiClient {
         
         // If interceptor returns null, don't make the request
         if (interceptorResult === null) {
+            // Release button if provided
+            if (buttonElement && window.releaseButton) {
+                window.releaseButton(buttonElement);
+            }
             return { code: 401, message: 'No token available', data: {} };
         }
         
-        try {
-            const fetchOptions = {
-                method: config.method,
-                headers: config.headers
-            };
-            
-            // Only add body for non-GET requests
-            if (config.method !== 'GET') {
-                fetchOptions.body = JSON.stringify(config.data);
+        // Create promise for API call
+        const apiPromise = (async () => {
+            try {
+                const fetchOptions = {
+                    method: config.method,
+                    headers: config.headers
+                };
+                
+                // Only add body for non-GET requests
+                if (config.method !== 'GET') {
+                    fetchOptions.body = JSON.stringify(config.data);
+                }
+                
+                const response = await fetch(`${this.baseUrl}/${endpoint}`, fetchOptions);
+                
+                console.log('Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('API Response:', result);
+                
+                // Don't throw error for HTTP status, let the API response handle it
+                return ApiInterceptors.afterResponse(result) || result;
+            } catch (error) {
+                console.error('API Request failed:', error);
+                ApiInterceptors.hideLoading();
+                throw error;
             }
-            
-            const response = await fetch(`${this.baseUrl}/${endpoint}`, fetchOptions);
-            
-            console.log('Response status:', response.status);
-            
-            const result = await response.json();
-            console.log('API Response:', result);
-            
-            // Don't throw error for HTTP status, let the API response handle it
-            return ApiInterceptors.afterResponse(result) || result;
-        } catch (error) {
-            console.error('API Request failed:', error);
-            ApiInterceptors.hideLoading();
-            throw error;
+        })();
+        
+        // Register button with API call
+        // Use provided button or auto-detect from button protection system
+        const btn = buttonElement || (window.getCurrentActiveButton && window.getCurrentActiveButton());
+        if (btn && window.registerButtonApiCall) {
+            window.registerButtonApiCall(btn, apiPromise);
         }
+        
+        return apiPromise;
     }
     
-    async makeFormDataRequest(endpoint, formData) {
+    async makeFormDataRequest(endpoint, formData, buttonElement = null) {
         const config = {
             method: 'POST',
             headers: {
@@ -71,24 +87,36 @@ class ApiClient {
         // Apply interceptors for FormData
         ApiInterceptors.beforeFormDataRequest(config, formData);
         
-        try {
-            const response = await fetch(`${this.baseUrl}/${endpoint}`, {
-                method: config.method,
-                headers: config.headers,
-                body: formData
-            });
-            
-            console.log('Response status:', response.status);
-            
-            const result = await response.json();
-            console.log('API Response:', result);
-            
-            return ApiInterceptors.afterResponse(result) || result;
-        } catch (error) {
-            console.error('FormData API Request failed:', error);
-            ApiInterceptors.hideLoading();
-            throw error;
+        // Create promise for API call
+        const apiPromise = (async () => {
+            try {
+                const response = await fetch(`${this.baseUrl}/${endpoint}`, {
+                    method: config.method,
+                    headers: config.headers,
+                    body: formData
+                });
+                
+                console.log('Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('API Response:', result);
+                
+                return ApiInterceptors.afterResponse(result) || result;
+            } catch (error) {
+                console.error('FormData API Request failed:', error);
+                ApiInterceptors.hideLoading();
+                throw error;
+            }
+        })();
+        
+        // Register button with API call
+        // Use provided button or auto-detect from button protection system
+        const btn = buttonElement || (window.getCurrentActiveButton && window.getCurrentActiveButton());
+        if (btn && window.registerButtonApiCall) {
+            window.registerButtonApiCall(btn, apiPromise);
         }
+        
+        return apiPromise;
     }
 
     // Auth methods
@@ -274,36 +302,48 @@ class ApiClient {
         return this.makeRequest('project-progress/list_activities', data);
     }
 
-    async addActivity(data) {
-        return this.makeRequest('project-progress/add_activity', data);
+    async addActivity(data, buttonElement = null) {
+        return this.makeRequest('project-progress/add_activity', data, 'POST', buttonElement);
     }
 
-    async updateActivity(data) {
-        return this.makeRequest('project-progress/update_activity', data);
+    async updateActivity(data, buttonElement = null) {
+        return this.makeRequest('project-progress/update_activity', data, 'POST', buttonElement);
+    }
+
+    async deleteActivity(data) {
+        return this.makeRequest('project-progress/delete_activity', data);
     }
 
     async listManpowerEquipment(data) {
         return this.makeRequest('project-progress/list_manpower_equipment', data);
     }
 
-    async addManpowerEquipment(data) {
-        return this.makeRequest('project-progress/add_manpower_equipment', data);
+    async addManpowerEquipment(data, buttonElement = null) {
+        return this.makeRequest('project-progress/add_manpower_equipment', data, 'POST', buttonElement);
     }
 
-    async updateManpowerEquipment(data) {
-        return this.makeRequest('project-progress/update_manpower_equipment', data);
+    async updateManpowerEquipment(data, buttonElement = null) {
+        return this.makeRequest('project-progress/update_manpower_equipment', data, 'POST', buttonElement);
+    }
+
+    async deleteManpowerEquipment(data) {
+        return this.makeRequest('project-progress/delete_manpower_equipment', data);
     }
 
     async listSafetyItems(data) {
         return this.makeRequest('project-progress/list_safety_items', data);
     }
 
-    async addSafetyItem(data) {
-        return this.makeRequest('project-progress/add_safety_item', data);
+    async addSafetyItem(data, buttonElement = null) {
+        return this.makeRequest('project-progress/add_safety_item', data, 'POST', buttonElement);
     }
 
-    async updateSafetyItem(data) {
-        return this.makeRequest('project-progress/update_safety_item', data);
+    async updateSafetyItem(data, buttonElement = null) {
+        return this.makeRequest('project-progress/update_safety_item', data, 'POST', buttonElement);
+    }
+
+    async deleteSafetyItem(data) {
+        return this.makeRequest('project-progress/delete_safety_item', data);
     }
 
     // File methods

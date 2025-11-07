@@ -691,6 +691,81 @@
                 word-break: break-word;
             }
         }
+        
+        /* Ensure all inputs in step 2 first row are same size */
+        #step2 .row > .col-md-4:first-child .custom-combo-dropdown {
+            width: 100% !important;
+        }
+        
+        /* Match Project Type input height with date picker inputs */
+        #step2 .custom-combo-dropdown .form-control.Input_control {
+            width: 100% !important;
+            box-sizing: border-box;
+            padding: 16px 55px 16px 20px !important;
+            border: 2px solid #e8ecf4 !important;
+            border-radius: 16px !important;
+            font-size: 15px !important;
+            font-weight: 500 !important;
+            min-height: auto !important;
+            height: auto !important;
+            line-height: 1.5 !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            color: #2d3748 !important;
+            background: #ffffff !important;
+        }
+        
+        [dir="rtl"] #step2 .custom-combo-dropdown .form-control.Input_control {
+            padding: 16px 20px 16px 55px !important;
+        }
+        
+        /* Adjust dropdown arrow position for larger padding */
+        #step2 .custom-combo-dropdown .dropdown-arrow {
+            right: 20px !important;
+        }
+        
+        [dir="rtl"] #step2 .custom-combo-dropdown .dropdown-arrow {
+            left: 20px !important;
+            right: auto !important;
+        }
+        
+        /* Adjust clear button position */
+        #step2 .custom-combo-dropdown .clear-selection {
+            right: 50px !important;
+        }
+        
+        [dir="rtl"] #step2 .custom-combo-dropdown .clear-selection {
+            left: 50px !important;
+            right: auto !important;
+        }
+        
+        /* Ensure date picker wrapper also takes full width for consistency */
+        #step2 .modern-datepicker-wrapper {
+            width: 100%;
+        }
+        
+        /* Match placeholder styling */
+        #step2 .custom-combo-dropdown .form-control.Input_control::placeholder {
+            color: #a0aec0 !important;
+            font-weight: 400 !important;
+        }
+        
+        /* Match border and focus styles */
+        #step2 .custom-combo-dropdown .form-control.Input_control:focus {
+            border-color: #F58D2E !important;
+            box-shadow: 0 0 0 4px rgba(245, 141, 46, 0.1), 0 4px 20px rgba(245, 141, 46, 0.15) !important;
+            outline: none !important;
+        }
+        
+        /* Override default padding that might interfere */
+        #step2 .custom-combo-dropdown input {
+            padding-right: 55px !important;
+        }
+        
+        [dir="rtl"] #step2 .custom-combo-dropdown input {
+            padding-left: 55px !important;
+            padding-right: 20px !important;
+        }
     </style>
 
 

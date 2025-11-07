@@ -12,6 +12,26 @@
     <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
     <link rel="stylesheet" href="{{ asset('website/css/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('website/css/responsive.css') }}" />
+    <style>
+        /* Hide number input spinner */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        /* Clean extend input styling */
+        .milestone-extend-input {
+            width: 70px !important;
+            text-align: center;
+            padding: 0.25rem 0.5rem !important;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
 
 <body data-phase-id="{{ request()->get('phase_id', 1) }}">
@@ -1654,15 +1674,23 @@
                     createPhaseForm.addEventListener('submit', async function(e) {
                         e.preventDefault();
 
-                        // Protect button
-                        const btn = document.querySelector('#createPhaseForm button[type="submit"]');
+                        // Get submit button (it's outside the form, using form attribute)
+                        const btn = document.querySelector('button[form="createPhaseForm"]');
+                        
+                        // Check if button is already disabled (protection system handles this)
                         if (btn && btn.disabled) return;
-                        if (btn) {
-                            btn.disabled = true;
-                            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
-                        }
 
                         const title = document.getElementById('title').value.trim();
+                        
+                        // Validate title
+                        if (!title) {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error('Please enter a phase title.');
+                            } else {
+                                alert('Please enter a phase title.');
+                            }
+                            return;
+                        }
                         
                         // Collect milestones - find inputs by their actual name attribute, not by index
                         const milestones = [];
@@ -1681,43 +1709,48 @@
                             }
                         });
 
-                        if (title) {
-                            try {
-                                // Get project ID from URL or use default
-                                const projectId = getProjectIdFromUrl ? getProjectIdFromUrl() : 
-                                                (typeof currentProjectId !== 'undefined' ? currentProjectId : 1);
-                                
-                                const response = await api.makeRequest('projects/create_phase', {
-                                    project_id: projectId,
-                                    user_id: {{ auth()->id() ?? 1 }},
-                                    title: title,
-                                    milestones: milestones.length > 0 ? milestones : null
-                                });
+                        try {
+                            // Get project ID from URL or use default
+                            const projectId = typeof getProjectIdFromUrl === 'function' ? getProjectIdFromUrl() : 
+                                            (typeof currentProjectId !== 'undefined' ? currentProjectId : 
+                                            {{ request()->get('project_id', 1) }});
+                            
+                            // Make API call and pass button element for automatic protection
+                            const response = await api.makeRequest('projects/create_phase', {
+                                project_id: projectId,
+                                user_id: {{ auth()->id() ?? 1 }},
+                                title: title,
+                                milestones: milestones.length > 0 ? milestones : null
+                            }, 'POST', btn);
 
-                                if (response.code === 200) {
-                                    // Close modal
-                                    const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
-                                    if (modal) modal.hide();
+                            if (response.code === 200) {
+                                // Close modal
+                                const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
+                                if (modal) modal.hide();
 
-                                    // Show success message
+                                // Show success message
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.success('Phase created successfully!');
+                                } else {
                                     alert('Phase "' + title + '" created successfully!');
+                                }
 
-                                    // Reset form
-                                    createPhaseForm.reset();
-                                    milestoneIndex = 1;
+                                // Reset form
+                                createPhaseForm.reset();
+                                milestoneIndex = 1;
 
-                                    // Reset milestones container
-                                    const container = document.getElementById('milestonesContainer');
-                                    container.innerHTML = `
+                                // Reset milestones container
+                                const container = document.getElementById('milestonesContainer');
+                                container.innerHTML = `
           <div class="milestone-item mb-2">
             <div class="row">
               <div class="col-8">
                 <input type="text" class="form-control Input_control" name="milestones[0][milestone_name]" 
-                  placeholder="Milestone name" maxlength="80" required>
+                  placeholder="{{ __('messages.milestone_name') }}" maxlength="80" required>
               </div>
               <div class="col-3">
                 <input type="number" class="form-control Input_control" name="milestones[0][days]" 
-                  placeholder="Days" min="1" required>
+                  placeholder="{{ __('messages.days') }}" min="1" required>
               </div>
               <div class="col-1">
                 <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
@@ -1728,28 +1761,26 @@
           </div>
         `;
 
-                                    // Reload page to show new phase
+                                // Reload page to show new phase
+                                setTimeout(() => {
                                     location.reload();
+                                }, 1000);
+                            } else {
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error(response.message || 'Failed to create phase');
                                 } else {
                                     alert('Error creating phase: ' + (response.message || 'Unknown error'));
                                 }
-                            } catch (error) {
-                                console.error('Error creating phase:', error);
-                                alert('Error creating phase. Please try again.');
-                            } finally {
-                                // Reset button
-                                if (btn) {
-                                    btn.disabled = false;
-                                    btn.innerHTML = '<i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}';
-                                }
                             }
-                        } else {
-                            alert('Please enter a phase title');
-                            if (btn) {
-                                btn.disabled = false;
-                                btn.innerHTML = '<i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}';
+                        } catch (error) {
+                            console.error('Error creating phase:', error);
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error('Error creating phase. Please try again.');
+                            } else {
+                                alert('Error creating phase. Please try again.');
                             }
                         }
+                        // Note: Button will be automatically released by button protection system when API call completes
                     });
                 }
             });
@@ -1974,24 +2005,30 @@
                                                                 </div>
                                                             </div>
                                                             <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
-                                                                <span class="text-muted small fw-medium">Extend Days:</span>
-                                                                <div class="input-group" style="width: 120px; flex-shrink: 0;">
-                                                                    <input type="number" class="form-control form-control-sm Input_control" 
-                                                                        style="font-size: 0.875rem; text-align: center; padding: 0.5rem;" 
+                                                                <span class="text-muted small fw-medium">Extend:</span>
+                                                                <div class="d-flex align-items-center gap-1">
+                                                                    <input type="number" 
+                                                                        class="form-control form-control-sm milestone-extend-input" 
                                                                         value="${milestone.extension_days || 0}" 
-                                                                        min="0" max="999" 
+                                                                        min="0" 
+                                                                        max="999" 
                                                                         id="ext_${milestone.id}" 
                                                                         placeholder="0"
-                                                                        onchange="extendMilestone(${milestone.id})">
-                                                                    <span class="input-group-text" style="font-size: 0.75rem; padding: 0.5rem 0.75rem; background-color: #f8f9fa; border-color: #dee2e6;">days</span>
+                                                                        onchange="extendMilestone(${milestone.id})"
+                                                                        onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
+                                                                    <span class="text-muted" style="font-size: 0.75rem;">days</span>
                                                                 </div>
-                                                                <div class="btn-group" role="group">
-                                                                    <button class="btn btn-outline-primary btn-sm" 
-                                                                        style="font-size: 0.75rem; padding: 0.375rem 0.5rem;" 
-                                                                        onclick="quickExtend(${milestone.id}, 1)" title="Add 1 day">+1</button>
-                                                                    <button class="btn btn-outline-primary btn-sm" 
-                                                                        style="font-size: 0.75rem; padding: 0.375rem 0.5rem;" 
-                                                                        onclick="quickExtend(${milestone.id}, 7)" title="Add 7 days">+7</button>
+                                                                <div class="d-flex gap-1">
+                                                                    <button type="button" 
+                                                                        class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                        style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                        onclick="quickExtend(${milestone.id}, 1)" 
+                                                                        title="Add 1 day">+1</button>
+                                                                    <button type="button" 
+                                                                        class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                        style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                        onclick="quickExtend(${milestone.id}, 7)" 
+                                                                        title="Add 7 days">+7</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -2069,9 +2106,21 @@
                 }
 
                 const saveBtn = document.querySelector('#addMilestoneModal .btn.orange_btn');
+                if (!saveBtn) {
+                    console.error('Save button not found');
+                    alert('Error: Save button not found');
+                    return;
+                }
+                
                 const originalText = saveBtn.innerHTML;
-                saveBtn.disabled = true;
-                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.saving') }}...';
+                
+                // Protect button and show loading
+                if (window.protectButton) {
+                    window.protectButton(saveBtn);
+                } else {
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.saving') }}...';
+                }
 
                 try {
                     // First get the current phase to update it with new milestone
@@ -2106,7 +2155,7 @@
                                 user_id: currentUserId,
                                 title: currentPhase.title,
                                 milestones: newMilestones
-                            });
+                            }, 'POST', saveBtn);
 
                             if (updateResponse.code === 200) {
                                 // Close modal
@@ -2131,8 +2180,16 @@
                     console.error('Error adding milestone:', error);
                     alert('Error adding milestone');
                 } finally {
-                    saveBtn.disabled = false;
-                    saveBtn.innerHTML = originalText;
+                    // Release button if protection system is available
+                    if (window.releaseButton) {
+                        window.releaseButton(saveBtn);
+                    } else {
+                        // Fallback: restore manually
+                        if (saveBtn) {
+                            saveBtn.disabled = false;
+                            saveBtn.innerHTML = originalText;
+                        }
+                    }
                 }
             }
         </script>
@@ -2746,28 +2803,45 @@
         <script>
             // Modal Functions
             function openActivitiesModal() {
-                document.getElementById('activitiesModalTitle').textContent = '{{ __('messages.add_activity') }}';
-                document.getElementById('activitiesSaveBtn').textContent = '{{ __('messages.save') }}';
-                document.getElementById('activitiesForm').reset();
-                document.getElementById('activityId').value = '';
+                const titleEl = document.getElementById('activitiesModalTitle');
+                const saveBtnSpan = document.getElementById('activitiesSaveBtn');
+                if (titleEl) titleEl.textContent = '{{ __('messages.add_activity') }}';
+                if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.save') }}';
+                
+                const form = document.getElementById('activitiesForm');
+                const activityId = document.getElementById('activityId');
+                if (form) form.reset();
+                if (activityId) activityId.value = '';
+                
                 const container = document.getElementById('modalActivitiesContainer');
-                container.innerHTML = `
+                if (container) {
+                    container.innerHTML = `
         <div class="activity-field mb-2">
             <input type="text" class="form-control Input_control" name="description[]" 
                     placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
         </div>
     `;
-                document.getElementById('removeLastActivityBtn').style.display = 'none';
+                }
+                
+                const removeBtn = document.getElementById('removeLastActivityBtn');
+                if (removeBtn) removeBtn.style.display = 'none';
                 new bootstrap.Modal(document.getElementById('activitiesModal')).show();
             }
 
             function openManpowerModal() {
-                document.getElementById('manpowerModalTitle').textContent = '{{ __('messages.add_manpower_equipment') }}';
-                document.getElementById('manpowerSaveBtn').textContent = '{{ __('messages.save') }}';
-                document.getElementById('manpowerForm').reset();
-                document.getElementById('manpowerId').value = '';
+                const titleEl = document.getElementById('manpowerModalTitle');
+                const saveBtnSpan = document.getElementById('manpowerSaveBtn');
+                if (titleEl) titleEl.textContent = '{{ __('messages.add_manpower_equipment') }}';
+                if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.save') }}';
+                
+                const form = document.getElementById('manpowerForm');
+                const manpowerId = document.getElementById('manpowerId');
+                if (form) form.reset();
+                if (manpowerId) manpowerId.value = '';
+                
                 const container = document.getElementById('modalManpowerContainer');
-                container.innerHTML = `
+                if (container) {
+                    container.innerHTML = `
         <div class="manpower-field mb-2">
             <div class="row">
                 <div class="col-7">
@@ -2781,23 +2855,36 @@
             </div>
         </div>
     `;
-                document.getElementById('removeLastManpowerBtn').style.display = 'none';
+                }
+                
+                const removeBtn = document.getElementById('removeLastManpowerBtn');
+                if (removeBtn) removeBtn.style.display = 'none';
                 new bootstrap.Modal(document.getElementById('manpowerModal')).show();
             }
 
             function openSafetyModal() {
-                document.getElementById('safetyModalTitle').textContent = '{{ __('messages.add_safety_item') }}';
-                document.getElementById('safetySaveBtn').textContent = '{{ __('messages.save') }}';
-                document.getElementById('safetyForm').reset();
-                document.getElementById('safetyId').value = '';
+                const titleEl = document.getElementById('safetyModalTitle');
+                const saveBtnSpan = document.getElementById('safetySaveBtn');
+                if (titleEl) titleEl.textContent = '{{ __('messages.add_safety_item') }}';
+                if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.save') }}';
+                
+                const form = document.getElementById('safetyForm');
+                const safetyId = document.getElementById('safetyId');
+                if (form) form.reset();
+                if (safetyId) safetyId.value = '';
+                
                 const container = document.getElementById('modalSafetyContainer');
-                container.innerHTML = `
+                if (container) {
+                    container.innerHTML = `
         <div class="safety-field mb-2">
             <input type="text" class="form-control Input_control" name="checklist_item[]" 
                     placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
         </div>
     `;
-                document.getElementById('removeLastSafetyBtn').style.display = 'none';
+                }
+                
+                const removeBtn = document.getElementById('removeLastSafetyBtn');
+                if (removeBtn) removeBtn.style.display = 'none';
                 new bootstrap.Modal(document.getElementById('safetyModal')).show();
             }
 
@@ -2886,14 +2973,42 @@
                     .filter(desc => desc);
 
                 if (descriptions.length === 0) {
-                    toastr.error('{{ __('messages.please_enter_description') }}');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ __('messages.please_enter_description') }}');
+                    } else {
+                        alert('{{ __('messages.please_enter_description') }}');
+                    }
                     return;
                 }
 
-                const saveBtn = document.getElementById('activitiesSaveBtn');
-                const originalText = saveBtn.textContent;
-                saveBtn.innerHTML =
-                    '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                // Get the button element (parent of the span with id activitiesSaveBtn)
+                const saveBtnSpan = document.getElementById('activitiesSaveBtn');
+                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#activitiesModal button[onclick="saveActivity()"]');
+                
+                if (!saveBtn) {
+                    console.error('Save button not found');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ __('messages.error_saving_activity') }}');
+                    } else {
+                        alert('{{ __('messages.error_saving_activity') }}');
+                    }
+                    return;
+                }
+                
+                // Store original content
+                const originalContent = saveBtn.innerHTML;
+                
+                // Protect button and show loading
+                if (window.protectButton) {
+                    window.protectButton(saveBtn);
+                } else {
+                    saveBtn.disabled = true;
+                    if (saveBtnSpan) {
+                        saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                    } else {
+                        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                    }
+                }
 
                 try {
                     let response;
@@ -2901,26 +3016,46 @@
                         response = await api.updateActivity({
                             activity_id: activityId,
                             description: descriptions[0]
-                        });
+                        }, saveBtn);
                     } else {
                         response = await api.addActivity({
                             project_id: currentProjectId,
                             user_id: currentUserId,
                             descriptions: descriptions
-                        });
+                        }, saveBtn);
                     }
 
                     if (response.code === 200) {
                         bootstrap.Modal.getInstance(document.getElementById('activitiesModal')).hide();
                         loadActivities();
-                        toastr.success(response.message || '{{ __('messages.activities_saved_successfully') }}');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message || '{{ __('messages.activities_saved_successfully') }}');
+                        } else {
+                            alert(response.message || '{{ __('messages.activities_saved_successfully') }}');
+                        }
                     } else {
-                        toastr.error(response.message || '{{ __('messages.failed_to_save_activity') }}');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.message || '{{ __('messages.failed_to_save_activity') }}');
+                        } else {
+                            alert(response.message || '{{ __('messages.failed_to_save_activity') }}');
+                        }
                     }
                 } catch (error) {
-                    toastr.error('{{ __('messages.error_saving_activity') }}');
+                    console.error('Error saving activity:', error);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ __('messages.error_saving_activity') }}');
+                    } else {
+                        alert('{{ __('messages.error_saving_activity') }}');
+                    }
                 } finally {
-                    saveBtn.textContent = originalText;
+                    // Release button if protection system is available
+                    if (window.releaseButton) {
+                        window.releaseButton(saveBtn);
+                    } else {
+                        // Fallback: restore manually
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalContent;
+                    }
                 }
             }
 
@@ -2973,10 +3108,30 @@
                     return;
                 }
 
-                const saveBtn = document.getElementById('manpowerSaveBtn');
-                const originalText = saveBtn.textContent;
-                saveBtn.innerHTML =
-                    '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                // Get the button element (parent of the span with id manpowerSaveBtn)
+                const saveBtnSpan = document.getElementById('manpowerSaveBtn');
+                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#manpowerModal button[onclick="saveManpower()"]');
+                
+                if (!saveBtn) {
+                    console.error('Save button not found');
+                    toastr.error('{{ __('messages.error_saving_manpower') }}');
+                    return;
+                }
+                
+                // Store original content
+                const originalContent = saveBtn.innerHTML;
+                
+                // Protect button and show loading
+                if (window.protectButton) {
+                    window.protectButton(saveBtn);
+                } else {
+                    saveBtn.disabled = true;
+                    if (saveBtnSpan) {
+                        saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                    } else {
+                        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                    }
+                }
 
                 try {
                     let response;
@@ -2985,26 +3140,46 @@
                             item_id: itemId,
                             category: validItems[0].category,
                             count: validItems[0].count
-                        });
+                        }, saveBtn);
                     } else {
                         response = await api.addManpowerEquipment({
                             project_id: currentProjectId,
                             user_id: currentUserId,
                             items: validItems
-                        });
+                        }, saveBtn);
                     }
 
                     if (response.code === 200) {
                         bootstrap.Modal.getInstance(document.getElementById('manpowerModal')).hide();
                         loadManpowerEquipment();
-                        toastr.success(response.message || '{{ __('messages.manpower_items_saved_successfully') }}');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message || '{{ __('messages.manpower_items_saved_successfully') }}');
+                        } else {
+                            alert(response.message || '{{ __('messages.manpower_items_saved_successfully') }}');
+                        }
                     } else {
-                        toastr.error(response.message || '{{ __('messages.failed_to_save_manpower') }}');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.message || '{{ __('messages.failed_to_save_manpower') }}');
+                        } else {
+                            alert(response.message || '{{ __('messages.failed_to_save_manpower') }}');
+                        }
                     }
                 } catch (error) {
-                    toastr.error('{{ __('messages.error_saving_manpower') }}');
+                    console.error('Error saving manpower:', error);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ __('messages.error_saving_manpower') }}');
+                    } else {
+                        alert('{{ __('messages.error_saving_manpower') }}');
+                    }
                 } finally {
-                    saveBtn.textContent = originalText;
+                    // Release button if protection system is available
+                    if (window.releaseButton) {
+                        window.releaseButton(saveBtn);
+                    } else {
+                        // Fallback: restore manually
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalContent;
+                    }
                 }
             }
 
@@ -3016,14 +3191,42 @@
                     .filter(item => item);
 
                 if (checklistItems.length === 0) {
-                    toastr.error('{{ __('messages.please_enter_safety_item') }}');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ __('messages.please_enter_safety_item') }}');
+                    } else {
+                        alert('{{ __('messages.please_enter_safety_item') }}');
+                    }
                     return;
                 }
 
-                const saveBtn = document.getElementById('safetySaveBtn');
-                const originalText = saveBtn.textContent;
-                saveBtn.innerHTML =
-                    '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                // Get the button element (parent of the span with id safetySaveBtn)
+                const saveBtnSpan = document.getElementById('safetySaveBtn');
+                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#safetyModal button[onclick="saveSafetyItem()"]');
+                
+                if (!saveBtn) {
+                    console.error('Save button not found');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ __('messages.error_saving_safety_item') }}');
+                    } else {
+                        alert('{{ __('messages.error_saving_safety_item') }}');
+                    }
+                    return;
+                }
+                
+                // Store original content
+                const originalContent = saveBtn.innerHTML;
+                
+                // Protect button and show loading
+                if (window.protectButton) {
+                    window.protectButton(saveBtn);
+                } else {
+                    saveBtn.disabled = true;
+                    if (saveBtnSpan) {
+                        saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                    } else {
+                        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                    }
+                }
 
                 try {
                     let response;
@@ -3031,56 +3234,90 @@
                         response = await api.updateSafetyItem({
                             item_id: itemId,
                             checklist_item: checklistItems[0]
-                        });
+                        }, saveBtn);
                     } else {
                         response = await api.addSafetyItem({
                             project_id: currentProjectId,
                             user_id: currentUserId,
                             checklist_items: checklistItems
-                        });
+                        }, saveBtn);
                     }
 
                     if (response.code === 200) {
                         bootstrap.Modal.getInstance(document.getElementById('safetyModal')).hide();
                         loadSafetyItems();
-                        toastr.success(response.message || '{{ __('messages.safety_items_saved_successfully') }}');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message || '{{ __('messages.safety_items_saved_successfully') }}');
+                        } else {
+                            alert(response.message || '{{ __('messages.safety_items_saved_successfully') }}');
+                        }
                     } else {
-                        toastr.error(response.message || '{{ __('messages.failed_to_save_safety_item') }}');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.message || '{{ __('messages.failed_to_save_safety_item') }}');
+                        } else {
+                            alert(response.message || '{{ __('messages.failed_to_save_safety_item') }}');
+                        }
                     }
                 } catch (error) {
-                    toastr.error('{{ __('messages.error_saving_safety_item') }}');
+                    console.error('Error saving safety item:', error);
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('{{ __('messages.error_saving_safety_item') }}');
+                    } else {
+                        alert('{{ __('messages.error_saving_safety_item') }}');
+                    }
                 } finally {
-                    saveBtn.textContent = originalText;
+                    // Release button if protection system is available
+                    if (window.releaseButton) {
+                        window.releaseButton(saveBtn);
+                    } else {
+                        // Fallback: restore manually
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalContent;
+                    }
                 }
             }
 
             // Edit Functions
             function editActivity(id, description) {
-                document.getElementById('activitiesModalTitle').textContent = '{{ __('messages.edit_activity') }}';
-                document.getElementById('activitiesSaveBtn').textContent = '{{ __('messages.update') }}';
-                document.getElementById('activityId').value = id;
+                const titleEl = document.getElementById('activitiesModalTitle');
+                const saveBtnSpan = document.getElementById('activitiesSaveBtn');
+                const activityIdEl = document.getElementById('activityId');
+                
+                if (titleEl) titleEl.textContent = '{{ __('messages.edit_activity') }}';
+                if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.update') }}';
+                if (activityIdEl) activityIdEl.value = id;
 
                 // Set the first input field value
                 const container = document.getElementById('modalActivitiesContainer');
-                container.innerHTML = `
+                if (container) {
+                    container.innerHTML = `
         <div class="activity-field mb-2">
             <input type="text" class="form-control Input_control" name="description[]" 
                     value="${description}" placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
         </div>
     `;
-                document.getElementById('removeLastActivityBtn').style.display = 'none';
-                document.getElementById('addMoreActivityBtn').style.display = 'none';
+                }
+                
+                const removeBtn = document.getElementById('removeLastActivityBtn');
+                const addMoreBtn = document.getElementById('addMoreActivityBtn');
+                if (removeBtn) removeBtn.style.display = 'none';
+                if (addMoreBtn) addMoreBtn.style.display = 'none';
                 new bootstrap.Modal(document.getElementById('activitiesModal')).show();
             }
 
             function editManpower(id, category, count) {
-                document.getElementById('manpowerModalTitle').textContent = '{{ __('messages.edit_manpower_equipment') }}';
-                document.getElementById('manpowerSaveBtn').textContent = '{{ __('messages.update') }}';
-                document.getElementById('manpowerId').value = id;
+                const titleEl = document.getElementById('manpowerModalTitle');
+                const saveBtnSpan = document.getElementById('manpowerSaveBtn');
+                const manpowerIdEl = document.getElementById('manpowerId');
+                
+                if (titleEl) titleEl.textContent = '{{ __('messages.edit_manpower_equipment') }}';
+                if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.update') }}';
+                if (manpowerIdEl) manpowerIdEl.value = id;
 
                 // Set the first input field values
                 const container = document.getElementById('modalManpowerContainer');
-                container.innerHTML = `
+                if (container) {
+                    container.innerHTML = `
         <div class="manpower-field mb-2">
             <div class="row">
                 <div class="col-7">
@@ -3094,8 +3331,12 @@
             </div>
         </div>
     `;
-                document.getElementById('removeLastManpowerBtn').style.display = 'none';
-                document.getElementById('addMoreManpowerBtn').style.display = 'none';
+                }
+                
+                const removeBtn = document.getElementById('removeLastManpowerBtn');
+                const addMoreBtn = document.getElementById('addMoreManpowerBtn');
+                if (removeBtn) removeBtn.style.display = 'none';
+                if (addMoreBtn) addMoreBtn.style.display = 'none';
                 new bootstrap.Modal(document.getElementById('manpowerModal')).show();
             }
 
@@ -3110,10 +3351,13 @@
                 const container = document.getElementById('activitiesUpdateContainer');
 
                 container.innerHTML = window.currentActivities.map(activity => `
-        <div class="mb-2">
+        <div class="mb-2 d-flex align-items-center gap-2 activity-item" data-activity-id="${activity.id}">
             <input type="hidden" name="activity_id[]" value="${activity.id}">
-            <input type="text" class="form-control" name="activity_description[]" 
+            <input type="text" class="form-control flex-grow-1" name="activity_description[]" 
                 value="${activity.description}" placeholder="Activity description" maxlength="150">
+            <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" style="width: 40px; min-width: 40px;" onclick="deleteActivityItem(${activity.id}, this)" title="{{ __('messages.delete') }}">
+                <i class="fas fa-trash"></i>
+            </button>
         </div>
     `).join('');
 
@@ -3131,16 +3375,15 @@
                 const container = document.getElementById('manpowerUpdateContainer');
 
                 container.innerHTML = window.currentManpower.map(item => `
-        <div class="row mb-2">
-            <div class="col-6">
-                <input type="hidden" name="manpower_id[]" value="${item.id}">
-                <input type="text" class="form-control" name="manpower_category[]" 
-                    value="${item.category}" placeholder="Category" maxlength="50" required>
-            </div>
-            <div class="col-6">
-                <input type="number" class="form-control" name="manpower_count[]" 
-                    value="${item.count}" placeholder="Count" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
-            </div>
+        <div class="mb-2 d-flex align-items-center gap-2 manpower-item" data-manpower-id="${item.id}">
+            <input type="hidden" name="manpower_id[]" value="${item.id}">
+            <input type="text" class="form-control" name="manpower_category[]" style="flex: 1 1 45%;" 
+                value="${item.category}" placeholder="Category" maxlength="50" required>
+            <input type="number" class="form-control" name="manpower_count[]" style="flex: 1 1 25%;" 
+                value="${item.count}" placeholder="Count" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
+            <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" style="width: 40px; min-width: 40px;" onclick="deleteManpowerItem(${item.id}, this)" title="{{ __('messages.delete') }}">
+                <i class="fas fa-trash"></i>
+            </button>
         </div>
     `).join('');
 
@@ -3158,19 +3401,148 @@
                 const container = document.getElementById('safetyUpdateContainer');
 
                 container.innerHTML = window.currentSafetyItems.map(item => `
-        <div class="mb-2">
+        <div class="mb-2 d-flex align-items-center gap-2 safety-item" data-safety-id="${item.id}">
             <input type="hidden" name="safety_id[]" value="${item.id}">
-            <input type="text" class="form-control" name="safety_item[]" 
+            <input type="text" class="form-control flex-grow-1" name="safety_item[]" 
                 value="${item.checklist_item}" placeholder="Safety item" maxlength="120">
+            <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" style="width: 40px; min-width: 40px;" onclick="deleteSafetyItem(${item.id}, this)" title="{{ __('messages.delete') }}">
+                <i class="fas fa-trash"></i>
+            </button>
         </div>
     `).join('');
 
                 modal.show();
             }
 
+            // Delete Functions
+            async function deleteActivityItem(activityId, buttonElement) {
+                if (!confirm('{{ __("messages.confirm_delete_activity") }}')) {
+                    return;
+                }
+
+                try {
+                    const response = await api.deleteActivity({
+                        activity_id: activityId
+                    });
+
+                    if (response.code === 200) {
+                        // Remove the item from DOM
+                        const itemElement = buttonElement.closest('.activity-item');
+                        if (itemElement) {
+                            itemElement.remove();
+                        }
+
+                        // Update the current activities array
+                        if (window.currentActivities) {
+                            window.currentActivities = window.currentActivities.filter(a => a.id !== activityId);
+                        }
+
+                        // Reload activities list
+                        loadActivities();
+
+                        toastr.success('{{ __("messages.activity_deleted_successfully") }}');
+
+                        // Close modal if no items left
+                        const container = document.getElementById('activitiesUpdateContainer');
+                        if (container && container.querySelectorAll('.activity-item').length === 0) {
+                            bootstrap.Modal.getInstance(document.getElementById('activitiesUpdateModal')).hide();
+                        }
+                    } else {
+                        toastr.error(response.message || '{{ __("messages.failed_to_delete_activity") }}');
+                    }
+                } catch (error) {
+                    console.error('Error deleting activity:', error);
+                    toastr.error('{{ __("messages.failed_to_delete_activity") }}');
+                }
+            }
+
+            async function deleteManpowerItem(itemId, buttonElement) {
+                if (!confirm('{{ __("messages.confirm_delete_manpower") }}')) {
+                    return;
+                }
+
+                try {
+                    const response = await api.deleteManpowerEquipment({
+                        item_id: itemId
+                    });
+
+                    if (response.code === 200) {
+                        // Remove the item from DOM
+                        const itemElement = buttonElement.closest('.manpower-item');
+                        if (itemElement) {
+                            itemElement.remove();
+                        }
+
+                        // Update the current manpower array
+                        if (window.currentManpower) {
+                            window.currentManpower = window.currentManpower.filter(m => m.id !== itemId);
+                        }
+
+                        // Reload manpower list
+                        loadManpowerEquipment();
+
+                        toastr.success('{{ __("messages.manpower_deleted_successfully") }}');
+
+                        // Close modal if no items left
+                        const container = document.getElementById('manpowerUpdateContainer');
+                        if (container && container.querySelectorAll('.manpower-item').length === 0) {
+                            bootstrap.Modal.getInstance(document.getElementById('manpowerUpdateModal')).hide();
+                        }
+                    } else {
+                        toastr.error(response.message || '{{ __("messages.failed_to_delete_manpower") }}');
+                    }
+                } catch (error) {
+                    console.error('Error deleting manpower item:', error);
+                    toastr.error('{{ __("messages.failed_to_delete_manpower") }}');
+                }
+            }
+
+            async function deleteSafetyItem(itemId, buttonElement) {
+                if (!confirm('{{ __("messages.confirm_delete_safety_item") }}')) {
+                    return;
+                }
+
+                try {
+                    const response = await api.deleteSafetyItem({
+                        item_id: itemId
+                    });
+
+                    if (response.code === 200) {
+                        // Remove the item from DOM
+                        const itemElement = buttonElement.closest('.safety-item');
+                        if (itemElement) {
+                            itemElement.remove();
+                        }
+
+                        // Update the current safety items array
+                        if (window.currentSafetyItems) {
+                            window.currentSafetyItems = window.currentSafetyItems.filter(s => s.id !== itemId);
+                        }
+
+                        // Reload safety items list
+                        loadSafetyItems();
+
+                        toastr.success('{{ __("messages.safety_item_deleted_successfully") }}');
+
+                        // Close modal if no items left
+                        const container = document.getElementById('safetyUpdateContainer');
+                        if (container && container.querySelectorAll('.safety-item').length === 0) {
+                            bootstrap.Modal.getInstance(document.getElementById('safetyUpdateModal')).hide();
+                        }
+                    } else {
+                        toastr.error(response.message || '{{ __("messages.failed_to_delete_safety_item") }}');
+                    }
+                } catch (error) {
+                    console.error('Error deleting safety item:', error);
+                    toastr.error('{{ __("messages.failed_to_delete_safety_item") }}');
+                }
+            }
+
             // Save Functions
             async function saveActivitiesUpdate() {
-                const descInputs = Array.from(document.querySelectorAll('input[name="activity_description[]"]'));
+                // Only get items that are still visible in the DOM (not deleted)
+                const activityItems = Array.from(document.querySelectorAll('.activity-item'));
+                const descInputs = activityItems.map(item => item.querySelector('input[name="activity_description[]"]')).filter(input => input);
 
                 // Validate descriptions
                 for (let input of descInputs) {
@@ -3186,8 +3558,15 @@
                     }
                 }
 
-                const ids = Array.from(document.querySelectorAll('input[name="activity_id[]"]')).map(input => parseInt(input
-                    .value));
+                if (descInputs.length === 0) {
+                    bootstrap.Modal.getInstance(document.getElementById('activitiesUpdateModal')).hide();
+                    return;
+                }
+
+                const ids = activityItems.map(item => {
+                    const idInput = item.querySelector('input[name="activity_id[]"]');
+                    return idInput ? parseInt(idInput.value) : null;
+                }).filter(id => id !== null);
                 const descriptions = descInputs.map(input => input.value.trim());
 
                 const activities = ids.map((id, index) => ({
@@ -3212,8 +3591,10 @@
             }
 
             async function saveManpowerUpdate() {
-                const categoryInputs = Array.from(document.querySelectorAll('input[name="manpower_category[]"]'));
-                const countInputs = Array.from(document.querySelectorAll('input[name="manpower_count[]"]'));
+                // Only get items that are still visible in the DOM (not deleted)
+                const manpowerItems = Array.from(document.querySelectorAll('.manpower-item'));
+                const categoryInputs = manpowerItems.map(item => item.querySelector('input[name="manpower_category[]"]')).filter(input => input);
+                const countInputs = manpowerItems.map(item => item.querySelector('input[name="manpower_count[]"]')).filter(input => input);
 
                 // Validate all fields
                 for (let i = 0; i < categoryInputs.length; i++) {
@@ -3245,8 +3626,15 @@
                     }
                 }
 
-                const ids = Array.from(document.querySelectorAll('input[name="manpower_id[]"]')).map(input => parseInt(input
-                    .value));
+                if (categoryInputs.length === 0) {
+                    bootstrap.Modal.getInstance(document.getElementById('manpowerUpdateModal')).hide();
+                    return;
+                }
+
+                const ids = manpowerItems.map(item => {
+                    const idInput = item.querySelector('input[name="manpower_id[]"]');
+                    return idInput ? parseInt(idInput.value) : null;
+                }).filter(id => id !== null);
                 const categories = categoryInputs.map(input => input.value.trim());
                 const counts = countInputs.map(input => parseInt(input.value));
 
@@ -3273,7 +3661,9 @@
             }
 
             async function saveSafetyUpdate() {
-                const itemInputs = Array.from(document.querySelectorAll('input[name="safety_item[]"]'));
+                // Only get items that are still visible in the DOM (not deleted)
+                const safetyItems = Array.from(document.querySelectorAll('.safety-item'));
+                const itemInputs = safetyItems.map(item => item.querySelector('input[name="safety_item[]"]')).filter(input => input);
 
                 // Validate safety items
                 for (let input of itemInputs) {
@@ -3289,8 +3679,15 @@
                     }
                 }
 
-                const ids = Array.from(document.querySelectorAll('input[name="safety_id[]"]')).map(input => parseInt(input
-                    .value));
+                if (itemInputs.length === 0) {
+                    bootstrap.Modal.getInstance(document.getElementById('safetyUpdateModal')).hide();
+                    return;
+                }
+
+                const ids = safetyItems.map(item => {
+                    const idInput = item.querySelector('input[name="safety_id[]"]');
+                    return idInput ? parseInt(idInput.value) : null;
+                }).filter(id => id !== null);
                 const items = itemInputs.map(input => input.value.trim());
 
                 const safety_items = ids.map((id, index) => ({

@@ -283,7 +283,7 @@
 
                 <div id="searchResults" class="mt-4">
                     <h6 class="fw-bold mb-3">{{ __('messages.search_results') }}</h6>
-                    <div id="resultsContainer" style="max-height: 400px; overflow-y: auto;">
+                    <div id="resultsContainer" style="max-height: 500px; overflow-y: auto;">
                         <div class="text-center text-muted py-4">
                             <i class="fas fa-search fa-3x mb-3"></i>
                             <p>{{ __('messages.enter_search_terms') }}</p>
@@ -404,6 +404,21 @@
         }
     }
 
+    // Format date function - same as dashboard
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        } catch (e) {
+            return dateString;
+        }
+    }
+
     function displaySearchResults(projects) {
         const container = document.getElementById('resultsContainer');
 
@@ -417,34 +432,117 @@
             return;
         }
 
-        const resultsHTML = projects.map(project => {
-            const statusClass = project.status === 'completed' ? 'bg-success' : 'bg-primary';
-            const progress = getConsistentProgress(project);
-            
-            return `
-                <div class="card mb-3" style="cursor: pointer;" onclick="window.location.href='/website/project/${project.id}/plans'">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <h6 class="fw-bold mb-1">${project.project_title}</h6>
-                                <small class="text-muted">${project.type || 'Construction'} • ${project.project_location || 'N/A'}</small>
+        // Create a wrapper div for list layout (one card per row)
+        const resultsWrapper = document.createElement('div');
+
+        projects.forEach((project, index) => {
+            const projectCard = document.createElement('div');
+            projectCard.className = 'mb-3';
+
+            projectCard.innerHTML = `
+                <div class="card project-card h-100" style="position: relative; cursor: pointer;" onclick="window.location.href='/website/project/${project.id}/plans'">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-start justify-content-between mb-3">
+                            <a href="/website/project/${project.id}/plans" class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px;" onclick="event.stopPropagation();">
+                                <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title || ''}">${project.project_title || 'N/A'}</h6>
+                            </a>
+                            <div class="dropdown" style="flex-shrink: 0;" onclick="event.stopPropagation();">
+                                <i class="fas fa-ellipsis-v" style="color: #4A90E2; cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item text-danger api-action-btn" href="#" onclick="event.preventDefault(); event.stopPropagation(); deleteProjectFromSearch(${project.id});"><i class="fas fa-trash me-2"></i>{{ __('messages.delete') }}</a></li>
+                                </ul>
                             </div>
-                            {{-- <div class="col-md-3">
-                                <span class="badge ${statusClass}">${project.status}</span>
-                            </div> --}}
-                            {{-- <div class="col-md-3">
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar" style="width: ${progress}%"></div>
-                                </div>
-                                <small class="text-muted">${progress}% {{ __('messages.complete') }}</small>
-                            </div> --}}
                         </div>
+                        <a href="/website/project/${project.id}/plans" class="text-decoration-none" onclick="event.stopPropagation();">
+                            <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                            <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                            </div>
+                            <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="d-flex align-items-center" style="gap: 6px;">
+                                    <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                    <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                </div>
+                                <div class="d-flex align-items-center" style="gap: 6px;">
+                                    <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                    <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             `;
-        }).join('');
 
-        container.innerHTML = resultsHTML;
+            resultsWrapper.appendChild(projectCard);
+
+            // Initialize Bootstrap dropdown
+            const dropdownIcon = projectCard.querySelector('[data-bs-toggle="dropdown"]');
+            if (dropdownIcon && typeof bootstrap !== 'undefined') {
+                new bootstrap.Dropdown(dropdownIcon);
+            }
+        });
+
+        container.innerHTML = '';
+        container.appendChild(resultsWrapper);
+    }
+
+    function deleteProjectFromSearch(projectId) {
+        if (!confirm('{{ __("messages.delete_project_warning") }}')) {
+            return;
+        }
+
+        const deleteBtn = event.target.closest('.api-action-btn');
+        if (deleteBtn) {
+            deleteBtn.disabled = true;
+            const originalHTML = deleteBtn.innerHTML;
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __("messages.deleting") }}...';
+            
+            const userId = typeof currentUserId !== 'undefined' ? currentUserId : {{ auth()->id() ?? 1 }};
+            
+            api.deleteProject({
+                project_id: projectId,
+                user_id: userId
+            }).then(response => {
+                if (response.code === 200) {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success('{{ __("messages.project_deleted_successfully") }}');
+                    }
+                    // Remove the project card from search results
+                    const projectCard = document.querySelector(`[onclick*="/website/project/${projectId}/plans"]`);
+                    if (projectCard) {
+                        projectCard.closest('.mb-3').remove();
+                    }
+                    // If no projects left, show no results message
+                    const container = document.getElementById('resultsContainer');
+                    if (container && container.querySelectorAll('.mb-3').length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-search fa-3x mb-3"></i>
+                                <p>{{ __('messages.no_projects_found') }}</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(response.message || '{{ __("messages.failed_to_delete_project") }}');
+                    }
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerHTML = originalHTML;
+                }
+            }).catch(error => {
+                console.error('Error deleting project:', error);
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('{{ __("messages.error_deleting_project") }}');
+                }
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = originalHTML;
+            });
+        }
     }
 
     function getConsistentProgress(project) {

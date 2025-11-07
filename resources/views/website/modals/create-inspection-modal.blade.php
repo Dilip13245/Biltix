@@ -59,7 +59,7 @@
           <div class="mb-3">
             <label for="description" class="form-label fw-medium">{{ __("messages.description") }}</label>
             <textarea class="form-control Input_control" id="description" name="description" rows="3"
-              placeholder="{{ __("messages.provide_detailed_description") }}" maxlength="1000"></textarea>
+              placeholder="{{ __("messages.provide_detailed_description") }}" maxlength="500"></textarea>
           </div>
 
           <div class="mb-3">

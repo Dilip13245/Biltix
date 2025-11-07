@@ -980,10 +980,22 @@ return [
     'saving' => 'Saving...',
     'activity_added_successfully' => 'Activity added successfully',
     'activity_updated_successfully' => 'Activity updated successfully',
+    'activity_deleted_successfully' => 'Activity deleted successfully!',
+    'confirm_delete_activity' => 'Are you sure you want to delete this activity?',
+    'failed_to_delete_activity' => 'Failed to delete activity',
+    'activity_not_found' => 'Activity not found',
     'manpower_added_successfully' => 'Manpower/Equipment added successfully',
     'manpower_updated_successfully' => 'Manpower/Equipment updated successfully',
+    'manpower_deleted_successfully' => 'Manpower item deleted successfully!',
+    'confirm_delete_manpower' => 'Are you sure you want to delete this manpower item?',
+    'failed_to_delete_manpower' => 'Failed to delete manpower item',
+    'manpower_not_found' => 'Manpower equipment not found',
     'safety_item_added_successfully' => 'Safety item added successfully',
     'safety_item_updated_successfully' => 'Safety item updated successfully',
+    'safety_item_deleted_successfully' => 'Safety item deleted successfully!',
+    'confirm_delete_safety_item' => 'Are you sure you want to delete this safety item?',
+    'failed_to_delete_safety_item' => 'Failed to delete safety item',
+    'safety_item_not_found' => 'Safety item not found',
     'failed_to_save_activity' => 'Failed to save activity',
     'failed_to_save_manpower' => 'Failed to save manpower/equipment',
     'failed_to_save_safety_item' => 'Failed to save safety item',
@@ -1141,6 +1153,7 @@ return [
     'rotate_right' => 'Rotate Right',
     'flip_horizontal' => 'Flip Horizontal',
     'flip_vertical' => 'Flip Vertical',
+    'add' => 'Add Image'
 ];
 
 

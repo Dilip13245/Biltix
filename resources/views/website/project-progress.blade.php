@@ -1838,19 +1838,48 @@
         document.addEventListener('DOMContentLoaded', function() {
             const createPhaseForm = document.getElementById('createPhaseForm');
             if (createPhaseForm) {
+                console.log('Phase form found, attaching submit handler');
+                
+                // Also attach click handler to the submit button as backup
+                const submitBtn = document.querySelector('button[form="createPhaseForm"]');
+                if (submitBtn) {
+                    submitBtn.addEventListener('click', function(e) {
+                        console.log('Submit button clicked');
+                        // Don't prevent default - let form submit
+                    });
+                }
+                
                 createPhaseForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
+                    console.log('Form submit event triggered');
 
-                    // Protect button
-                    const btn = document.querySelector('#createPhaseModal .btn.orange_btn');
-                    if (btn && btn.disabled) return;
-                    if (btn) {
-                        btn.disabled = true;
-                        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+                    // Get submit button (it's outside the form, using form attribute)
+                    const btn = document.querySelector('button[form="createPhaseForm"]');
+                    console.log('Submit button:', btn);
+                    
+                    // Check if button is already disabled (protection system handles this)
+                    if (btn && btn.disabled) {
+                        console.log('Button already disabled, returning');
+                        return;
+                    }
+                    
+                    // Manually protect button here since form submit might bypass button protection
+                    if (btn && window.protectButton) {
+                        window.protectButton(btn);
                     }
 
                     const formData = new FormData(createPhaseForm);
                     const title = formData.get('title');
+
+                    // Validate title
+                    if (!title || !title.trim()) {
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('Please enter a phase title.');
+                        } else {
+                            alert('Please enter a phase title.');
+                        }
+                        return;
+                    }
 
                     // Collect milestones - find inputs by their actual name attribute, not by index
                     const milestones = [];
@@ -1869,46 +1898,50 @@
                         }
                     });
 
-                    if (title.trim()) {
-                        try {
-                            const response = await api.makeRequest('projects/create_phase', {
-                                project_id: currentProjectId,
-                                user_id: {{ auth()->id() ?? 1 }},
-                                title: title,
-                                milestones: milestones.length > 0 ? milestones : null
-                            });
+                    try {
+                        // Make API call and pass button element for automatic protection
+                        const response = await api.makeRequest('projects/create_phase', {
+                            project_id: currentProjectId,
+                            user_id: {{ auth()->id() ?? 1 }},
+                            title: title.trim(),
+                            milestones: milestones.length > 0 ? milestones : null
+                        }, 'POST', btn);
 
-                            if (response.code === 200) {
-                                // Close modal
-                                const modal = bootstrap.Modal.getInstance(document.getElementById(
-                                    'createPhaseModal'));
-                                if (modal) modal.hide();
+                        if (response.code === 200) {
+                            // Close modal
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
+                            if (modal) modal.hide();
 
-                                // Show success message
-                                alert('Phase "' + title + '" created successfully!');
-
-                                // Reset form
-                                createPhaseForm.reset();
-                                milestoneIndex = 1;
-                                resetMilestonesContainer();
-
-                                // Reload phases
-                                loadPhases(true);
+                            // Show success message
+                            if (typeof toastr !== 'undefined') {
+                                toastr.success('Phase created successfully!');
                             } else {
-                                alert('Error creating phase: ' + response.message);
+                                alert('Phase "' + title + '" created successfully!');
                             }
-                        } catch (error) {
-                            console.error('Error creating phase:', error);
-                            alert('Error creating phase. Please try again.');
-                        } finally {
-                            // Reset button
-                            if (btn) {
-                                btn.disabled = false;
-                                btn.innerHTML =
-                                    '<i class="fas fa-plus me-2"></i>{{ __('messages.create_phase') }}';
+
+                            // Reset form
+                            createPhaseForm.reset();
+                            milestoneIndex = 1;
+                            resetMilestonesContainer();
+
+                            // Reload phases
+                            loadPhases(true);
+                        } else {
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error(response.message || 'Failed to create phase');
+                            } else {
+                                alert('Error creating phase: ' + (response.message || 'Unknown error'));
                             }
                         }
+                    } catch (error) {
+                        console.error('Error creating phase:', error);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('Error creating phase. Please try again.');
+                        } else {
+                            alert('Error creating phase. Please try again.');
+                        }
                     }
+                    // Note: Button will be automatically released by button protection system when API call completes
                 });
             }
         });
