@@ -11,7 +11,46 @@ use Illuminate\Support\Facades\Log;
 class NotificationHelper
 {
     /**
-     * Send notification and push to user(s)
+     * Send notification and push to user(s) - Queued (Async)
+     *
+     * @param array|int $userIds
+     * @param string $type
+     * @param string $title
+     * @param string $message
+     * @param array $data
+     * @param string $priority
+     * @return void
+     */
+    public static function send($userIds, $type, $title, $message, $data = [], $priority = 'medium')
+    {
+        try {
+            // Check if queue connection is sync - if yes, send directly without queue
+            $queueConnection = config('queue.default');
+            
+            if ($queueConnection === 'sync') {
+                // If sync mode, send directly (for backward compatibility)
+                Log::warning("NotificationHelper::send - Queue is in sync mode, sending directly");
+                return self::sendSync($userIds, $type, $title, $message, $data, $priority);
+            }
+            
+            // Dispatch job to queue for async processing
+            \App\Jobs\SendNotificationJob::dispatch($userIds, $type, $title, $message, $data, $priority)
+                ->onConnection('database')
+                ->onQueue('default');
+                
+            Log::info("NotificationHelper::send - Job dispatched to queue", [
+                'type' => $type,
+                'queue_connection' => $queueConnection
+            ]);
+        } catch (\Exception $e) {
+            Log::error("NotificationHelper::send failed: " . $e->getMessage());
+            // Fallback to sync if dispatch fails
+            return self::sendSync($userIds, $type, $title, $message, $data, $priority);
+        }
+    }
+
+    /**
+     * Send notification and push to user(s) - Synchronous (for use in jobs)
      *
      * @param array|int $userIds
      * @param string $type
@@ -21,20 +60,60 @@ class NotificationHelper
      * @param string $priority
      * @return array
      */
-    public static function send($userIds, $type, $title, $message, $data = [], $priority = 'medium')
+    public static function sendSync($userIds, $type, $title, $message, $data = [], $priority = 'medium')
     {
         try {
             // Use Laravel's service container to resolve dependencies automatically
             $pushService = app(PushNotificationService::class);
             return $pushService->send($userIds, $type, $title, $message, $data, $priority);
         } catch (\Exception $e) {
-            Log::error("NotificationHelper::send failed: " . $e->getMessage());
+            Log::error("NotificationHelper::sendSync failed: " . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Send notification to project team members
+     * Send notification to project team members - Queued (Async)
+     *
+     * @param int $projectId
+     * @param string $type
+     * @param string $title
+     * @param string $message
+     * @param array $data
+     * @param string $priority
+     * @param array $excludeUserIds Users to exclude from notification
+     * @return void
+     */
+    public static function sendToProjectTeam($projectId, $type, $title, $message, $data = [], $priority = 'medium', $excludeUserIds = [])
+    {
+        try {
+            // Check if queue connection is sync - if yes, send directly without queue
+            $queueConnection = config('queue.default');
+            
+            if ($queueConnection === 'sync') {
+                // If sync mode, send directly (for backward compatibility)
+                Log::warning("NotificationHelper::sendToProjectTeam - Queue is in sync mode, sending directly");
+                return self::sendToProjectTeamSync($projectId, $type, $title, $message, $data, $priority, $excludeUserIds);
+            }
+            
+            // Dispatch job to queue for async processing
+            \App\Jobs\SendNotificationToProjectTeamJob::dispatch($projectId, $type, $title, $message, $data, $priority, $excludeUserIds)
+                ->onConnection('database')
+                ->onQueue('default');
+                
+            Log::info("NotificationHelper::sendToProjectTeam - Job dispatched to queue", [
+                'type' => $type,
+                'queue_connection' => $queueConnection
+            ]);
+        } catch (\Exception $e) {
+            Log::error("NotificationHelper::sendToProjectTeam failed: " . $e->getMessage());
+            // Fallback to sync if dispatch fails
+            return self::sendToProjectTeamSync($projectId, $type, $title, $message, $data, $priority, $excludeUserIds);
+        }
+    }
+
+    /**
+     * Send notification to project team members - Synchronous (for use in jobs)
      *
      * @param int $projectId
      * @param string $type
@@ -45,7 +124,7 @@ class NotificationHelper
      * @param array $excludeUserIds Users to exclude from notification
      * @return array
      */
-    public static function sendToProjectTeam($projectId, $type, $title, $message, $data = [], $priority = 'medium', $excludeUserIds = [])
+    public static function sendToProjectTeamSync($projectId, $type, $title, $message, $data = [], $priority = 'medium', $excludeUserIds = [])
     {
         try {
             // Use Laravel's service container to resolve dependencies automatically
@@ -81,13 +160,13 @@ class NotificationHelper
 
             return $pushService->send($teamMembers, $type, $title, $message, $data, $priority);
         } catch (\Exception $e) {
-            Log::error("NotificationHelper::sendToProjectTeam failed: " . $e->getMessage());
+            Log::error("NotificationHelper::sendToProjectTeamSync failed: " . $e->getMessage());
             return [];
         }
     }
 
     /**
-     * Send notification to project manager and technical engineer
+     * Send notification to project manager and technical engineer - Queued (Async)
      *
      * @param int $projectId
      * @param string $type
@@ -96,14 +175,14 @@ class NotificationHelper
      * @param array $data
      * @param string $priority
      * @param array $excludeUserIds Users to exclude from notification
-     * @return array
+     * @return void
      */
     public static function sendToProjectManagers($projectId, $type, $title, $message, $data = [], $priority = 'medium', $excludeUserIds = [])
     {
         try {
             $project = Project::where('id', $projectId)->first();
             if (!$project) {
-                return [];
+                return;
             }
 
             $userIds = [];
@@ -121,13 +200,13 @@ class NotificationHelper
             }
 
             if (empty($userIds)) {
-                return [];
+                return;
             }
 
-            return self::send($userIds, $type, $title, $message, $data, $priority);
+            // Dispatch job to queue for async processing
+            self::send($userIds, $type, $title, $message, $data, $priority);
         } catch (\Exception $e) {
             Log::error("NotificationHelper::sendToProjectManagers failed: " . $e->getMessage());
-            return [];
         }
     }
 

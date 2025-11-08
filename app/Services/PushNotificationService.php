@@ -376,7 +376,7 @@ class PushNotificationService
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $accessToken,
                 'Content-Type' => 'application/json',
-            ])->timeout(30)->post($url, $payload);
+            ])->timeout(10)->post($url, $payload);
 
             $responseData = $response->json();
             $statusCode = $response->status();
@@ -491,7 +491,7 @@ class PushNotificationService
             $response = Http::withHeaders([
                 'Authorization' => 'key=' . $apiKey,
                 'Content-Type' => 'application/json',
-            ])->timeout(30)->post($url, $payload);
+            ])->timeout(10)->post($url, $payload);
 
             $responseData = $response->json();
             $statusCode = $response->status();
