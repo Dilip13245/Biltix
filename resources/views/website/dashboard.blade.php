@@ -2334,6 +2334,9 @@
                     map.setCenter(saudiArabia);
                     map.setZoom(6);
                 }
+                
+                // Clear stored location data
+                window.projectLocationData = null;
 
                 // Clear file displays
                 document.getElementById('construction-files').innerHTML = '';
@@ -2377,6 +2380,16 @@
                     if (hasFiles) {
                         // Store form data for later use
                         window.projectFormData = new FormData(createProjectForm);
+                        
+                        // Store location data before closing modal (for validation)
+                        const projectLocation = document.getElementById('project_location');
+                        const latitude = document.getElementById('latitude');
+                        const longitude = document.getElementById('longitude');
+                        window.projectLocationData = {
+                            location: projectLocation ? projectLocation.value.trim() : '',
+                            latitude: latitude ? latitude.value : '',
+                            longitude: longitude ? longitude.value : ''
+                        };
 
                         // Close project modal
                         const projectModal = bootstrap.Modal.getInstance(document.getElementById(
@@ -2613,27 +2626,43 @@
             // Create project with marked up images
             async function createProjectWithMarkup(markedUpImageData) {
                 // Validate location is selected on map before submitting
-                const projectLocation = document.getElementById('project_location');
-                const latitude = document.getElementById('latitude');
-                const longitude = document.getElementById('longitude');
+                // Get the stored form data first
+                const formData = window.projectFormData;
+                
+                // Get location values from FormData (more reliable than DOM when modal is closed)
+                const projectLocation = formData.get('project_location') || '';
+                const latitude = formData.get('latitude') || '';
+                const longitude = formData.get('longitude') || '';
+                
+                // Also check stored location data as fallback (in case FormData doesn't have it)
+                const locationData = window.projectLocationData || {};
+                const storedLocation = locationData.location || projectLocation;
+                const storedLatitude = locationData.latitude || latitude;
+                const storedLongitude = locationData.longitude || longitude;
 
-                if (!projectLocation.value.trim() || !latitude.value || !longitude.value) {
-                    projectLocation.classList.add('is-invalid');
+                // Check if location is selected on map (must have latitude and longitude)
+                // Only show error if location is actually missing (latitude and longitude are required)
+                const hasValidLocation = storedLatitude && storedLatitude.trim() !== '' && 
+                                        storedLongitude && storedLongitude.trim() !== '';
+                
+                if (!hasValidLocation) {
                     showToast('{{ __('messages.please_select_location') }}', 'warning');
                     
                     // Re-enable button
                     const btn = document.querySelector('#createProjectModal .btn.orange_btn');
+                    const drawingBtn = document.getElementById('saveDrawingBtn');
                     if (btn) {
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fas fa-plus me-2"></i>Create Project';
+                    }
+                    if (drawingBtn) {
+                        drawingBtn.disabled = false;
+                        drawingBtn.innerHTML = '<i class="fas fa-save me-2"></i><span id="saveButtonText">Save</span>';
                     }
                     return;
                 }
 
                 try {
-                    // Get the stored form data
-                    const formData = window.projectFormData;
-
                     // Store original files (both image and non-image) before clearing
                     const originalFiles = {
                         construction_plans: [],

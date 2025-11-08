@@ -127,7 +127,7 @@
                                 <table class="table align-middle mb-0">
                                     <thead class="sticky-top bg-white">
                                         <tr>
-                                            <th class="small text-muted">{{ __('messages.title') }}</th>
+                                            <th class="small text-muted" style="max-width: 250px;">{{ __('messages.title') }}</th>
                                             <th class="small text-muted">{{ __('messages.date') }}</th>
                                             <th class="small text-muted">{{ __('messages.status') }}</th>
                                             <th class="small text-muted">{{ __('messages.actions') }}</th>
@@ -229,6 +229,13 @@
                 }
             }
 
+            // Helper function to truncate text
+            function truncateText(text, maxLength = 40) {
+                if (!text) return '-';
+                if (text.length <= maxLength) return text;
+                return text.substring(0, maxLength) + '...';
+            }
+
             function displayInspections(inspections) {
                 const tbody = document.getElementById('inspectionsTableBody');
 
@@ -247,12 +254,14 @@
                 tbody.innerHTML = inspections.map(inspection => {
                     const statusBadge = getStatusBadge(inspection.status);
                     const date = new Date(inspection.created_at).toLocaleDateString();
+                    const title = inspection.description || 'Inspection';
+                    const subtitle = inspection.category || '-';
 
                     return `
                         <tr>
-                            <td class="border-0">
-                                <div class="fw-semibold">${inspection.description || 'Inspection'}</div>
-                                <div class="small text-muted">${inspection.category}</div>
+                            <td class="border-0" style="max-width: 250px;">
+                                <div class="fw-semibold small text-truncate" style="max-width: 100%; font-size: 0.85rem;" title="${title}">${truncateText(title, 18)}</div>
+                                <div class="small text-muted text-truncate" style="max-width: 100%; font-size: 0.75rem;" title="${subtitle}">${truncateText(subtitle, 20)}</div>
                             </td>
                             <td class="border-0">${date}</td>
                             <td class="border-0">${statusBadge}</td>
@@ -272,7 +281,7 @@
                         text: '{{ __('messages.todo') }}'
                     },
                     'in_progress': {
-                        class: 'badge3',
+                        class: 'badge5',
                         icon: 'hourglass-half',
                         text: '{{ __('messages.in_progress') }}'
                     },
@@ -287,7 +296,7 @@
                         text: '{{ __('messages.approved') }}'
                     },
                     'failed': {
-                        class: 'badge2 text-danger',
+                        class: 'badge2',
                         icon: 'times-circle',
                         text: '{{ __('messages.failed') }}'
                     }

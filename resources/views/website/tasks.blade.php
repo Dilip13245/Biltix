@@ -324,13 +324,13 @@
 
         function getStatusBadge(status) {
             const statusMap = {
-                'todo': 'badge2',
-                'in_progress': 'badge4',
+                'todo': 'badge3',
+                'in_progress': 'badge5',
                 'complete': 'badge1',
-                'approve': 'badge3'
+                'approve': 'badge1'
             };
 
-            const badgeClass = statusMap[status] || 'badge2';
+            const badgeClass = statusMap[status] || 'badge3';
             const statusText = status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
 
             return `<span class="badge ${badgeClass} fw-normal" style="font-size: 0.9em;">${statusText}</span>`;
@@ -447,8 +447,16 @@
             document.getElementById('taskDetailStartDate').textContent = formatDate(task.created_at);
             document.getElementById('taskDetailAssignedTo').textContent = task.assigned_user_name || 'Unassigned';
             document.getElementById('taskDetailNumber').textContent = task.task_number || '-';
-            document.getElementById('taskDetailStatus').textContent = task.status.charAt(0).toUpperCase() + task.status
-                .slice(1).replace('_', ' ');
+            const statusBadge = document.getElementById('taskDetailStatus');
+            statusBadge.textContent = task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ');
+            // Set consistent status badge class
+            const statusMap = {
+                'todo': 'badge3',
+                'in_progress': 'badge5',
+                'complete': 'badge1',
+                'approve': 'badge1'
+            };
+            statusBadge.className = `badge ${statusMap[task.status] || 'badge3'}`;
             document.getElementById('taskDetailPriority').innerHTML = getPriorityBadge(task.priority);
 
             loadTaskImages(task.images || []);
@@ -730,8 +738,16 @@
                 });
 
                 if (response.code === 200) {
-                    document.getElementById('taskDetailStatus').textContent = newStatus.charAt(0).toUpperCase() +
-                        newStatus.slice(1).replace('_', ' ');
+                    const statusBadge = document.getElementById('taskDetailStatus');
+                    statusBadge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1).replace('_', ' ');
+                    // Update status badge with consistent color
+                    const statusMap = {
+                        'todo': 'badge3',
+                        'in_progress': 'badge5',
+                        'complete': 'badge1',
+                        'approve': 'badge1'
+                    };
+                    statusBadge.className = `badge ${statusMap[newStatus] || 'badge3'}`;
                     window.currentTaskDetails.status = newStatus;
                     
                     // Update resolve button visibility based on new status
@@ -777,7 +793,7 @@
 
                 if (response.code === 200) {
                     document.getElementById('taskDetailStatus').textContent = 'Approve';
-                    document.getElementById('taskDetailStatus').className = 'badge badge3';
+                    document.getElementById('taskDetailStatus').className = 'badge badge1';
                     document.getElementById('taskStatusSelect').value = 'approve';
                     document.getElementById('taskStatusSelect').disabled = true;
 

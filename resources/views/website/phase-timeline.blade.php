@@ -1897,7 +1897,13 @@
                     const extensionDays = parseInt(extensionInput.value) || 0;
 
                     if (extensionDays < 0 || extensionDays > 3650) {
-                        alert('Extension days must be between 0 and 3650');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.warning('Extension days must be between 0 and 3650');
+                        } else if (typeof showToast === 'function') {
+                            showToast('Extension days must be between 0 and 3650', 'warning');
+                        } else {
+                            alert('Extension days must be between 0 and 3650');
+                        }
                         extensionInput.value = Math.min(Math.max(extensionDays, 0), 3650);
                         return;
                     }
@@ -1912,16 +1918,40 @@
                         if (response.code === 200) {
                             loadPhaseTimeline();
                             if (extensionDays > 0) {
-                                alert(`Milestone extended by ${extensionDays} days`);
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.success(`Milestone extended by ${extensionDays} days`);
+                                } else if (typeof showToast === 'function') {
+                                    showToast(`Milestone extended by ${extensionDays} days`, 'success');
+                                } else {
+                                    alert(`Milestone extended by ${extensionDays} days`);
+                                }
                             } else {
-                                alert('Extension reset successfully');
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.success('Extension reset successfully');
+                                } else if (typeof showToast === 'function') {
+                                    showToast('Extension reset successfully', 'success');
+                                } else {
+                                    alert('Extension reset successfully');
+                                }
                             }
                         } else {
-                            alert('Failed to extend milestone: ' + response.message);
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error('Failed to extend milestone: ' + response.message);
+                            } else if (typeof showToast === 'function') {
+                                showToast('Failed to extend milestone: ' + response.message, 'error');
+                            } else {
+                                alert('Failed to extend milestone: ' + response.message);
+                            }
                         }
                     } catch (error) {
                         console.error('Error extending milestone:', error);
-                        alert('Error extending milestone');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('Error extending milestone');
+                        } else if (typeof showToast === 'function') {
+                            showToast('Error extending milestone', 'error');
+                        } else {
+                            alert('Error extending milestone');
+                        }
                     }
                 }, 500);
             }
@@ -2101,14 +2131,26 @@
                 const milestoneDays = parseInt(document.getElementById('milestoneDays').value);
 
                 if (!milestoneName || !milestoneDays || milestoneDays < 1) {
-                    alert('Please fill all fields correctly');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.warning('Please fill all fields correctly');
+                    } else if (typeof showToast === 'function') {
+                        showToast('Please fill all fields correctly', 'warning');
+                    } else {
+                        alert('Please fill all fields correctly');
+                    }
                     return;
                 }
 
                 const saveBtn = document.querySelector('#addMilestoneModal .btn.orange_btn');
                 if (!saveBtn) {
                     console.error('Save button not found');
-                    alert('Error: Save button not found');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Error: Save button not found');
+                    } else if (typeof showToast === 'function') {
+                        showToast('Error: Save button not found', 'error');
+                    } else {
+                        alert('Error: Save button not found');
+                    }
                     return;
                 }
                 
@@ -2163,22 +2205,52 @@
                                 if (modal) modal.hide();
 
                                 // Show success message
-                                alert('Milestone added successfully!');
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.success('Milestone added successfully!');
+                                } else if (typeof showToast === 'function') {
+                                    showToast('Milestone added successfully!', 'success');
+                                } else {
+                                    alert('Milestone added successfully!');
+                                }
 
                                 // Reload timeline
                                 loadPhaseTimeline();
                             } else {
-                                alert('Failed to add milestone: ' + updateResponse.message);
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.error('Failed to add milestone: ' + updateResponse.message);
+                                } else if (typeof showToast === 'function') {
+                                    showToast('Failed to add milestone: ' + updateResponse.message, 'error');
+                                } else {
+                                    alert('Failed to add milestone: ' + updateResponse.message);
+                                }
                             }
                         } else {
-                            alert('Phase not found');
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error('Phase not found');
+                            } else if (typeof showToast === 'function') {
+                                showToast('Phase not found', 'error');
+                            } else {
+                                alert('Phase not found');
+                            }
                         }
                     } else {
-                        alert('Failed to load phase data');
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('Failed to load phase data');
+                        } else if (typeof showToast === 'function') {
+                            showToast('Failed to load phase data', 'error');
+                        } else {
+                            alert('Failed to load phase data');
+                        }
                     }
                 } catch (error) {
                     console.error('Error adding milestone:', error);
-                    alert('Error adding milestone');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Error adding milestone');
+                    } else if (typeof showToast === 'function') {
+                        showToast('Error adding milestone', 'error');
+                    } else {
+                        alert('Error adding milestone');
+                    }
                 } finally {
                     // Release button if protection system is available
                     if (window.releaseButton) {

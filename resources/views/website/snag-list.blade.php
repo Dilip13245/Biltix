@@ -293,7 +293,7 @@
         function getStatusBadge(status) {
             const statusMap = {
                 'todo': {
-                    class: 'badge5'
+                    class: 'badge3'
                 },
                 'complete': {
                     class: 'badge1'
@@ -701,11 +701,11 @@
 
         function getStatusBadgeClass(status) {
             const statusMap = {
-                'todo': 'badge5',
+                'todo': 'badge3',
                 'complete': 'badge1',
                 'approve': 'badge1'
             };
-            return statusMap[status.toLowerCase()] || 'badge5';
+            return statusMap[status.toLowerCase()] || 'badge3';
         }
 
         async function addComment(snagId) {
@@ -761,6 +761,13 @@
                     // Update current snag details
                     if (window.currentSnagDetails) {
                         window.currentSnagDetails.status = 'approve';
+                    }
+                    
+                    // Update status badge in modal
+                    const statusBadge = document.querySelector('#snagDetailsModal .badge');
+                    if (statusBadge) {
+                        statusBadge.textContent = 'Approve';
+                        statusBadge.className = `badge ${getStatusBadgeClass('approve')}`;
                     }
                     
                     // Update status select
@@ -833,6 +840,12 @@
 
                 if (response.code === 200) {
                     window.currentSnagDetails.status = newStatus;
+                    // Update status badge in modal
+                    const statusBadge = document.querySelector('#snagDetailsModal .badge');
+                    if (statusBadge) {
+                        statusBadge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                        statusBadge.className = `badge ${getStatusBadgeClass(newStatus)}`;
+                    }
                     // Update approve button visibility based on new status
                     updateApproveButtonVisibility();
                     loadSnags();

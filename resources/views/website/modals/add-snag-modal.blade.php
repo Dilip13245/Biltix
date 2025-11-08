@@ -13,6 +13,58 @@
           #addSnagModal .modal-header {
             position: relative !important;
           }
+          
+          /* Fix validation icon overlap - remove icon and set proper padding */
+          #addSnagModal .form-control.is-invalid,
+          #addSnagModal .Input_control.is-invalid,
+          #addSnagModal input.is-invalid,
+          #addSnagModal select.is-invalid,
+          #addSnagModal textarea.is-invalid {
+            border-color: #dc3545 !important;
+            background-image: none !important;
+            padding-right: 0.75rem !important;
+            padding-left: 0.75rem !important;
+          }
+          
+          [dir="rtl"] #addSnagModal .form-control.is-invalid,
+          [dir="rtl"] #addSnagModal .Input_control.is-invalid,
+          [dir="rtl"] #addSnagModal input.is-invalid,
+          [dir="rtl"] #addSnagModal select.is-invalid,
+          [dir="rtl"] #addSnagModal textarea.is-invalid {
+            padding-right: 0.75rem !important;
+            padding-left: 0.75rem !important;
+          }
+          
+          /* For select fields - keep dropdown arrow, remove validation icon */
+          #addSnagModal .form-select.is-invalid:not([multiple]):not([size]),
+          #addSnagModal .form-select.is-invalid:not([multiple])[size="1"],
+          #addSnagModal select.is-invalid:not([multiple]):not([size]),
+          #addSnagModal select.is-invalid:not([multiple])[size="1"] {
+            --bs-form-select-bg-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+            background-position: var(--bs-form-select-bg-position) !important;
+            background-size: 16px 12px !important;
+            padding-right: 3rem !important;
+            border-color: #dc3545 !important;
+          }
+          
+          [dir="rtl"] #addSnagModal .form-select.is-invalid:not([multiple]):not([size]),
+          [dir="rtl"] #addSnagModal .form-select.is-invalid:not([multiple])[size="1"],
+          [dir="rtl"] #addSnagModal select.is-invalid:not([multiple]):not([size]),
+          [dir="rtl"] #addSnagModal select.is-invalid:not([multiple])[size="1"] {
+            --bs-form-select-bg-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+            padding-right: 0.75rem !important;
+            padding-left: 3rem !important;
+            border-color: #dc3545 !important;
+          }
+          
+          /* Ensure invalid-feedback has proper spacing */
+          #addSnagModal .invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: #dc3545;
+          }
         </style>
         @if(app()->getLocale() == 'ar')
         <div class="d-flex justify-content-between align-items-center w-100">
@@ -49,7 +101,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="description" class="form-label fw-medium">{{ __("messages.add_description") }}</label>
+            <label for="description" class="form-label fw-medium">{{ __("messages.add_description") }} <span class="text-muted">({{ __("messages.optional") }})</span></label>
             <textarea class="form-control Input_control" id="description" name="description" rows="3"
               placeholder="{{ __("messages.provide_detailed_description") }}" maxlength="1000"></textarea>
           </div>
@@ -142,7 +194,7 @@ function validateSnagForm() {
     }
     
     if (!isValid) {
-        showToast('Please fill in all required fields.', 'error');
+        showToast('Please fill all fields correctly', 'error');
     }
     
     return isValid;

@@ -37,7 +37,7 @@
                             <div class="col-md-8">
                                 <h4 id="taskDetailTitle" class="fw-bold black_color mb-2">Task Title</h4>
                                 <div class="d-flex gap-3 flex-wrap mb-2">
-                                    <span id="taskDetailStatus" class="badge badge2">{{ __('messages.todo') }}</span>
+                                    <span id="taskDetailStatus" class="badge badge3">{{ __('messages.todo') }}</span>
                                     <small class="text-muted"><i class="fas fa-hashtag me-1"></i><span id="taskDetailNumber">-</span></small>
                                 </div>
                             </div>

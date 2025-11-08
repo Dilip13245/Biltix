@@ -284,16 +284,19 @@
             checklistItem.className = 'form-check mb-2';
 
             checklistItem.innerHTML = `
-            <div class="d-flex align-items-center justify-content-between w-100">
-                <label class="form-check-label ${isCompleted ? 'text-muted' : ''} flex-grow-1" for="checklist-${item.id}">
+            <div class="d-flex align-items-start justify-content-between w-100">
+                <label class="form-check-label ${isCompleted ? 'text-muted' : ''} flex-grow-1 me-2" for="checklist-${item.id}" style="word-wrap: break-word; line-height: 1.5;">
                     ${item.checklist_item}
                 </label>
-                <div class="flex-grow-1 mx-3" style="border-bottom: 2px dotted #dee2e6;"></div>
-                <input class="form-check-input" type="checkbox" 
-                       id="checklist-${item.id}" 
-                       ${item.is_checked ? 'checked' : ''}
-                       ${isCompleted ? 'disabled' : ''}
-                       onchange="toggleChecklistItem(${item.id}, this.checked)">
+                <div class="flex-shrink-0 mx-2" style="border-bottom: 2px dotted #dee2e6; min-width: 20px; margin-top: 0.375rem;"></div>
+                <div class="flex-shrink-0" style="margin-top: 0.125rem;">
+                    <input class="form-check-input" type="checkbox" 
+                           id="checklist-${item.id}" 
+                           ${item.is_checked ? 'checked' : ''}
+                           ${isCompleted ? 'disabled' : ''}
+                           onchange="toggleChecklistItem(${item.id}, this.checked)"
+                           style="margin-top: 0.25rem;">
+                </div>
             </div>
         `;
 
@@ -548,17 +551,17 @@
     }
 
     function getInspectionStatusClass(status) {
-        if (!status) return 'bg-warning';
+        if (!status) return 'badge3';
         const statusLower = String(status).toLowerCase().trim();
         const statusClasses = {
-            'todo': 'bg-warning',
-            'pending': 'bg-warning',
-            'in_progress': 'bg-info',
-            'completed': 'bg-success',
-            'approved': 'bg-success',
-            'failed': 'bg-danger'
+            'todo': 'badge3',
+            'pending': 'badge3',
+            'in_progress': 'badge5',
+            'completed': 'badge1',
+            'approved': 'badge1',
+            'failed': 'badge2'
         };
-        return statusClasses[statusLower] || 'bg-secondary';
+        return statusClasses[statusLower] || 'badge3';
     }
 
     function showImageModal(imageUrl) {
@@ -820,6 +823,22 @@
     .form-check-input:checked {
         background-color: #198754;
         border-color: #198754;
+    }
+
+    /* Fix checklist item alignment for long text */
+    #checklist-container .form-check {
+        margin-bottom: 0.75rem;
+    }
+
+    #checklist-container .form-check-label {
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    #checklist-container .form-check-input {
+        flex-shrink: 0;
+        margin-top: 0.25rem;
     }
 
     .badge {

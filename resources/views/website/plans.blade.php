@@ -944,50 +944,45 @@
             // Add scroll listener for pagination
             window.addEventListener('scroll', handlePlansScroll);
 
-            const uploadForm = document.getElementById('uploadPlanForm');
-            if (uploadForm && !uploadForm.hasAttribute('data-listener-added')) {
-                console.log('Upload form found, adding event listener');
-                uploadForm.setAttribute('data-listener-added', 'true');
-                uploadForm.addEventListener('submit', function(e) {
+            // Handle upload plan button click - use capture phase to override other handlers
+            const uploadPlanBtn = document.getElementById('uploadPlanSubmitBtn');
+            if (uploadPlanBtn) {
+                uploadPlanBtn.addEventListener('click', function handleUploadPlanClick(e) {
                     e.preventDefault();
-                    console.log('Form submitted');
-
-                    // Protect button - early return if already processing
-                    const btn = document.getElementById('uploadPlanSubmitBtn');
-                    if (btn && btn.disabled) {
-                        console.log('Button already disabled, preventing duplicate submission');
-                        e.stopImmediatePropagation();
-                        return false;
-                    }
-
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    console.log('=== Upload Plan Next button clicked ===');
+                    
                     const fileInput = document.getElementById('planFiles');
-                    const files = fileInput.files;
+                    const files = fileInput?.files;
 
                     if (!files || files.length === 0) {
                         toastr.warning('{{ __('messages.please_select_files') }}');
-                        return;
+                        return false;
                     }
+                    
+                    console.log('Files selected:', files.length);
 
-                    // Disable button after validation passes
-                    if (btn) {
-                        btn.disabled = true;
-                        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-                    }
+                    // Disable button
+                    uploadPlanBtn.disabled = true;
+                    uploadPlanBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
 
                     // Store form data
-                    window.planFormData = new FormData(uploadForm);
+                    const form = document.getElementById('uploadPlanForm');
+                    window.planFormData = new FormData(form);
                     const projectId = getProjectIdFromUrl();
                     window.planFormData.append('project_id', projectId);
 
                     // Separate image and document files (exclude DWG from images)
                     const imageFiles = Array.from(files).filter(file => {
-                        return file.type.startsWith('image/') && !file.name.toLowerCase().endsWith(
-                            '.dwg');
+                        return file.type.startsWith('image/') && !file.name.toLowerCase().endsWith('.dwg');
                     });
                     const documentFiles = Array.from(files).filter(file => {
-                        return !file.type.startsWith('image/') || file.name.toLowerCase().endsWith(
-                            '.dwg');
+                        return !file.type.startsWith('image/') || file.name.toLowerCase().endsWith('.dwg');
                     });
+
+                    console.log('Image files:', imageFiles.length, 'Document files:', documentFiles.length);
 
                     // Store all files for later processing
                     window.allSelectedFiles = {
@@ -996,64 +991,80 @@
                     };
 
                     if (imageFiles.length > 0) {
-                        // Close upload modal
-                        const uploadModal = bootstrap.Modal.getInstance(document.getElementById(
-                            'uploadPlanModal'));
-                        if (uploadModal) uploadModal.hide();
-
-                        // Reset button when going to drawing modal (user can still cancel)
-                        if (btn) {
-                            btn.disabled = false;
-                            btn.innerHTML = '{{ __('messages.next') }}';
+                        // Store files globally
+                        window.selectedFiles = imageFiles;
+                        
+                        // Close upload modal first
+                        const uploadModal = bootstrap.Modal.getInstance(document.getElementById('uploadPlanModal'));
+                        if (uploadModal) {
+                            uploadModal.hide();
                         }
 
-                        // Open drawing modal for images
-                        setTimeout(() => {
-                            // Check if drawing modal function exists
-                            if (typeof openDrawingModal === 'function') {
-                                openDrawingModal({
-                                    title: '{{ __('messages.drawing') }}',
-                                    saveButtonText: '{{ __('messages.save') }}',
-                                    mode: 'image',
-                                    onSave: function(markedUpImageData) {
-                                        // Protect drawing save button
-                                        const drawingBtn = document.getElementById(
-                                            'saveDrawingBtn');
-                                        if (drawingBtn && drawingBtn.disabled) return;
-                                        if (drawingBtn) {
-                                            drawingBtn.disabled = true;
-                                            drawingBtn.innerHTML =
-                                                '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
-                                        }
-                                        uploadMixedFiles(markedUpImageData);
+                        // Reset button
+                        uploadPlanBtn.disabled = false;
+                        uploadPlanBtn.innerHTML = '{{ __('messages.next') }}';
+
+                        console.log('Opening drawing modal...');
+                        console.log('openDrawingModal type:', typeof openDrawingModal);
+                        console.log('window.openDrawingModal type:', typeof window.openDrawingModal);
+
+                        // Open drawing modal (same pattern as project-files.blade.php)
+                        const openDrawing = typeof openDrawingModal !== 'undefined' ? openDrawingModal : (typeof window.openDrawingModal !== 'undefined' ? window.openDrawingModal : null);
+                        
+                        if (openDrawing && typeof openDrawing === 'function') {
+                            openDrawing({
+                                title: '{{ __('messages.drawing') }}',
+                                saveButtonText: '{{ __('messages.save') }}',
+                                mode: 'image',
+                                onSave: function(markedUpImageData) {
+                                    const drawingBtn = document.getElementById('saveDrawingBtn');
+                                    if (drawingBtn && drawingBtn.disabled) return;
+                                    if (drawingBtn) {
+                                        drawingBtn.disabled = true;
+                                        drawingBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
                                     }
-                                });
-                            } else {
-                                console.error('Drawing modal not available, uploading directly');
-                                uploadPlanDirectly();
-                            }
+                                    uploadMixedFiles(markedUpImageData);
+                                }
+                            });
 
-                            window.selectedFiles = imageFiles;
-
-                            // Add event listener only if modal exists
+                            // Load images after modal is shown (same pattern as project-files.blade.php)
                             const drawingModal = document.getElementById('drawingModal');
                             if (drawingModal) {
                                 drawingModal.addEventListener('shown.bs.modal', function() {
+                                    console.log('Drawing modal shown, loading images...');
+                                    const loadSingle = typeof loadImageToCanvas !== 'undefined' ? loadImageToCanvas : (typeof window.loadImageToCanvas !== 'undefined' ? window.loadImageToCanvas : null);
+                                    const loadMultiple = typeof loadMultipleFiles !== 'undefined' ? loadMultipleFiles : (typeof window.loadMultipleFiles !== 'undefined' ? window.loadMultipleFiles : null);
+                                    
                                     if (imageFiles.length === 1) {
-                                        loadImageToCanvas(imageFiles[0]);
+                                        if (loadSingle && typeof loadSingle === 'function') {
+                                            loadSingle(imageFiles[0]);
+                                        } else {
+                                            console.error('loadImageToCanvas function not found');
+                                        }
                                     } else {
-                                        loadMultipleFiles(imageFiles);
+                                        if (loadMultiple && typeof loadMultiple === 'function') {
+                                            loadMultiple(imageFiles);
+                                        } else {
+                                            console.error('loadMultipleFiles function not found');
+                                        }
                                     }
-                                }, {
-                                    once: true
-                                });
+                                }, { once: true });
+                            } else {
+                                console.error('Drawing modal element not found');
                             }
-                        }, 300);
+                        } else {
+                            console.error('openDrawingModal function not found');
+                            toastr.error('Drawing modal not available');
+                            uploadPlanDirectly();
+                        }
                     } else {
                         // Only documents, upload directly
+                        console.log('No images, uploading directly');
                         uploadPlanDirectly();
                     }
-                });
+                    
+                    return false;
+                }, true); // Use capture phase to run before other handlers
             }
 
             window.uploadPlanDirectly = async function() {

@@ -106,32 +106,35 @@ function showFieldError(field, message) {
     field.parentElement.appendChild(errorDiv);
 }
 
-// Form submit handler - handle both form submit and button click
+// Form validation only - actual submit is handled in plans.blade.php
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('uploadPlanForm');
     const submitBtn = document.getElementById('uploadPlanSubmitBtn');
     
+    // Prevent default form submission
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            if (!validatePlanForm()) {
-                return false;
-            }
-        });
+            return false;
+        }, { capture: true });
     }
     
-    // Also handle button click
+    // Button click handler - trigger form submit event (handled by plans.blade.php)
     if (submitBtn) {
         submitBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            const form = document.getElementById('uploadPlanForm');
-            if (form && typeof validatePlanForm === 'function') {
-                if (validatePlanForm()) {
-                    // Validation passed, trigger form submit
-                    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-                }
+            
+            // Validate form
+            if (typeof validatePlanForm === 'function' && !validatePlanForm()) {
+                return false;
+            }
+            
+            // Trigger form submit event (will be handled by plans.blade.php)
+            if (form) {
+                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                form.dispatchEvent(submitEvent);
             }
         });
     }

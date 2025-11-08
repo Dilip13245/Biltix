@@ -961,12 +961,14 @@
         }
 
         // Pagination variables
-        let allFiles = []; // Store all files for proper counting
-        let currentDisplayedFiles = []; // Currently displayed files
+        let allFiles = []; // Store all loaded files
         let currentPage = 1;
         let isLoading = false;
         let hasMorePages = true;
+        let totalFiles = 0; // Total files count from API
+        let autoLoadAttempts = 0; // Track auto-load attempts when filters exclude files
         const filesPerPage = 10;
+        const maxAutoLoadAttempts = 50; // Maximum pages to auto-load when filters exclude files
 
         // Load folders from API
         async function loadFolders() {
@@ -990,15 +992,29 @@
             }
         }
 
-        // Load all files for count statistics
+        // Load all files for count statistics (get total count from API)
         async function loadAllFilesForCounts(projectId) {
             try {
+                // Get first page to get total count
                 const response = await api.getFiles({
-                    project_id: projectId
+                    project_id: projectId,
+                    page: 1,
+                    limit: 1 // Just to get pagination metadata
                 });
                 
-                if (response.code === 200 && response.data && response.data.data) {
-                    updateFileCounts(response.data.data, []);
+                if (response.code === 200 && response.data) {
+                    if (response.data.pagination) {
+                        totalFiles = response.data.pagination.total;
+                        // Now load all files for counts (we need all to calculate category counts)
+                        await loadAllFilesForCountsCalculation(projectId);
+                    } else {
+                        // Fallback: load first page files for counting
+                        if (response.data.data) {
+                            updateFileCounts(response.data.data, []);
+                        } else {
+                            updateFileCounts([], []);
+                        }
+                    }
                 } else {
                     updateFileCounts([], []);
                 }
@@ -1007,61 +1023,145 @@
                 updateFileCounts([], []);
             }
         }
-
-        // Load project files from API
-        async function loadProjectFiles(folderId = null, resetPagination = true) {
+        
+        // Load all files for count calculation
+        async function loadAllFilesForCountsCalculation(projectId, folderId = null) {
             try {
-                const projectId = getProjectIdFromUrl();
                 const params = {
-                    project_id: projectId
+                    project_id: projectId,
+                    page: 1,
+                    limit: 10000 // Large limit to get all files for counting
                 };
                 if (folderId) {
                     params.folder_id = folderId;
                 }
+                
+                // Load all files by requesting a large limit
                 const response = await api.getFiles(params);
-
+                
                 if (response.code === 200 && response.data && response.data.data) {
-                    allFiles = response.data.data;
-                    
-                    if (resetPagination) {
-                        currentPage = 1;
-                        currentDisplayedFiles = [];
-                        hasMorePages = true;
-                    }
-                    
-                    let filteredFiles = applyClientSideFilters(allFiles);
-                    filteredFiles = applyClientSideSorting(filteredFiles);
-                    
-                    loadFilesPage(filteredFiles, resetPagination);
-                    updateFileCounts(allFiles, filteredFiles);
+                    updateFileCounts(response.data.data, []);
                 } else {
-                    displayNoFiles();
                     updateFileCounts([], []);
                 }
             } catch (error) {
+                console.error('Failed to load all files for counts:', error);
+                // Use totalFiles for total count if available
+                if (totalFiles > 0) {
+                    updateFileCounts([], []);
+                }
+            }
+        }
+
+        // Load project files from API with server-side pagination
+        async function loadProjectFiles(folderId = null, resetPagination = true) {
+            try {
+                if (isLoading) return;
+                
+                const projectId = getProjectIdFromUrl();
+                const params = {
+                    project_id: projectId,
+                    page: resetPagination ? 1 : currentPage,
+                    limit: filesPerPage
+                };
+                if (folderId) {
+                    params.folder_id = folderId;
+                }
+                
+                isLoading = true;
+                const response = await api.getFiles(params);
+
+                if (response.code === 200 && response.data && response.data.data) {
+                    const newFiles = response.data.data;
+                    
+                    if (resetPagination) {
+                        currentPage = 1;
+                        allFiles = [];
+                        hasMorePages = true;
+                        autoLoadAttempts = 0; // Reset auto-load counter
+                        // Clear table
+                        const tbody = document.getElementById('filesTableBody');
+                        if (tbody) tbody.innerHTML = '';
+                    }
+                    
+                    // Store all files (unfiltered) for counting purposes
+                    allFiles = allFiles.concat(newFiles);
+                    
+                    // Apply client-side filters and sorting to new files for display
+                    let filteredFiles = applyClientSideFilters(newFiles);
+                    filteredFiles = applyClientSideSorting(filteredFiles);
+                    
+                    // Display filtered files
+                    if (filteredFiles.length > 0) {
+                        displayFiles(filteredFiles, !resetPagination); // Append if not reset
+                        autoLoadAttempts = 0; // Reset counter when we find matching files
+                    } else {
+                        // If no files match filter on this page:
+                        autoLoadAttempts++;
+                        
+                        // Check if we should auto-load next page
+                        const shouldAutoLoad = response.data.pagination && 
+                                             response.data.pagination.has_more && 
+                                             autoLoadAttempts < maxAutoLoadAttempts;
+                        
+                        if (shouldAutoLoad) {
+                            // Load next page automatically to find matching files
+                            currentPage++;
+                            isLoading = false;
+                            setTimeout(() => loadProjectFiles(folderId, false), 100);
+                            return;
+                        } else {
+                            // Either no more pages or reached max attempts - stop auto-loading
+                            if (resetPagination || autoLoadAttempts >= maxAutoLoadAttempts) {
+                                // Show empty message if this was first page or we've tried too many pages
+                                displayNoFiles();
+                            }
+                            // Don't set hasMorePages = false here - let it be set by API response below
+                        }
+                    }
+                    
+                    // Update pagination info (always based on API response)
+                    // This determines if scroll-based loading should continue
+                    if (response.data.pagination) {
+                        hasMorePages = response.data.pagination.has_more;
+                        totalFiles = response.data.pagination.total;
+                    } else {
+                        hasMorePages = newFiles.length >= filesPerPage;
+                    }
+                    
+                    // Update counts - reload all files for accurate counts only on reset
+                    if (resetPagination) {
+                        const projectId = getProjectIdFromUrl();
+                        if (folderId) {
+                            // For folder view, load all files in folder for counts
+                            loadAllFilesForCountsCalculation(projectId, folderId);
+                        } else {
+                            // For root view, load all files for counts
+                            loadAllFilesForCountsCalculation(projectId);
+                        }
+                    }
+                } else {
+                    if (resetPagination) {
+                        displayNoFiles();
+                        updateFileCounts([], []);
+                    }
+                    hasMorePages = false;
+                }
+                
+                isLoading = false;
+            } catch (error) {
                 console.error('Failed to load files:', error);
-                displayNoFiles();
-                updateFileCounts([], []);
+                if (resetPagination) {
+                    displayNoFiles();
+                    updateFileCounts([], []);
+                }
+                isLoading = false;
+                hasMorePages = false;
             }
         }
         
-        function loadFilesPage(filteredFiles, resetDisplay = false) {
-            const startIndex = (currentPage - 1) * filesPerPage;
-            const endIndex = startIndex + filesPerPage;
-            const pageFiles = filteredFiles.slice(startIndex, endIndex);
-            
-            if (resetDisplay) {
-                currentDisplayedFiles = pageFiles;
-                displayFiles(currentDisplayedFiles, false);
-            } else {
-                currentDisplayedFiles = currentDisplayedFiles.concat(pageFiles);
-                displayFiles(pageFiles, true); // Append mode
-            }
-            
-            // Check if more pages available
-            hasMorePages = endIndex < filteredFiles.length;
-            isLoading = false;
-        }
+        // This function is no longer needed as we're using server-side pagination
+        // Keeping it for backward compatibility but it's handled in loadProjectFiles now
 
         function applyClientSideFilters(files) {
             return files.filter(file => {
@@ -1261,8 +1361,8 @@
         };
 
         function updateFileCounts(allFiles, filteredFiles = null) {
-            // Always show total counts from all files (not filtered)
-            const totalFiles = allFiles.length;
+            // Calculate counts from all files loaded
+            const totalCount = allFiles.length;
             const drawings = allFiles.filter(f => {
                 const ext = getFileExtension(f.file_type);
                 return ['dwg', 'dxf', 'dwf', 'jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(ext);
@@ -1273,25 +1373,46 @@
             }).length;
             const pdfs = allFiles.filter(f => getFileExtension(f.file_type) === 'pdf').length;
 
-            document.getElementById('totalFilesCount').textContent = totalFiles;
+            // Use totalFiles from API if available and we haven't loaded all files yet
+            const displayTotal = (totalFiles > 0 && allFiles.length < totalFiles) ? totalFiles : totalCount;
+            
+            document.getElementById('totalFilesCount').textContent = displayTotal;
             document.getElementById('drawingsCount').textContent = drawings;
             document.getElementById('documentsCount').textContent = documents;
             document.getElementById('pdfsCount').textContent = pdfs;
         }
         
-        // Table scroll handler for infinite scroll
+        // Window scroll handler for infinite scroll (works for both table and page scroll)
+        function handleWindowScroll() {
+            if (isLoading || !hasMorePages) return;
+            
+            // Only load more if we're viewing files (not folders)
+            const filesContainer = document.getElementById('filesTableContainer');
+            if (!filesContainer || filesContainer.style.display === 'none') return;
+            
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            // Load more when user is 200px from bottom
+            if (scrollTop + windowHeight >= documentHeight - 200) {
+                loadMoreFiles();
+            }
+        }
+        
+        // Table container scroll handler (if table has its own scroll)
         function handleTableScroll() {
             if (isLoading || !hasMorePages) return;
             
             const container = document.getElementById('filesTableContainer');
-            if (!container) return;
+            if (!container || container.style.display === 'none') return;
             
             const scrollTop = container.scrollTop;
             const scrollHeight = container.scrollHeight;
             const clientHeight = container.clientHeight;
             
-            // Load more when user is 50px from bottom
-            if (scrollTop + clientHeight >= scrollHeight - 50) {
+            // Load more when user is 200px from bottom
+            if (scrollTop + clientHeight >= scrollHeight - 200) {
                 loadMoreFiles();
             }
         }
@@ -1299,13 +1420,8 @@
         function loadMoreFiles() {
             if (isLoading || !hasMorePages) return;
             
-            isLoading = true;
             currentPage++;
-            
-            // Get current filtered files and load next page
-            let filteredFiles = applyClientSideFilters(allFiles);
-            filteredFiles = applyClientSideSorting(filteredFiles);
-            loadFilesPage(filteredFiles, false); // Don't reset display
+            loadProjectFiles(currentFolderId, false); // Don't reset pagination, load next page
         }
 
         function getFileIconFromName(filename) {
@@ -1463,6 +1579,12 @@
             currentFolderId = folderId;
             currentFolderName = folderName;
             
+            // Reset pagination when opening folder
+            currentPage = 1;
+            allFiles = [];
+            hasMorePages = true;
+            isLoading = false;
+            
             // Update UI
             document.getElementById('currentPath').textContent = folderName;
             document.getElementById('backBtn').style.display = 'block';
@@ -1482,8 +1604,8 @@
             document.getElementById('foldersGrid').style.display = 'none';
             document.getElementById('filesTableContainer').style.display = 'block';
             
-            // Load files for this folder
-            loadProjectFiles(folderId);
+            // Load files for this folder (reset pagination)
+            loadProjectFiles(folderId, true);
         }
 
         function goBack() {
@@ -1690,6 +1812,13 @@
             if (tableContainer) {
                 tableContainer.addEventListener('scroll', handleTableScroll);
             }
+            
+            // Also listen to window scroll for infinite scroll
+            let scrollTimeout;
+            window.addEventListener('scroll', function() {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(handleWindowScroll, 100);
+            });
 
             // Filter button functionality
             const filterBtn = document.querySelector('.filter-btn');

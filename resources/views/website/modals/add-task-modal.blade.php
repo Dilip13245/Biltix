@@ -14,6 +14,58 @@
                     #addTaskModal .modal-header {
                         position: relative !important;
                     }
+                    
+                    /* Fix validation icon overlap - remove icon and set proper padding */
+                    #addTaskModal .form-control.is-invalid,
+                    #addTaskModal .Input_control.is-invalid,
+                    #addTaskModal input.is-invalid,
+                    #addTaskModal select.is-invalid,
+                    #addTaskModal textarea.is-invalid {
+                        border-color: #dc3545 !important;
+                        background-image: none !important;
+                        padding-right: 0.75rem !important;
+                        padding-left: 0.75rem !important;
+                    }
+                    
+                    [dir="rtl"] #addTaskModal .form-control.is-invalid,
+                    [dir="rtl"] #addTaskModal .Input_control.is-invalid,
+                    [dir="rtl"] #addTaskModal input.is-invalid,
+                    [dir="rtl"] #addTaskModal select.is-invalid,
+                    [dir="rtl"] #addTaskModal textarea.is-invalid {
+                        padding-right: 0.75rem !important;
+                        padding-left: 0.75rem !important;
+                    }
+                    
+                    /* For select fields - keep dropdown arrow, remove validation icon */
+                    #addTaskModal .form-select.is-invalid:not([multiple]):not([size]),
+                    #addTaskModal .form-select.is-invalid:not([multiple])[size="1"],
+                    #addTaskModal select.is-invalid:not([multiple]):not([size]),
+                    #addTaskModal select.is-invalid:not([multiple])[size="1"] {
+                        --bs-form-select-bg-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+                        background-position: var(--bs-form-select-bg-position) !important;
+                        background-size: 16px 12px !important;
+                        padding-right: 3rem !important;
+                        border-color: #dc3545 !important;
+                    }
+                    
+                    [dir="rtl"] #addTaskModal .form-select.is-invalid:not([multiple]):not([size]),
+                    [dir="rtl"] #addTaskModal .form-select.is-invalid:not([multiple])[size="1"],
+                    [dir="rtl"] #addTaskModal select.is-invalid:not([multiple]):not([size]),
+                    [dir="rtl"] #addTaskModal select.is-invalid:not([multiple])[size="1"] {
+                        --bs-form-select-bg-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+                        padding-right: 0.75rem !important;
+                        padding-left: 3rem !important;
+                        border-color: #dc3545 !important;
+                    }
+                    
+                    /* Ensure invalid-feedback has proper spacing */
+                    #addTaskModal .invalid-feedback {
+                        display: block;
+                        width: 100%;
+                        margin-top: 0.25rem;
+                        font-size: 0.875rem;
+                        color: #dc3545;
+                    }
                 </style>
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">

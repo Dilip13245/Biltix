@@ -129,7 +129,14 @@ class FileController extends Controller
             });
 
             $data = [
-                'data' => $files->items()
+                'data' => $files->items(),
+                'pagination' => [
+                    'total' => $files->total(),
+                    'per_page' => $files->perPage(),
+                    'current_page' => $files->currentPage(),
+                    'last_page' => $files->lastPage(),
+                    'has_more' => $files->hasMorePages()
+                ]
             ];
 
             return $this->toJsonEnc($data, trans('api.files.list_retrieved'), Config::get('constant.SUCCESS'));
@@ -317,7 +324,8 @@ class FileController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'file_id' => 'required|integer',
-                'file' => 'required|file|max:10240', // 10MB max
+                'file' => 'nullable|file|max:10240', // 10MB max, optional
+                'description' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
@@ -330,18 +338,32 @@ class FileController extends Controller
                 return $this->toJsonEnc([], trans('api.files.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
-            // Delete old file
-            FileHelper::deleteFile($file->file_path);
+            // Check if at least file or description is provided
+            if (!$request->hasFile('file') && !$request->has('description')) {
+                return $this->toJsonEnc([], 'Please provide either a file or description to update.', Config::get('constant.ERROR'));
+            }
 
-            // Upload new file
-            $fileData = FileHelper::uploadFile($request->file('file'), 'project_files');
+            // Update file if provided
+            if ($request->hasFile('file')) {
+                // Delete old file
+                FileHelper::deleteFile($file->file_path);
+
+                // Upload new file
+                $fileData = FileHelper::uploadFile($request->file('file'), 'project_files');
+                
+                // Update file with new file data
+                $file->name = $fileData['filename'];
+                $file->original_name = $fileData['original_name'];
+                $file->file_path = $fileData['path'];
+                $file->file_size = $fileData['size'];
+                $file->file_type = $fileData['mime_type'];
+            }
             
-            // Update file with new file data
-            $file->name = $fileData['filename'];
-            $file->original_name = $fileData['original_name'];
-            $file->file_path = $fileData['path'];
-            $file->file_size = $fileData['size'];
-            $file->file_type = $fileData['mime_type'];
+            // Update description if provided
+            if ($request->has('description')) {
+                $file->description = $request->description;
+            }
+            
             $file->save();
             
             // Add full URL to response
