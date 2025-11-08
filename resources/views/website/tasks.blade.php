@@ -490,11 +490,14 @@
                 }
             }
 
+            // Hide buttons if approved or user not assigned
             if (isApproved || !isAssignedUser) {
                 if (addImagesBtn) addImagesBtn.style.display = 'none';
                 if (resolveBtn) resolveBtn.style.display = 'none';
             } else {
-                if (addImagesBtn) addImagesBtn.style.display = 'block';
+                // Show add images button only if not completed
+                if (addImagesBtn) addImagesBtn.style.display = task.status !== 'complete' && task.status !== 'approve' ? 'block' : 'none';
+                // Show resolve button ONLY when status is 'complete'
                 if (resolveBtn) resolveBtn.style.display = task.status === 'complete' ? 'block' : 'none';
             }
 
@@ -730,6 +733,24 @@
                     document.getElementById('taskDetailStatus').textContent = newStatus.charAt(0).toUpperCase() +
                         newStatus.slice(1).replace('_', ' ');
                     window.currentTaskDetails.status = newStatus;
+                    
+                    // Update resolve button visibility based on new status
+                    const resolveBtn = document.getElementById('resolveBtn');
+                    const addImagesBtn = document.getElementById('addImagesBtn');
+                    const isAssignedUser = window.currentTaskDetails.assigned_to && parseInt(window.currentTaskDetails.assigned_to) === parseInt(currentUserId);
+                    
+                    if (resolveBtn && addImagesBtn) {
+                        if (newStatus === 'approve' || !isAssignedUser) {
+                            resolveBtn.style.display = 'none';
+                            addImagesBtn.style.display = 'none';
+                        } else {
+                            // Show resolve button ONLY when status is 'complete'
+                            resolveBtn.style.display = newStatus === 'complete' ? 'block' : 'none';
+                            // Show add images button only if not completed
+                            addImagesBtn.style.display = newStatus !== 'complete' && newStatus !== 'approve' ? 'block' : 'none';
+                        }
+                    }
+                    
                     loadTasks();
                     toastr.success(response.message || '{{ __('messages.task_updated_successfully') }}');
                 } else {
@@ -749,10 +770,9 @@
             if (!window.currentTaskDetails) return;
 
             try {
-                const response = await api.updateTaskStatus({
+                const response = await api.approveTask({
                     task_id: window.currentTaskDetails.id,
-                    user_id: currentUserId,
-                    status: 'approve'
+                    user_id: currentUserId
                 });
 
                 if (response.code === 200) {
@@ -768,13 +788,13 @@
 
                     window.currentTaskDetails.status = 'approve';
                     loadTasks();
-                    toastr.success('{{ __('messages.task_resolved_successfully') }}');
+                    toastr.success(response.message || '{{ __('messages.task_resolved_successfully') }}');
                 } else {
-                    toastr.error('{{ __('messages.failed_to_resolve_task') }}');
+                    toastr.error(response.message || '{{ __('messages.failed_to_resolve_task') }}');
                 }
             } catch (error) {
                 console.error('Error resolving task:', error);
-                toastr.error('{{ __('messages.error_resolving_task') }}');
+                toastr.error(error.message || '{{ __('messages.error_resolving_task') }}');
             }
         }
 

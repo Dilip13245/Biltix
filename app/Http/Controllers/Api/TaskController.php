@@ -442,6 +442,93 @@ class TaskController extends Controller
         }
     }
 
+    public function approve(Request $request)
+    {
+        try {
+            $task_id = $request->input('task_id');
+            $user_id = $request->input('user_id');
+
+            $task = Task::where('id', $task_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$task) {
+                return $this->toJsonEnc([], trans('api.tasks.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Only allow approval if task is completed
+            if ($task->status !== 'complete') {
+                return $this->toJsonEnc([], trans('api.tasks.must_be_completed_first'), Config::get('constant.ERROR'));
+            }
+
+            $oldStatus = $task->status;
+            $task->status = 'approve';
+            $task->save();
+
+            // Send notification for task approved
+            $project = \App\Models\Project::find($task->project_id);
+            $approver = \App\Models\User::find($user_id);
+            
+            if ($project && $approver) {
+                $recipients = [];
+                
+                // Add task creator
+                if ($task->created_by && $task->created_by != $user_id) {
+                    $recipients[] = $task->created_by;
+                }
+                
+                // Add assigned user if different from approver
+                if ($task->assigned_to && $task->assigned_to != $user_id && !in_array($task->assigned_to, $recipients)) {
+                    $recipients[] = $task->assigned_to;
+                }
+                
+                if (!empty($recipients)) {
+                    NotificationHelper::send(
+                        $recipients,
+                        'task_approved',
+                        'Task Approved',
+                        "Task '{$task->title}' has been approved by {$approver->name}",
+                        [
+                            'task_id' => $task->id,
+                            'task_title' => $task->title,
+                            'old_status' => $oldStatus,
+                            'new_status' => 'approve',
+                            'approved_by' => $user_id,
+                            'approved_by_name' => $approver->name,
+                            'project_id' => $task->project_id,
+                            'action_url' => "/tasks/{$task->id}"
+                        ],
+                        'medium'
+                    );
+                }
+                
+                // Team notification (excluding approver, creator, and assigned user)
+                NotificationHelper::sendToProjectTeam(
+                    $task->project_id,
+                    'task_approved',
+                    'Task Approved',
+                    "Task '{$task->title}' has been approved by {$approver->name}",
+                    [
+                        'task_id' => $task->id,
+                        'task_title' => $task->title,
+                        'old_status' => $oldStatus,
+                        'new_status' => 'approve',
+                        'approved_by' => $user_id,
+                        'approved_by_name' => $approver->name,
+                        'action_url' => "/tasks/{$task->id}"
+                    ],
+                    'low',
+                    [$user_id, $task->created_by, $task->assigned_to]
+                );
+            }
+
+            return $this->toJsonEnc($task, trans('api.tasks.approved_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
     public function addComment(Request $request)
     {
         try {

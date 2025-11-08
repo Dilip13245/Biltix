@@ -109,6 +109,18 @@
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
+            // Setup snag details modal - hide approve button when modal opens
+            const snagDetailsModal = document.getElementById('snagDetailsModal');
+            if (snagDetailsModal) {
+                snagDetailsModal.addEventListener('show.bs.modal', function() {
+                    // Hide approve button immediately when modal starts to open
+                    const approveBtn = document.getElementById('approveSnagBtn');
+                    if (approveBtn) {
+                        approveBtn.style.display = 'none';
+                    }
+                });
+            }
+            
             // Check if API is available before loading
             if (typeof api !== 'undefined' && api.getSnags) {
                 loadSnags();
@@ -515,10 +527,17 @@
         }
 
         function displaySnagDetails(snag) {
+            // Hide approve button immediately when modal opens
+            const approveBtn = document.getElementById('approveSnagBtn');
+            if (approveBtn) {
+                approveBtn.style.display = 'none';
+            }
+            
             const currentUserId = {{ auth()->id() ?? 1 }};
+            const snagStatus = snag.status ? String(snag.status).toLowerCase().trim() : 'todo';
             const isAssignedUser = snag.assigned_to_id && parseInt(snag.assigned_to_id) === parseInt(currentUserId);
-            const isCompleted = snag.status.toLowerCase() === 'complete';
-            const isApproved = snag.status.toLowerCase() === 'approve';
+            const isCompleted = snagStatus === 'complete';
+            const isApproved = snagStatus === 'approve';
             const canComment = !isApproved;
             const hasCommented = snag.has_comment || false;
 
@@ -561,11 +580,6 @@
                                     <option value="complete">{{ __('messages.complete') }}</option>
                                     ${isApproved ? '<option value="approve">{{ __('messages.approve') }}</option>' : ''}
                                 </select>
-                                ${isCompleted && isAssignedUser && !isApproved ? `
-                                        <button class="btn btn-success api-action-btn" onclick="resolveSnag(${snag.id})">
-                                            <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
-                                        </button>
-                                    ` : ''}
                             </div>
                         </div>
                     </div>
@@ -654,9 +668,35 @@
                 if (statusSelect) {
                     statusSelect.value = snag.status.toLowerCase();
                 }
+                // Show/hide approve button based on status and permissions (same as tasks)
+                updateApproveButtonVisibility();
             }, 100);
 
             window.currentSnagDetails = snag;
+        }
+
+        function updateApproveButtonVisibility() {
+            const approveBtn = document.getElementById('approveSnagBtn');
+            if (!approveBtn) return;
+
+            const snag = window.currentSnagDetails;
+            if (!snag || !snag.status) {
+                approveBtn.style.display = 'none';
+                return;
+            }
+
+            const currentUserId = {{ auth()->id() ?? 1 }};
+            const snagStatus = String(snag.status).toLowerCase().trim();
+            const isAssignedUser = snag.assigned_to_id && parseInt(snag.assigned_to_id) === parseInt(currentUserId);
+            const isCompleted = snagStatus === 'complete';
+            const isApproved = snagStatus === 'approve';
+
+            // Show button ONLY if: status is exactly 'complete', user is assigned, and not already approved
+            if (isCompleted && isAssignedUser && !isApproved) {
+                approveBtn.style.display = 'inline-block';
+            } else {
+                approveBtn.style.display = 'none';
+            }
         }
 
         function getStatusBadgeClass(status) {
@@ -704,23 +744,46 @@
             }
         }
 
-        async function resolveSnag(snagId) {
+        async function approveSnag() {
+            const snag = window.currentSnagDetails;
+            if (!snag || !snag.id) {
+                toastr.error('{{ __('messages.snag_not_found') }}');
+                return;
+            }
+
             try {
-                const response = await api.resolveSnag({
-                    snag_id: snagId,
+                const response = await api.approveSnag({
+                    snag_id: snag.id,
                     user_id: {{ auth()->id() ?? 1 }}
                 });
 
                 if (response.code === 200) {
-                    toastr.success('{{ __('messages.snag_resolved_success') }}');
-                    bootstrap.Modal.getInstance(document.getElementById('snagDetailsModal')).hide();
+                    // Update current snag details
+                    if (window.currentSnagDetails) {
+                        window.currentSnagDetails.status = 'approve';
+                    }
+                    
+                    // Update status select
+                    const statusSelect = document.getElementById('snagStatusSelect');
+                    if (statusSelect) {
+                        statusSelect.value = 'approve';
+                        statusSelect.disabled = true;
+                    }
+                    
+                    // Hide approve button
+                    updateApproveButtonVisibility();
+                    
+                    // Reload snags list
                     loadSnags();
+                    
+                    // Show success message
+                    toastr.success(response.message || '{{ __('messages.snag_approved_successfully') }}');
                 } else {
-                    toastr.error('{{ __('messages.failed_resolve_snag') }}');
+                    toastr.error(response.message || '{{ __('messages.failed_to_approve_snag') }}');
                 }
             } catch (error) {
-                console.error('Error resolving snag:', error);
-                toastr.error('{{ __('messages.failed_resolve_snag') }}');
+                console.error('Error approving snag:', error);
+                toastr.error(error.message || '{{ __('messages.error_approving_snag') }}');
             }
         }
 
@@ -744,6 +807,22 @@
             if (!window.currentSnagDetails) return;
 
             const newStatus = document.getElementById('snagStatusSelect').value;
+            const currentStatus = window.currentSnagDetails.status;
+
+            // Frontend validation: prevent going backwards
+            // If status is 'complete', cannot change to 'todo'
+            if (currentStatus === 'complete' && newStatus === 'todo') {
+                toastr.error('{{ __('messages.cannot_change_to_todo_from_complete') }}');
+                document.getElementById('snagStatusSelect').value = currentStatus;
+                return;
+            }
+            
+            // If status is 'approve', cannot change to 'todo' or 'complete'
+            if (currentStatus === 'approve' && (newStatus === 'todo' || newStatus === 'complete')) {
+                toastr.error('{{ __('messages.cannot_change_from_approve') }}');
+                document.getElementById('snagStatusSelect').value = currentStatus;
+                return;
+            }
 
             try {
                 const response = await api.updateSnag({
@@ -754,15 +833,19 @@
 
                 if (response.code === 200) {
                     window.currentSnagDetails.status = newStatus;
+                    // Update approve button visibility based on new status
+                    updateApproveButtonVisibility();
                     loadSnags();
-                    toastr.success('{{ __('messages.snag_updated_successfully') }}');
+                    toastr.success(response.message || '{{ __('messages.snag_updated_successfully') }}');
                 } else {
-                    toastr.error(response.message || '{{ __('messages.failed_to_update_snag') }}');
+                    // Show backend error message in toastr
+                    const errorMessage = response.message || '{{ __('messages.failed_to_update_snag') }}';
+                    toastr.error(errorMessage);
                     document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
                 }
             } catch (error) {
                 console.error('Error updating snag status:', error);
-                toastr.error('{{ __('messages.error_updating_snag') }}');
+                toastr.error(error.message || '{{ __('messages.error_updating_snag') }}');
                 document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
             }
         }

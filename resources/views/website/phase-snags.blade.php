@@ -195,6 +195,18 @@
             }
 
             function setupModalUserLoading() {
+                // Setup snag details modal - hide approve button when modal opens
+                const snagDetailsModal = document.getElementById('snagDetailsModal');
+                if (snagDetailsModal) {
+                    snagDetailsModal.addEventListener('show.bs.modal', function() {
+                        // Hide approve button immediately when modal starts to open
+                        const approveBtn = document.getElementById('approveSnagBtn');
+                        if (approveBtn) {
+                            approveBtn.style.display = 'none';
+                        }
+                    });
+                }
+                
                 const addSnagModal = document.getElementById('addSnagModal');
                 if (addSnagModal) {
                     addSnagModal.addEventListener('show.bs.modal', async function() {
@@ -230,11 +242,21 @@
                                             assignedSelect.searchableDropdown.updateOptions();
                                         }
                                     }
+                                    // Re-setup form handlers after modal is shown (override modal script)
+                                    setupAddSnagForm();
                                 }, 100);
                             }
                         } catch (error) {
                             console.error('Error loading users:', error);
                         }
+                    });
+                    
+                    // Also setup when modal is fully shown
+                    addSnagModal.addEventListener('shown.bs.modal', function() {
+                        // Re-setup form handlers to ensure they work
+                        setTimeout(() => {
+                            setupAddSnagForm();
+                        }, 50);
                     });
                 }
             }
@@ -371,54 +393,86 @@
 
             function setupAddSnagForm() {
                 const addSnagForm = document.getElementById('addSnagForm');
+                
+                // Form submit handler (same as snag-list.blade.php)
                 if (addSnagForm) {
+                    // Use capture phase and stop immediately to override other handlers
                     addSnagForm.addEventListener('submit', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        
+                        processSnagForm();
+                        return false;
+                    }, true); // Use capture phase
+                }
+                
+                // Button click handler - directly process form (override modal script)
+                const createBtn = document.getElementById('createSnagBtn');
+                if (createBtn) {
+                    // Remove any existing onclick
+                    createBtn.onclick = null;
+                    
+                    // Add our handler with capture to run first
+                    createBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        
+                        processSnagForm();
+                        return false;
+                    }, true); // Use capture phase
+                }
+            }
+            
+            function processSnagForm() {
+                // Validate form first
+                if (typeof validateSnagForm === 'function') {
+                    if (!validateSnagForm()) {
+                        return false;
+                    }
+                }
 
-                        // Validate form first
-                        if (typeof validateSnagForm === 'function') {
-                            if (!validateSnagForm()) {
-                                return false;
+                const fileInput = document.getElementById('snagPhotos');
+
+                if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                    // Store files and open drawing modal
+                    window.selectedFiles = fileInput.files;
+
+                    if (typeof openDrawingModal === 'function') {
+                        openDrawingModal({
+                            title: 'Image Markup',
+                            saveButtonText: 'Save Snag',
+                            mode: 'image',
+                            onSave: function(imageData) {
+                                saveSnagWithMarkup(imageData);
                             }
-                        }
+                        });
 
-                        // Protect button
-                        const submitBtn = document.getElementById('createSnagBtn');
-                        if (submitBtn && submitBtn.disabled) {
-                            return;
-                        }
-
-                        const fileInput = document.getElementById('snagPhotos');
-
-                        if (fileInput.files && fileInput.files.length > 0) {
-                            // Store files and open drawing modal
-                            window.selectedFiles = fileInput.files;
-
-                            openDrawingModal({
-                                title: 'Image Markup',
-                                saveButtonText: 'Save Snag',
-                                mode: 'image',
-                                onSave: function(imageData) {
-                                    saveSnagWithMarkup(imageData);
-                                }
-                            });
-
-                            // Load images after modal is shown
-                            document.getElementById('drawingModal').addEventListener('shown.bs.modal', function() {
+                        // Load images after modal is shown
+                        const drawingModal = document.getElementById('drawingModal');
+                        if (drawingModal) {
+                            drawingModal.addEventListener('shown.bs.modal', function() {
                                 if (window.selectedFiles.length === 1) {
-                                    loadImageToCanvas(window.selectedFiles[0]);
+                                    if (typeof loadImageToCanvas === 'function') {
+                                        loadImageToCanvas(window.selectedFiles[0]);
+                                    }
                                 } else {
-                                    loadMultipleFiles(window.selectedFiles);
+                                    if (typeof loadMultipleFiles === 'function') {
+                                        loadMultipleFiles(window.selectedFiles);
+                                    }
                                 }
                             }, {
                                 once: true
                             });
-                        } else {
-                            // No images, direct API call
-                            saveSnagWithoutMarkup();
                         }
-                    });
+                    } else {
+                        console.error('openDrawingModal function not found');
+                        toastr.error('Drawing modal not available');
+                    }
+                } else {
+                    // No images, direct API call
+                    saveSnagWithoutMarkup();
                 }
             }
 
@@ -442,6 +496,7 @@
             }
 
             async function saveSnagWithMarkup(imageData) {
+                const createBtn = document.getElementById('createSnagBtn');
                 try {
                     const formData = new FormData();
 
@@ -485,26 +540,33 @@
                         toastr.success('Snag with markup saved successfully!');
                         document.getElementById('addSnagForm').reset();
                         loadSnags();
-                    } else {
-                        // Use the global releaseButton function if available
-                        const createBtn = document.getElementById('createSnagBtn');
-                        if (createBtn && typeof window.releaseButton === 'function') {
-                            window.releaseButton(createBtn);
+                        
+                        // Reset button state
+                        if (createBtn) {
+                            createBtn.disabled = false;
+                            createBtn.innerHTML = '{{ __('messages.create_snag') }}';
                         }
-                        toastr.error('Failed to create snag: ' + response.message);
+                    } else {
+                        // Reset button state on error
+                        if (createBtn) {
+                            createBtn.disabled = false;
+                            createBtn.innerHTML = '{{ __('messages.create_snag') }}';
+                        }
+                        toastr.error('Failed to create snag: ' + (response.message || 'Unknown error'));
                     }
                 } catch (error) {
                     console.error('Error creating snag:', error);
-                    // Use the global releaseButton function if available
-                    const createBtn = document.getElementById('createSnagBtn');
-                    if (createBtn && typeof window.releaseButton === 'function') {
-                        window.releaseButton(createBtn);
+                    // Reset button state on error
+                    if (createBtn) {
+                        createBtn.disabled = false;
+                        createBtn.innerHTML = '{{ __('messages.create_snag') }}';
                     }
-                    toastr.error('Failed to create snag');
+                    toastr.error('Failed to create snag: ' + (error.message || 'Unknown error'));
                 }
             }
 
             async function saveSnagWithoutMarkup() {
+                const createBtn = document.getElementById('createSnagBtn');
                 try {
                     const formData = new FormData();
 
@@ -530,27 +592,27 @@
                         document.getElementById('addSnagForm').reset();
                         loadSnags();
                         
-                        // Use the global releaseButton function if available
-                        const createBtn = document.getElementById('createSnagBtn');
-                        if (createBtn && typeof window.releaseButton === 'function') {
-                            window.releaseButton(createBtn);
+                        // Reset button state
+                        if (createBtn) {
+                            createBtn.disabled = false;
+                            createBtn.innerHTML = '{{ __('messages.create_snag') }}';
                         }
                     } else {
-                        // Use the global releaseButton function if available
-                        const createBtn = document.getElementById('createSnagBtn');
-                        if (createBtn && typeof window.releaseButton === 'function') {
-                            window.releaseButton(createBtn);
+                        // Reset button state on error
+                        if (createBtn) {
+                            createBtn.disabled = false;
+                            createBtn.innerHTML = '{{ __('messages.create_snag') }}';
                         }
-                        toastr.error('Failed to create snag: ' + response.message);
+                        toastr.error('Failed to create snag: ' + (response.message || 'Unknown error'));
                     }
                 } catch (error) {
                     console.error('Error creating snag:', error);
-                    // Use the global releaseButton function if available
-                    const createBtn = document.getElementById('createSnagBtn');
-                    if (createBtn && typeof window.releaseButton === 'function') {
-                        window.releaseButton(createBtn);
+                    // Reset button state on error
+                    if (createBtn) {
+                        createBtn.disabled = false;
+                        createBtn.innerHTML = '{{ __('messages.create_snag') }}';
                     }
-                    toastr.error('Failed to create snag');
+                    toastr.error('Failed to create snag: ' + (error.message || 'Unknown error'));
                 }
             }
 
@@ -607,10 +669,17 @@
             }
 
             function displaySnagDetails(snag) {
+                // Hide approve button immediately when modal opens
+                const approveBtn = document.getElementById('approveSnagBtn');
+                if (approveBtn) {
+                    approveBtn.style.display = 'none';
+                }
+                
                 const currentUserId = {{ auth()->id() ?? 1 }};
+                const snagStatus = snag.status ? String(snag.status).toLowerCase().trim() : 'todo';
                 const isAssignedUser = snag.assigned_to_id && parseInt(snag.assigned_to_id) === parseInt(currentUserId);
-                const isCompleted = snag.status.toLowerCase() === 'complete';
-                const isApproved = snag.status.toLowerCase() === 'approve';
+                const isCompleted = snagStatus === 'complete';
+                const isApproved = snagStatus === 'approve';
                 const canComment = !isApproved;
                 const hasCommented = snag.has_comment || false;
 
@@ -663,11 +732,6 @@
                                     <option value="complete">{{ __('messages.complete') }}</option>
                                     ${isApproved ? '<option value="approve">{{ __('messages.approve') }}</option>' : ''}
                                 </select>
-                                ${isCompleted && isAssignedUser && !isApproved ? `
-                                                    <button class="btn btn-success api-action-btn" onclick="resolveSnag(${snag.id})">
-                                                        <i class="fas fa-check me-2"></i>{{ __('messages.mark_resolved') }}
-                                                    </button>
-                                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -756,9 +820,35 @@
                     if (statusSelect) {
                         statusSelect.value = snag.status.toLowerCase();
                     }
+                    // Show/hide approve button based on status and permissions (same as tasks)
+                    updateApproveButtonVisibility();
                 }, 100);
 
                 window.currentSnagDetails = snag;
+            }
+
+            function updateApproveButtonVisibility() {
+                const approveBtn = document.getElementById('approveSnagBtn');
+                if (!approveBtn) return;
+
+                const snag = window.currentSnagDetails;
+                if (!snag || !snag.status) {
+                    approveBtn.style.display = 'none';
+                    return;
+                }
+
+                const currentUserId = {{ auth()->id() ?? 1 }};
+                const snagStatus = String(snag.status).toLowerCase().trim();
+                const isAssignedUser = snag.assigned_to_id && parseInt(snag.assigned_to_id) === parseInt(currentUserId);
+                const isCompleted = snagStatus === 'complete';
+                const isApproved = snagStatus === 'approve';
+
+                // Show button ONLY if: status is exactly 'complete', user is assigned, and not already approved
+                if (isCompleted && isAssignedUser && !isApproved) {
+                    approveBtn.style.display = 'inline-block';
+                } else {
+                    approveBtn.style.display = 'none';
+                }
             }
 
             function getStatusBadgeClass(status) {
@@ -845,6 +935,22 @@
                 if (!window.currentSnagDetails) return;
 
                 const newStatus = document.getElementById('snagStatusSelect').value;
+                const currentStatus = window.currentSnagDetails.status;
+
+                // Frontend validation: prevent going backwards
+                // If status is 'complete', cannot change to 'todo'
+                if (currentStatus === 'complete' && newStatus === 'todo') {
+                    toastr.error('{{ __('messages.cannot_change_to_todo_from_complete') }}');
+                    document.getElementById('snagStatusSelect').value = currentStatus;
+                    return;
+                }
+                
+                // If status is 'approve', cannot change to 'todo' or 'complete'
+                if (currentStatus === 'approve' && (newStatus === 'todo' || newStatus === 'complete')) {
+                    toastr.error('{{ __('messages.cannot_change_from_approve') }}');
+                    document.getElementById('snagStatusSelect').value = currentStatus;
+                    return;
+                }
 
                 try {
                     const response = await api.updateSnag({
@@ -853,18 +959,65 @@
                         status: newStatus
                     });
 
-                    if (response.code === 200) {
-                        window.currentSnagDetails.status = newStatus;
-                        loadSnags();
-                        toastr.success('{{ __('messages.snag_updated_successfully') }}');
-                    } else {
-                        toastr.error(response.message || '{{ __('messages.failed_to_update_snag') }}');
-                        document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
-                    }
+                if (response.code === 200) {
+                    window.currentSnagDetails.status = newStatus;
+                    // Update approve button visibility based on new status
+                    updateApproveButtonVisibility();
+                    loadSnags();
+                    toastr.success(response.message || '{{ __('messages.snag_updated_successfully') }}');
+                } else {
+                    // Show backend error message in toastr
+                    const errorMessage = response.message || '{{ __('messages.failed_to_update_snag') }}';
+                    toastr.error(errorMessage);
+                    document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
+                }
                 } catch (error) {
                     console.error('Error updating snag status:', error);
-                    toastr.error('{{ __('messages.error_updating_snag') }}');
+                    toastr.error(error.message || '{{ __('messages.error_updating_snag') }}');
                     document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
+                }
+            }
+
+            async function approveSnag() {
+                const snag = window.currentSnagDetails;
+                if (!snag || !snag.id) {
+                    toastr.error('{{ __('messages.snag_not_found') }}');
+                    return;
+                }
+
+                try {
+                    const response = await api.approveSnag({
+                        snag_id: snag.id,
+                        user_id: {{ auth()->id() ?? 1 }}
+                    });
+
+                    if (response.code === 200) {
+                        // Update current snag details
+                        if (window.currentSnagDetails) {
+                            window.currentSnagDetails.status = 'approve';
+                        }
+                        
+                        // Update status select
+                        const statusSelect = document.getElementById('snagStatusSelect');
+                        if (statusSelect) {
+                            statusSelect.value = 'approve';
+                            statusSelect.disabled = true;
+                        }
+                        
+                        // Hide approve button
+                        updateApproveButtonVisibility();
+                        
+                        // Reload snags list
+                        loadSnags();
+                        
+                        // Show success message
+                        toastr.success(response.message || '{{ __('messages.snag_approved_successfully') }}');
+                    } else {
+                        toastr.error(response.message || '{{ __('messages.failed_to_approve_snag') }}');
+                    }
+                } catch (error) {
+                    console.error('Error approving snag:', error);
+                    toastr.error(error.message || '{{ __('messages.error_approving_snag') }}');
                 }
             }
         </script>

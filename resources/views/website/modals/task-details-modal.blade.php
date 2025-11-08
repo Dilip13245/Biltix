@@ -106,9 +106,11 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
+                @can('tasks', 'approve')
                 <button class="btn btn-success api-action-btn" onclick="markAsResolved()" id="resolveBtn">
                     {{ __('messages.mark_resolved') }}
                 </button>
+                @endcan
             </div>
         </div>
     </div>

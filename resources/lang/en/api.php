@@ -86,6 +86,8 @@ return [
         'not_assigned_to_user' => 'You are not authorized to modify this task. Only assigned users can make changes.',
         'user_not_in_project' => 'Selected user is not a member of this project. Only project team members can be assigned to tasks.',
         'team_members_retrieved' => 'Project team members retrieved successfully',
+        'approved_success' => 'Task approved successfully',
+        'must_be_completed_first' => 'Task must be completed before approval',
     ],
     'projects' => [
         'created_success' => 'Project created successfully',
@@ -117,6 +119,7 @@ return [
         'item_saved' => 'Checklist item saved successfully',
         'completed_success' => 'Inspection completed successfully',
         'approved_success' => 'Inspection approved successfully',
+        'must_be_completed_first' => 'Inspection must be completed before approval',
         'results_retrieved' => 'Results retrieved successfully',
         'not_found' => 'Inspection not found',
         'submitted_success' => 'Inspection submitted successfully',
@@ -138,6 +141,11 @@ return [
         'comment_added' => 'Comment added successfully',
         'categories_retrieved' => 'Categories retrieved successfully',
         'not_found' => 'Snag not found',
+        'approved_success' => 'Snag approved successfully',
+        'must_be_completed_first' => 'Snag must be completed before approval',
+        'cannot_change_to_todo_from_complete' => 'Cannot change snag status from "Complete" to "Todo". Once a snag is completed, it cannot be reverted to todo.',
+        'cannot_change_from_approve' => 'Cannot change snag status from "Approve". Once a snag is approved, it cannot be reverted to "Todo" or "Complete".',
+        'not_assigned_to_user' => 'You are not authorized to modify this snag. Only assigned users can make changes.',
     ],
     'daily_logs' => [
         'created_success' => 'Daily log created successfully',

@@ -13,7 +13,7 @@ class Inspection extends Model
 
     protected $fillable = [
         'project_id', 'phase_id', 'category', 'description', 'comment', 'status', 'inspected_by', 'created_by',
-        'is_active', 'is_deleted', 'notes', 'started_at'
+        'is_active', 'is_deleted', 'started_at'
     ];
     
     protected $attributes = [

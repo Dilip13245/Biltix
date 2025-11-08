@@ -369,8 +369,12 @@ class InspectionController extends Controller
                 return $this->toJsonEnc([], trans('api.inspections.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            // Only allow approval if inspection is completed
+            if ($inspection->status !== 'completed') {
+                return $this->toJsonEnc([], trans('api.inspections.must_be_completed_first'), Config::get('constant.ERROR'));
+            }
+
             $inspection->status = 'approved';
-            $inspection->notes = $approval_notes ?? '';
             $inspection->save();
 
             // Send notification for inspection approved

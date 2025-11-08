@@ -146,6 +146,16 @@
                                         style="display: none;">
                                         {{ __('messages.completed') }}
                                     </button>
+                                    @can('inspections', 'approve')
+                                    <button type="button" class="btn btn-success api-action-btn" id="approve-inspection-btn"
+                                        onclick="markInspectionApproved()" style="display: none;">
+                                        <i class="fas fa-check-double me-2"></i>{{ __('messages.mark_as_approved') }}
+                                    </button>
+                                    <button type="button" class="btn btn-success" id="approved-btn" disabled
+                                        style="display: none;">
+                                        <i class="fas fa-check-double me-2"></i>{{ __('messages.approved') }}
+                                    </button>
+                                    @endcan
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                         {{ __('messages.close') }}
                                     </button>
@@ -203,8 +213,8 @@
 
         // Status
         const statusBadge = document.getElementById('inspection-status');
-        statusBadge.textContent = getStatusText(inspection.status);
-        statusBadge.className = `badge ${getStatusClass(inspection.status)}`;
+        statusBadge.textContent = getInspectionStatusText(inspection.status);
+        statusBadge.className = `badge ${getInspectionStatusClass(inspection.status)}`;
 
         // Update action buttons based on status
         updateActionButtons(inspection.status);
@@ -406,8 +416,8 @@
 
                 // Update status badge
                 const statusBadge = document.getElementById('inspection-status');
-                statusBadge.textContent = getStatusText('completed');
-                statusBadge.className = `badge ${getStatusClass('completed')}`;
+                statusBadge.textContent = getInspectionStatusText('completed');
+                statusBadge.className = `badge ${getInspectionStatusClass('completed')}`;
 
                 toastr.success(response.message || '{{ __('messages.inspection_marked_complete') }}');
 
@@ -429,15 +439,75 @@
         toastr.info('Feature not implemented yet');
     }
 
+    async function markInspectionApproved() {
+        if (!currentInspectionId) {
+            toastr.error('{{ __('messages.inspection_not_found') }}');
+            return;
+        }
+
+        try {
+            const response = await api.approveInspection({
+                inspection_id: currentInspectionId,
+                user_id: getUserId()
+            });
+
+            if (response.code === 200) {
+                // Update local data
+                currentInspectionData.status = 'approved';
+                
+                // Update action buttons
+                updateActionButtons('approved');
+                
+                // Update status badge
+                const statusBadge = document.getElementById('inspection-status');
+                statusBadge.textContent = getInspectionStatusText('approved');
+                statusBadge.className = `badge ${getInspectionStatusClass('approved')}`;
+
+                toastr.success(response.message || '{{ __('messages.inspection_approved_successfully') }}');
+
+                // Refresh the inspections list
+                if (typeof loadInspections === 'function') {
+                    loadInspections();
+                }
+            } else {
+                toastr.error(response.message || '{{ __('messages.failed_to_approve_inspection') }}');
+            }
+        } catch (error) {
+            console.error('Error approving inspection:', error);
+            toastr.error('{{ __('messages.error_approving_inspection') }}');
+        }
+    }
+
     function updateActionButtons(status) {
         const completeBtn = document.getElementById('mark-complete-btn');
         const completedBtn = document.getElementById('completed-btn');
+        const approveBtn = document.getElementById('approve-inspection-btn');
+        const approvedBtn = document.getElementById('approved-btn');
         const commentInputSection = document.getElementById('comment-input-section');
         const uploadBtn = document.getElementById('upload-image-btn');
 
-        if (status === 'completed') {
-            completeBtn.style.display = 'none';
-            completedBtn.style.display = 'block';
+        const statusLower = status ? String(status).toLowerCase().trim() : 'todo';
+
+        if (statusLower === 'approved') {
+            // Inspection is approved - show approved button only
+            if (completeBtn) completeBtn.style.display = 'none';
+            if (completedBtn) completedBtn.style.display = 'none';
+            if (approveBtn) approveBtn.style.display = 'none';
+            if (approvedBtn) approvedBtn.style.display = 'block';
+            if (uploadBtn) uploadBtn.style.display = 'none';
+            // Disable comment input when approved
+            if (commentInputSection) {
+                const textarea = document.getElementById('inspection-comment');
+                const commentBtn = document.getElementById('comment-btn');
+                if (textarea) textarea.disabled = true;
+                if (commentBtn) commentBtn.disabled = true;
+            }
+        } else if (statusLower === 'completed') {
+            // Inspection is completed - show approve button if user has permission
+            if (completeBtn) completeBtn.style.display = 'none';
+            if (completedBtn) completedBtn.style.display = 'block';
+            if (approveBtn) approveBtn.style.display = 'block';
+            if (approvedBtn) approvedBtn.style.display = 'none';
             if (uploadBtn) uploadBtn.style.display = 'none';
             // Disable comment input when completed
             if (commentInputSection) {
@@ -447,8 +517,11 @@
                 if (commentBtn) commentBtn.disabled = true;
             }
         } else {
-            completeBtn.style.display = 'block';
-            completedBtn.style.display = 'none';
+            // Inspection is not completed - show complete button
+            if (completeBtn) completeBtn.style.display = 'block';
+            if (completedBtn) completedBtn.style.display = 'none';
+            if (approveBtn) approveBtn.style.display = 'none';
+            if (approvedBtn) approvedBtn.style.display = 'none';
             if (uploadBtn) uploadBtn.style.display = 'block';
             // Enable comment input when not completed
             if (commentInputSection) {
@@ -460,26 +533,32 @@
         }
     }
 
-    function getStatusText(status) {
+    function getInspectionStatusText(status) {
+        if (!status) return '{{ __('messages.todo') }}';
+        const statusLower = String(status).toLowerCase().trim();
         const statusTexts = {
             'todo': '{{ __('messages.todo') }}',
             'pending': '{{ __('messages.pending') }}',
             'in_progress': '{{ __('messages.in_progress') }}',
             'completed': '{{ __('messages.completed') }}',
+            'approved': '{{ __('messages.approved') }}',
             'failed': '{{ __('messages.failed') }}'
         };
-        return statusTexts[status] || status;
+        return statusTexts[statusLower] || status;
     }
 
-    function getStatusClass(status) {
+    function getInspectionStatusClass(status) {
+        if (!status) return 'bg-warning';
+        const statusLower = String(status).toLowerCase().trim();
         const statusClasses = {
             'todo': 'bg-warning',
             'pending': 'bg-warning',
             'in_progress': 'bg-info',
             'completed': 'bg-success',
+            'approved': 'bg-success',
             'failed': 'bg-danger'
         };
-        return statusClasses[status] || 'bg-secondary';
+        return statusClasses[statusLower] || 'bg-secondary';
     }
 
     function showImageModal(imageUrl) {

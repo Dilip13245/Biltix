@@ -244,6 +244,14 @@ class ApiClient {
         return this.makeRequest('tasks/change_status', data);
     }
 
+    async approveTask(data) {
+        return this.makeRequest('tasks/approve', data);
+    }
+
+    async approveSnag(data) {
+        return this.makeRequest('snags/approve', data);
+    }
+
     async addTaskComment(data) {
         return this.makeRequest('tasks/add_comment', data);
     }

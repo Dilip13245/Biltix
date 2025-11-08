@@ -229,6 +229,11 @@
                     icon: 'check-circle',
                     text: '{{ __('messages.completed') }}'
                 },
+                'approved': {
+                    class: 'badge1',
+                    icon: 'check-double',
+                    text: '{{ __('messages.approved') }}'
+                },
                 'failed': {
                     class: 'badge2 text-danger',
                     icon: 'times-circle',

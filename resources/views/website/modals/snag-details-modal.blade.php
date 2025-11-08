@@ -36,6 +36,14 @@
                     </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
+                @can('snags', 'approve')
+                <button class="btn btn-success api-action-btn" onclick="approveSnag()" id="approveSnagBtn" style="display: none;">
+                    <i class="fas fa-check-double me-2"></i>{{ __('messages.mark_as_approved') }}
+                </button>
+                @endcan
+            </div>
         </div>
     </div>
 </div>

@@ -92,6 +92,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('update', [TaskController::class, 'update']);
         Route::post('delete', [TaskController::class, 'delete']);
         Route::post('change_status', [TaskController::class, 'changeStatus']);
+        Route::post('approve', [TaskController::class, 'approve']);
         Route::post('add_comment', [TaskController::class, 'addComment']);
         Route::post('get_comments', [TaskController::class, 'getComments']);
         Route::post('update_progress', [TaskController::class, 'updateProgress']);
@@ -120,6 +121,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('details', [SnagController::class, 'details']);
         Route::post('update', [SnagController::class, 'update']);
         Route::post('resolve', [SnagController::class, 'resolve']);
+        Route::post('approve', [SnagController::class, 'approve']);
         Route::post('assign', [SnagController::class, 'assign']);
         Route::post('add_comment', [SnagController::class, 'addComment']);
         Route::post('categories', [SnagController::class, 'categories']);

@@ -550,12 +550,15 @@
                 const addImagesBtn = document.getElementById('addImagesBtn');
                 const resolveBtn = document.getElementById('resolveBtn');
 
-                if (isCompleted || !isAssignedUser) {
+                // Hide buttons if approved or user not assigned
+                if (isApproved || !isAssignedUser) {
                     if (addImagesBtn) addImagesBtn.style.display = 'none';
                     if (resolveBtn) resolveBtn.style.display = 'none';
                 } else {
-                    if (addImagesBtn) addImagesBtn.style.display = 'block';
-                    if (resolveBtn) resolveBtn.style.display = 'block';
+                    // Show add images button only if not completed
+                    if (addImagesBtn) addImagesBtn.style.display = task.status !== 'complete' && task.status !== 'approve' ? 'block' : 'none';
+                    // Show resolve button ONLY when status is 'complete'
+                    if (resolveBtn) resolveBtn.style.display = task.status === 'complete' ? 'block' : 'none';
                 }
 
                 // Show message if user is not assigned
@@ -791,6 +794,14 @@
                     return;
                 }
 
+                // Protect button if changing to approve status
+                const statusSelect = document.getElementById('taskStatusSelect');
+                let buttonProtected = false;
+                if (newStatus === 'approve' && window.protectButton && statusSelect) {
+                    window.protectButton(statusSelect);
+                    buttonProtected = true;
+                }
+
                 try {
                     const response = await api.updateTaskStatus({
                         task_id: window.currentTaskDetails.id,
@@ -802,6 +813,24 @@
                         document.getElementById('taskDetailStatus').textContent = newStatus.charAt(0).toUpperCase() +
                             newStatus.slice(1).replace('_', ' ');
                         window.currentTaskDetails.status = newStatus;
+                        
+                        // Update resolve button visibility based on new status
+                        const resolveBtn = document.getElementById('resolveBtn');
+                        const addImagesBtn = document.getElementById('addImagesBtn');
+                        const isAssignedUser = window.currentTaskDetails.assigned_to && parseInt(window.currentTaskDetails.assigned_to) === parseInt(currentUserId);
+                        
+                        if (resolveBtn && addImagesBtn) {
+                            if (newStatus === 'approve' || !isAssignedUser) {
+                                resolveBtn.style.display = 'none';
+                                addImagesBtn.style.display = 'none';
+                            } else {
+                                // Show resolve button ONLY when status is 'complete'
+                                resolveBtn.style.display = newStatus === 'complete' ? 'block' : 'none';
+                                // Show add images button only if not completed
+                                addImagesBtn.style.display = newStatus !== 'complete' && newStatus !== 'approve' ? 'block' : 'none';
+                            }
+                        }
+                        
                         loadTasks();
                         toastr.success(response.message || '{{ __('messages.task_updated_successfully') }}');
                     } else {
@@ -814,6 +843,11 @@
                     console.error('Error updating task status:', error);
                     toastr.error(error.message || '{{ __('messages.error_updating_task') }}');
                     document.getElementById('taskStatusSelect').value = window.currentTaskDetails.status;
+                } finally {
+                    // Release button protection if it was protected
+                    if (buttonProtected && window.releaseButton && statusSelect) {
+                        window.releaseButton(statusSelect);
+                    }
                 }
             }
 
@@ -839,31 +873,34 @@
                 if (!window.currentTaskDetails) return;
 
                 try {
-                    const formData = new FormData();
-                    formData.append('task_id', window.currentTaskDetails.id);
-                    formData.append('user_id', currentUserId);
-
-                    const response = await api.updateTask(formData);
+                    const response = await api.approveTask({
+                        task_id: window.currentTaskDetails.id,
+                        user_id: currentUserId
+                    });
 
                     if (response.code === 200) {
                         // Update UI
-                        document.getElementById('taskDetailStatus').textContent = 'Completed';
-                        document.getElementById('taskDetailStatus').className = 'badge badge1';
+                        document.getElementById('taskDetailStatus').textContent = 'Approve';
+                        document.getElementById('taskDetailStatus').className = 'badge badge3';
+                        document.getElementById('taskStatusSelect').value = 'approve';
+                        document.getElementById('taskStatusSelect').disabled = true;
 
                         // Hide add images button and resolve button
-                        document.getElementById('addImagesBtn').style.display = 'none';
-                        document.getElementById('resolveBtn').style.display = 'none';
+                        const addImagesBtn = document.getElementById('addImagesBtn');
+                        const resolveBtn = document.getElementById('resolveBtn');
+                        if (addImagesBtn) addImagesBtn.style.display = 'none';
+                        if (resolveBtn) resolveBtn.style.display = 'none';
 
-                        // Reload tasks
+                        window.currentTaskDetails.status = 'approve';
                         loadTasks();
 
-                        toastr.success('{{ __('messages.task_completed_successfully') }}');
+                        toastr.success(response.message || '{{ __('messages.task_resolved_successfully') }}');
                     } else {
-                        toastr.error('{{ __('messages.failed_to_complete_task') }}');
+                        toastr.error(response.message || '{{ __('messages.failed_to_resolve_task') }}');
                     }
                 } catch (error) {
-                    console.error('Error completing task:', error);
-                    toastr.error('{{ __('messages.error_completing_task') }}');
+                    console.error('Error resolving task:', error);
+                    toastr.error(error.message || '{{ __('messages.error_resolving_task') }}');
                 }
             }
 

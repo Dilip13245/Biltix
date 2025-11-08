@@ -304,15 +304,29 @@ class SnagController extends Controller
             $oldStatus = $snag->status;
             $statusChanged = false;
             
+            // Validate status change: prevent going backwards
+            if ($request->filled('status')) {
+                $newStatus = $request->status;
+                
+                // If status is 'complete', cannot change to 'todo'
+                if ($oldStatus === 'complete' && $newStatus === 'todo') {
+                    return $this->toJsonEnc([], trans('api.snags.cannot_change_to_todo_from_complete'), Config::get('constant.ERROR'));
+                }
+                
+                // If status is 'approve', cannot change to 'todo' or 'complete'
+                if ($oldStatus === 'approve' && ($newStatus === 'todo' || $newStatus === 'complete')) {
+                    return $this->toJsonEnc([], trans('api.snags.cannot_change_from_approve'), Config::get('constant.ERROR'));
+                }
+                
+                $snag->status = $newStatus;
+                $statusChanged = ($oldStatus != $newStatus);
+            }
+            
             // Update fields if provided
             if ($request->filled('title')) $snag->title = $request->title;
             if ($request->filled('description')) $snag->description = $request->description;
             if ($request->filled('location')) $snag->location = $request->location;
             if ($request->filled('assigned_to')) $snag->assigned_to = $request->assigned_to;
-            if ($request->filled('status')) {
-                $snag->status = $request->status;
-                $statusChanged = ($oldStatus != $request->status);
-            }
             if ($request->filled('comment')) $snag->comment = $request->comment;
             
             // Handle image uploads
@@ -486,6 +500,93 @@ class SnagController extends Controller
             }
 
             return $this->toJsonEnc($snag, trans('api.snags.resolved_success'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function approve(Request $request)
+    {
+        try {
+            $snag_id = $request->input('snag_id');
+            $user_id = $request->input('user_id');
+
+            $snag = Snag::where('id', $snag_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$snag) {
+                return $this->toJsonEnc([], trans('api.snags.not_found'), Config::get('constant.NOT_FOUND'));
+            }
+
+            // Only allow approval if snag is completed
+            if ($snag->status !== 'complete') {
+                return $this->toJsonEnc([], trans('api.snags.must_be_completed_first'), Config::get('constant.ERROR'));
+            }
+
+            $oldStatus = $snag->status;
+            $snag->status = 'approve';
+            $snag->save();
+
+            // Send notification for snag approved
+            $project = \App\Models\Project::find($snag->project_id);
+            $approver = \App\Models\User::find($user_id);
+            
+            if ($project && $approver) {
+                $recipients = [];
+                
+                // Add snag reporter
+                if ($snag->reported_by && $snag->reported_by != $user_id) {
+                    $recipients[] = $snag->reported_by;
+                }
+                
+                // Add assigned user if different from approver
+                if ($snag->assigned_to && $snag->assigned_to != $user_id && !in_array($snag->assigned_to, $recipients)) {
+                    $recipients[] = $snag->assigned_to;
+                }
+                
+                if (!empty($recipients)) {
+                    NotificationHelper::send(
+                        $recipients,
+                        'snag_approved',
+                        'Snag Approved',
+                        "Snag '{$snag->title}' has been approved by {$approver->name}",
+                        [
+                            'snag_id' => $snag->id,
+                            'snag_title' => $snag->title,
+                            'old_status' => $oldStatus,
+                            'new_status' => 'approve',
+                            'approved_by' => $user_id,
+                            'approved_by_name' => $approver->name,
+                            'project_id' => $snag->project_id,
+                            'action_url' => "/snags/{$snag->id}"
+                        ],
+                        'medium'
+                    );
+                }
+                
+                // Team notification (excluding approver, reporter, and assigned user)
+                NotificationHelper::sendToProjectTeam(
+                    $snag->project_id,
+                    'snag_approved',
+                    'Snag Approved',
+                    "Snag '{$snag->title}' has been approved by {$approver->name}",
+                    [
+                        'snag_id' => $snag->id,
+                        'snag_title' => $snag->title,
+                        'old_status' => $oldStatus,
+                        'new_status' => 'approve',
+                        'approved_by' => $user_id,
+                        'approved_by_name' => $approver->name,
+                        'action_url' => "/snags/{$snag->id}"
+                    ],
+                    'low',
+                    [$user_id, $snag->reported_by, $snag->assigned_to]
+                );
+            }
+
+            return $this->toJsonEnc($snag, trans('api.snags.approved_success'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
