@@ -156,6 +156,12 @@
                                                  aria-valuemax="100">
                                             </div>
                                         </div>
+                                        @can('projects', 'edit')
+                                            <button class="btn btn-success btn-sm mt-2 api-action-btn" id="markCompletedBtn" 
+                                                style="display: none;" onclick="markProjectAsCompleted()">
+                                                <i class="fas fa-check-circle {{ margin_end(1) }}"></i>{{ __('messages.mark_as_completed') }}
+                                            </button>
+                                        @endcan
                                     </div>
                                     <div class="row gy-3 gx-5">
                                         <div class="col-12 col-md-6">
@@ -555,6 +561,40 @@
         </div>
     </div>
     <script>
+        async function markProjectAsCompleted() {
+            if (!confirm('{{ __('messages.confirm_mark_completed') }}')) {
+                return;
+            }
+
+            const btn = document.getElementById('markCompletedBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(1) }}"></i>{{ __('messages.updating') }}...';
+
+            try {
+                const response = await api.updateProject({
+                    project_id: currentProjectId,
+                    user_id: {{ auth()->id() ?? 1 }},
+                    status: 'completed'
+                });
+
+                if (response.code === 200) {
+                    showToast('{{ __('messages.project_marked_completed') }}', 'success');
+                    btn.style.display = 'none';
+                    loadProjectData();
+                } else {
+                    showToast(response.message || '{{ __('messages.failed_to_update_project') }}', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error marking project as completed:', error);
+                showToast('{{ __('messages.error_updating_project') }}', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
         function deleteProject() {
             const modal = new bootstrap.Modal(document.getElementById('deleteProjectModal'));
             modal.show();
@@ -1473,6 +1513,14 @@
                     if (overallProgressBar) {
                         overallProgressBar.style.width = overallProgress + '%';
                         overallProgressBar.setAttribute('aria-valuenow', overallProgress);
+                    }
+
+                    // Show Mark as Completed button if progress is 100% and user is creator
+                    const markCompletedBtn = document.getElementById('markCompletedBtn');
+                    if (markCompletedBtn && overallProgress >= 100 && project.status !== 'completed') {
+                        markCompletedBtn.style.display = 'inline-block';
+                    } else if (markCompletedBtn) {
+                        markCompletedBtn.style.display = 'none';
                     }
 
                     // Update location display and map

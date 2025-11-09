@@ -1164,7 +1164,13 @@ return [
     'rotate_right' => 'Rotate Right',
     'flip_horizontal' => 'Flip Horizontal',
     'flip_vertical' => 'Flip Vertical',
-    'add' => 'Add Image'
+    'add' => 'Add Image',
+
+    // Project completion
+    'mark_as_completed' => 'Mark as Completed',
+    'confirm_mark_completed' => 'Are you sure you want to mark this project as completed?',
+    'project_marked_completed' => 'Project marked as completed successfully',
+    'updating' => 'Updating',
 ];
 
 

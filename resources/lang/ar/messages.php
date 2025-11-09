@@ -1109,4 +1109,10 @@ return [
     'rotate_right' => 'تدوير لليمين',
     'flip_horizontal' => 'قلب أفقي',
     'flip_vertical' => 'قلب عمودي',
+
+    // Project completion
+    'mark_as_completed' => 'وضع علامة مكتمل',
+    'confirm_mark_completed' => 'هل أنت متأكد أنك تريد وضع علامة على هذا المشروع كمكتمل؟',
+    'project_marked_completed' => 'تم وضع علامة على المشروع كمكتمل بنجاح',
+    'updating' => 'جاري التحديث',
 ];

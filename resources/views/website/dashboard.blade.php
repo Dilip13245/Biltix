@@ -950,15 +950,10 @@
                             <button class="btn btn-outline-secondary d-flex align-items-center gap-2 status-filter-btn"
                                 type="button" id="statusFilterBtn">
                                 <i class="fas fa-filter"></i>
-                                <span id="statusFilterText">{{ __('messages.all_status') }}</span>
+                                <span id="statusFilterText">{{ __('messages.active') }}</span>
                                 <i class="fas fa-chevron-down status-filter-arrow"></i>
                             </button>
                             <div class="status-filter-menu" id="statusFilterMenu">
-                                <div class="status-filter-option" data-value="all"
-                                    data-text="{{ __('messages.all_status') }}">
-                                    <i class="fas fa-list text-secondary"></i>
-                                    <span>{{ __('messages.all_status') }}</span>
-                                </div>
                                 <div class="status-filter-option" data-value="active"
                                     data-text="{{ __('messages.active') }}">
                                     <i class="fas fa-play-circle text-success"></i>
@@ -1407,7 +1402,7 @@
         let currentPage = 1;
         let isLoading = false;
         let hasMoreProjects = true;
-        let currentFilter = 'all';
+        let currentFilter = 'active';
         let allProjects = [];
 
         // Load projects from API with pagination
@@ -1493,13 +1488,27 @@
                 return;
             }
 
-            const newProjects = reset ? projects : projects.slice(-10);
+            // Filter out completed projects if not in completed filter
+            let filteredProjects = projects;
+            if (currentFilter !== 'completed') {
+                filteredProjects = projects.filter(p => p.status !== 'completed');
+            }
+
+            if (filteredProjects.length === 0) {
+                if (reset) {
+                    displayNoProjects();
+                }
+                return;
+            }
+
+            const newProjects = reset ? filteredProjects : filteredProjects.slice(-10);
 
             newProjects.forEach((project, index) => {
                 if (!reset && container.querySelector(`[data-project-id="${project.id}"]`)) {
                     return;
                 }
 
+                const isCompleted = project.status === 'completed';
                 const statusClass = getStatusClass(project.status);
                 const statusText = getStatusText(project.status);
                 const progressPercent = getRandomProgress(project.status);
@@ -1510,12 +1519,17 @@
                 projectCard.setAttribute('data-wow-delay', `${index * 0.1}s`);
 
                 projectCard.innerHTML = `
-                    <div class="card project-card h-100" style="position: relative;">
+                    <div class="card project-card h-100" style="position: relative; ${isCompleted ? 'opacity: 0.7; cursor: not-allowed;' : ''}">
                         <div class="card-body p-3">
                             <div class="d-flex align-items-start justify-content-between mb-3">
-                                <a href="/website/project/${project.id}/plans" class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px;">
-                                    <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
-                                </a>
+                                ${isCompleted ? 
+                                    `<div class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px; cursor: not-allowed;">
+                                        <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
+                                    </div>` :
+                                    `<a href="/website/project/${project.id}/plans" class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px;">
+                                        <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
+                                    </a>`
+                                }
                                 <div class="dropdown" style="flex-shrink: 0;">
                                     <i class="fas fa-ellipsis-v" style="color: #4A90E2; cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
                                     <ul class="dropdown-menu dropdown-menu-end">
@@ -1523,27 +1537,50 @@
                                     </ul>
                                 </div>
                             </div>
-                            <a href="/website/project/${project.id}/plans" class="text-decoration-none">
-                                <hr style="border-color: #e0e0e0; margin: 12px 0;">
-                                <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
-                                    <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                    <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
-                                </div>
-                                <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
-                                    <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                    <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div class="d-flex align-items-center" style="gap: 6px;">
-                                        <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                        <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                            ${isCompleted ? 
+                                `<div style="cursor: not-allowed;">
+                                    <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                                    <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                        <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                        <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
                                     </div>
-                                    <div class="d-flex align-items-center" style="gap: 6px;">
-                                        <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                        <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                    <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                        <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                        <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
                                     </div>
-                                </div>
-                            </a>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="d-flex align-items-center" style="gap: 6px;">
+                                            <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                            <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center" style="gap: 6px;">
+                                            <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                            <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                </div>` :
+                                `<a href="/website/project/${project.id}/plans" class="text-decoration-none">
+                                    <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                                    <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                        <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                        <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                                    </div>
+                                    <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                        <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                        <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="d-flex align-items-center" style="gap: 6px;">
+                                            <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                            <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center" style="gap: 6px;">
+                                            <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                            <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                </a>`
+                            }
                         </div>
                     </div>
                 `;
@@ -1926,7 +1963,7 @@
             // Load notifications, profile image and projects on page load
             loadUserProfileImage();
             loadNotifications();
-            loadProjects('all', true);
+            loadProjects('active', true);
 
             // Setup date picker listeners for vanilla calendar
             setTimeout(() => {

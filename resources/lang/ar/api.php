@@ -106,6 +106,7 @@ return [
         'timeline_retrieved' => 'تم استرداد الجدول الزمني بنجاح',
         'phase_progress_updated' => 'تم تحديث تقدم المرحلة بنجاح',
         'only_creator_can_delete' => 'يمكن لمنشئ المشروع فقط حذف هذا المشروع',
+        'only_creator_can_complete' => 'يمكن لمنشئ المشروع فقط وضع علامة على هذا المشروع كمكتمل',
     ],
     'inspections' => [
         'created_success' => 'تم إنشاء التفتيش بنجاح',

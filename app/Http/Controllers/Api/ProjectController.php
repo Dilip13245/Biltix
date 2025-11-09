@@ -323,6 +323,13 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            // Validate if user is trying to mark project as completed
+            if ($request->filled('status') && $request->status === 'completed') {
+                if ($project->created_by != $user_id) {
+                    return $this->toJsonEnc([], trans('api.projects.only_creator_can_complete'), Config::get('constant.ERROR'));
+                }
+            }
+
             if ($request->filled('project_title')) $project->project_title = $request->project_title;
             if ($request->filled('contractor_name')) $project->contractor_name = $request->contractor_name;
             if ($request->filled('project_manager_id')) $project->project_manager_id = $request->project_manager_id;

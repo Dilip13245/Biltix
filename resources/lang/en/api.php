@@ -107,6 +107,7 @@ return [
         'timeline_retrieved' => 'Timeline retrieved successfully',
         'phase_progress_updated' => 'Phase progress updated successfully',
         'only_creator_can_delete' => 'Only project creator can delete this project',
+        'only_creator_can_complete' => 'Only project creator can mark this project as completed',
         'cannot_delete_incomplete_project' => 'Cannot delete project. Project completion must be 100% to delete. Current progress: :progress%',
     ],
     'inspections' => [
