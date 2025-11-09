@@ -425,6 +425,40 @@ class ProjectController extends Controller
                 return $this->toJsonEnc([], trans('api.projects.only_creator_can_delete'), Config::get('constant.ERROR'));
             }
 
+            // Check if project progress is 100% before allowing deletion
+            $phases = ProjectPhase::with(['tasks', 'inspections', 'snags'])
+                ->where('project_id', $project_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->get();
+            
+            $projectProgress = 0;
+            if ($phases->count() > 0) {
+                $totalProgress = 0;
+                $phaseCount = 0;
+                
+                foreach ($phases as $phase) {
+                    $phaseProgress = $phase->time_progress; // This uses approved status calculation
+                    if ($phaseProgress !== null) {
+                        $totalProgress += $phaseProgress;
+                        $phaseCount++;
+                    }
+                }
+                
+                if ($phaseCount > 0) {
+                    $projectProgress = round($totalProgress / $phaseCount, 2);
+                }
+            }
+
+            // Only allow deletion if project is 100% complete
+            if ($projectProgress < 100) {
+                return $this->toJsonEnc(
+                    ['progress_percentage' => $projectProgress], 
+                    trans('api.projects.cannot_delete_incomplete_project', ['progress' => $projectProgress]), 
+                    Config::get('constant.ERROR')
+                );
+            }
+
             $project->is_deleted = true;
             $project->save();
 
