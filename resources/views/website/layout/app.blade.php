@@ -120,7 +120,8 @@
               
               try {
                   const response = await api.getProjectDetails({
-                      project_id: projectId
+                      project_id: projectId,
+                      user_id: {{ auth()->id() ?? 1 }}
                   });
                   
                   if (response.code === 200 && response.data) {
@@ -143,8 +144,8 @@
                           document.getElementById('headerEndDate').textContent = formatHeaderDate(project.project_due_date);
                       }
                       
-                      // Calculate and display progress (placeholder - you can enhance this)
-                      const progress = calculateProjectProgress(project);
+                      // Display progress from API (phase progress average)
+                      const progress = project.progress_percentage !== undefined ? Math.round(project.progress_percentage) : 0;
                       document.getElementById('headerProgress').textContent = progress + '%';
                       
                       // Update status
@@ -172,23 +173,8 @@
           });
       }
       
-      function calculateProjectProgress(project) {
-          // Simple progress calculation based on dates
-          if (project.project_start_date && project.project_due_date) {
-              const startDate = new Date(project.project_start_date);
-              const endDate = new Date(project.project_due_date);
-              const currentDate = new Date();
-              
-              if (currentDate < startDate) return 0;
-              if (currentDate > endDate) return 100;
-              
-              const totalDuration = endDate - startDate;
-              const elapsed = currentDate - startDate;
-              
-              return Math.round((elapsed / totalDuration) * 100);
-          }
-          return 0;
-      }
+      // calculateProjectProgress function removed - now using progress_percentage from API
+      // Progress is calculated on backend based on phase progress average (approved status)
       
       function getStatusText(status) {
           switch (status?.toLowerCase()) {

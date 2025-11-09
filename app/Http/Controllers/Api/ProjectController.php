@@ -275,6 +275,33 @@ class ProjectController extends Controller
             $project->project_manager_name = $projectManager ? $projectManager->name : null;
             $project->technical_engineer_name = $technicalEngineer ? $technicalEngineer->name : null;
 
+            // Calculate project progress based on phase progress average
+            $phases = ProjectPhase::with(['tasks', 'inspections', 'snags'])
+                ->where('project_id', $project_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->get();
+            
+            $projectProgress = 0;
+            if ($phases->count() > 0) {
+                $totalProgress = 0;
+                $phaseCount = 0;
+                
+                foreach ($phases as $phase) {
+                    $phaseProgress = $phase->time_progress; // This uses approved status calculation
+                    if ($phaseProgress !== null) {
+                        $totalProgress += $phaseProgress;
+                        $phaseCount++;
+                    }
+                }
+                
+                if ($phaseCount > 0) {
+                    $projectProgress = round($totalProgress / $phaseCount, 2);
+                }
+            }
+            
+            $project->progress_percentage = $projectProgress;
+
             return $this->toJsonEnc($project, trans('api.projects.details_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
@@ -569,14 +596,14 @@ class ProjectController extends Controller
             $project_id = $request->input('project_id');
             $user_id = $request->input('user_id');
 
-            $phases = ProjectPhase::with('milestones')
+            $phases = ProjectPhase::with(['milestones', 'tasks', 'inspections', 'snags'])
                 ->where('project_id', $project_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            // Add calculated time progress for each phase
+            // Add calculated progress for each phase (based on approved status of tasks, inspections, snags)
             $phases->each(function ($phase) {
                 $phase->time_progress = $phase->time_progress;
                 $phase->has_extensions = $phase->has_extensions;

@@ -121,14 +121,6 @@
     </div>
     <div class="px-md-4">
         <div class="container-fluid">
-            <!-- Commented out original stats cards
-                                    <div class="row g-4">
-                                        Project Completion Card
-                                        Active Workers Card
-                                        Days Remaining Card
-                                    </div>
-                                    -->
-
             <!-- Project Phases Cards -->
             <div class="row g-4" id="phasesContainer">
                 <!-- Dynamic phases will be loaded here -->
@@ -147,6 +139,23 @@
                                                 <i class="fas fa-edit me-1"></i>{{ __('messages.edit_project') }}
                                             </button>
                                         @endcan
+                                    </div>
+                                    <!-- Overall Project Progress (Simple line like phases) -->
+                                    <div class="mb-3 mb-md-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="text-muted small fw-medium">Completion Percentages</span>
+                                            <span class="text-primary fw-semibold" id="overallProjectProgress">0%</span>
+                                        </div>
+                                        <div class="progress" style="height:12px; border-radius: 6px;">
+                                            <div class="progress-bar" 
+                                                 role="progressbar" 
+                                                 id="overallProjectProgressBar"
+                                                 style="width: 0%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%); border-radius: 6px;" 
+                                                 aria-valuenow="0" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row gy-3 gx-5">
                                         <div class="col-12 col-md-6">
@@ -1283,6 +1292,9 @@
                     phasesCache = response.data;
                     lastLoadTime = now;
                     renderPhases(response.data);
+                    
+                    // Reload project data to update overall progress after phases are loaded
+                    loadProjectData();
                 } else {
                     console.error('Failed to load phases:', response.message);
                 }
@@ -1350,16 +1362,17 @@
                                 </div>
                                 <div class="mb-3">
                                     <div class="progress position-relative" style="height:12px;">
-                                        ${hasExtensions ? `
-                                                        <!-- Original timeline progress -->
+                                        <!-- Extended days progress bar commented out - only showing status-based progress -->
+                                        <!-- ${hasExtensions ? `
+                                                        Original timeline progress - COMMENTED OUT
                                                         <div class="progress-bar" role="progressbar" 
                                                             style="width: ${Math.min(progress, 100)}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
                                                             aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        <!-- Extension area (lighter color) -->
+                                                        Extension area (lighter color)
                                                         <div class="progress-bar" role="progressbar" 
                                                             style="width: ${Math.max(0, Math.min(100 - progress, extensionDays / (totalDays / 100)))}%; background: rgba(255, 193, 7, 0.3); border-left: 2px solid #ffc107;"
                                                             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        <!-- Extension indicator -->
+                                                        Extension indicator
                                                         <div class="position-absolute top-0 h-100 d-flex align-items-center" style="left: ${Math.min(progress, 100)}%; transform: translateX(-50%);">
                                                             <div style="width: 2px; height: 100%; background: #ffc107;"></div>
                                                         </div>
@@ -1367,24 +1380,29 @@
                                                             <i class="fas fa-clock text-warning" title="Extended by ${extensionDays} days" style="font-size: 10px;"></i>
                                                         </div>
                                                     ` : `
-                                                        <!-- Normal progress bar -->
+                                                        Normal progress bar
                                                         <div class="progress-bar" role="progressbar" 
                                                             style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
                                                             aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    `}
+                                                    `} -->
+                                        <!-- Status-based progress bar only -->
+                                        <div class="progress-bar" role="progressbar" 
+                                            style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
+                                            aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                     <div class="d-flex justify-content-between mt-1">
                                         <small class="text-muted">${Math.round(progress)}% Time Progress</small>
                                         <small class="text-muted">${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</small>
                                     </div>
-                                    ${hasExtensions ? `
+                                    <!-- Extended timeline info commented out -->
+                                    <!-- ${hasExtensions ? `
                                                     <div class="mt-1">
                                                         <small class="text-warning">
                                                             <i class="fas fa-info-circle me-1"></i>
                                                             Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
                                                         </small>
                                                     </div>
-                                                ` : ''}
+                                                ` : ''} -->
                                 </div>
                                 <div class="small text-muted">
                                     ${phase.milestones ? phase.milestones.map(milestone => {
@@ -1419,7 +1437,8 @@
         async function loadProjectData() {
             try {
                 const response = await api.getProjectDetails({
-                    project_id: currentProjectId
+                    project_id: currentProjectId,
+                    user_id: {{ auth()->id() ?? 1 }}
                 });
 
                 if (response.code === 200 && response.data) {
@@ -1440,6 +1459,20 @@
                     }
                     if (project.project_due_date) {
                         document.getElementById('endDate').textContent = formatDate(project.project_due_date);
+                    }
+
+                    // Update overall project progress (simple line like phases)
+                    const overallProgress = project.progress_percentage !== undefined ? Math.round(project.progress_percentage) : 0;
+                    const overallProgressElement = document.getElementById('overallProjectProgress');
+                    const overallProgressBar = document.getElementById('overallProjectProgressBar');
+                    
+                    if (overallProgressElement) {
+                        overallProgressElement.textContent = overallProgress + '%';
+                    }
+                    
+                    if (overallProgressBar) {
+                        overallProgressBar.style.width = overallProgress + '%';
+                        overallProgressBar.setAttribute('aria-valuenow', overallProgress);
                     }
 
                     // Update location display and map

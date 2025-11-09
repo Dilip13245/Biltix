@@ -2008,14 +2008,15 @@
                                     <div class="d-flex align-items-center gap-3 text-muted small flex-wrap">
                                         <span><i class="fas fa-calendar me-1"></i>${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</span>
                                     </div>
-                                    ${extensionDays > 0 ? `
+                                    <!-- Extended timeline info commented out - only showing status-based progress -->
+                                    <!-- ${extensionDays > 0 ? `
                                                         <div class="mt-1">
                                                             <small class="text-warning text-wrap d-inline-block">
                                                                 <i class="fas fa-info-circle me-1"></i>
                                                                 Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
                                                             </small>
                                                         </div>
-                                                    ` : ''}
+                                                    ` : ''} -->
                                 </div>
                             </div>
                             <div class="timeline-milestones ps-5">

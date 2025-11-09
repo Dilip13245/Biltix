@@ -172,15 +172,15 @@ class HomeController extends Controller
     
     public function phaseTimeline($project_id)
     {
-        // Get phases with their time progress for the project
-        $phases = ProjectPhase::with('milestones')
+        // Get phases with their progress for the project (based on approved status)
+        $phases = ProjectPhase::with(['milestones', 'tasks', 'inspections', 'snags'])
             ->where('project_id', $project_id)
             ->where('is_active', true)
             ->where('is_deleted', false)
             ->orderBy('id')
             ->get();
             
-        // Add calculated time progress for each phase (same as API)
+        // Add calculated progress for each phase (based on approved status - same as API)
         $phases->each(function ($phase) {
             $phase->time_progress = $phase->time_progress;
             $phase->has_extensions = $phase->has_extensions;
