@@ -333,7 +333,7 @@
                             <div class="steps-container">
                                 <div class="step-item">
                                     <div class="step active" id="step1">1</div>
-                                    <div class="step-label active" id="step1-label">{{ __('auth.mobile') }}</div>
+                                    <div class="step-label active" id="step1-label">{{ __('auth.email') }}</div>
                                 </div>
                                 <div class="step-line inactive" id="line1"></div>
                                 <div class="step-item">
@@ -349,15 +349,15 @@
 
                             <!-- Form -->
                             <form id="forgotPasswordForm">
-                                <!-- Step 1: Mobile Number -->
+                                <!-- Step 1: Email -->
                                 <div class="form-step active" id="form-step-1">
                                     <div class="mb-3">
-                                        <label class="form-label">{{ __('auth.mobile_number') }}</label>
+                                        <label class="form-label">{{ __('auth.email_address') }}</label>
                                         <div class="position-relative">
-                                            <input type="tel" class="form-control" id="mobileNumber" placeholder="{{ __('auth.enter_mobile') }}" required>
-                                            <i class="fas fa-phone input-icon"></i>
+                                            <input type="email" class="form-control" id="emailAddress" placeholder="{{ __('auth.enter_email') }}" required>
+                                            <i class="fas fa-envelope input-icon"></i>
                                         </div>
-                                        <div class="error-message" id="mobileError"></div>
+                                        <div class="error-message" id="emailError"></div>
                                     </div>
                                 </div>
 
@@ -365,7 +365,7 @@
                                 <div class="form-step" id="form-step-2">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.enter_otp') }}</label>
-                                        <p class="text-muted small">{{ __('auth.otp_sent_to') }} <span id="displayMobile"></span></p>
+                                        <p class="text-muted small">{{ __('auth.otp_sent_to') }} <span id="displayEmail"></span></p>
                                         <div class="otp-inputs">
                                             <input type="text" class="otp-input" maxlength="1" data-index="0" pattern="[0-9]">
                                             <input type="text" class="otp-input" maxlength="1" data-index="1" pattern="[0-9]">
@@ -433,7 +433,7 @@
     <script>
         let currentStep = 1;
         const totalSteps = 3;
-        let userPhone = '';
+        let userEmail = '';
         let resendTimer = null;
         let resendCountdown = 0;
 
@@ -448,17 +448,14 @@
             document.querySelectorAll('.form-control, .otp-input').forEach(el => el.classList.remove('error'));
             
             if (step === 1) {
-                const mobile = document.getElementById('mobileNumber');
+                const email = document.getElementById('emailAddress');
                 
-                const phoneValue = mobile.value.trim();
-                if (!phoneValue) {
-                    showError(mobile, 'mobileError', '{{ __('auth.mobile_required') }}');
+                const emailValue = email.value.trim();
+                if (!emailValue) {
+                    showError(email, 'emailError', '{{ __('auth.email_required') }}');
                     isValid = false;
-                } else if (/\s/.test(phoneValue)) {
-                    showError(mobile, 'mobileError', '{{ __('auth.mobile_spaces') }}');
-                    isValid = false;
-                } else if (!isValidPhone(phoneValue)) {
-                    showError(mobile, 'mobileError', '{{ __('auth.mobile_invalid') }}');
+                } else if (!isValidEmail(emailValue)) {
+                    showError(email, 'emailError', '{{ __('auth.email_invalid') }}');
                     isValid = false;
                 }
                 
@@ -523,10 +520,9 @@
             errorElement.classList.add('show');
         }
         
-        function isValidPhone(phone) {
-            const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
-            const phoneRegex = /^[\+]?[1-9]\d{9,14}$/;
-            return phoneRegex.test(cleanPhone) && !/[a-zA-Z]/.test(cleanPhone);
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         }
         
         function isStrongPassword(password) {
@@ -540,17 +536,17 @@
             }
             
             if (currentStep === 1) {
-                const mobile = document.getElementById('mobileNumber').value;
+                const email = document.getElementById('emailAddress').value;
                 
                 try {
                     const response = await api.sendOtp({
-                        phone: mobile,
+                        email: email,
                         type: 'forgot'
                     });
                     
                     if (response.code === 200) {
-                        userPhone = mobile;
-                        document.getElementById('displayMobile').textContent = mobile;
+                        userEmail = email;
+                        document.getElementById('displayEmail').textContent = email;
                         startResendTimer();
                         toastr.success(response.message);
                     } else {
@@ -567,7 +563,7 @@
                 
                 try {
                     const response = await api.verifyOtp({
-                        phone: userPhone,
+                        email: userEmail,
                         otp: otp,
                         type: 'forgot'
                     });
@@ -589,7 +585,7 @@
                 
                 try {
                     const response = await api.resetPassword({
-                        phone: userPhone,
+                        email: userEmail,
                         new_password: newPass,
                         confirm_password: confirmPass
                     });
@@ -729,14 +725,14 @@
         async function resendOTP() {
             if (resendCountdown > 0) return;
             
-            if (!userPhone) {
-                toastr.warning('{{ __('auth.enter_mobile') }}');
+            if (!userEmail) {
+                toastr.warning('{{ __('auth.enter_email') }}');
                 return;
             }
             
             try {
                 const response = await api.sendOtp({
-                    phone: userPhone,
+                    email: userEmail,
                     type: 'forgot'
                 });
                 

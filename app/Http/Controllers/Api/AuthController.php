@@ -254,69 +254,58 @@ class AuthController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'type' => 'required|in:forgot',
-                'phone' => 'required|string',
+                'email' => 'required|email',
             ], [
                 'type.required' => trans('api.auth.type_required'),
                 'type.in' => trans('api.auth.type_invalid'),
-                'phone.required' => trans('api.auth.phone_number_required'),
+                'email.required' => trans('api.auth.email_required'),
+                'email.email' => trans('api.auth.email_invalid'),
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            $phone = $request->input('phone');
-            $otp = '123456';
+            $email = $request->input('email');
+            $otp = rand(100000, 999999);
 
-            // Find user by phone only
-            $user = User::where('phone', $phone)->first();
+            $user = User::where('email', $email)->first();
 
             if (!$user) {
-                return $this->toJsonEnc([], trans('api.auth.user_not_found_phone'), Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_email'), Config::get('constant.NOT_FOUND'));
             }
 
-            // Check if user is deleted
             if ($user->is_deleted == 1) {
                 return $this->toJsonEnc([], trans('api.auth.account_deleted_error'), Config::get('constant.ERROR'));
             }
 
-            // Check if user is not verified
             if ($user->is_verified != 1) {
                 return $this->toJsonEnc([], trans('api.auth.account_not_verified'), Config::get('constant.ERROR'));
             }
 
-            // Check if user is inactive
             if ($user->is_active != 1) {
                 return $this->toJsonEnc([], trans('api.auth.account_inactive'), Config::get('constant.ERROR'));
             }
 
-            try {
-                Log::info('OTP for phone ' . $phone . ': ' . $otp);
+            $user->otp = $otp;
+            $user->otp_expires_at = now()->addMinutes(10);
+            $user->save();
 
-                $user->otp = $otp;
-                $user->otp_expires_at = now()->addMinutes(10);
-                $user->save();
+            try {
+                $subject = app()->getLocale() == 'ar' ? 'إعادة تعيين كلمة المرور - Biltix' : 'Reset Password - Biltix';
+                
+                Mail::send('emails.reset-password', ['user' => $user, 'otp' => $otp], function($message) use ($user, $subject) {
+                    $message->to($user->email)
+                            ->subject($subject);
+                });
+                
+                Log::info('OTP sent to email: ' . $email);
             } catch (\Exception $e) {
-                Log::error('OTP process failed: ' . $e->getMessage());
-                return $this->toJsonEnc([], 'Failed to process OTP', Config::get('constant.ERROR'));
+                Log::error('Email send failed: ' . $e->getMessage());
+                return $this->toJsonEnc([], 'Failed to send email. Please try again.', Config::get('constant.ERROR'));
             }
 
-            // Send OTP notification
-            NotificationHelper::send(
-                $user->id,
-                'otp_sent',
-                'Verification OTP',
-                "Your verification OTP is {$otp}. Valid for 10 minutes.",
-                [
-                    'user_id' => $user->id,
-                    'otp' => $otp,
-                    'purpose' => $request->type ?? 'verification',
-                    'expires_at' => now()->addMinutes(10)->toDateTimeString()
-                ],
-                'high'
-            );
-
-            return $this->toJsonEnc(['otp' => $otp], trans('api.auth.otp_sent'), Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc([], trans('api.auth.otp_sent_email'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             Log::error('sendOtp exception: ' . $e->getMessage());
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
@@ -327,11 +316,12 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'phone' => 'required|string',
+                'email' => 'required|email',
                 'otp' => 'required|string',
                 'type' => 'required|in:forgot',
             ], [
-                'phone.required' => trans('api.auth.phone_number_required'),
+                'email.required' => trans('api.auth.email_required'),
+                'email.email' => trans('api.auth.email_invalid'),
                 'otp.required' => trans('api.auth.otp_required'),
                 'type.required' => trans('api.auth.type_required'),
             ]);
@@ -340,15 +330,14 @@ class AuthController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            $phone = $request->input('phone');
+            $email = $request->input('email');
             $otp = $request->input('otp');
             $type = $request->input('type');
 
-            // Find user by phone only
-            $user = User::where('phone', $phone)->first();
+            $user = User::where('email', $email)->first();
 
             if (!$user) {
-                return $this->toJsonEnc([], trans('api.auth.user_not_found_phone'), Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_email'), Config::get('constant.NOT_FOUND'));
             }
 
             // Check if user is deleted
@@ -392,11 +381,12 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'phone' => 'required|string',
+                'email' => 'required|email',
                 'new_password' => 'required|min:6',
                 'confirm_password' => 'required|same:new_password',
             ], [
-                'phone.required' => trans('api.auth.phone_number_required'),
+                'email.required' => trans('api.auth.email_required'),
+                'email.email' => trans('api.auth.email_invalid'),
                 'new_password.required' => trans('api.auth.new_password_required'),
                 'new_password.min' => trans('api.auth.new_password_min'),
                 'confirm_password.required' => trans('api.auth.confirm_password_required'),
@@ -407,11 +397,10 @@ class AuthController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            // Find user by phone only
-            $user = User::where('phone', $request->phone)->first();
+            $user = User::where('email', $request->email)->first();
 
             if (!$user) {
-                return $this->toJsonEnc([], trans('api.auth.user_not_found_phone'), Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.auth.user_not_found_email'), Config::get('constant.NOT_FOUND'));
             }
 
             // Check if user is deleted
