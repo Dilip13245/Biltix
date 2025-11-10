@@ -77,5 +77,6 @@ class Kernel extends HttpKernel
         'web.permission' => \App\Http\Middleware\WebPermission::class,
         'web.api.auth' => \App\Http\Middleware\WebApiAuth::class,
         'auto.permission' => \App\Http\Middleware\AutoPermission::class,
+        'upload.limits' => \App\Http\Middleware\IncreaseUploadLimits::class,
     ];
 }

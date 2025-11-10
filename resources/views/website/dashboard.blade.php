@@ -1960,10 +1960,25 @@
                 });
             }
 
+            // Check URL for filter parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterParam = urlParams.get('filter');
+            
+            // Set initial filter based on URL parameter
+            let initialFilter = 'active';
+            if (filterParam === 'completed') {
+                initialFilter = 'completed';
+                // Update filter button text
+                const filterText = document.getElementById('statusFilterText');
+                if (filterText) {
+                    filterText.textContent = '{{ __('messages.completed') }}';
+                }
+            }
+            
             // Load notifications, profile image and projects on page load
             loadUserProfileImage();
             loadNotifications();
-            loadProjects('active', true);
+            loadProjects(initialFilter, true);
 
             // Setup date picker listeners for vanilla calendar
             setTimeout(() => {

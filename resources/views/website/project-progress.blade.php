@@ -580,8 +580,11 @@
 
                 if (response.code === 200) {
                     showToast('{{ __('messages.project_marked_completed') }}', 'success');
-                    btn.style.display = 'none';
-                    loadProjectData();
+                    
+                    // Redirect to dashboard with completed filter after short delay
+                    setTimeout(() => {
+                        window.location.href = '/dashboard?filter=completed';
+                    }, 1000);
                 } else {
                     showToast(response.message || '{{ __('messages.failed_to_update_project') }}', 'error');
                     btn.disabled = false;
