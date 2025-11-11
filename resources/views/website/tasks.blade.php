@@ -71,7 +71,7 @@
                 </select>
             </div>
             @can('tasks', 'create')
-                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#taskSelectionModal">
                     <i class="fas fa-plus"></i>
                     {{ __('messages.add_new_task') }}
                 </button>
@@ -101,6 +101,8 @@
             </div>
         </div>
     </section>
+    @include('website.modals.task-selection-modal')
+    @include('website.modals.task-library-modal')
     @include('website.modals.add-task-modal')
     @include('website.modals.drawing-modal')
     @include('website.modals.task-details-modal')
