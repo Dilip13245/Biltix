@@ -220,12 +220,40 @@ document.getElementById('addSnagModal')?.addEventListener('hidden.bs.modal', fun
     }
 });
 
-// Reset button text when modal is shown
-document.getElementById('addSnagModal')?.addEventListener('show.bs.modal', function() {
-    const btn = document.getElementById('createSnagBtn');
-    if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = '{{ __("messages.create_snag") }}';
-    }
-});
+// Load data when modal is shown
+if (!window.snagModalListenerAdded) {
+    window.snagModalListenerAdded = true;
+    document.getElementById('addSnagModal')?.addEventListener('shown.bs.modal', async function() {
+        const btn = document.getElementById('createSnagBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '{{ __("messages.create_snag") }}';
+        }
+        
+        // Load data
+        if (window.loadUsers) await window.loadUsers();
+        if (window.loadPhases) await window.loadPhases();
+        
+        // Destroy and recreate dropdowns
+        setTimeout(() => {
+            ['assignedTo', 'phaseSelect', 'categorySelect'].forEach(id => {
+                const select = document.getElementById(id);
+                if (select) {
+                    // Remove old wrapper
+                    const wrapper = select.closest('.searchable-dropdown');
+                    if (wrapper) {
+                        const parent = wrapper.parentElement;
+                        parent.insertBefore(select, wrapper);
+                        wrapper.remove();
+                        select.style.display = '';
+                    }
+                    // Create new instance
+                    if (window.SearchableDropdown) {
+                        select.searchableDropdown = new SearchableDropdown(select);
+                    }
+                }
+            });
+        }, 100);
+    });
+}
 </script>

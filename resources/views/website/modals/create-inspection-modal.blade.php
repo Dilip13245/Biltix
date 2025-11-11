@@ -122,11 +122,13 @@ function removeChecklistItem(button) {
 function protectButton(btn) {
   if (btn.disabled) return;
   btn.disabled = true;
+  const originalText = btn.innerHTML;
+  btn.setAttribute('data-original-text', originalText);
   btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-  setTimeout(function() {
-    btn.disabled = false;
-    btn.innerHTML = '{{ __("messages.create_inspection") }}';
-  }, 5000);
+  // Store timeout ID so it can be cleared if needed
+  btn.setAttribute('data-timeout-id', setTimeout(function() {
+    resetFormSubmission('createInspectionForm');
+  }, 30000)); // 30 seconds max timeout
 }
 
 // Allow adding new category when modal opens
@@ -242,6 +244,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+// // Reset form submission function
+// function resetFormSubmission(formId) {
+//   const form = document.getElementById(formId);
+//   if (form) {
+//     // Find the submit button
+//     const submitBtn = form.querySelector('button[type="submit"]') || document.getElementById('inspectionSubmitBtn');
+//     if (submitBtn) {
+//       // Clear any existing timeout
+//       const timeoutId = submitBtn.getAttribute('data-timeout-id');
+//       if (timeoutId) {
+//         clearTimeout(parseInt(timeoutId));
+//         submitBtn.removeAttribute('data-timeout-id');
+//       }
+      
+//       // Use the global releaseButton function if available
+//       if (typeof window.releaseButton === 'function') {
+//         window.releaseButton(submitBtn);
+//       } else {
+//         // Fallback: manually reset button
+//         submitBtn.disabled = false;
+//         const originalText = submitBtn.getAttribute('data-original-text') || '{{ __("messages.create_inspection") }}';
+//         submitBtn.innerHTML = originalText;
+//         submitBtn.removeAttribute('data-original-text');
+//       }
+//     }
+//   }
+// }
 
 // Submit inspection with images
 async function submitInspectionWithImages(imageDataArray) {

@@ -21,22 +21,22 @@
                 <div class="row align-items-start">
                     <div class="col-12">
                         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <button class="btn btn-outline-primary" onclick="history.back()">
-                                    <i class="fas fa-arrow-left"></i>
-                                </button>
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn btn-outline-primary" onclick="history.back()">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
                                 <div>
                                     <h4 class="mb-1">{{ __('messages.project_timeline') }}</h4>
                                     <p class="text-muted small mb-0">{{ __('messages.track_project_phases') }}</p>
-                                </div>
-                            </div>
-                            {{-- @can('phases', 'create')
-                                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
-                                    <i class="fas fa-plus"></i>
-                                    {{ __('messages.create_phase') }}
-                                </button>
-                            @endcan --}}
                         </div>
+            </div>
+            {{-- @can('phases', 'create')
+                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
+                    <i class="fas fa-plus"></i>
+                    {{ __('messages.create_phase') }}
+                </button>
+            @endcan --}}
+        </div>
                     </div>
                 </div>
             </div>
@@ -325,18 +325,18 @@
                                                         }
                                                     }
                                                 </style>
-                                                <button
+                                            <button
                                                     type="button"
                                                     class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white"
                                                     id="datePickerBtn">
-                                                    <svg width="15" height="16" viewBox="0 0 15 16"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path
-                                                            d="M3.23438 1V2H1.73438C0.90625 2 0.234375 2.67188 0.234375 3.5V5H14.2344V3.5C14.2344 2.67188 13.5625 2 12.7344 2H11.2344V1C11.2344 0.446875 10.7875 0 10.2344 0C9.68125 0 9.23438 0.446875 9.23438 1V2H5.23438V1C5.23438 0.446875 4.7875 0 4.23438 0C3.68125 0 3.23438 0.446875 3.23438 1ZM14.2344 6H0.234375V14.5C0.234375 15.3281 0.90625 16 1.73438 16H12.7344C13.5625 16 14.2344 15.3281 14.2344 14.5V6Z"
-                                                            fill="#4477C4" />
-                                                    </svg>
-                                                    <span id="currentDateBtn"></span>
-                                                </button>
+                                                <svg width="15" height="16" viewBox="0 0 15 16"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M3.23438 1V2H1.73438C0.90625 2 0.234375 2.67188 0.234375 3.5V5H14.2344V3.5C14.2344 2.67188 13.5625 2 12.7344 2H11.2344V1C11.2344 0.446875 10.7875 0 10.2344 0C9.68125 0 9.23438 0.446875 9.23438 1V2H5.23438V1C5.23438 0.446875 4.7875 0 4.23438 0C3.68125 0 3.23438 0.446875 3.23438 1ZM14.2344 6H0.234375V14.5C0.234375 15.3281 0.90625 16 1.73438 16H12.7344C13.5625 16 14.2344 15.3281 14.2344 14.5V6Z"
+                                                        fill="#4477C4" />
+                                                </svg>
+                                                <span id="currentDateBtn"></span>
+                                            </button>
                                                 <div id="timelineDatePickerWrapper" style="position: absolute; top: 0; left: 0; width: 0; height: 0; overflow: visible;">
                                                     @include('website.includes.date-picker', [
                                                         'id' => 'timelineDatePicker',
@@ -502,7 +502,7 @@
             
             // Helper function to get today's date in local timezone
             function getTodayLocalDateString() {
-                const today = new Date();
+                    const today = new Date();
                 const year = today.getFullYear();
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const day = String(today.getDate()).padStart(2, '0');
@@ -1732,12 +1732,10 @@
                     } else if (extensionDays > 0) {
                         badgeClass = 'badge3';
                         badgeText = 'Extended';
-                    } else if (progress > 0) {
+                    } else {
+                        // Default to "In Progress" for all phases (including new ones with 0 progress)
                         badgeClass = 'badge4';
                         badgeText = 'In Progress';
-                    } else {
-                        badgeClass = 'badge2';
-                        badgeText = 'Pending';
                     }
 
                     return `
@@ -2480,7 +2478,7 @@
                 container.innerHTML = `
         <div class="activity-field mb-2">
             <input type="text" class="form-control Input_control" name="description[]" 
-                placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
+                    placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
         </div>
     `;
                 document.getElementById('removeLastActivityBtn').style.display = 'none';
@@ -2520,7 +2518,7 @@
                 container.innerHTML = `
         <div class="safety-field mb-2">
             <input type="text" class="form-control Input_control" name="checklist_item[]" 
-                placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
+                    placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
         </div>
     `;
                 document.getElementById('removeLastSafetyBtn').style.display = 'none';
@@ -2534,7 +2532,7 @@
                 fieldDiv.className = 'activity-field mb-2';
                 fieldDiv.innerHTML = `
         <input type="text" class="form-control Input_control" name="description[]" 
-            placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
+                placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
     `;
                 container.appendChild(fieldDiv);
                 updateRemoveButton('removeLastActivityBtn', container);
@@ -2582,7 +2580,7 @@
                 fieldDiv.className = 'safety-field mb-2';
                 fieldDiv.innerHTML = `
         <input type="text" class="form-control Input_control" name="checklist_item[]" 
-            placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
+                placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
     `;
                 container.appendChild(fieldDiv);
                 updateRemoveButton('removeLastSafetyBtn', container);
@@ -2598,7 +2596,7 @@
 
             function updateRemoveButton(buttonId, container) {
                 const removeBtn = document.getElementById(buttonId);
-                if (removeBtn) {
+                    if (removeBtn) {
                     removeBtn.style.display = container.children.length > 1 ? 'inline-block' : 'none';
                 }
             }
@@ -2791,7 +2789,7 @@
                 container.innerHTML = `
         <div class="activity-field mb-2">
             <input type="text" class="form-control Input_control" name="description[]" 
-                value="${description}" placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
+                    value="${description}" placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
         </div>
     `;
                 document.getElementById('removeLastActivityBtn').style.display = 'none';

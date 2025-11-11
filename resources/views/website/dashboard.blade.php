@@ -1418,22 +1418,22 @@
                             </div>
                             <a href="/website/project/${project.id}/plans" class="text-decoration-none">
                                 <hr style="border-color: #e0e0e0; margin: 12px 0;">
-                                <div class="mb-2">
-                                    <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
-                                    <span class="text-muted ms-2" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                                <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                    <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                    <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
                                 </div>
-                                <div class="mb-2 d-flex align-items-start" style="min-width: 0;">
-                                    <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; width: 20px; flex-shrink: 0;"></i>
-                                    <span class="text-muted ms-2" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;" title="${project.project_location || 'N/A'}">${project.project_location || 'N/A'}</span>
+                                <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                    <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                    <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div>
-                                        <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
-                                        <span class="text-muted ms-2" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                    <div class="d-flex align-items-center" style="gap: 6px;">
+                                        <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                        <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
                                     </div>
-                                    <div>
-                                        <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; width: 20px;"></i>
-                                        <span class="text-muted ms-2" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                    <div class="d-flex align-items-center" style="gap: 6px;">
+                                        <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                        <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
                                     </div>
                                 </div>
                             </a>

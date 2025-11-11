@@ -173,7 +173,7 @@
             }
         }
 
-        async function loadUsers() {
+        window.loadUsers = async function() {
             try {
                 const response = await api.getProjectTeamMembers({
                     project_id: currentProjectId,
@@ -201,7 +201,7 @@
             }
         }
 
-        async function loadPhases() {
+        window.loadPhases = async function() {
             try {
                 const response = await api.listPhases({
                     project_id: currentProjectId

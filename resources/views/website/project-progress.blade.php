@@ -1114,12 +1114,10 @@
                 } else if (hasExtensions) {
                     badgeClass = 'badge3'; // Warning for extensions
                     badgeText = 'Extended';
-                } else if (progress > 0) {
+                } else {
+                    // Default to "In Progress" for all phases (including new ones with 0 progress)
                     badgeClass = 'badge4';
                     badgeText = 'In Progress';
-                } else {
-                    badgeClass = 'badge2';
-                    badgeText = 'Pending';
                 }
 
                 // Progress bar color based on status

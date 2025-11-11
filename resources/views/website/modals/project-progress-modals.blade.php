@@ -45,8 +45,8 @@
                     <input type="hidden" id="activityId" name="activity_id">
                     <div class="mb-3">
                         <label class="form-label fw-medium">{{ __('messages.description') }}</label>
-                        <div id="modalActivitiesContainer">
-                            <div class="activity-field mb-2">
+                    <div id="modalActivitiesContainer">
+                        <div class="activity-field mb-2">
                                 <input type="text" class="form-control Input_control" name="description[]" 
                                     placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150" required>
                             </div>
@@ -126,17 +126,17 @@
                     <input type="hidden" id="manpowerId" name="item_id">
                     <div class="mb-3">
                         <label class="form-label fw-medium">{{ __('messages.manpower_equipment') }}</label>
-                        <div id="modalManpowerContainer">
-                            <div class="manpower-field mb-2">
+                    <div id="modalManpowerContainer">
+                        <div class="manpower-field mb-2">
                                 <div class="row">
-                                    <div class="col-7">
+                                <div class="col-7">
                                         <input type="text" class="form-control Input_control" name="category[]" 
                                             placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
-                                    </div>
+                                </div>
                                     <div class="col-5">
                                         <input type="number" class="form-control Input_control" name="count[]" 
                                             placeholder="{{ __('messages.count') }}" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
-                                    </div>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -208,8 +208,8 @@
                     <input type="hidden" id="safetyId" name="item_id">
                     <div class="mb-3">
                         <label class="form-label fw-medium">{{ __('messages.checklist_item') }}</label>
-                        <div id="modalSafetyContainer">
-                            <div class="safety-field mb-2">
+                    <div id="modalSafetyContainer">
+                        <div class="safety-field mb-2">
                                 <input type="text" class="form-control Input_control" name="checklist_item[]" 
                                     placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120" required>
                             </div>
@@ -389,7 +389,7 @@ function removeLastSafetyField() {
 
 function updateRemoveButton(buttonId, container) {
     const removeBtn = document.getElementById(buttonId);
-    if (removeBtn) {
+        if (removeBtn) {
         removeBtn.style.display = container.children.length > 1 ? 'inline-block' : 'none';
     }
 }
