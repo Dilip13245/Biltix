@@ -73,9 +73,10 @@
                         </div>
                         <div class="table-responsive" style="height: 400px; overflow-y: auto;">
                             <table class="table align-middle mb-0">
-                                <thead class="sticky-top bg-white">
+                                <thead class=" bg-white">
                                     <tr>
-                                        <th class="small text-muted" style="max-width: 250px;">{{ __('messages.title') }}</th>
+                                        <th class="small text-muted" style="max-width: 250px;">{{ __('messages.title') }}
+                                        </th>
                                         <th class="small text-muted">{{ __('messages.date') }}</th>
                                         <th class="small text-muted">{{ __('messages.status') }}</th>
                                         <th class="small text-muted">{{ __('messages.actions') }}</th>

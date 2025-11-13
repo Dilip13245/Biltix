@@ -115,27 +115,33 @@
 
         @media (max-width: 768px) {
             [dir="ltr"] .notification-dropdown {
-                right: -150px;
-                width: 300px;
-                max-width: calc(100vw - 40px);
+                left: 0;
+                right: auto;
+                width: calc(100vw - 20px);
+                max-width: 350px;
             }
 
             [dir="rtl"] .notification-dropdown {
-                left: -150px;
-                width: 300px;
-                max-width: calc(100vw - 40px);
+                right: 0;
+                left: auto;
+                width: calc(100vw - 20px);
+                max-width: 350px;
             }
         }
 
         @media (max-width: 480px) {
             [dir="ltr"] .notification-dropdown {
-                right: -120px;
-                width: 280px;
+                left: 0;
+                right: auto;
+                width: calc(100vw - 20px);
+                max-width: 320px;
             }
 
             [dir="rtl"] .notification-dropdown {
-                left: -120px;
-                width: 280px;
+                right: 0;
+                left: auto;
+                width: calc(100vw - 20px);
+                max-width: 320px;
             }
         }
 
@@ -788,27 +794,7 @@
                                 class="Head_title fw-bold ms-3 fs24 d-none d-lg-inline-block">{{ __('messages.project_dashboard') }}</span>
                         </a>
                         <div class=" d-flex align-items-center justify-content-end gap-md-4 gap-3 w-100 flex-wrap ">
-                            <!-- Language Toggle - Custom Dropdown -->
-                            <div class="custom-header-dropdown" id="langDropdownWrapper">
-                                <button class="btn btn-outline-primary btn-sm custom-header-dropdown-btn" type="button"
-                                    id="langDropdownBtn">
-                                    <span id="currentLang">{{ is_rtl() ? 'العربية' : 'English' }}</span>
-                                </button>
-                                <ul class="custom-header-dropdown-menu" id="langDropdownMenu">
-                                    <li><a class="custom-header-dropdown-item"
-                                            href="{{ route('lang.switch', 'en') }}">English</a></li>
-                                    <li><a class="custom-header-dropdown-item"
-                                            href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
-                                </ul>
-                            </div>
-
-                            <form class="d-none d-md-block serchBar position-relative">
-                                <i class="fas fa-search position-absolute top-50 translate-middle-y"
-                                    style="color: #6c757d; pointer-events: none;"></i>
-                                <input class="form-control" type="search"
-                                    placeholder="{{ __('messages.search_projects') }}" aria-label="Search"
-                                    data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
-                            </form>
+                            <!-- Notification Icon -->
                             <div class="notification-wrapper position-relative">
                                 <div class="position-relative MessageBOx text-center" style="cursor: pointer;"
                                     onclick="toggleNotifications()">
@@ -836,6 +822,28 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Language Toggle - Custom Dropdown -->
+                            <div class="custom-header-dropdown" id="langDropdownWrapper">
+                                <button class="btn btn-outline-primary btn-sm custom-header-dropdown-btn" type="button"
+                                    id="langDropdownBtn">
+                                    <span id="currentLang">{{ is_rtl() ? 'العربية' : 'English' }}</span>
+                                </button>
+                                <ul class="custom-header-dropdown-menu" id="langDropdownMenu">
+                                    <li><a class="custom-header-dropdown-item"
+                                            href="{{ route('lang.switch', 'en') }}">English</a></li>
+                                    <li><a class="custom-header-dropdown-item"
+                                            href="{{ route('lang.switch', 'ar') }}">العربية</a></li>
+                                </ul>
+                            </div>
+
+                            <form class="d-none d-md-block serchBar position-relative">
+                                <i class="fas fa-search position-absolute top-50 translate-middle-y"
+                                    style="color: #6c757d; pointer-events: none;"></i>
+                                <input class="form-control" type="search"
+                                    placeholder="{{ __('messages.search_projects') }}" aria-label="Search"
+                                    data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
+                            </form>
                             <div class="dropdown">
                                 <a href="#" class="d-flex align-items-center gap-2 gap-md-3" type="button"
                                     id="dropdownMenuButton" data-bs-toggle="dropdown">
