@@ -586,7 +586,7 @@ function validateInspectionForm() {
       input.classList.add('is-invalid');
       const errorDiv = document.createElement('div');
       errorDiv.className = 'invalid-feedback';
-      errorDiv.textContent = 'Checklist item cannot be empty';
+      errorDiv.textContent = '{{ __('messages.checklist_item_cannot_be_empty') }}';
       input.parentElement.appendChild(errorDiv);
     }
   });
@@ -633,7 +633,7 @@ function getValidationMessage(key) {
     description_required: '{{ __('messages.please_enter_description') }}',
     checklist_required: '{{ __('messages.please_add_checklist_item') }}'
   };
-  return messages[key] || 'Validation error';
+  return messages[key] || '{{ __('messages.validation_error') }}';
 }
 
 function resetSubmitButton() {

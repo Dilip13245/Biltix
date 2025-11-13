@@ -147,19 +147,16 @@
                                             <span class="text-primary fw-semibold" id="overallProjectProgress">0%</span>
                                         </div>
                                         <div class="progress" style="height:12px; border-radius: 6px;">
-                                            <div class="progress-bar" 
-                                                 role="progressbar" 
-                                                 id="overallProjectProgressBar"
-                                                 style="width: 0%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%); border-radius: 6px;" 
-                                                 aria-valuenow="0" 
-                                                 aria-valuemin="0" 
-                                                 aria-valuemax="100">
+                                            <div class="progress-bar" role="progressbar" id="overallProjectProgressBar"
+                                                style="width: 0%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%); border-radius: 6px;"
+                                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                                             </div>
                                         </div>
                                         @can('projects', 'edit')
-                                            <button class="btn btn-success btn-sm mt-2 api-action-btn" id="markCompletedBtn" 
+                                            <button class="btn btn-success btn-sm mt-2 api-action-btn" id="markCompletedBtn"
                                                 style="display: none;" onclick="markProjectAsCompleted()">
-                                                <i class="fas fa-check-circle {{ margin_end(1) }}"></i>{{ __('messages.mark_as_completed') }}
+                                                <i
+                                                    class="fas fa-check-circle {{ margin_end(1) }}"></i>{{ __('messages.mark_as_completed') }}
                                             </button>
                                         @endcan
                                     </div>
@@ -569,7 +566,8 @@
             const btn = document.getElementById('markCompletedBtn');
             const originalText = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(1) }}"></i>{{ __('messages.updating') }}...';
+            btn.innerHTML =
+                '<i class="fas fa-spinner fa-spin {{ margin_end(1) }}"></i>{{ __('messages.updating') }}...';
 
             try {
                 const response = await api.updateProject({
@@ -580,7 +578,7 @@
 
                 if (response.code === 200) {
                     showToast('{{ __('messages.project_marked_completed') }}', 'success');
-                    
+
                     // Redirect to dashboard with completed filter after short delay
                     setTimeout(() => {
                         window.location.href = '/dashboard?filter=completed';
@@ -699,7 +697,7 @@
                 const extensionDays = parseInt(extensionInput.value) || 0;
 
                 if (extensionDays < 0 || extensionDays > 3650) {
-                    toastr.error('Extension days must be between 0 and 3650');
+                    toastr.error('{{ __('messages.extension_days_range') }}');
                     extensionInput.value = Math.min(Math.max(extensionDays, 0), 3650);
                     return;
                 }
@@ -1016,7 +1014,8 @@
                 const clearBtn = document.createElement('i');
                 clearBtn.className = 'fas fa-times clear-selection d-none';
                 clearBtn.id = 'clear' + fieldId.charAt(0).toUpperCase() + fieldId.slice(1) + 'Selection';
-                clearBtn.style.cssText = 'position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;';
+                clearBtn.style.cssText =
+                    'position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;';
                 if (document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl') {
                     clearBtn.style.left = '35px';
                     clearBtn.style.right = 'auto';
@@ -1057,7 +1056,8 @@
                         input.style.cursor = 'pointer';
                         input.style.backgroundColor = '#f8f9fa';
                         clearBtn.classList.remove('d-none');
-                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement
+                            .getAttribute('dir') === 'rtl';
                         if (isRTL) {
                             clearBtn.style.left = '35px';
                             clearBtn.style.right = 'auto';
@@ -1139,7 +1139,7 @@
                 select.style.width = '100%';
                 select.style.maxWidth = '300px';
                 select.id = fieldId + '_input';
-                select.innerHTML = '<option value="">Loading...</option>';
+                select.innerHTML = '<option value="">{{ __('messages.loading_options') }}</option>';
                 fieldElement.innerHTML = '';
                 fieldElement.appendChild(select);
 
@@ -1158,7 +1158,8 @@
                 }
 
                 if (response.code === 200 && response.data) {
-                    selectElement.innerHTML = '<option value="">Select ' + label + '</option>';
+                    selectElement.innerHTML = '<option value="">{{ __('messages.select_label') }}'.replace(':label',
+                        label) + '</option>';
                     response.data.forEach(user => {
                         const option = document.createElement('option');
                         option.value = user.id;
@@ -1180,7 +1181,7 @@
                 }
             } catch (error) {
                 console.error('Failed to load options:', error);
-                selectElement.innerHTML = '<option value="">Error loading options</option>';
+                selectElement.innerHTML = '<option value="">{{ __('messages.error_loading_options') }}</option>';
             }
         }
 
@@ -1335,7 +1336,7 @@
                     phasesCache = response.data;
                     lastLoadTime = now;
                     renderPhases(response.data);
-                    
+
                     // Reload project data to update overall progress after phases are loaded
                     loadProjectData();
                 } else {
@@ -1407,27 +1408,27 @@
                                     <div class="progress position-relative" style="height:12px;">
                                         <!-- Extended days progress bar commented out - only showing status-based progress -->
                                         <!-- ${hasExtensions ? `
-                                                        Original timeline progress - COMMENTED OUT
-                                                        <div class="progress-bar" role="progressbar" 
-                                                            style="width: ${Math.min(progress, 100)}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
-                                                            aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        Extension area (lighter color)
-                                                        <div class="progress-bar" role="progressbar" 
-                                                            style="width: ${Math.max(0, Math.min(100 - progress, extensionDays / (totalDays / 100)))}%; background: rgba(255, 193, 7, 0.3); border-left: 2px solid #ffc107;"
-                                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        Extension indicator
-                                                        <div class="position-absolute top-0 h-100 d-flex align-items-center" style="left: ${Math.min(progress, 100)}%; transform: translateX(-50%);">
-                                                            <div style="width: 2px; height: 100%; background: #ffc107;"></div>
-                                                        </div>
-                                                        <div class="position-absolute top-0 end-0 h-100 d-flex align-items-center" style="padding-right: 4px;">
-                                                            <i class="fas fa-clock text-warning" title="Extended by ${extensionDays} days" style="font-size: 10px;"></i>
-                                                        </div>
-                                                    ` : `
-                                                        Normal progress bar
-                                                        <div class="progress-bar" role="progressbar" 
-                                                            style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
-                                                            aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    `} -->
+                                                                    Original timeline progress - COMMENTED OUT
+                                                                    <div class="progress-bar" role="progressbar" 
+                                                                        style="width: ${Math.min(progress, 100)}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
+                                                                        aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    Extension area (lighter color)
+                                                                    <div class="progress-bar" role="progressbar" 
+                                                                        style="width: ${Math.max(0, Math.min(100 - progress, extensionDays / (totalDays / 100)))}%; background: rgba(255, 193, 7, 0.3); border-left: 2px solid #ffc107;"
+                                                                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    Extension indicator
+                                                                    <div class="position-absolute top-0 h-100 d-flex align-items-center" style="left: ${Math.min(progress, 100)}%; transform: translateX(-50%);">
+                                                                        <div style="width: 2px; height: 100%; background: #ffc107;"></div>
+                                                                    </div>
+                                                                    <div class="position-absolute top-0 end-0 h-100 d-flex align-items-center" style="padding-right: 4px;">
+                                                                        <i class="fas fa-clock text-warning" title="${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}" style="font-size: 10px;"></i>
+                                                                    </div>
+                                                                ` : `
+                                                                    Normal progress bar
+                                                                    <div class="progress-bar" role="progressbar" 
+                                                                        style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
+                                                                        aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                `} -->
                                         <!-- Status-based progress bar only -->
                                         <div class="progress-bar" role="progressbar" 
                                             style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
@@ -1439,13 +1440,13 @@
                                     </div>
                                     <!-- Extended timeline info commented out -->
                                     <!-- ${hasExtensions ? `
-                                                    <div class="mt-1">
-                                                        <small class="text-warning">
-                                                            <i class="fas fa-info-circle me-1"></i>
-                                                            Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                                        </small>
-                                                    </div>
-                                                ` : ''} -->
+                                                                <div class="mt-1">
+                                                                    <small class="text-warning">
+                                                                        <i class="fas fa-info-circle me-1"></i>
+                                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                                    </small>
+                                                                </div>
+                                                            ` : ''} -->
                                 </div>
                                 <div class="small text-muted">
                                     ${phase.milestones ? phase.milestones.map(milestone => {
@@ -1455,20 +1456,20 @@
                                         const extendedIcon = isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : '';
                                         
                                         return `
-                                                        <div class="d-flex justify-content-between align-items-center ${overdueClass} mb-1">
-                                                            <span>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}${extendedIcon}</span>
-                                                        </div>
-                                                    `;
+                                                                    <div class="d-flex justify-content-between align-items-center ${overdueClass} mb-1">
+                                                                        <span>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}${extendedIcon}</span>
+                                                                    </div>
+                                                                `;
                                     }).join('') : '<div>No milestones defined</div>'}
                                 </div>
                                 ${hasExtensions ? `
-                                                <div class="mt-2">
-                                                    <small class="text-warning">
-                                                        <i class="fas fa-exclamation-triangle me-1"></i>
-                                                        Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
-                                                    </small>
-                                                </div>
-                                            ` : ''}
+                                                            <div class="mt-2">
+                                                                <small class="text-warning">
+                                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                                    Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
+                                                                </small>
+                                                            </div>
+                                                        ` : ''}
 
                             </div>
                         </div>
@@ -1505,14 +1506,15 @@
                     }
 
                     // Update overall project progress (simple line like phases)
-                    const overallProgress = project.progress_percentage !== undefined ? Math.round(project.progress_percentage) : 0;
+                    const overallProgress = project.progress_percentage !== undefined ? Math.round(project
+                        .progress_percentage) : 0;
                     const overallProgressElement = document.getElementById('overallProjectProgress');
                     const overallProgressBar = document.getElementById('overallProjectProgressBar');
-                    
+
                     if (overallProgressElement) {
                         overallProgressElement.textContent = overallProgress + '%';
                     }
-                    
+
                     if (overallProgressBar) {
                         overallProgressBar.style.width = overallProgress + '%';
                         overallProgressBar.setAttribute('aria-valuenow', overallProgress);
@@ -1572,7 +1574,7 @@
             ];
             elements.forEach(id => {
                 const element = document.getElementById(id);
-                if (element) element.textContent = 'Error loading data';
+                if (element) element.textContent = '{{ __('messages.error_loading_data') }}';
             });
         }
 
@@ -1595,7 +1597,7 @@
                 dropdownButton.className = 'btn btn-outline-secondary dropdown-toggle';
                 dropdownButton.type = 'button';
                 dropdownButton.setAttribute('data-bs-toggle', 'dropdown');
-                dropdownButton.textContent = 'Loading users...';
+                dropdownButton.textContent = '{{ __('messages.loading_users') }}';
 
                 // Create dropdown menu
                 const dropdownMenu = document.createElement('ul');
@@ -1771,13 +1773,15 @@
                         menuElement.appendChild(listItem);
                     });
                 } else {
-                    buttonElement.textContent = 'No users found';
-                    menuElement.innerHTML = '<li><span class="dropdown-item-text">No users found</span></li>';
+                    buttonElement.textContent = '{{ __('messages.no_users_found') }}';
+                    menuElement.innerHTML =
+                        '<li><span class="dropdown-item-text">{{ __('messages.no_users_found') }}</span></li>';
                 }
             } catch (error) {
                 console.error('Failed to load users:', error);
-                buttonElement.textContent = 'Error loading users';
-                menuElement.innerHTML = '<li><span class="dropdown-item-text">Error loading users</span></li>';
+                buttonElement.textContent = '{{ __('messages.error_loading_users') }}';
+                menuElement.innerHTML =
+                    '<li><span class="dropdown-item-text">{{ __('messages.error_loading_users') }}</span></li>';
             }
         }
 
@@ -1819,6 +1823,7 @@
                             top: auto !important;
                             margin: 0 !important;
                         }
+
                         #createPhaseModal .modal-header {
                             position: relative !important;
                         }
@@ -1828,7 +1833,8 @@
                             <h5 class="modal-title" id="createPhaseModalLabel">
                                 {{ __('messages.create_phase') }}<i class="fas fa-layer-group ms-2"></i>
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ __('messages.close') }}"></button>
                         </div>
                     @else
                         <h5 class="modal-title" id="createPhaseModalLabel">
@@ -1943,7 +1949,7 @@
             const createPhaseForm = document.getElementById('createPhaseForm');
             if (createPhaseForm) {
                 console.log('Phase form found, attaching submit handler');
-                
+
                 // Also attach click handler to the submit button as backup
                 const submitBtn = document.querySelector('button[form="createPhaseForm"]');
                 if (submitBtn) {
@@ -1952,7 +1958,7 @@
                         // Don't prevent default - let form submit
                     });
                 }
-                
+
                 createPhaseForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     console.log('Form submit event triggered');
@@ -1960,13 +1966,13 @@
                     // Get submit button (it's outside the form, using form attribute)
                     const btn = document.querySelector('button[form="createPhaseForm"]');
                     console.log('Submit button:', btn);
-                    
+
                     // Check if button is already disabled (protection system handles this)
                     if (btn && btn.disabled) {
                         console.log('Button already disabled, returning');
                         return;
                     }
-                    
+
                     // Manually protect button here since form submit might bypass button protection
                     if (btn && window.protectButton) {
                         window.protectButton(btn);
@@ -1978,9 +1984,9 @@
                     // Validate title
                     if (!title || !title.trim()) {
                         if (typeof toastr !== 'undefined') {
-                            toastr.error('Please enter a phase title.');
+                            toastr.error('{{ __('messages.please_enter_phase_title') }}');
                         } else {
-                            alert('Please enter a phase title.');
+                            alert('{{ __('messages.please_enter_phase_title') }}');
                         }
                         return;
                     }
@@ -1997,7 +2003,8 @@
                         if (nameInput && nameInput.value.trim()) {
                             milestones.push({
                                 milestone_name: nameInput.value.trim(),
-                                days: daysInput && daysInput.value ? parseInt(daysInput.value) : null
+                                days: daysInput && daysInput.value ? parseInt(daysInput
+                                    .value) : null
                             });
                         }
                     });
@@ -2013,14 +2020,15 @@
 
                         if (response.code === 200) {
                             // Close modal
-                            const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
+                            const modal = bootstrap.Modal.getInstance(document.getElementById(
+                                'createPhaseModal'));
                             if (modal) modal.hide();
 
                             // Show success message
                             if (typeof toastr !== 'undefined') {
-                                toastr.success('Phase created successfully!');
+                                toastr.success('{{ __('messages.phase_created_successfully') }}');
                             } else {
-                                alert('Phase "' + title + '" created successfully!');
+                                alert('{{ __('messages.phase_created_successfully') }}');
                             }
 
                             // Reset form
@@ -2032,17 +2040,19 @@
                             loadPhases(true);
                         } else {
                             if (typeof toastr !== 'undefined') {
-                                toastr.error(response.message || 'Failed to create phase');
+                                toastr.error(response.message ||
+                                    '{{ __('messages.failed_to_create_phase') }}');
                             } else {
-                                alert('Error creating phase: ' + (response.message || 'Unknown error'));
+                                alert('{{ __('messages.error_creating_phase') }}: ' + (response
+                                    .message || '{{ __('messages.unknown_error') }}'));
                             }
                         }
                     } catch (error) {
                         console.error('Error creating phase:', error);
                         if (typeof toastr !== 'undefined') {
-                            toastr.error('Error creating phase. Please try again.');
+                            toastr.error('{{ __('messages.error_creating_phase') }}');
                         } else {
-                            alert('Error creating phase. Please try again.');
+                            alert('{{ __('messages.error_creating_phase') }}');
                         }
                     }
                     // Note: Button will be automatically released by button protection system when API call completes
@@ -2089,6 +2099,7 @@
                             top: auto !important;
                             margin: 0 !important;
                         }
+
                         #phaseNavigationModal .modal-header {
                             position: relative !important;
                         }
@@ -2098,7 +2109,8 @@
                             <h5 class="modal-title" id="phaseNavigationModalLabel">
                                 <span id="phaseModalTitle">Phase Management</span><i class="fas fa-layer-group ms-2"></i>
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ __('messages.close') }}"></button>
                         </div>
                     @else
                         <h5 class="modal-title" id="phaseNavigationModalLabel">

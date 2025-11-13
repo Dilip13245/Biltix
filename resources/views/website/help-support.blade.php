@@ -133,7 +133,7 @@
                 showFieldError(email, '{{ __('messages.email_address') }} is required');
                 isValid = false;
             } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-                showFieldError(email, 'Please enter a valid email address');
+                showFieldError(email, '{{ __('messages.please_enter_valid_email') }}');
                 isValid = false;
             }
             

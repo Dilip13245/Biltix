@@ -884,7 +884,7 @@
                 ];
                 elements.forEach(id => {
                     const element = document.getElementById(id);
-                    if (element) element.textContent = 'Error loading data';
+                    if (element) element.textContent = '{{ __('messages.error_loading_data') }}';
                 });
             }
 
@@ -1082,7 +1082,7 @@
                     select.style.width = '100%';
                     select.style.maxWidth = '300px';
                     select.id = fieldId + '_input';
-                    select.innerHTML = '<option value="">Loading...</option>';
+                    select.innerHTML = '<option value="">{{ __('messages.loading_options') }}</option>';
                     fieldElement.innerHTML = '';
                     fieldElement.appendChild(select);
 
@@ -1101,7 +1101,8 @@
                     }
 
                     if (response.code === 200 && response.data) {
-                        selectElement.innerHTML = '<option value="">Select ' + label + '</option>';
+                        selectElement.innerHTML = '<option value="">{{ __('messages.select_label') }}'.replace(':label',
+                            label) + '</option>';
                         response.data.forEach(user => {
                             const option = document.createElement('option');
                             option.value = user.id;
@@ -1123,7 +1124,7 @@
                     }
                 } catch (error) {
                     console.error('Failed to load options:', error);
-                    selectElement.innerHTML = '<option value="">Error loading options</option>';
+                    selectElement.innerHTML = '<option value="">{{ __('messages.error_loading_options') }}</option>';
                 }
             }
 
@@ -1344,11 +1345,11 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${filteredActivities.map(activity => `
-                                                                <li class="d-flex align-items-center mb-2">
-                                                                  <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                                                  <span class="flex-grow-1 text-wrap">${activity.description}</span>
-                                                                </li>
-                                                              `).join('')}
+                                                                                                <li class="d-flex align-items-center mb-2">
+                                                                                                  <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                                                                                  <span class="flex-grow-1 text-wrap">${activity.description}</span>
+                                                                                                </li>
+                                                                                              `).join('')}
     </ul>
   `;
             }
@@ -1403,13 +1404,13 @@
       <table class="table table-borderless mb-0">
         <tbody>
           ${filteredItems.map(item => `
-                                                                    <tr>
-                                                                      <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
-                                                                      <td class="text-end">
-                                                                        <span class="text-primary fw-semibold">${item.count}</span>
-                                                                      </td>
-                                                                    </tr>
-                                                                  `).join('')}
+                                                                                                    <tr>
+                                                                                                      <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
+                                                                                                      <td class="text-end">
+                                                                                                        <span class="text-primary fw-semibold">${item.count}</span>
+                                                                                                      </td>
+                                                                                                    </tr>
+                                                                                                  `).join('')}
         </tbody>
       </table>
     </div>
@@ -1464,15 +1465,15 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${filteredItems.map(item => `
-                                                                <li class="mb-2">
-                                                                  <div class="d-flex align-items-center p-3 rounded bg4">
-                                                                    <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
-                                                                      <i class="fas fa-check-circle"></i>
-                                                                    </span>
-                                                                    <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
-                                                                  </div>
-                                                                </li>
-                                                              `).join('')}
+                                                                                                <li class="mb-2">
+                                                                                                  <div class="d-flex align-items-center p-3 rounded bg4">
+                                                                                                    <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
+                                                                                                      <i class="fas fa-check-circle"></i>
+                                                                                                    </span>
+                                                                                                    <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
+                                                                                                  </div>
+                                                                                                </li>
+                                                                                              `).join('')}
     </ul>
   `;
             }
@@ -1592,7 +1593,7 @@
                             <i class="fas fa-layer-group me-2"></i>{{ __('messages.create_phase') }}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                            aria-label="{{ __('messages.close') }}"></button>
                     </div>
                     <div class="modal-body">
                         <form id="createPhaseForm">
@@ -1703,9 +1704,9 @@
                         // Validate title
                         if (!title) {
                             if (typeof toastr !== 'undefined') {
-                                toastr.error('Please enter a phase title.');
+                                toastr.error('{{ __('messages.please_enter_phase_title') }}');
                             } else {
-                                alert('Please enter a phase title.');
+                                alert('{{ __('messages.please_enter_phase_title') }}');
                             }
                             return;
                         }
@@ -1751,9 +1752,9 @@
 
                                 // Show success message
                                 if (typeof toastr !== 'undefined') {
-                                    toastr.success('Phase created successfully!');
+                                    toastr.success('{{ __('messages.phase_created_successfully') }}');
                                 } else {
-                                    alert('Phase "' + title + '" created successfully!');
+                                    alert('{{ __('messages.phase_created_successfully') }}');
                                 }
 
                                 // Reset form
@@ -1788,17 +1789,19 @@
                                 }, 1000);
                             } else {
                                 if (typeof toastr !== 'undefined') {
-                                    toastr.error(response.message || 'Failed to create phase');
+                                    toastr.error(response.message ||
+                                        '{{ __('messages.failed_to_create_phase') }}');
                                 } else {
-                                    alert('Error creating phase: ' + (response.message || 'Unknown error'));
+                                    alert('{{ __('messages.error_creating_phase') }}: ' + (response
+                                        .message || '{{ __('messages.unknown_error') }}'));
                                 }
                             }
                         } catch (error) {
                             console.error('Error creating phase:', error);
                             if (typeof toastr !== 'undefined') {
-                                toastr.error('Error creating phase. Please try again.');
+                                toastr.error('{{ __('messages.error_creating_phase') }}');
                             } else {
-                                alert('Error creating phase. Please try again.');
+                                alert('{{ __('messages.error_creating_phase') }}');
                             }
                         }
                         // Note: Button will be automatically released by button protection system when API call completes
@@ -1817,7 +1820,7 @@
                             <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">Phase Management</span>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                            aria-label="{{ __('messages.close') }}"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row g-3">
@@ -1858,7 +1861,8 @@
                                     <div class="card-body text-center p-4">
                                         <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
                                         <h5 class="card-title">{{ __('messages.project_details') }}</h5>
-                                        <p class="card-text text-muted">{{ __('messages.view_project_timeline') }}</p>
+                                        <p class="card-text text-muted">{{ __('messages.view_project_timeline') }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -1919,11 +1923,11 @@
 
                     if (extensionDays < 0 || extensionDays > 3650) {
                         if (typeof toastr !== 'undefined') {
-                            toastr.warning('Extension days must be between 0 and 3650');
+                            toastr.warning('{{ __('messages.extension_days_range') }}');
                         } else if (typeof showToast === 'function') {
-                            showToast('Extension days must be between 0 and 3650', 'warning');
+                            showToast('{{ __('messages.extension_days_range') }}', 'warning');
                         } else {
-                            alert('Extension days must be between 0 and 3650');
+                            alert('{{ __('messages.extension_days_range') }}');
                         }
                         extensionInput.value = Math.min(Math.max(extensionDays, 0), 3650);
                         return;
@@ -1940,38 +1944,43 @@
                             loadPhaseTimeline();
                             if (extensionDays > 0) {
                                 if (typeof toastr !== 'undefined') {
-                                    toastr.success(`Milestone extended by ${extensionDays} days`);
+                                    toastr.success('{{ __('messages.milestone_extended_by_days') }}'.replace(
+                                        ':days', extensionDays));
                                 } else if (typeof showToast === 'function') {
-                                    showToast(`Milestone extended by ${extensionDays} days`, 'success');
+                                    showToast('{{ __('messages.milestone_extended_by_days') }}'.replace(
+                                        ':days', extensionDays), 'success');
                                 } else {
-                                    alert(`Milestone extended by ${extensionDays} days`);
+                                    alert('{{ __('messages.milestone_extended_by_days') }}'.replace(':days',
+                                        extensionDays));
                                 }
                             } else {
                                 if (typeof toastr !== 'undefined') {
-                                    toastr.success('Extension reset successfully');
+                                    toastr.success('{{ __('messages.extension_reset_successfully') }}');
                                 } else if (typeof showToast === 'function') {
-                                    showToast('Extension reset successfully', 'success');
+                                    showToast('{{ __('messages.extension_reset_successfully') }}', 'success');
                                 } else {
-                                    alert('Extension reset successfully');
+                                    alert('{{ __('messages.extension_reset_successfully') }}');
                                 }
                             }
                         } else {
                             if (typeof toastr !== 'undefined') {
-                                toastr.error('Failed to extend milestone: ' + response.message);
+                                toastr.error('{{ __('messages.failed_to_extend_milestone') }}: ' + response
+                                    .message);
                             } else if (typeof showToast === 'function') {
-                                showToast('Failed to extend milestone: ' + response.message, 'error');
+                                showToast('{{ __('messages.failed_to_extend_milestone') }}: ' + response
+                                    .message, 'error');
                             } else {
-                                alert('Failed to extend milestone: ' + response.message);
+                                alert('{{ __('messages.failed_to_extend_milestone') }}: ' + response.message);
                             }
                         }
                     } catch (error) {
                         console.error('Error extending milestone:', error);
                         if (typeof toastr !== 'undefined') {
-                            toastr.error('Error extending milestone');
+                            toastr.error('{{ __('messages.error_extending_milestone') }}');
                         } else if (typeof showToast === 'function') {
-                            showToast('Error extending milestone', 'error');
+                            showToast('{{ __('messages.error_extending_milestone') }}', 'error');
                         } else {
-                            alert('Error extending milestone');
+                            alert('{{ __('messages.error_extending_milestone') }}');
                         }
                     }
                 }, 500);
@@ -2031,13 +2040,13 @@
                                     </div>
                                     <!-- Extended timeline info commented out - only showing status-based progress -->
                                     <!-- ${extensionDays > 0 ? `
-                                                                <div class="mt-1">
-                                                                    <small class="text-warning text-wrap d-inline-block">
-                                                                        <i class="fas fa-info-circle me-1"></i>
-                                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                                                    </small>
-                                                                </div>
-                                                            ` : ''} -->
+                                                                                                <div class="mt-1">
+                                                                                                    <small class="text-warning text-wrap d-inline-block">
+                                                                                                        <i class="fas fa-info-circle me-1"></i>
+                                                                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                                                                    </small>
+                                                                                                </div>
+                                                                                            ` : ''} -->
                                 </div>
                             </div>
                             <div class="timeline-milestones ps-5">
@@ -2045,65 +2054,65 @@
                                     const isExtended = milestone.is_extended;
                                     const isOverdue = milestone.is_overdue;
                                     return `
-                                                                <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
-                                                                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
-                                                                        <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                                                            <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
-                                                                            <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
-                                                                            ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
-                                                                        </div>
-                                                                        <div class="text-muted small" style="flex-shrink: 0;">
-                                                                            ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
-                                                                        <span class="text-muted small fw-medium">Extend:</span>
-                                                                        <div class="d-flex align-items-center gap-1">
-                                                                            <input type="number" 
-                                                                                class="form-control form-control-sm milestone-extend-input" 
-                                                                                value="${milestone.extension_days || 0}" 
-                                                                                min="0" 
-                                                                                max="999" 
-                                                                                id="ext_${milestone.id}" 
-                                                                                placeholder="0"
-                                                                                onchange="extendMilestone(${milestone.id})"
-                                                                                onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
-                                                                            <span class="text-muted" style="font-size: 0.75rem;">days</span>
-                                                                        </div>
-                                                                        <div class="d-flex gap-1">
-                                                                            <button type="button" 
-                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
-                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
-                                                                                onclick="quickExtend(${milestone.id}, 1)" 
-                                                                                title="Add 1 day">+1</button>
-                                                                            <button type="button" 
-                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
-                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
-                                                                                onclick="quickExtend(${milestone.id}, 7)" 
-                                                                                title="Add 7 days">+7</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            `;
-                                }).join('') : '<div class="text-muted small">No milestones defined</div>'}
+                                                                                                <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
+                                                                                                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                                                                                                        <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                                                                                            <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
+                                                                                                            <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
+                                                                                                            ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
+                                                                                                        </div>
+                                                                                                        <div class="text-muted small" style="flex-shrink: 0;">
+                                                                                                            ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+                                                                                                        <span class="text-muted small fw-medium">Extend:</span>
+                                                                                                        <div class="d-flex align-items-center gap-1">
+                                                                                                            <input type="number" 
+                                                                                                                class="form-control form-control-sm milestone-extend-input" 
+                                                                                                                value="${milestone.extension_days || 0}" 
+                                                                                                                min="0" 
+                                                                                                                max="999" 
+                                                                                                                id="ext_${milestone.id}" 
+                                                                                                                placeholder="0"
+                                                                                                                onchange="extendMilestone(${milestone.id})"
+                                                                                                                onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
+                                                                                                            <span class="text-muted" style="font-size: 0.75rem;">days</span>
+                                                                                                        </div>
+                                                                                                        <div class="d-flex gap-1">
+                                                                                                            <button type="button" 
+                                                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                                                                onclick="quickExtend(${milestone.id}, 1)" 
+                                                                                                                title="{{ __('messages.add_1_day') }}">+1</button>
+                                                                                                            <button type="button" 
+                                                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                                                                onclick="quickExtend(${milestone.id}, 7)" 
+                                                                                                                title="{{ __('messages.add_7_days') }}">+7</button>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            `;
+                                }).join('') : '<div class="text-muted small">{{ __('messages.no_milestones_defined') }}</div>'}
                                 ${extensionDays > 0 ? `
-                                                            <div class="mt-2">
-                                                                <small class="text-warning">
-                                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                                    Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
-                                                                </small>
-                                                            </div>
-                                                        ` : ''}
+                                                                                            <div class="mt-2">
+                                                                                                <small class="text-warning">
+                                                                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                                                                    ${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}
+                                                                                                </small>
+                                                                                            </div>
+                                                                                        ` : ''}
                                 <div class="mt-2 d-flex gap-1 flex-wrap">
                                     <small class="text-muted me-2">Quick extend:</small>
                                     ${phase.milestones && phase.milestones.length === 1 ? `
-                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                    onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
-                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                    onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
-                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                    onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
-                                                            ` : ''}
+                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
+                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
+                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
+                                                                                            ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -2133,7 +2142,7 @@
                 // Get current phase ID from timeline
                 const currentPhaseId = getCurrentPhaseId();
                 if (!currentPhaseId) {
-                    alert('No phase selected');
+                    alert('{{ __('messages.no_phase_selected') }}');
                     return;
                 }
 
@@ -2167,11 +2176,11 @@
                 if (!saveBtn) {
                     console.error('Save button not found');
                     if (typeof toastr !== 'undefined') {
-                        toastr.error('Error: Save button not found');
+                        toastr.error('{{ __('messages.error_save_button_not_found') }}');
                     } else if (typeof showToast === 'function') {
-                        showToast('Error: Save button not found', 'error');
+                        showToast('{{ __('messages.error_save_button_not_found') }}', 'error');
                     } else {
-                        alert('Error: Save button not found');
+                        alert('{{ __('messages.error_save_button_not_found') }}');
                     }
                     return;
                 }
@@ -2228,50 +2237,52 @@
 
                                 // Show success message
                                 if (typeof toastr !== 'undefined') {
-                                    toastr.success('Milestone added successfully!');
+                                    toastr.success('{{ __('messages.milestone_added_successfully') }}');
                                 } else if (typeof showToast === 'function') {
-                                    showToast('Milestone added successfully!', 'success');
+                                    showToast('{{ __('messages.milestone_added_successfully') }}', 'success');
                                 } else {
-                                    alert('Milestone added successfully!');
+                                    alert('{{ __('messages.milestone_added_successfully') }}');
                                 }
 
                                 // Reload timeline
                                 loadPhaseTimeline();
                             } else {
                                 if (typeof toastr !== 'undefined') {
-                                    toastr.error('Failed to add milestone: ' + updateResponse.message);
+                                    toastr.error('{{ __('messages.failed_to_add_milestone') }}: ' + updateResponse
+                                        .message);
                                 } else if (typeof showToast === 'function') {
-                                    showToast('Failed to add milestone: ' + updateResponse.message, 'error');
+                                    showToast('{{ __('messages.failed_to_add_milestone') }}: ' + updateResponse.message,
+                                        'error');
                                 } else {
-                                    alert('Failed to add milestone: ' + updateResponse.message);
+                                    alert('{{ __('messages.failed_to_add_milestone') }}: ' + updateResponse.message);
                                 }
                             }
                         } else {
                             if (typeof toastr !== 'undefined') {
-                                toastr.error('Phase not found');
+                                toastr.error('{{ __('messages.phase_not_found') }}');
                             } else if (typeof showToast === 'function') {
-                                showToast('Phase not found', 'error');
+                                showToast('{{ __('messages.phase_not_found') }}', 'error');
                             } else {
-                                alert('Phase not found');
+                                alert('{{ __('messages.phase_not_found') }}');
                             }
                         }
                     } else {
                         if (typeof toastr !== 'undefined') {
-                            toastr.error('Failed to load phase data');
+                            toastr.error('{{ __('messages.failed_to_load_phase_data') }}');
                         } else if (typeof showToast === 'function') {
-                            showToast('Failed to load phase data', 'error');
+                            showToast('{{ __('messages.failed_to_load_phase_data') }}', 'error');
                         } else {
-                            alert('Failed to load phase data');
+                            alert('{{ __('messages.failed_to_load_phase_data') }}');
                         }
                     }
                 } catch (error) {
                     console.error('Error adding milestone:', error);
                     if (typeof toastr !== 'undefined') {
-                        toastr.error('Error adding milestone');
+                        toastr.error('{{ __('messages.error_adding_milestone') }}');
                     } else if (typeof showToast === 'function') {
-                        showToast('Error adding milestone', 'error');
+                        showToast('{{ __('messages.error_adding_milestone') }}', 'error');
                     } else {
-                        alert('Error adding milestone');
+                        alert('{{ __('messages.error_adding_milestone') }}');
                     }
                 } finally {
                     // Release button if protection system is available
@@ -2312,14 +2323,14 @@
                                     {{ __('messages.project_timeline') }}<i class="fas fa-chart-line ms-2"></i>
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                                    aria-label="{{ __('messages.close') }}"></button>
                             </div>
                         @else
                             <h5 class="modal-title" id="timelineModalLabel">
                                 <i class="fas fa-chart-line me-2"></i>{{ __('messages.project_timeline') }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                                aria-label="{{ __('messages.close') }}"></button>
                         @endif
                     </div>
                     <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -2756,14 +2767,14 @@
                                     {{ __('messages.add_milestone') }}<i class="fas fa-plus ms-2"></i>
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                                    aria-label="{{ __('messages.close') }}"></button>
                             </div>
                         @else
                             <h5 class="modal-title" id="addMilestoneModalLabel">
                                 <i class="fas fa-plus me-2"></i>{{ __('messages.add_milestone') }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                                aria-label="{{ __('messages.close') }}"></button>
                         @endif
                     </div>
                     <div class="modal-body">
@@ -2804,7 +2815,7 @@
                 <div class="modal-content">
                     <div class="modal-header border-0 pb-0">
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                            aria-label="{{ __('messages.close') }}"></button>
                     </div>
                     <div class="modal-body text-center px-4 pb-4">
                         <div class="mb-3">
@@ -3171,19 +3182,19 @@
                     const count = countInputs[i].value.trim();
 
                     if (!category) {
-                        toastr.error('Category is required');
+                        toastr.error('{{ __('messages.category_is_required') }}');
                         categoryInputs[i].focus();
                         return;
                     }
 
                     if (!count || count === '' || isNaN(count) || parseInt(count) < 0) {
-                        toastr.error('Count is required and must be a valid number');
+                        toastr.error('{{ __('messages.count_required_valid_number') }}');
                         countInputs[i].focus();
                         return;
                     }
 
                     if (parseInt(count) > 2147483647) {
-                        toastr.error('Count is too large');
+                        toastr.error('{{ __('messages.count_is_too_large') }}');
                         countInputs[i].focus();
                         return;
                     }
@@ -3448,7 +3459,7 @@
             // Activities Update Modal
             function openActivitiesUpdateModal() {
                 if (!window.currentActivities || window.currentActivities.length === 0) {
-                    toastr.warning('No activities to update');
+                    toastr.warning('{{ __('messages.no_activities_to_update') }}');
                     return;
                 }
 
@@ -3459,7 +3470,7 @@
         <div class="mb-2 d-flex align-items-center gap-2 activity-item" data-activity-id="${activity.id}">
             <input type="hidden" name="activity_id[]" value="${activity.id}">
             <input type="text" class="form-control flex-grow-1" name="activity_description[]" 
-                value="${activity.description}" placeholder="Activity description" maxlength="150">
+                value="${activity.description}" placeholder="{{ __('messages.enter_activity_description') }}" maxlength="150">
             <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" style="width: 40px; min-width: 40px;" onclick="deleteActivityItem(${activity.id}, this)" title="{{ __('messages.delete') }}">
                 <i class="fas fa-trash"></i>
             </button>
@@ -3472,7 +3483,7 @@
             // Manpower Update Modal
             function openManpowerUpdateModal() {
                 if (!window.currentManpower || window.currentManpower.length === 0) {
-                    toastr.warning('No manpower items to update');
+                    toastr.warning('{{ __('messages.no_manpower_items_to_update') }}');
                     return;
                 }
 
@@ -3483,9 +3494,9 @@
         <div class="mb-2 d-flex align-items-center gap-2 manpower-item" data-manpower-id="${item.id}">
             <input type="hidden" name="manpower_id[]" value="${item.id}">
             <input type="text" class="form-control" name="manpower_category[]" style="flex: 1 1 45%;" 
-                value="${item.category}" placeholder="Category" maxlength="50" required>
+                value="${item.category}" placeholder="{{ __('messages.enter_category') }}" maxlength="50" required>
             <input type="number" class="form-control" name="manpower_count[]" style="flex: 1 1 25%;" 
-                value="${item.count}" placeholder="Count" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
+                value="${item.count}" placeholder="{{ __('messages.count') }}" min="0" max="2147483647" oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);" required>
             <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" style="width: 40px; min-width: 40px;" onclick="deleteManpowerItem(${item.id}, this)" title="{{ __('messages.delete') }}">
                 <i class="fas fa-trash"></i>
             </button>
@@ -3498,7 +3509,7 @@
             // Safety Update Modal
             function openSafetyUpdateModal() {
                 if (!window.currentSafetyItems || window.currentSafetyItems.length === 0) {
-                    toastr.warning('No safety items to update');
+                    toastr.warning('{{ __('messages.no_safety_items_to_update') }}');
                     return;
                 }
 
@@ -3509,7 +3520,7 @@
         <div class="mb-2 d-flex align-items-center gap-2 safety-item" data-safety-id="${item.id}">
             <input type="hidden" name="safety_id[]" value="${item.id}">
             <input type="text" class="form-control flex-grow-1" name="safety_item[]" 
-                value="${item.checklist_item}" placeholder="Safety item" maxlength="120">
+                value="${item.checklist_item}" placeholder="{{ __('messages.enter_safety_item') }}" maxlength="120">
             <button type="button" class="btn btn-sm btn-outline-danger flex-shrink-0" style="width: 40px; min-width: 40px;" onclick="deleteSafetyItem(${item.id}, this)" title="{{ __('messages.delete') }}">
                 <i class="fas fa-trash"></i>
             </button>
@@ -3653,12 +3664,12 @@
                 // Validate descriptions
                 for (let input of descInputs) {
                     if (!input.value.trim()) {
-                        toastr.error('Description is required');
+                        toastr.error('{{ __('messages.description_is_required') }}');
                         input.focus();
                         return;
                     }
                     if (input.value.length > 150) {
-                        toastr.error('Description must be less than 150 characters');
+                        toastr.error('{{ __('messages.description_max_length') }}');
                         input.focus();
                         return;
                     }
@@ -3687,12 +3698,12 @@
                     if (response.code === 200) {
                         bootstrap.Modal.getInstance(document.getElementById('activitiesUpdateModal')).hide();
                         loadActivities();
-                        toastr.success('Activities updated successfully!');
+                        toastr.success('{{ __('messages.activities_updated_successfully') }}');
                     } else {
-                        toastr.error(response.message || 'Failed to update activities');
+                        toastr.error(response.message || '{{ __('messages.failed_to_update_activities') }}');
                     }
                 } catch (error) {
-                    toastr.error('Failed to update activities');
+                    toastr.error('{{ __('messages.failed_to_update_activities') }}');
                 }
             }
 
@@ -3710,25 +3721,25 @@
                     const count = countInputs[i].value.trim();
 
                     if (!category) {
-                        toastr.error('Category is required');
+                        toastr.error('{{ __('messages.category_is_required') }}');
                         categoryInputs[i].focus();
                         return;
                     }
 
                     if (category.length > 50) {
-                        toastr.error('Category must be less than 50 characters');
+                        toastr.error('{{ __('messages.category_max_length') }}');
                         categoryInputs[i].focus();
                         return;
                     }
 
                     if (!count || count === '' || isNaN(count) || parseInt(count) < 0) {
-                        toastr.error('Count is required and must be a valid number');
+                        toastr.error('{{ __('messages.count_required_valid_number') }}');
                         countInputs[i].focus();
                         return;
                     }
 
                     if (parseInt(count) > 2147483647) {
-                        toastr.error('Count is too large');
+                        toastr.error('{{ __('messages.count_is_too_large') }}');
                         countInputs[i].focus();
                         return;
                     }
@@ -3759,12 +3770,12 @@
                     if (response.code === 200) {
                         bootstrap.Modal.getInstance(document.getElementById('manpowerUpdateModal')).hide();
                         loadManpowerEquipment();
-                        toastr.success('Manpower updated successfully!');
+                        toastr.success('{{ __('messages.manpower_updated_successfully') }}');
                     } else {
-                        toastr.error(response.message || 'Failed to update manpower');
+                        toastr.error(response.message || '{{ __('messages.failed_to_update_manpower') }}');
                     }
                 } catch (error) {
-                    toastr.error('Failed to update manpower');
+                    toastr.error('{{ __('messages.failed_to_update_manpower') }}');
                 }
             }
 
@@ -3777,12 +3788,12 @@
                 // Validate safety items
                 for (let input of itemInputs) {
                     if (!input.value.trim()) {
-                        toastr.error('Safety item is required');
+                        toastr.error('{{ __('messages.safety_item_is_required') }}');
                         input.focus();
                         return;
                     }
                     if (input.value.length > 120) {
-                        toastr.error('Safety item must be less than 120 characters');
+                        toastr.error('{{ __('messages.safety_item_max_length') }}');
                         input.focus();
                         return;
                     }
@@ -3811,12 +3822,12 @@
                     if (response.code === 200) {
                         bootstrap.Modal.getInstance(document.getElementById('safetyUpdateModal')).hide();
                         loadSafetyItems();
-                        toastr.success('Safety items updated successfully!');
+                        toastr.success('{{ __('messages.safety_items_updated_successfully') }}');
                     } else {
-                        toastr.error(response.message || 'Failed to update safety items');
+                        toastr.error(response.message || '{{ __('messages.failed_to_update_safety_items') }}');
                     }
                 } catch (error) {
-                    toastr.error('Failed to update safety items');
+                    toastr.error('{{ __('messages.failed_to_update_safety_items') }}');
                 }
             }
         </script>

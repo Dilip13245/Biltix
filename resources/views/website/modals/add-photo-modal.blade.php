@@ -44,13 +44,13 @@
                         <div class="col-md-6 mb-3">
                             <label for="photoCategory" class="form-label fw-medium">Category</label>
                             <select class="form-select Input_control" id="photoCategory" name="category">
-                                <option value="">Select Category</option>
-                                <option value="foundation">Foundation</option>
-                                <option value="structure">Structure</option>
-                                <option value="finishing">Finishing</option>
-                                <option value="safety">Safety</option>
-                                <option value="equipment">Equipment</option>
-                                <option value="progress">Progress</option>
+                                <option value="">{{ __('messages.select_category') }}</option>
+                                <option value="foundation">{{ __('messages.category_foundation') }}</option>
+                                <option value="structure">{{ __('messages.category_structure') }}</option>
+                                <option value="finishing">{{ __('messages.category_finishing') }}</option>
+                                <option value="safety">{{ __('messages.category_safety') }}</option>
+                                <option value="equipment">{{ __('messages.category_equipment') }}</option>
+                                <option value="progress">{{ __('messages.category_progress') }}</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -156,21 +156,21 @@
             // Validate photos
             const photoFiles = form.querySelector('#photoFiles');
             if (!photoFiles.files || photoFiles.files.length === 0) {
-                showFieldError(photoFiles, 'Please select at least one photo');
+                showFieldError(photoFiles, '{{ __('messages.please_select_at_least_one_photo') }}');
                 isValid = false;
             }
 
             // Validate category
             const photoCategory = form.querySelector('#photoCategory');
             if (!photoCategory.value) {
-                showFieldError(photoCategory, 'Category is required');
+                showFieldError(photoCategory, '{{ __('messages.category_is_required') }}');
                 isValid = false;
             }
 
             // Validate date
             const photoDate = form.querySelector('#photoDate');
             if (!photoDate.value) {
-                showFieldError(photoDate, 'Date Taken is required');
+                showFieldError(photoDate, '{{ __('messages.date_taken_is_required') }}');
                 isValid = false;
             }
 
