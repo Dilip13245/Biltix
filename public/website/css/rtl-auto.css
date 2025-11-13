@@ -7,9 +7,19 @@
 }
 
 [dir="rtl"] .serchBar input,
-[dir="rtl"] .serchBar2 input {
+[dir="rtl"] .serchBar2 input,
+[dir="rtl"] .serchBar.position-relative input,
+[dir="rtl"] .serchBar.position-relative .form-control,
+[dir="rtl"] .serchBar2.position-relative input,
+[dir="rtl"] .serchBar2.position-relative .form-control,
+[dir="rtl"] .position-relative.serchBar > input,
+[dir="rtl"] .position-relative.serchBar > .form-control,
+[dir="rtl"] .position-relative.serchBar2 > input,
+[dir="rtl"] .position-relative.serchBar2 > .form-control,
+[dir="rtl"] form.serchBar.position-relative input.form-control,
+[dir="rtl"] form.serchBar.position-relative input[type="search"] {
   padding-left: 40px !important;
-  padding-right: 12px !important;
+  padding-right: 45px !important;
 }
 
 /* Modal header RTL fixes */
