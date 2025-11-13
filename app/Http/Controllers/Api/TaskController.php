@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\TaskImage;
+use App\Models\TaskLibrary;
 use App\Helpers\NumberHelper;
 use App\Helpers\NotificationHelper;
 use Illuminate\Http\Request;
@@ -781,6 +782,36 @@ class TaskController extends Controller
             $task->save();
 
             return $this->toJsonEnc($task, trans('api.tasks.attachment_uploaded'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function getTaskLibrary(Request $request)
+    {
+        try {
+            $taskLibraries = TaskLibrary::active()
+                ->with(['descriptions' => function($query) {
+                    $query->active()->orderBy('sort_order');
+                }])
+                ->orderBy('title')
+                ->get();
+
+            $data = $taskLibraries->map(function($library) {
+                return [
+                    'id' => $library->id,
+                    'title' => $library->title,
+                    'descriptions' => $library->descriptions->map(function($desc) {
+                        return [
+                            'id' => $desc->id,
+                            'description' => $desc->description,
+                            'sort_order' => $desc->sort_order,
+                        ];
+                    }),
+                ];
+            });
+
+            return $this->toJsonEnc($data, 'Task library retrieved successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

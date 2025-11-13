@@ -98,6 +98,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('update_progress', [TaskController::class, 'updateProgress']);
         Route::post('assign_bulk', [TaskController::class, 'assignBulk']);
         Route::post('upload_attachment', [TaskController::class, 'uploadAttachment']);
+        Route::get('library', [TaskController::class, 'getTaskLibrary']);
     });
 
     Route::prefix('inspections')->group(function () {

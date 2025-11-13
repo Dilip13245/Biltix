@@ -38,6 +38,7 @@ return [
         'logout_success' => 'Logout successful',
         'account_deleted' => 'Account deleted successfully',
         'user_not_found' => 'User not found with this email',
+        'user_not_found_email' => 'User not found with this email',
         'account_not_verified' => 'Your account is not verified. Please verify your account first',
         'account_inactive' => 'Your account is inactive. Please contact support',
         'account_deleted_error' => 'Your account has been deleted. Please contact support if this is an error',

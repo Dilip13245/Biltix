@@ -40,12 +40,16 @@ class ApiClient {
                     headers: config.headers
                 };
                 
-                // Only add body for non-GET requests
-                if (config.method !== 'GET') {
+                // Handle GET requests with query parameters
+                let requestUrl = `${this.baseUrl}/${endpoint}`;
+                if (config.method === 'GET' && Object.keys(config.data).length > 0) {
+                    const queryParams = new URLSearchParams(config.data).toString();
+                    requestUrl += `?${queryParams}`;
+                } else if (config.method !== 'GET') {
                     fetchOptions.body = JSON.stringify(config.data);
                 }
                 
-                const response = await fetch(`${this.baseUrl}/${endpoint}`, fetchOptions);
+                const response = await fetch(requestUrl, fetchOptions);
                 
                 console.log('Response status:', response.status);
                 
@@ -231,6 +235,10 @@ class ApiClient {
 
     async getTaskDetails(data) {
         return this.makeRequest('tasks/details', data);
+    }
+
+    async getTaskLibrary() {
+        return this.makeRequest('tasks/library', {}, 'GET');
     }
 
     async updateTask(data) {
