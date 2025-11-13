@@ -93,44 +93,45 @@
 
         /* Mobile Responsive Styles for Project Files Page */
         @media (max-width: 991px) {
+
             /* Content Header */
             .content-header {
                 flex-direction: column;
                 align-items: flex-start !important;
             }
-            
-            .content-header > div:first-child {
+
+            .content-header>div:first-child {
                 margin-bottom: 1rem;
             }
-            
+
             .gallery-filters {
                 width: 100%;
                 justify-content: flex-start;
             }
-            
+
             /* Statistics Cards */
             .col-12.col-lg-3.col-md-4 {
                 margin-bottom: 1rem;
             }
-            
+
             /* Folder Grid */
             #foldersGrid .col-md-3.col-sm-4.col-6 {
                 flex: 0 0 50%;
                 max-width: 50%;
             }
-            
+
             /* Content Container */
             #contentContainer {
                 height: auto !important;
                 max-height: 60vh;
                 padding: 0 0.5rem !important;
             }
-            
+
             /* Card Body Padding */
             .card-body.py-md-4 {
                 padding: 1rem !important;
             }
-            
+
             /* Path Header */
             .d-flex.justify-content-between.align-items-center.px-md-4 {
                 flex-direction: column;
@@ -138,45 +139,45 @@
                 gap: 0.75rem;
                 padding: 0.75rem !important;
             }
-            
+
             /* Back Button */
             #backBtn {
                 margin-bottom: 0.5rem;
             }
-            
+
             /* Folder Actions */
             #folderActions {
                 width: 100%;
             }
-            
+
             #folderActions button {
                 width: 100%;
             }
-            
+
             /* Table Responsive */
             .table-responsive {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
-            
+
             .table-responsive table {
                 min-width: 600px;
             }
-            
+
             .table-responsive th,
             .table-responsive td {
                 white-space: nowrap;
                 font-size: 0.875rem;
                 padding: 0.5rem !important;
             }
-            
+
             /* File Name Column */
             .table-responsive td:first-child {
                 max-width: 150px;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            
+
             /* File Description - Allow word wrap */
             .table-responsive td:first-child .file-description {
                 white-space: normal !important;
@@ -187,7 +188,7 @@
                 margin-top: 4px;
             }
         }
-        
+
         /* Desktop - File Description Word Wrap */
         .table-responsive td:first-child .file-description {
             white-space: normal !important;
@@ -197,49 +198,50 @@
             display: block;
             margin-top: 4px;
         }
-        
+
         @media (max-width: 576px) {
+
             /* Folder Grid - Mobile */
             #foldersGrid .col-md-3.col-sm-4.col-6 {
                 flex: 0 0 100%;
                 max-width: 100%;
             }
-            
+
             /* Folder Card */
             .folder-card {
                 margin-bottom: 0.75rem;
             }
-            
+
             .folder-card .card-body {
                 padding: 1rem !important;
             }
-            
+
             .folder-card i.fa-folder {
                 font-size: 2rem !important;
             }
-            
+
             /* Content Container */
             #contentContainer {
                 max-height: 50vh;
                 padding: 0.5rem !important;
             }
-            
+
             /* Create Folder Button */
             #createFolderBtn {
                 width: 100%;
                 justify-content: center;
             }
-            
+
             /* Statistics Cards */
             .col-12.col-lg-3.col-md-4 {
                 flex: 0 0 100%;
                 max-width: 100%;
             }
-            
+
             .card-body.p-md-4 {
                 padding: 1rem !important;
             }
-            
+
             /* Table - Hide some columns on mobile */
             .table-responsive th:nth-child(3),
             .table-responsive td:nth-child(3),
@@ -247,42 +249,43 @@
             .table-responsive td:nth-child(4) {
                 display: none;
             }
-            
+
             /* Table - Adjust file name width */
             .table-responsive td:first-child {
                 max-width: 200px;
             }
-            
+
             /* Path Text */
             #currentPath {
                 font-size: 1rem;
             }
-            
+
             /* Upload Button */
             .btn-sm.orange_btn {
                 font-size: 0.875rem;
                 padding: 0.5rem 1rem;
             }
         }
-        
+
         @media (max-width: 375px) {
+
             /* Extra Small Screens */
             #foldersGrid {
                 gap: 0.5rem !important;
             }
-            
+
             .folder-card .card-body {
                 padding: 0.75rem !important;
             }
-            
+
             .folder-card h6 {
                 font-size: 0.875rem;
             }
-            
+
             .folder-card small {
                 font-size: 0.75rem;
             }
-            
+
             #contentContainer {
                 max-height: 45vh;
             }
@@ -414,10 +417,12 @@
                         <div class="card-body card-body py-md-4 px-0">
                             <div class="d-flex justify-content-between align-items-center px-md-4 px-2 mb-4">
                                 <div class="d-flex align-items-center gap-2">
-                                    <button class="btn btn-sm btn-outline-secondary" id="backBtn" onclick="goBack()" style="display: none;">
+                                    <button class="btn btn-sm btn-outline-secondary" id="backBtn" onclick="goBack()"
+                                        style="display: none;">
                                         <i class="fas fa-arrow-left"></i>
                                     </button>
-                                    <h5 class="fw-semibold black_color mb-0" id="currentPath">{{ __('messages.folders') }}</h5>
+                                    <h5 class="fw-semibold black_color mb-0" id="currentPath">{{ __('messages.folders') }}
+                                    </h5>
                                 </div>
                                 <div id="folderActions" style="display: none;">
                                     @can('files', 'upload')
@@ -427,7 +432,8 @@
                                     @endcan
                                 </div>
                             </div>
-                            <div class="" id="contentContainer" style="height: 400px; overflow-y: auto; padding: 0 1rem;">
+                            <div class="" id="contentContainer"
+                                style="height: 400px; overflow-y: auto; padding: 0 1rem;">
                                 <div id="foldersGrid" class="row g-3">
                                     <div class="col-12 text-center py-4">
                                         <div class="spinner-border" role="status"></div>
@@ -463,13 +469,13 @@
         // Open File Upload Modal
         window.openFileUploadModal = function() {
             const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('fileUploadModal'));
-            
+
             // Reset modal state
             document.getElementById('fileUploadFilesList').innerHTML = '';
             document.getElementById('fileUploadNotesContainer').style.display = 'none';
             document.getElementById('fileUploadNotesList').innerHTML = '';
             document.getElementById('fileUploadMultiple').value = '';
-            
+
             modal.show();
         };
 
@@ -535,21 +541,21 @@
                             ${Array.from(input.files).map((file, index) => {
                                 const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                 return `
-                                    <div class="col-12">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="file_fileUpload_${index}" 
-                                                onchange="toggleFileDescriptionInModal('fileUpload', ${index})">
-                                            <label class="form-check-label d-flex align-items-center" for="file_fileUpload_${index}">
-                                                <i class="${fileIcon} me-2"></i>
-                                                <span class="text-truncate">${file.name}</span>
-                                            </label>
-                                        </div>
-                                        <div class="ms-4 mt-2" id="desc_fileUpload_${index}" style="display: none;">
-                                            <textarea class="form-control form-control-sm" name="file_notes_fileUpload_${index}" 
-                                                placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                        </div>
-                                    </div>
-                                `;
+                                                <div class="col-12">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="file_fileUpload_${index}" 
+                                                            onchange="toggleFileDescriptionInModal('fileUpload', ${index})">
+                                                        <label class="form-check-label d-flex align-items-center" for="file_fileUpload_${index}">
+                                                            <i class="${fileIcon} me-2"></i>
+                                                            <span class="text-truncate">${file.name}</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="ms-4 mt-2" id="desc_fileUpload_${index}" style="display: none;">
+                                                        <textarea class="form-control form-control-sm" name="file_notes_fileUpload_${index}" 
+                                                            placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                    </div>
+                                                </div>
+                                            `;
                             }).join('')}
                         </div>
                     `;
@@ -592,30 +598,54 @@
                 if (textarea) textarea.value = '';
             }
         };
-        
+
         function showCategorySelectionModal(file) {
             const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
             const modal = document.createElement('div');
             modal.className = 'modal fade';
-            
+
             let headerHTML = '';
             if (isRtl) {
                 headerHTML = `
-                    <div class="modal-header" style="position: relative !important; padding: 1rem 1rem 1rem 1rem !important; min-height: 60px !important; display: flex !important; align-items: center !important;">
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="position: absolute !important; left: 1rem !important;"></button>
-                        <h5 class="modal-title" style="position: absolute !important; right: 1rem !important; margin: 0 !important;">{{ __('messages.select_category') }}</h5>
+                    <div class="modal-header">
+                        <style>
+                            .category-selection-modal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+                            .category-selection-modal .modal-header {
+                                position: relative !important;
+                            }
+                        </style>
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <h5 class="modal-title">{{ __('messages.select_category') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
                     </div>`;
             } else {
                 headerHTML = `
                     <div class="modal-header">
+                        <style>
+                            .category-selection-modal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+                            .category-selection-modal .modal-header {
+                                position: relative !important;
+                            }
+                        </style>
                         <h5 class="modal-title">{{ __('messages.select_category') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>`;
             }
-            
+
             modal.innerHTML = `
                 <div class="modal-dialog">
-                    <div class="modal-content">
+                    <div class="modal-content category-selection-modal">
                         ` + headerHTML + `
                         <div class="modal-body">
                             <p class="mb-3">{{ __('messages.uploading_file') }}: <strong>${file.name}</strong></p>
@@ -637,24 +667,24 @@
                     </div>
                 </div>
             `;
-            
+
             document.body.appendChild(modal);
             const bsModal = new bootstrap.Modal(modal);
             bsModal.show();
-            
+
             // Load categories
             loadFileCategories();
-            
+
             // Description field is now always visible for all files
-            
+
             modal.addEventListener('hidden.bs.modal', () => modal.remove());
         }
-        
+
         async function loadFileCategories() {
             try {
                 const response = await api.getFileCategories();
                 const select = document.getElementById('categorySelect');
-                
+
                 if (response.code === 200 && response.data && select) {
                     select.innerHTML = '<option value="">{{ __('messages.select_category') }}</option>';
                     response.data.forEach(category => {
@@ -676,22 +706,22 @@
                 }
             }
         }
-        
+
         function proceedWithUpload() {
             const categoryId = document.getElementById('categorySelect').value;
             if (!categoryId) {
                 toastr.warning('{{ __('messages.please_select_category') }}');
                 return;
             }
-            
+
             window.selectedCategoryId = categoryId;
             window.selectedFileDescription = document.getElementById('fileDescription').value.trim();
-            
+
             // Close category modal
             bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
-            
+
             const file = window.selectedFile;
-            
+
             if (isImageFile(file.type)) {
                 // Open drawing modal for image markup
                 openDrawingModal({
@@ -734,9 +764,10 @@
             files.forEach((file, index) => {
                 const fileItem = document.createElement('div');
                 fileItem.className = 'mb-3 p-3 border rounded';
-                const fileIcon = isImageFile(file.type) ? 'fas fa-image text-success' : 'fas fa-file text-primary';
+                const fileIcon = isImageFile(file.type) ? 'fas fa-image text-success' :
+                    'fas fa-file text-primary';
                 const size = (file.size / 1024 / 1024).toFixed(2);
-                
+
                 fileItem.innerHTML = `
                     <div class="d-flex align-items-center mb-2">
                         <i class="${fileIcon} me-2"></i>
@@ -768,7 +799,8 @@
 
                     // Collect notes for each file
                     const fileNotes = {};
-                    const noteInputs = document.querySelectorAll('textarea[name^="file_notes_fileUpload_"]');
+                    const noteInputs = document.querySelectorAll(
+                        'textarea[name^="file_notes_fileUpload_"]');
                     noteInputs.forEach(input => {
                         if (input.value.trim()) {
                             fileNotes[input.name] = input.value.trim();
@@ -789,7 +821,8 @@
                     window.selectedCategoryId = 1;
 
                     // Close upload modal
-                    const uploadModal = bootstrap.Modal.getInstance(document.getElementById('fileUploadModal'));
+                    const uploadModal = bootstrap.Modal.getInstance(document.getElementById(
+                        'fileUploadModal'));
                     if (uploadModal) uploadModal.hide();
 
                     // Process files: if image, open drawing modal; otherwise upload directly
@@ -838,7 +871,7 @@
                     onSave: function(imageDataArray) {
                         // imageDataArray is an array when multiple files, or single data URL when one file
                         const imageDataList = Array.isArray(imageDataArray) ? imageDataArray : [imageDataArray];
-                        
+
                         // Map image data back to original files with their notes
                         imageFiles.forEach((fileData, index) => {
                             const imageData = imageDataList[index] || null;
@@ -850,7 +883,8 @@
                         });
 
                         // Close drawing modal
-                        const drawingModal = bootstrap.Modal.getInstance(document.getElementById('drawingModal'));
+                        const drawingModal = bootstrap.Modal.getInstance(document.getElementById(
+                            'drawingModal'));
                         if (drawingModal) drawingModal.hide();
 
                         // Clean up
@@ -869,7 +903,9 @@
                     } else {
                         loadMultipleFiles(imageFilesArray);
                     }
-                }, { once: true });
+                }, {
+                    once: true
+                });
             } else {
                 // No image files, upload directly
                 uploadAllFiles();
@@ -882,12 +918,12 @@
             if (dataURL instanceof File) {
                 return dataURL;
             }
-            
+
             // If it's already a Blob, return it as is
             if (dataURL instanceof Blob) {
                 return dataURL;
             }
-            
+
             // Handle base64 strings
             if (typeof dataURL === 'string' && dataURL.includes(',')) {
                 const arr = dataURL.split(',');
@@ -902,7 +938,7 @@
                     type: mime
                 });
             }
-            
+
             // Return as-is if not a recognized format
             return dataURL;
         }
@@ -923,7 +959,7 @@
                     if (fileData.note) {
                         formData.append('description', fileData.note);
                     }
-                    
+
                     // If markup exists (and it's a dataURL string, not the original File), convert it to blob and use that
                     if (fileData.markup && typeof fileData.markup === 'string' && fileData.markup.includes(',')) {
                         // This is markup data (dataURL string), convert to blob
@@ -942,7 +978,7 @@
                 }
 
                 toastr.success('{{ __('messages.file_uploaded_successfully') }}');
-                
+
                 // Reload files
                 if (currentFolderId) {
                     loadProjectFiles(currentFolderId);
@@ -1001,7 +1037,7 @@
                     page: 1,
                     limit: 1 // Just to get pagination metadata
                 });
-                
+
                 if (response.code === 200 && response.data) {
                     if (response.data.pagination) {
                         totalFiles = response.data.pagination.total;
@@ -1023,7 +1059,7 @@
                 updateFileCounts([], []);
             }
         }
-        
+
         // Load all files for count calculation
         async function loadAllFilesForCountsCalculation(projectId, folderId = null) {
             try {
@@ -1035,10 +1071,10 @@
                 if (folderId) {
                     params.folder_id = folderId;
                 }
-                
+
                 // Load all files by requesting a large limit
                 const response = await api.getFiles(params);
-                
+
                 if (response.code === 200 && response.data && response.data.data) {
                     updateFileCounts(response.data.data, []);
                 } else {
@@ -1057,7 +1093,7 @@
         async function loadProjectFiles(folderId = null, resetPagination = true) {
             try {
                 if (isLoading) return;
-                
+
                 const projectId = getProjectIdFromUrl();
                 const params = {
                     project_id: projectId,
@@ -1067,13 +1103,13 @@
                 if (folderId) {
                     params.folder_id = folderId;
                 }
-                
+
                 isLoading = true;
                 const response = await api.getFiles(params);
 
                 if (response.code === 200 && response.data && response.data.data) {
                     const newFiles = response.data.data;
-                    
+
                     if (resetPagination) {
                         currentPage = 1;
                         allFiles = [];
@@ -1083,14 +1119,14 @@
                         const tbody = document.getElementById('filesTableBody');
                         if (tbody) tbody.innerHTML = '';
                     }
-                    
+
                     // Store all files (unfiltered) for counting purposes
                     allFiles = allFiles.concat(newFiles);
-                    
+
                     // Apply client-side filters and sorting to new files for display
                     let filteredFiles = applyClientSideFilters(newFiles);
                     filteredFiles = applyClientSideSorting(filteredFiles);
-                    
+
                     // Display filtered files
                     if (filteredFiles.length > 0) {
                         displayFiles(filteredFiles, !resetPagination); // Append if not reset
@@ -1098,12 +1134,12 @@
                     } else {
                         // If no files match filter on this page:
                         autoLoadAttempts++;
-                        
+
                         // Check if we should auto-load next page
-                        const shouldAutoLoad = response.data.pagination && 
-                                             response.data.pagination.has_more && 
-                                             autoLoadAttempts < maxAutoLoadAttempts;
-                        
+                        const shouldAutoLoad = response.data.pagination &&
+                            response.data.pagination.has_more &&
+                            autoLoadAttempts < maxAutoLoadAttempts;
+
                         if (shouldAutoLoad) {
                             // Load next page automatically to find matching files
                             currentPage++;
@@ -1119,7 +1155,7 @@
                             // Don't set hasMorePages = false here - let it be set by API response below
                         }
                     }
-                    
+
                     // Update pagination info (always based on API response)
                     // This determines if scroll-based loading should continue
                     if (response.data.pagination) {
@@ -1128,7 +1164,7 @@
                     } else {
                         hasMorePages = newFiles.length >= filesPerPage;
                     }
-                    
+
                     // Update counts - reload all files for accurate counts only on reset
                     if (resetPagination) {
                         const projectId = getProjectIdFromUrl();
@@ -1147,7 +1183,7 @@
                     }
                     hasMorePages = false;
                 }
-                
+
                 isLoading = false;
             } catch (error) {
                 console.error('Failed to load files:', error);
@@ -1159,7 +1195,7 @@
                 hasMorePages = false;
             }
         }
-        
+
         // This function is no longer needed as we're using server-side pagination
         // Keeping it for backward compatibility but it's handled in loadProjectFiles now
 
@@ -1238,7 +1274,7 @@
         function displayFolders(folders) {
             const container = document.getElementById('foldersGrid');
             container.className = 'row g-3';
-            
+
             if (!folders || folders.length === 0) {
                 container.innerHTML = `
                     <div class="col-12 text-center py-4">
@@ -1260,7 +1296,7 @@
                     </div>
                 </div>
             `).join('');
-            
+
             container.innerHTML = foldersHtml;
         }
 
@@ -1292,10 +1328,13 @@
 
                 const ext = getFileExtension(file.file_type);
                 const isViewable = ['pdf', 'jpg', 'jpeg', 'png', 'gif'].includes(ext);
-                const fullPath = file.file_path.startsWith('http') ? file.file_path : `{{ url('storage') }}/${file.file_path}`;
+                const fullPath = file.file_path.startsWith('http') ? file.file_path :
+                    `{{ url('storage') }}/${file.file_path}`;
                 const rowStyle = isViewable ? 'cursor: pointer;' : '';
-                const rowClick = isViewable ? `onclick="viewFile('${fullPath}', '${ext}', '${(file.original_name || file.name).replace(/'/g, "\\'")}')"`  : '';
-                
+                const rowClick = isViewable ?
+                    `onclick="viewFile('${fullPath}', '${ext}', '${(file.original_name || file.name).replace(/'/g, "\\'")}')"` :
+                    '';
+
                 return `
                     <tr style="${rowStyle}" ${rowClick}>
                         <td>
@@ -1316,7 +1355,7 @@
                     </tr>
                 `;
             }).join('');
-            
+
             if (append) {
                 tbody.innerHTML += filesHtml;
             } else {
@@ -1329,19 +1368,39 @@
             tbody.innerHTML =
                 '<tr><td colspan="5" class="text-center py-4"><i class="fas fa-folder-open fa-3x text-muted mb-3"></i><h5 class="text-muted">{{ __('messages.no_files_found') }}</h5></td></tr>';
         }
-        
+
         window.viewFile = function(filePath, fileType, fileName) {
             if (fileType === 'pdf') {
                 window.open(filePath, '_blank');
             } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileType)) {
                 const modal = document.createElement('div');
                 modal.className = 'modal fade';
+                const isRtl = document.documentElement.getAttribute('dir') === 'rtl' || '{{ app()->getLocale() }}' ===
+                    'ar';
                 modal.innerHTML = `
                     <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
+                        <div class="modal-content image-viewer-modal">
                             <div class="modal-header">
-                                <h5 class="modal-title"><i class="fas fa-image me-2"></i>${fileName}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                <style>
+                                    .image-viewer-modal .modal-header .btn-close {
+                                        position: static !important;
+                                        right: auto !important;
+                                        top: auto !important;
+                                        margin: 0 !important;
+                                    }
+                                    .image-viewer-modal .modal-header {
+                                        position: relative !important;
+                                    }
+                                </style>
+                                ${isRtl ? `
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <h5 class="modal-title">${fileName}<i class="fas fa-image ms-2"></i></h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            ` : `
+                                            <h5 class="modal-title"><i class="fas fa-image me-2"></i>${fileName}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            `}
                             </div>
                             <div class="modal-body text-center">
                                 <img src="${filePath}" class="img-fluid" alt="${fileName}" style="max-height: 70vh;">
@@ -1375,51 +1434,51 @@
 
             // Use totalFiles from API if available and we haven't loaded all files yet
             const displayTotal = (totalFiles > 0 && allFiles.length < totalFiles) ? totalFiles : totalCount;
-            
+
             document.getElementById('totalFilesCount').textContent = displayTotal;
             document.getElementById('drawingsCount').textContent = drawings;
             document.getElementById('documentsCount').textContent = documents;
             document.getElementById('pdfsCount').textContent = pdfs;
         }
-        
+
         // Window scroll handler for infinite scroll (works for both table and page scroll)
         function handleWindowScroll() {
             if (isLoading || !hasMorePages) return;
-            
+
             // Only load more if we're viewing files (not folders)
             const filesContainer = document.getElementById('filesTableContainer');
             if (!filesContainer || filesContainer.style.display === 'none') return;
-            
+
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight;
-            
+
             // Load more when user is 200px from bottom
             if (scrollTop + windowHeight >= documentHeight - 200) {
                 loadMoreFiles();
             }
         }
-        
+
         // Table container scroll handler (if table has its own scroll)
         function handleTableScroll() {
             if (isLoading || !hasMorePages) return;
-            
+
             const container = document.getElementById('filesTableContainer');
             if (!container || container.style.display === 'none') return;
-            
+
             const scrollTop = container.scrollTop;
             const scrollHeight = container.scrollHeight;
             const clientHeight = container.clientHeight;
-            
+
             // Load more when user is 200px from bottom
             if (scrollTop + clientHeight >= scrollHeight - 200) {
                 loadMoreFiles();
             }
         }
-        
+
         function loadMoreFiles() {
             if (isLoading || !hasMorePages) return;
-            
+
             currentPage++;
             loadProjectFiles(currentFolderId, false); // Don't reset pagination, load next page
         }
@@ -1531,7 +1590,7 @@
             const ext = getFileExtension(fileType);
             const typeMap = {
                 'pdf': 'PDF',
-                'docx': 'DOCX', 
+                'docx': 'DOCX',
                 'doc': 'DOC',
                 'xlsx': 'XLSX',
                 'xls': 'XLS',
@@ -1578,13 +1637,13 @@
         function openFolder(folderId, folderName) {
             currentFolderId = folderId;
             currentFolderName = folderName;
-            
+
             // Reset pagination when opening folder
             currentPage = 1;
             allFiles = [];
             hasMorePages = true;
             isLoading = false;
-            
+
             // Update UI
             document.getElementById('currentPath').textContent = folderName;
             document.getElementById('backBtn').style.display = 'block';
@@ -1603,7 +1662,7 @@
             }
             document.getElementById('foldersGrid').style.display = 'none';
             document.getElementById('filesTableContainer').style.display = 'block';
-            
+
             // Load files for this folder (reset pagination)
             loadProjectFiles(folderId, true);
         }
@@ -1611,7 +1670,7 @@
         function goBack() {
             currentFolderId = null;
             currentFolderName = '';
-            
+
             // Update UI
             document.getElementById('currentPath').textContent = '{{ __('messages.folders') }}';
             document.getElementById('backBtn').style.display = 'none';
@@ -1623,7 +1682,7 @@
             if (filterBtn) filterBtn.style.cssText = 'display: none !important';
             if (sortBtn) sortBtn.style.cssText = 'display: none !important';
             document.getElementById('filesTableContainer').style.display = 'none';
-            
+
             // Force complete reset of folders grid
             const contentContainer = document.getElementById('contentContainer');
             contentContainer.innerHTML = `
@@ -1648,20 +1707,49 @@
                     </table>
                 </div>
             `;
-            
+
             // Load folders
             loadFolders();
         }
 
         function showCreateFolderModal() {
+            const isRtl = document.documentElement.getAttribute('dir') === 'rtl' || '{{ app()->getLocale() }}' === 'ar';
             const modal = document.createElement('div');
-            modal.className = 'modal fade';
+            modal.className = 'modal fade create-folder-modal';
             modal.innerHTML = `
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">{{ __('messages.create_folder') }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <style>
+                                .create-folder-modal .modal-header {
+                                    position: relative !important;
+                                    flex-direction: row !important;
+                                }
+                                .create-folder-modal .modal-header .btn-close {
+                                    position: static !important;
+                                    right: auto !important;
+                                    top: auto !important;
+                                    margin: 0 !important;
+                                }
+                                .create-folder-modal .modal-header .modal-title {
+                                    margin: 0 !important;
+                                }
+                                .create-folder-modal .modal-header > div {
+                                    width: 100%;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                }
+                            </style>
+                            ${isRtl ? `
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <h5 class="modal-title mb-0">{{ __('messages.create_folder') }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        ` : `
+                                        <h5 class="modal-title mb-0">{{ __('messages.create_folder') }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        `}
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
@@ -1676,7 +1764,7 @@
                     </div>
                 </div>
             `;
-            
+
             document.body.appendChild(modal);
             const bsModal = new bootstrap.Modal(modal);
             bsModal.show();
@@ -1685,25 +1773,26 @@
 
         async function createFolder() {
             const name = document.getElementById('folderName').value.trim();
-            
+
             if (!name) {
                 toastr.error('{{ __('messages.folder_name_required') }}');
                 return;
             }
-            
+
             try {
                 const projectId = getProjectIdFromUrl();
                 const response = await api.createFolder({
                     project_id: projectId,
                     name: name
                 });
-                
+
                 if (response.code === 200) {
                     bootstrap.Modal.getInstance(document.querySelector('.modal.show')).hide();
                     toastr.success('{{ __('messages.folder_created_successfully') }}');
                     loadFolders();
                 } else {
-                    toastr.error('{{ __('messages.folder_creation_failed') }}: ' + (response.message || 'Unknown error'));
+                    toastr.error('{{ __('messages.folder_creation_failed') }}: ' + (response.message ||
+                        'Unknown error'));
                 }
             } catch (error) {
                 console.error('Create folder error:', error);
@@ -1782,7 +1871,8 @@
                 const btn = document.getElementById('saveDrawingBtn');
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-save me-2"></i><span id="saveButtonText">{{ __('messages.save') }}</span>';
+                    btn.innerHTML =
+                        '<i class="fas fa-save me-2"></i><span id="saveButtonText">{{ __('messages.save') }}</span>';
                 }
             }
         }
@@ -1806,13 +1896,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Load folders on page load
             loadFolders();
-            
+
             // Add scroll event listener for infinite scroll
             const tableContainer = document.getElementById('filesTableContainer');
             if (tableContainer) {
                 tableContainer.addEventListener('scroll', handleTableScroll);
             }
-            
+
             // Also listen to window scroll for infinite scroll
             let scrollTimeout;
             window.addEventListener('scroll', function() {
@@ -2024,11 +2114,11 @@
                 if (e.target && e.target.id === 'saveDrawingBtn') {
                     const btn = e.target;
                     if (btn.disabled) return;
-                    
+
                     btn.disabled = true;
                     const originalText = btn.innerHTML;
                     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
-                    
+
                     const canvas = document.getElementById('canvas');
                     if (canvas) {
                         const imageData = canvas.toDataURL();
@@ -2037,7 +2127,7 @@
                             window.drawingConfig.onSave(imageData);
                         }
                     }
-                    
+
                     // Reset button after 5 seconds as fallback
                     setTimeout(() => {
                         btn.disabled = false;

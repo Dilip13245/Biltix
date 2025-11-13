@@ -1,92 +1,144 @@
 <!-- Plan Viewer Modal -->
 <div class="modal fade" id="planViewerModal" tabindex="-1" aria-labelledby="planViewerModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content">
-      <div class="modal-header" style="padding: 1rem 1.5rem;">
-        <style>
-          #planViewerModal .btn-close {
-            position: static !important;
-            right: auto !important;
-            top: auto !important;
-          }
-        </style>
-        <div class="d-flex justify-content-between align-items-center w-100">
-          <h5 class="modal-title mb-0" id="planViewerModalLabel">
-            <i class="fas fa-drafting-compass me-2"></i>{{ __('messages.plan_viewer') }}
-          </h5>
-          
-          <div class="d-flex align-items-center gap-2 flex-wrap">
-            <!-- Zoom Controls -->
-            <div class="btn-group btn-group-sm d-none d-md-flex" role="group">
-              <button class="btn btn-outline-primary" onclick="zoomIn()">
-                <i class="fas fa-search-plus"></i>
-              </button>
-              <button class="btn btn-outline-primary" onclick="zoomOut()">
-                <i class="fas fa-search-minus"></i>
-              </button>
-              <button class="btn btn-outline-primary" onclick="resetZoom()">
-                <i class="fas fa-expand-arrows-alt"></i>
-              </button>
-            </div>
-            
-            <!-- Mobile Zoom Controls -->
-            <div class="d-flex d-md-none gap-1">
-              <button class="btn btn-sm btn-outline-primary" onclick="zoomIn()">
-                <i class="fas fa-search-plus"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-primary" onclick="zoomOut()">
-                <i class="fas fa-search-minus"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-primary" onclick="resetZoom()">
-                <i class="fas fa-expand-arrows-alt"></i>
-              </button>
-            </div>
-            
-            <!-- Download Button -->
-            <button class="btn btn-sm orange_btn me-4 api-action-btn" onclick="downloadPlan()">
-              <span class="d-none d-sm-inline">{{ __('messages.download') }}</span>
-            </button>
-            
-            <!-- Close Button -->
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: static !important;"></button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-body p-0">
-        <div class="row h-100" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
-          <div class="col-md-9 p-0">
-            <div id="planViewerContainer" class="h-100 position-relative overflow-auto bg-light d-flex align-items-center justify-content-center">
-              <!-- Content will be dynamically loaded here -->
-              <div id="planContent"></div>
-            </div>
-          </div>
-          <div class="col-md-3 @if(app()->getLocale() == 'ar') border-end @else border-start @endif">
-            <div class="p-3">
-              <h6 class="fw-bold mb-3">{{ __('messages.plan_information') }}</h6>
-              
-              <div class="mb-3">
-                <strong>{{ __('messages.name') }}:</strong>
-                <p id="planInfoName" class="mb-2">-</p>
-              </div>
-              
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 1rem 1.5rem;">
+                <style>
+                    #planViewerModal .modal-header .btn-close {
+                        position: static !important;
+                        right: auto !important;
+                        top: auto !important;
+                        margin: 0 !important;
+                    }
 
-              
-              <div class="mb-3">
-                <strong>{{ __('messages.file_type') }}:</strong>
-                <p id="planInfoFileType" class="mb-2">-</p>
-              </div>
-              
-              <div class="mb-3">
-                <strong>{{ __('messages.file_size') }}:</strong>
-                <p id="planInfoSize" class="mb-2">-</p>
-              </div>
-              
-              <div class="mb-3">
-                <strong>{{ __('messages.upload_date') }}:</strong>
-                <p id="planInfoUpdated" class="mb-2">-</p>
-              </div>
+                    #planViewerModal .modal-header {
+                        position: relative !important;
+                    }
+                </style>
+                @if (app()->getLocale() == 'ar')
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title mb-0" id="planViewerModalLabel">
+                            {{ __('messages.plan_viewer') }}<i class="fas fa-drafting-compass ms-2"></i>
+                        </h5>
 
-              <!-- Tools Section - Commented Out
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <!-- Zoom Controls -->
+                            <div class="btn-group btn-group-sm d-none d-md-flex" role="group">
+                                <button class="btn btn-outline-primary" onclick="zoomIn()">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="zoomOut()">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="resetZoom()">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                </button>
+                            </div>
+
+                            <!-- Mobile Zoom Controls -->
+                            <div class="d-flex d-md-none gap-1">
+                                <button class="btn btn-sm btn-outline-primary" onclick="zoomIn()">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="zoomOut()">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="resetZoom()">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                </button>
+                            </div>
+
+                            <!-- Download Button -->
+                            <button class="btn btn-sm orange_btn ms-4 api-action-btn" onclick="downloadPlan()">
+                                <span class="d-none d-sm-inline">{{ __('messages.download') }}</span>
+                            </button>
+
+                            <!-- Close Button -->
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                style="position: static !important;"></button>
+                        </div>
+                    </div>
+                @else
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title mb-0" id="planViewerModalLabel">
+                            <i class="fas fa-drafting-compass me-2"></i>{{ __('messages.plan_viewer') }}
+                        </h5>
+
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <!-- Zoom Controls -->
+                            <div class="btn-group btn-group-sm d-none d-md-flex" role="group">
+                                <button class="btn btn-outline-primary" onclick="zoomIn()">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="zoomOut()">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="resetZoom()">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                </button>
+                            </div>
+
+                            <!-- Mobile Zoom Controls -->
+                            <div class="d-flex d-md-none gap-1">
+                                <button class="btn btn-sm btn-outline-primary" onclick="zoomIn()">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="zoomOut()">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="resetZoom()">
+                                    <i class="fas fa-expand-arrows-alt"></i>
+                                </button>
+                            </div>
+
+                            <!-- Download Button -->
+                            <button class="btn btn-sm orange_btn me-4 api-action-btn" onclick="downloadPlan()">
+                                <span class="d-none d-sm-inline">{{ __('messages.download') }}</span>
+                            </button>
+
+                            <!-- Close Button -->
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                style="position: static !important;"></button>
+                        </div>
+                    </div>
+                @endif
+            </div>
+            <div class="modal-body p-0">
+                <div class="row h-100" style="@if (app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
+                    <div class="col-md-9 p-0">
+                        <div id="planViewerContainer"
+                            class="h-100 position-relative overflow-auto bg-light d-flex align-items-center justify-content-center">
+                            <!-- Content will be dynamically loaded here -->
+                            <div id="planContent"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 @if (app()->getLocale() == 'ar') border-end @else border-start @endif">
+                        <div class="p-3">
+                            <h6 class="fw-bold mb-3">{{ __('messages.plan_information') }}</h6>
+
+                            <div class="mb-3">
+                                <strong>{{ __('messages.name') }}:</strong>
+                                <p id="planInfoName" class="mb-2">-</p>
+                            </div>
+
+
+
+                            <div class="mb-3">
+                                <strong>{{ __('messages.file_type') }}:</strong>
+                                <p id="planInfoFileType" class="mb-2">-</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <strong>{{ __('messages.file_size') }}:</strong>
+                                <p id="planInfoSize" class="mb-2">-</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <strong>{{ __('messages.upload_date') }}:</strong>
+                                <p id="planInfoUpdated" class="mb-2">-</p>
+                            </div>
+
+                            <!-- Tools Section - Commented Out
               <hr>
               
               <h6 class="fw-bold mb-3">{{ __('messages.tools') }}</h6>
@@ -116,90 +168,95 @@
               </div>
               
               <div class="mt-3">
-                <textarea class="form-control form-control-sm" rows="2" placeholder="{{ __('messages.add_comment_placeholder') }}" id="planComment"></textarea>
+                <textarea class="form-control form-control-sm" rows="2"
+                    placeholder="{{ __('messages.add_comment_placeholder') }}" id="planComment"></textarea>
                 <button class="btn btn-sm orange_btn mt-2 w-100 api-action-btn" onclick="addPlanComment()">
                   <i class="fas fa-comment me-1"></i>{{ __('messages.add_comment') }}
                 </button>
               </div>
               -->
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <script>
-let currentZoom = 1;
-let isDragging = false;
-let startX, startY, scrollLeft, scrollTop;
-let currentPlanData = null;
+    let currentZoom = 1;
+    let isDragging = false;
+    let startX, startY, scrollLeft, scrollTop;
+    let currentPlanData = null;
 
-function loadPlanContent(planData) {
-  currentPlanData = planData;
-  currentZoom = 1;
-  const container = document.getElementById('planContent');
-  const fileType = planData.file_type?.toLowerCase();
-  
-  // Reset container
-  container.innerHTML = '';
-  container.style.overflow = 'auto';
-  
-  if (isImageFile(fileType)) {
-    // Image files
-    container.innerHTML = `<img id="planImage" src="${planData.file_path}" alt="${planData.title}" style="cursor: grab; transition: transform 0.3s; max-width: 100%; height: auto; display: block; margin: 0 auto;">`;
-    setupImageInteractions();
-  } else if (fileType?.includes('pdf')) {
-    // PDF files - better viewer
-    container.innerHTML = `
+    function loadPlanContent(planData) {
+        currentPlanData = planData;
+        currentZoom = 1;
+        const container = document.getElementById('planContent');
+        const fileType = planData.file_type?.toLowerCase();
+
+        // Reset container
+        container.innerHTML = '';
+        container.style.overflow = 'auto';
+
+        if (isImageFile(fileType)) {
+            // Image files
+            container.innerHTML =
+                `<img id="planImage" src="${planData.file_path}" alt="${planData.title}" style="cursor: grab; transition: transform 0.3s; max-width: 100%; height: auto; display: block; margin: 0 auto;">`;
+            setupImageInteractions();
+        } else if (fileType?.includes('pdf')) {
+            // PDF files - better viewer
+            container.innerHTML = `
       <div style="width: 100%; height: 100%; min-height: 600px;">
         <iframe id="pdfViewer" src="${planData.file_path}#toolbar=1&navpanes=1&scrollbar=1&view=FitH" 
                 style="width: 100%; height: 100%; border: none; min-height: 600px;"></iframe>
       </div>
     `;
-  } else if (fileType?.includes('word') || fileType?.includes('doc')) {
-    // Word documents - Office viewer
-    const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(planData.file_path)}`;
-    container.innerHTML = `
+        } else if (fileType?.includes('word') || fileType?.includes('doc')) {
+            // Word documents - Office viewer
+            const officeUrl =
+                `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(planData.file_path)}`;
+            container.innerHTML = `
       <div style="width: 100%; height: 100%; min-height: 600px;">
         <iframe src="${officeUrl}" style="width: 100%; height: 100%; border: none; min-height: 600px;"></iframe>
       </div>
     `;
-  } else if (fileType?.includes('excel') || fileType?.includes('sheet')) {
-    // Excel files - Office viewer
-    const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(planData.file_path)}`;
-    container.innerHTML = `
+        } else if (fileType?.includes('excel') || fileType?.includes('sheet')) {
+            // Excel files - Office viewer
+            const officeUrl =
+                `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(planData.file_path)}`;
+            container.innerHTML = `
       <div style="width: 100%; height: 100%; min-height: 600px;">
         <iframe src="${officeUrl}" style="width: 100%; height: 100%; border: none; min-height: 600px;"></iframe>
       </div>
     `;
-  } else if (fileType?.includes('text') || fileType?.includes('txt')) {
-    // Text files
-    fetch(planData.file_path)
-      .then(response => response.text())
-      .then(text => {
-        container.innerHTML = `
+        } else if (fileType?.includes('text') || fileType?.includes('txt')) {
+            // Text files
+            fetch(planData.file_path)
+                .then(response => response.text())
+                .then(text => {
+                    container.innerHTML = `
           <div class="p-4" style="background: #f8f9fa; height: 100%; overflow-y: auto;">
             <pre style="white-space: pre-wrap; font-family: monospace; font-size: 14px;">${text}</pre>
           </div>
         `;
-      })
-      .catch(() => {
-        showFileIcon(container, planData);
-      });
-  } else {
-    // Other files - show icon and download link
-    showFileIcon(container, planData);
-  }
-}
+                })
+                .catch(() => {
+                    showFileIcon(container, planData);
+                });
+        } else {
+            // Other files - show icon and download link
+            showFileIcon(container, planData);
+        }
+    }
 
-function isImageFile(fileType) {
-  return fileType?.includes('image') || fileType?.includes('jpg') || fileType?.includes('jpeg') || fileType?.includes('png') || fileType?.includes('gif') || fileType?.includes('bmp') || fileType?.includes('svg');
-}
+    function isImageFile(fileType) {
+        return fileType?.includes('image') || fileType?.includes('jpg') || fileType?.includes('jpeg') || fileType
+            ?.includes('png') || fileType?.includes('gif') || fileType?.includes('bmp') || fileType?.includes('svg');
+    }
 
-function showFileIcon(container, planData) {
-  container.innerHTML = `
+    function showFileIcon(container, planData) {
+        container.innerHTML = `
     <div class="text-center p-5 d-flex flex-column justify-content-center align-items-center" style="height: 100%; min-height: 400px;">
       <i class="${getFileIcon(planData.file_type)} fa-5x text-primary mb-3"></i>
       <h5>${planData.title}</h5>
@@ -214,136 +271,142 @@ function showFileIcon(container, planData) {
       </div>
     </div>
   `;
-}
-
-function getFileIcon(fileType) {
-  const type = fileType?.toLowerCase();
-  if (type?.includes('pdf')) return 'fas fa-file-pdf';
-  if (type?.includes('dwg')) return 'fas fa-drafting-compass';
-  if (type?.includes('word') || type?.includes('doc')) return 'fas fa-file-word';
-  if (type?.includes('excel') || type?.includes('sheet')) return 'fas fa-file-excel';
-  return 'fas fa-file';
-}
-
-let isDragging = false;
-let startX, startY, scrollLeft, scrollTop;
-
-function setupImageInteractions() {
-  const image = document.getElementById('planImage');
-  if (!image) return;
-  
-  const container = document.getElementById('planViewerContainer');
-  
-  // Mouse events for dragging
-  image.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    image.style.cursor = 'grabbing';
-    startX = e.pageX - container.offsetLeft;
-    startY = e.pageY - container.offsetTop;
-    scrollLeft = container.scrollLeft;
-    scrollTop = container.scrollTop;
-    e.preventDefault();
-  });
-  
-  image.addEventListener('mouseleave', () => {
-    isDragging = false;
-    image.style.cursor = 'grab';
-  });
-  
-  image.addEventListener('mouseup', () => {
-    isDragging = false;
-    image.style.cursor = 'grab';
-  });
-  
-  image.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - container.offsetLeft;
-    const y = e.pageY - container.offsetTop;
-    const walkX = (x - startX) * 2;
-    const walkY = (y - startY) * 2;
-    container.scrollLeft = scrollLeft - walkX;
-    container.scrollTop = scrollTop - walkY;
-  });
-  
-  // Wheel zoom
-  container.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    currentZoom = Math.max(0.1, Math.min(5, currentZoom + delta));
-    image.style.transform = `scale(${currentZoom})`;
-  });
-}
-
-function zoomIn() {
-  const image = document.getElementById('planImage');
-  const pdfViewer = document.getElementById('pdfViewer');
-  
-  if (image) {
-    currentZoom = Math.min(currentZoom * 1.2, 5);
-    image.style.transform = `scale(${currentZoom})`;
-    image.style.transformOrigin = 'center center';
-  } else if (pdfViewer) {
-    // For PDF, try to send zoom command
-    try {
-      pdfViewer.contentWindow.postMessage({action: 'zoom', direction: 'in'}, '*');
-    } catch (e) {
-      console.log('PDF zoom not supported');
     }
-  }
-}
 
-function zoomOut() {
-  const image = document.getElementById('planImage');
-  const pdfViewer = document.getElementById('pdfViewer');
-  
-  if (image) {
-    currentZoom = Math.max(currentZoom / 1.2, 0.1);
-    image.style.transform = `scale(${currentZoom})`;
-    image.style.transformOrigin = 'center center';
-  } else if (pdfViewer) {
-    // For PDF, try to send zoom command
-    try {
-      pdfViewer.contentWindow.postMessage({action: 'zoom', direction: 'out'}, '*');
-    } catch (e) {
-      console.log('PDF zoom not supported');
+    function getFileIcon(fileType) {
+        const type = fileType?.toLowerCase();
+        if (type?.includes('pdf')) return 'fas fa-file-pdf';
+        if (type?.includes('dwg')) return 'fas fa-drafting-compass';
+        if (type?.includes('word') || type?.includes('doc')) return 'fas fa-file-word';
+        if (type?.includes('excel') || type?.includes('sheet')) return 'fas fa-file-excel';
+        return 'fas fa-file';
     }
-  }
-}
 
-function resetZoom() {
-  const image = document.getElementById('planImage');
-  const pdfViewer = document.getElementById('pdfViewer');
-  
-  if (image) {
-    currentZoom = 1;
-    image.style.transform = `scale(${currentZoom})`;
-    image.style.transformOrigin = 'center center';
-  } else if (pdfViewer) {
-    // For PDF, reload to reset zoom
-    const currentSrc = pdfViewer.src;
-    pdfViewer.src = currentSrc;
-  }
-}
+    let isDragging = false;
+    let startX, startY, scrollLeft, scrollTop;
 
-function downloadPlan() {
-  if (currentPlanData) {
-    const link = document.createElement('a');
-    link.href = currentPlanData.file_path;
-    link.download = currentPlanData.title + '.' + (currentPlanData.file_type?.split('/')[1] || 'file');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-}
+    function setupImageInteractions() {
+        const image = document.getElementById('planImage');
+        if (!image) return;
 
-function printPlan() {
-  if (currentPlanData) {
-    const fileType = currentPlanData.file_type?.toLowerCase();
-    
-    if (isImageFile(fileType)) {
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write(`
+        const container = document.getElementById('planViewerContainer');
+
+        // Mouse events for dragging
+        image.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            image.style.cursor = 'grabbing';
+            startX = e.pageX - container.offsetLeft;
+            startY = e.pageY - container.offsetTop;
+            scrollLeft = container.scrollLeft;
+            scrollTop = container.scrollTop;
+            e.preventDefault();
+        });
+
+        image.addEventListener('mouseleave', () => {
+            isDragging = false;
+            image.style.cursor = 'grab';
+        });
+
+        image.addEventListener('mouseup', () => {
+            isDragging = false;
+            image.style.cursor = 'grab';
+        });
+
+        image.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const y = e.pageY - container.offsetTop;
+            const walkX = (x - startX) * 2;
+            const walkY = (y - startY) * 2;
+            container.scrollLeft = scrollLeft - walkX;
+            container.scrollTop = scrollTop - walkY;
+        });
+
+        // Wheel zoom
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            currentZoom = Math.max(0.1, Math.min(5, currentZoom + delta));
+            image.style.transform = `scale(${currentZoom})`;
+        });
+    }
+
+    function zoomIn() {
+        const image = document.getElementById('planImage');
+        const pdfViewer = document.getElementById('pdfViewer');
+
+        if (image) {
+            currentZoom = Math.min(currentZoom * 1.2, 5);
+            image.style.transform = `scale(${currentZoom})`;
+            image.style.transformOrigin = 'center center';
+        } else if (pdfViewer) {
+            // For PDF, try to send zoom command
+            try {
+                pdfViewer.contentWindow.postMessage({
+                    action: 'zoom',
+                    direction: 'in'
+                }, '*');
+            } catch (e) {
+                console.log('PDF zoom not supported');
+            }
+        }
+    }
+
+    function zoomOut() {
+        const image = document.getElementById('planImage');
+        const pdfViewer = document.getElementById('pdfViewer');
+
+        if (image) {
+            currentZoom = Math.max(currentZoom / 1.2, 0.1);
+            image.style.transform = `scale(${currentZoom})`;
+            image.style.transformOrigin = 'center center';
+        } else if (pdfViewer) {
+            // For PDF, try to send zoom command
+            try {
+                pdfViewer.contentWindow.postMessage({
+                    action: 'zoom',
+                    direction: 'out'
+                }, '*');
+            } catch (e) {
+                console.log('PDF zoom not supported');
+            }
+        }
+    }
+
+    function resetZoom() {
+        const image = document.getElementById('planImage');
+        const pdfViewer = document.getElementById('pdfViewer');
+
+        if (image) {
+            currentZoom = 1;
+            image.style.transform = `scale(${currentZoom})`;
+            image.style.transformOrigin = 'center center';
+        } else if (pdfViewer) {
+            // For PDF, reload to reset zoom
+            const currentSrc = pdfViewer.src;
+            pdfViewer.src = currentSrc;
+        }
+    }
+
+    function downloadPlan() {
+        if (currentPlanData) {
+            const link = document.createElement('a');
+            link.href = currentPlanData.file_path;
+            link.download = currentPlanData.title + '.' + (currentPlanData.file_type?.split('/')[1] || 'file');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    function printPlan() {
+        if (currentPlanData) {
+            const fileType = currentPlanData.file_type?.toLowerCase();
+
+            if (isImageFile(fileType)) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
         <html>
           <head>
             <title>{{ __('messages.print') }} - ${currentPlanData.title}</title>
@@ -357,33 +420,33 @@ function printPlan() {
           </body>
         </html>
       `);
-      printWindow.document.close();
-    } else {
-      // For other files, open in new tab for printing
-      window.open(currentPlanData.file_path, '_blank');
+                printWindow.document.close();
+            } else {
+                // For other files, open in new tab for printing
+                window.open(currentPlanData.file_path, '_blank');
+            }
+        }
     }
-  }
-}
 
-function addAnnotation() {
-  alert('{{ __('messages.annotation_feature_coming_soon') }}');
-}
+    function addAnnotation() {
+        alert('{{ __('messages.annotation_feature_coming_soon') }}');
+    }
 
-function measureTool() {
-  alert('{{ __('messages.measure_feature_coming_soon') }}');
-}
+    function measureTool() {
+        alert('{{ __('messages.measure_feature_coming_soon') }}');
+    }
 
-function reportIssue() {
-  alert('{{ __('messages.issue_report_feature_coming_soon') }}');
-}
+    function reportIssue() {
+        alert('{{ __('messages.issue_report_feature_coming_soon') }}');
+    }
 
-function addPlanComment() {
-  const commentInput = document.getElementById('planComment');
-  const comment = commentInput.value.trim();
-  
-  if (comment) {
-    const commentsDiv = document.getElementById('planComments');
-    const newCommentHTML = `
+    function addPlanComment() {
+        const commentInput = document.getElementById('planComment');
+        const comment = commentInput.value.trim();
+
+        if (comment) {
+            const commentsDiv = document.getElementById('planComments');
+            const newCommentHTML = `
       <div class="mb-3">
         <div class="bg-light p-2 rounded">
           <strong class="small">{{ __('messages.you') }}</strong>
@@ -392,50 +455,50 @@ function addPlanComment() {
         </div>
       </div>
     `;
-    
-    // Remove "no comments" message if exists
-    const noComments = commentsDiv.querySelector('.text-muted.text-center');
-    if (noComments) {
-      noComments.remove();
+
+            // Remove "no comments" message if exists
+            const noComments = commentsDiv.querySelector('.text-muted.text-center');
+            if (noComments) {
+                noComments.remove();
+            }
+
+            commentsDiv.insertAdjacentHTML('beforeend', newCommentHTML);
+            commentInput.value = '';
+        }
     }
-    
-    commentsDiv.insertAdjacentHTML('beforeend', newCommentHTML);
-    commentInput.value = '';
-  }
-}
 
-function addAnnotation() {
-  alert('Annotation tool would be implemented here');
-}
+    function addAnnotation() {
+        alert('Annotation tool would be implemented here');
+    }
 
-function measureTool() {
-  alert('Measurement tool would be implemented here');
-}
+    function measureTool() {
+        alert('Measurement tool would be implemented here');
+    }
 
-function printPlan() {
-  const planImage = document.getElementById('planImage');
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write(`
+    function printPlan() {
+        const planImage = document.getElementById('planImage');
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
     <html>
-      <head><title>{{ __("messages.print") }} Plan</title></head>
+      <head><title>{{ __('messages.print') }} Plan</title></head>
       <body style="margin:0; text-align:center;">
         <img src="${planImage.src}" style="max-width:100%; height:auto;">
       </body>
     </html>
   `);
-  printWindow.document.close();
-  printWindow.print();
-}
+        printWindow.document.close();
+        printWindow.print();
+    }
 
-function reportIssue() {
-  alert('Issue reporting form would open here');
-}
+    function reportIssue() {
+        alert('Issue reporting form would open here');
+    }
 
-function addPlanComment() {
-  const comment = document.getElementById('planComment').value;
-  if (comment.trim()) {
-    const commentsDiv = document.getElementById('planComments');
-    const newCommentHTML = `
+    function addPlanComment() {
+        const comment = document.getElementById('planComment').value;
+        if (comment.trim()) {
+            const commentsDiv = document.getElementById('planComments');
+            const newCommentHTML = `
       <div class="mb-3">
         <div class="bg-light p-2 rounded">
           <strong class="small">You</strong>
@@ -444,44 +507,44 @@ function addPlanComment() {
         </div>
       </div>
     `;
-    commentsDiv.insertAdjacentHTML('beforeend', newCommentHTML);
-    document.getElementById('planComment').value = '';
-  }
-}
+            commentsDiv.insertAdjacentHTML('beforeend', newCommentHTML);
+            document.getElementById('planComment').value = '';
+        }
+    }
 
-// Pan functionality
-document.addEventListener('DOMContentLoaded', function() {
-  const container = document.getElementById('planViewerContainer');
-  const image = document.getElementById('planImage');
-  
-  image.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    image.style.cursor = 'grabbing';
-    startX = e.pageX - container.offsetLeft;
-    startY = e.pageY - container.offsetTop;
-    scrollLeft = container.scrollLeft;
-    scrollTop = container.scrollTop;
-  });
-  
-  image.addEventListener('mouseleave', () => {
-    isDragging = false;
-    image.style.cursor = 'grab';
-  });
-  
-  image.addEventListener('mouseup', () => {
-    isDragging = false;
-    image.style.cursor = 'grab';
-  });
-  
-  image.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - container.offsetLeft;
-    const y = e.pageY - container.offsetTop;
-    const walkX = (x - startX) * 2;
-    const walkY = (y - startY) * 2;
-    container.scrollLeft = scrollLeft - walkX;
-    container.scrollTop = scrollTop - walkY;
-  });
-});
+    // Pan functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('planViewerContainer');
+        const image = document.getElementById('planImage');
+
+        image.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            image.style.cursor = 'grabbing';
+            startX = e.pageX - container.offsetLeft;
+            startY = e.pageY - container.offsetTop;
+            scrollLeft = container.scrollLeft;
+            scrollTop = container.scrollTop;
+        });
+
+        image.addEventListener('mouseleave', () => {
+            isDragging = false;
+            image.style.cursor = 'grab';
+        });
+
+        image.addEventListener('mouseup', () => {
+            isDragging = false;
+            image.style.cursor = 'grab';
+        });
+
+        image.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const y = e.pageY - container.offsetTop;
+            const walkX = (x - startX) * 2;
+            const walkY = (y - startY) * 2;
+            container.scrollLeft = scrollLeft - walkX;
+            container.scrollTop = scrollTop - walkY;
+        });
+    });
 </script>

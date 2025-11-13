@@ -3,15 +3,40 @@
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ __('messages.task_library') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <style>
+                    #taskLibraryModal .modal-header .btn-close {
+                        position: static !important;
+                        right: auto !important;
+                        top: auto !important;
+                        margin: 0 !important;
+                    }
+
+                    #taskLibraryModal .modal-header {
+                        position: relative !important;
+                    }
+                </style>
+                @if (app()->getLocale() == 'ar')
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title">{{ __('messages.task_library') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                @else
+                    <h5 class="modal-title">{{ __('messages.task_library') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                @endif
             </div>
             <div class="modal-body p-3 p-md-4">
                 <div class="mb-3">
-                    <div class="input-group">
+                    <div class="input-group" style="position: relative;">
+                        @if(app()->getLocale() == 'ar')
+                        <input type="search" class="form-control" id="librarySearchInput"
+                            placeholder="{{ __('messages.search_tasks') }}" style="padding-left: 45px; padding-right: 12px;" />
+                        <span class="input-group-text" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); z-index: 5; border: none; background: transparent; pointer-events: none; padding: 0;"><i class="fas fa-search" style="color: #6c757d;"></i></span>
+                        @else
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                         <input type="search" class="form-control" id="librarySearchInput"
                             placeholder="{{ __('messages.search_tasks') }}" />
+                        @endif
                     </div>
                 </div>
                 <div id="taskLibraryList" class="task-library-list">

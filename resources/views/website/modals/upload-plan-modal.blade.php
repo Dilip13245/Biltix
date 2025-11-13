@@ -2,19 +2,26 @@
 <div class="modal fade" id="uploadPlanModal" tabindex="-1" aria-labelledby="uploadPlanModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
+      <div class="modal-header">
         <style>
-          #uploadPlanModal .btn-close {
+          #uploadPlanModal .modal-header .btn-close {
             position: static !important;
             right: auto !important;
             top: auto !important;
+            margin: 0 !important;
+          }
+
+          #uploadPlanModal .modal-header {
+            position: relative !important;
           }
         </style>
-        @if(app()->getLocale() == 'ar')
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          <h5 class="modal-title" id="uploadPlanModalLabel">
-            <i class="fas fa-upload me-2"></i>{{ __('messages.upload_new_plan') }}
-          </h5>
+        @if (app()->getLocale() == 'ar')
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <h5 class="modal-title" id="uploadPlanModalLabel">
+              {{ __('messages.upload_new_plan') }}<i class="fas fa-upload ms-2"></i>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
         @else
           <h5 class="modal-title" id="uploadPlanModalLabel">
             <i class="fas fa-upload me-2"></i>{{ __('messages.upload_new_plan') }}

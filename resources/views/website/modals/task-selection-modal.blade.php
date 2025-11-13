@@ -2,8 +2,27 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ __('messages.add_new_task') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <style>
+                    #taskSelectionModal .modal-header .btn-close {
+                        position: static !important;
+                        right: auto !important;
+                        top: auto !important;
+                        margin: 0 !important;
+                    }
+
+                    #taskSelectionModal .modal-header {
+                        position: relative !important;
+                    }
+                </style>
+                @if (app()->getLocale() == 'ar')
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title">{{ __('messages.add_new_task') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                @else
+                    <h5 class="modal-title">{{ __('messages.add_new_task') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                @endif
             </div>
             <div class="modal-body p-3 p-md-4">
                 <div class="row g-3">

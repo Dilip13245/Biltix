@@ -2,10 +2,24 @@
 <div class="modal fade" id="editSnagModal" tabindex="-1" aria-labelledby="editSnagModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
-                @if(app()->getLocale() == 'ar')
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <h5 class="modal-title" id="editSnagModalLabel">{{ __('messages.edit_snag') }}</h5>
+            <div class="modal-header">
+                <style>
+                    #editSnagModal .modal-header .btn-close {
+                        position: static !important;
+                        right: auto !important;
+                        top: auto !important;
+                        margin: 0 !important;
+                    }
+
+                    #editSnagModal .modal-header {
+                        position: relative !important;
+                    }
+                </style>
+                @if (app()->getLocale() == 'ar')
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title" id="editSnagModalLabel">{{ __('messages.edit_snag') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                 @else
                     <h5 class="modal-title" id="editSnagModalLabel">{{ __('messages.edit_snag') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

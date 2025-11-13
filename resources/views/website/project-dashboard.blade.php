@@ -26,10 +26,30 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="createProjectModalLabel">
-          <i class="fas fa-plus me-2"></i>{{ __('messages.create_new_project') }}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <style>
+          #createProjectModal .modal-header .btn-close {
+            position: static !important;
+            right: auto !important;
+            top: auto !important;
+            margin: 0 !important;
+          }
+          #createProjectModal .modal-header {
+            position: relative !important;
+          }
+        </style>
+        @if (app()->getLocale() == 'ar')
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <h5 class="modal-title" id="createProjectModalLabel">
+              {{ __('messages.create_new_project') }}<i class="fas fa-plus ms-2"></i>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        @else
+          <h5 class="modal-title" id="createProjectModalLabel">
+            <i class="fas fa-plus me-2"></i>{{ __('messages.create_new_project') }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        @endif
       </div>
       <div class="modal-body">
         <form id="createProjectForm">

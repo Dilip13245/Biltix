@@ -3,10 +3,31 @@
   <div class="modal-dialog modal-fullscreen">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="taskDrawingModalLabel">
-          <i class="fas fa-pencil-alt {{ margin_end(2) }}"></i>{{ __('messages.drawing') }}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <style>
+          #taskDrawingModal .modal-header .btn-close {
+            position: static !important;
+            right: auto !important;
+            top: auto !important;
+            margin: 0 !important;
+          }
+
+          #taskDrawingModal .modal-header {
+            position: relative !important;
+          }
+        </style>
+        @if (app()->getLocale() == 'ar')
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <h5 class="modal-title" id="taskDrawingModalLabel">
+              {{ __('messages.drawing') }}<i class="fas fa-pencil-alt ms-2"></i>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        @else
+          <h5 class="modal-title" id="taskDrawingModalLabel">
+            <i class="fas fa-pencil-alt me-2"></i>{{ __('messages.drawing') }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        @endif
       </div>
       <div class="modal-body p-0">
         <div class="d-flex h-100">

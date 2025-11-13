@@ -1812,10 +1812,30 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createPhaseModalLabel">
-                        <i class="fas fa-layer-group me-2"></i>{{ __('messages.create_phase') }}
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <style>
+                        #createPhaseModal .modal-header .btn-close {
+                            position: static !important;
+                            right: auto !important;
+                            top: auto !important;
+                            margin: 0 !important;
+                        }
+                        #createPhaseModal .modal-header {
+                            position: relative !important;
+                        }
+                    </style>
+                    @if (app()->getLocale() == 'ar')
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <h5 class="modal-title" id="createPhaseModalLabel">
+                                {{ __('messages.create_phase') }}<i class="fas fa-layer-group ms-2"></i>
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    @else
+                        <h5 class="modal-title" id="createPhaseModalLabel">
+                            <i class="fas fa-layer-group me-2"></i>{{ __('messages.create_phase') }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    @endif
                 </div>
                 <div class="modal-body">
                     <form id="createPhaseForm">
@@ -2062,10 +2082,30 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="phaseNavigationModalLabel">
-                        <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">Phase Management</span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <style>
+                        #phaseNavigationModal .modal-header .btn-close {
+                            position: static !important;
+                            right: auto !important;
+                            top: auto !important;
+                            margin: 0 !important;
+                        }
+                        #phaseNavigationModal .modal-header {
+                            position: relative !important;
+                        }
+                    </style>
+                    @if (app()->getLocale() == 'ar')
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <h5 class="modal-title" id="phaseNavigationModalLabel">
+                                <span id="phaseModalTitle">Phase Management</span><i class="fas fa-layer-group ms-2"></i>
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    @else
+                        <h5 class="modal-title" id="phaseNavigationModalLabel">
+                            <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">Phase Management</span>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    @endif
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
