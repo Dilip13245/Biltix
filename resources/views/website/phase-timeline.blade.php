@@ -19,9 +19,11 @@
             -webkit-appearance: none;
             margin: 0;
         }
+
         input[type="number"] {
             -moz-appearance: textfield;
         }
+
         /* Clean extend input styling */
         .milestone-extend-input {
             width: 70px !important;
@@ -41,22 +43,22 @@
                 <div class="row align-items-start">
                     <div class="col-12">
                         <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <button class="btn btn-outline-primary" onclick="history.back()">
-                                <i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }}"></i>
-                            </button>
+                            <div class="d-flex align-items-center gap-3">
+                                <button class="btn btn-outline-primary" onclick="history.back()">
+                                    <i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }}"></i>
+                                </button>
                                 <div>
                                     <h4 class="mb-1">{{ __('messages.project_timeline') }}</h4>
                                     <p class="text-muted small mb-0">{{ __('messages.track_project_phases') }}</p>
-                        </div>
-            </div>
-            {{-- @can('phases', 'create')
+                                </div>
+                            </div>
+                            {{-- @can('phases', 'create')
                 <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#createPhaseModal">
                     <i class="fas fa-plus"></i>
                     {{ __('messages.create_phase') }}
                 </button>
             @endcan --}}
-        </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -184,13 +186,13 @@
                                                         <span id="projectName">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
-                                                        <div class="mb-2 mb-md-3" style="display: none;">
-                                                            <span
-                                                                class="text-muted small black_color">{{ __('messages.company_name') }}</span>
-                                                            <div class="fw-medium">
-                                                                <span id="companyName">{{ __('messages.loading') }}...</span>
-                                                            </div>
-                                                        </div>
+                                                <div class="mb-2 mb-md-3" style="display: none;">
+                                                    <span
+                                                        class="text-muted small black_color">{{ __('messages.company_name') }}</span>
+                                                    <div class="fw-medium">
+                                                        <span id="companyName">{{ __('messages.loading') }}...</span>
+                                                    </div>
+                                                </div>
                                                 <div class="mb-2 mb-md-3">
                                                     <span
                                                         class="text-muted small black_color">{{ __('messages.start_date') }}</span>
@@ -212,21 +214,21 @@
                                                         <span id="projectType">{{ __('messages.loading') }}...</span>
                                                     </div>
                                                 </div>
-                                                        <div class="mb-2 mb-md-3" style="display: none;">
-                                                            <span
-                                                                class="text-muted small black_color">{{ __('messages.project_manager') }}</span>
-                                                            <div class="fw-medium">
-                                                                <span
-                                                                    id="projectManager">{{ __('messages.loading') }}...</span>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mb-2 mb-md-3" style="display: none;">
-                                                            <span
-                                                                class="text-muted small black_color">{{ __('messages.site_engineer') }}</span>
-                                                            <div class="fw-medium">
-                                                                <span id="siteEngineer">{{ __('messages.loading') }}...</span>
-                                                            </div>
-                                                        </div>
+                                                <div class="mb-2 mb-md-3" style="display: none;">
+                                                    <span
+                                                        class="text-muted small black_color">{{ __('messages.project_manager') }}</span>
+                                                    <div class="fw-medium">
+                                                        <span
+                                                            id="projectManager">{{ __('messages.loading') }}...</span>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-2 mb-md-3" style="display: none;">
+                                                    <span
+                                                        class="text-muted small black_color">{{ __('messages.site_engineer') }}</span>
+                                                    <div class="fw-medium">
+                                                        <span id="siteEngineer">{{ __('messages.loading') }}...</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="mt-4 d-flex flex-wrap gap-2">
@@ -243,8 +245,8 @@
                                             </button>
                                             <button onclick="openTimelineModal()"
                                                 class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white">
-                                                <svg width="21" height="16" viewBox="0 0 21 16" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
+                                                <svg width="21" height="16" viewBox="0 0 21 16"
+                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <g clip-path="url(#clip0_861_1919)">
                                                         <path
                                                             d="M4.0625 2.25C4.26141 2.25 4.45218 2.32902 4.59283 2.46967C4.73348 2.61032 4.8125 2.80109 4.8125 3C4.8125 3.19891 4.73348 3.38968 4.59283 3.53033C4.45218 3.67098 4.26141 3.75 4.0625 3.75C3.86359 3.75 3.67282 3.67098 3.53217 3.53033C3.39152 3.38968 3.3125 3.19891 3.3125 3C3.3125 2.80109 3.39152 2.61032 3.53217 2.46967C3.67282 2.32902 3.86359 2.25 4.0625 2.25ZM5.0625 5.29063C5.94688 4.90625 6.5625 4.025 6.5625 3C6.5625 1.61875 5.44375 0.5 4.0625 0.5C2.68125 0.5 1.5625 1.61875 1.5625 3C1.5625 4.025 2.17812 4.90625 3.0625 5.29063V7H1.0625C0.509375 7 0.0625 7.44688 0.0625 8C0.0625 8.55313 0.509375 9 1.0625 9H9.0625V10.7094C8.17813 11.0938 7.5625 11.975 7.5625 13C7.5625 14.3813 8.68125 15.5 10.0625 15.5C11.4438 15.5 12.5625 14.3813 12.5625 13C12.5625 11.975 11.9469 11.0938 11.0625 10.7094V9H19.0625C19.6156 9 20.0625 8.55313 20.0625 8C20.0625 7.44688 19.6156 7 19.0625 7H17.0625V5.29063C17.9469 4.90625 18.5625 4.025 18.5625 3C18.5625 1.61875 17.4438 0.5 16.0625 0.5C14.6812 0.5 13.5625 1.61875 13.5625 3C13.5625 4.025 14.1781 4.90625 15.0625 5.29063V7H5.0625V5.29063ZM15.3125 3C15.3125 2.80109 15.3915 2.61032 15.5322 2.46967C15.6728 2.32902 15.8636 2.25 16.0625 2.25C16.2614 2.25 16.4522 2.32902 16.5928 2.46967C16.7335 2.61032 16.8125 2.80109 16.8125 3C16.8125 3.19891 16.7335 3.38968 16.5928 3.53033C16.4522 3.67098 16.2614 3.75 16.0625 3.75C15.8636 3.75 15.6728 3.67098 15.5322 3.53033C15.3915 3.38968 15.3125 3.19891 15.3125 3ZM10.0625 12.25C10.2614 12.25 10.4522 12.329 10.5928 12.4697C10.7335 12.6103 10.8125 12.8011 10.8125 13C10.8125 13.1989 10.7335 13.3897 10.5928 13.5303C10.4522 13.671 10.2614 13.75 10.0625 13.75C9.86359 13.75 9.67282 13.671 9.53217 13.5303C9.39152 13.3897 9.3125 13.1989 9.3125 13C9.3125 12.8011 9.39152 12.6103 9.53217 12.4697C9.67282 12.329 9.86359 12.25 10.0625 12.25Z"
@@ -269,25 +271,27 @@
                                                         border: 0;
                                                         pointer-events: none;
                                                     }
+
                                                     #timelineDatePickerWrapper .modern-datepicker-icon {
                                                         display: none;
                                                     }
-                                                    
+
                                                     /* Desktop: Absolute position so calendar scrolls with page */
                                                     #timelineDatePickerWrapper .modern-datepicker-calendar {
                                                         position: absolute !important;
                                                         z-index: 1060 !important;
                                                     }
-                                                    
+
                                                     /* Mobile responsive for timeline date picker only */
                                                     @media (max-width: 768px) {
+
                                                         /* Prevent body scroll when calendar is open */
                                                         body.calendar-open {
                                                             overflow: hidden !important;
                                                             position: fixed !important;
                                                             width: 100% !important;
                                                         }
-                                                        
+
                                                         #timelineDatePickerWrapper .modern-datepicker-calendar {
                                                             position: fixed !important;
                                                             left: 50% !important;
@@ -300,13 +304,13 @@
                                                             width: 90vw !important;
                                                             z-index: 1060 !important;
                                                         }
-                                                        
+
                                                         [dir="rtl"] #timelineDatePickerWrapper .modern-datepicker-calendar {
                                                             left: 50% !important;
                                                             right: auto !important;
                                                             transform: translate(-50%, -50%) !important;
                                                         }
-                                                        
+
                                                         /* Header responsive - make month/year dropdowns fit */
                                                         #timelineDatePickerWrapper .datepicker-header {
                                                             margin-bottom: 10px;
@@ -314,14 +318,14 @@
                                                             gap: 4px;
                                                             flex-wrap: wrap;
                                                         }
-                                                        
+
                                                         #timelineDatePickerWrapper .datepicker-nav {
                                                             width: 32px;
                                                             height: 32px;
                                                             font-size: 14px;
                                                             flex-shrink: 0;
                                                         }
-                                                        
+
                                                         #timelineDatePickerWrapper .datepicker-month {
                                                             gap: 4px;
                                                             flex-wrap: wrap;
@@ -329,41 +333,41 @@
                                                             min-width: 0;
                                                             width: 100%;
                                                         }
-                                                        
+
                                                         #timelineDatePickerWrapper .datepicker-dropdown-trigger {
                                                             font-size: 12px;
                                                             padding: 5px 10px;
                                                             min-width: 90px;
                                                         }
-                                                        
+
                                                         #timelineDatePickerWrapper .datepicker-dropdown-trigger.year-trigger {
                                                             min-width: 65px;
                                                         }
-                                                        
+
                                                         #timelineDatePickerWrapper .datepicker-content {
                                                             padding: 12px;
                                                         }
                                                     }
                                                 </style>
-                                            <button
-                                                    type="button"
+                                                <button type="button"
                                                     class="btn btn-outline-primary d-flex align-items-center gap-2 rounded-5 svg-hover-white"
                                                     id="datePickerBtn">
-                                                <svg width="15" height="16" viewBox="0 0 15 16"
-                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M3.23438 1V2H1.73438C0.90625 2 0.234375 2.67188 0.234375 3.5V5H14.2344V3.5C14.2344 2.67188 13.5625 2 12.7344 2H11.2344V1C11.2344 0.446875 10.7875 0 10.2344 0C9.68125 0 9.23438 0.446875 9.23438 1V2H5.23438V1C5.23438 0.446875 4.7875 0 4.23438 0C3.68125 0 3.23438 0.446875 3.23438 1ZM14.2344 6H0.234375V14.5C0.234375 15.3281 0.90625 16 1.73438 16H12.7344C13.5625 16 14.2344 15.3281 14.2344 14.5V6Z"
-                                                        fill="#4477C4" />
-                                                </svg>
-                                                <span id="currentDateBtn"></span>
-                                            </button>
-                                                <div id="timelineDatePickerWrapper" style="position: absolute; top: 0; left: 0; width: 0; height: 0; overflow: visible;">
+                                                    <svg width="15" height="16" viewBox="0 0 15 16"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M3.23438 1V2H1.73438C0.90625 2 0.234375 2.67188 0.234375 3.5V5H14.2344V3.5C14.2344 2.67188 13.5625 2 12.7344 2H11.2344V1C11.2344 0.446875 10.7875 0 10.2344 0C9.68125 0 9.23438 0.446875 9.23438 1V2H5.23438V1C5.23438 0.446875 4.7875 0 4.23438 0C3.68125 0 3.23438 0.446875 3.23438 1ZM14.2344 6H0.234375V14.5C0.234375 15.3281 0.90625 16 1.73438 16H12.7344C13.5625 16 14.2344 15.3281 14.2344 14.5V6Z"
+                                                            fill="#4477C4" />
+                                                    </svg>
+                                                    <span id="currentDateBtn"></span>
+                                                </button>
+                                                <div id="timelineDatePickerWrapper"
+                                                    style="position: absolute; top: 0; left: 0; width: 0; height: 0; overflow: visible;">
                                                     @include('website.includes.date-picker', [
                                                         'id' => 'timelineDatePicker',
                                                         'name' => 'timeline_date',
                                                         'placeholder' => __('messages.select_date'),
                                                         'value' => date('Y-m-d'),
-                                                        'required' => false
+                                                        'required' => false,
                                                     ])
                                                 </div>
                                             </div>
@@ -372,7 +376,8 @@
                                     </div>
                                     @can('projects', 'delete')
                                         <div class="ms-auto mt-3 mt-md-0">
-                                            <button class="btn btn-danger d-flex align-items-center gap-2 py-md-2 api-action-btn"
+                                            <button
+                                                class="btn btn-danger d-flex align-items-center gap-2 py-md-2 api-action-btn"
                                                 onclick="deleteProject()">
                                                 <i class="fas fa-trash"></i> {{ __('messages.delete_project') }}
                                             </button>
@@ -519,33 +524,33 @@
                 const day = String(date.getDate()).padStart(2, '0');
                 return `${year}-${month}-${day}`;
             }
-            
+
             // Helper function to get today's date in local timezone
             function getTodayLocalDateString() {
-                    const today = new Date();
+                const today = new Date();
                 const year = today.getFullYear();
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const day = String(today.getDate()).padStart(2, '0');
                 return `${year}-${month}-${day}`;
             }
-            
+
             // Selected date for filtering (default: today in local timezone)
             let selectedDate = getTodayLocalDateString();
-            
+
             // Store data availability for selected date
             let hasActivitiesData = false;
             let hasManpowerData = false;
             let hasSafetyData = false;
-            
+
             // Function to toggle add buttons visibility based on selected date
             function toggleAddButtonsVisibility() {
                 const today = getTodayLocalDateString();
                 const isToday = selectedDate === today;
-                
+
                 const addActivityBtn = document.getElementById('addActivityBtn');
                 const addManpowerBtn = document.getElementById('addManpowerBtn');
                 const addSafetyBtn = document.getElementById('addSafetyBtn');
-                
+
                 if (addActivityBtn) {
                     addActivityBtn.style.display = isToday ? 'inline-block' : 'none';
                 }
@@ -556,13 +561,13 @@
                     addSafetyBtn.style.display = isToday ? 'inline-block' : 'none';
                 }
             }
-            
+
             // Function to toggle update buttons visibility based on data availability
             function toggleUpdateButtonsVisibility() {
                 const updateActivityBtn = document.getElementById('updateActivityBtn');
                 const updateManpowerBtn = document.getElementById('updateManpowerBtn');
                 const updateSafetyBtn = document.getElementById('updateSafetyBtn');
-                
+
                 if (updateActivityBtn) {
                     updateActivityBtn.style.display = hasActivitiesData ? 'inline-block' : 'none';
                 }
@@ -573,7 +578,7 @@
                     updateSafetyBtn.style.display = hasSafetyData ? 'inline-block' : 'none';
                 }
             }
-            
+
             // Function to update date button text
             function updateDateButton(dateString) {
                 const currentDateBtn = document.getElementById('currentDateBtn');
@@ -587,33 +592,33 @@
                     currentDateBtn.textContent = date.toLocaleDateString('en-US', options);
                 }
             }
-            
+
             // Load all data on page load
             document.addEventListener('DOMContentLoaded', function() {
                 // Set initial date on button
                 updateDateButton(selectedDate);
-                
+
                 // Toggle add buttons visibility
                 toggleAddButtonsVisibility();
-                
+
                 // Setup date picker
                 const datePickerBtn = document.getElementById('datePickerBtn');
                 const datePickerInput = document.getElementById('timelineDatePicker');
                 const datePickerWrapper = datePickerInput?.closest('.modern-datepicker-wrapper');
                 const datePickerIcon = datePickerWrapper?.querySelector('.modern-datepicker-icon');
-                
+
                 if (datePickerInput) {
                     // Set initial value
                     datePickerInput.value = selectedDate;
-                    
+
                     // Listen for date changes
                     datePickerInput.addEventListener('change', function() {
                         // Save scroll position before any operations
                         const isMobile = window.innerWidth <= 768;
-                        const savedScrollY = isMobile && document.body.classList.contains('calendar-open') 
-                            ? parseInt(document.body.dataset.scrollY || 0) 
-                            : null;
-                        
+                        const savedScrollY = isMobile && document.body.classList.contains('calendar-open') ?
+                            parseInt(document.body.dataset.scrollY || 0) :
+                            null;
+
                         // Remove calendar-open class first
                         if (isMobile && document.body.classList.contains('calendar-open')) {
                             document.body.classList.remove('calendar-open');
@@ -622,11 +627,11 @@
                             document.body.style.width = '';
                             delete document.body.dataset.scrollY;
                         }
-                        
+
                         selectedDate = this.value;
                         updateDateButton(selectedDate);
                         toggleAddButtonsVisibility();
-                        
+
                         // Reload all filtered data
                         Promise.all([
                             loadActivities(),
@@ -644,16 +649,16 @@
                             }
                         });
                     });
-                    
+
                     // Listen for custom dateSelected event
                     datePickerInput.addEventListener('dateSelected', function(e) {
                         if (e.detail && e.detail.date) {
                             // Save scroll position before any operations
                             const isMobile = window.innerWidth <= 768;
-                            const savedScrollY = isMobile && document.body.classList.contains('calendar-open') 
-                                ? parseInt(document.body.dataset.scrollY || 0) 
-                                : null;
-                            
+                            const savedScrollY = isMobile && document.body.classList.contains('calendar-open') ?
+                                parseInt(document.body.dataset.scrollY || 0) :
+                                null;
+
                             // Remove calendar-open class first
                             if (isMobile && document.body.classList.contains('calendar-open')) {
                                 document.body.classList.remove('calendar-open');
@@ -662,16 +667,16 @@
                                 document.body.style.width = '';
                                 delete document.body.dataset.scrollY;
                             }
-                            
+
                             selectedDate = e.detail.date;
                             updateDateButton(selectedDate);
                             toggleAddButtonsVisibility();
-                            
+
                             // Reload all filtered data
                             loadActivities();
                             loadManpowerEquipment();
                             loadSafetyItems();
-                            
+
                             // Restore scroll position after all operations complete
                             if (isMobile && savedScrollY !== null) {
                                 // Use setTimeout to ensure it happens after any scroll-resetting operations
@@ -682,29 +687,30 @@
                         }
                     });
                 }
-                
+
                 // Open date picker when button is clicked
                 if (datePickerBtn) {
                     datePickerBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        
+
                         if (datePickerInput) {
                             const calendar = document.getElementById('timelineDatePicker_calendar');
                             const buttonRect = datePickerBtn.getBoundingClientRect();
                             const isMobile = window.innerWidth <= 768;
-                            
+
                             // Update date picker input value before opening
                             datePickerInput.value = selectedDate;
-                            
+
                             // Prevent body scroll on mobile when calendar opens - save scroll position
                             if (isMobile) {
-                                const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+                                const scrollY = window.scrollY || window.pageYOffset || document.documentElement
+                                    .scrollTop;
                                 document.body.style.top = `-${scrollY}px`;
                                 document.body.dataset.scrollY = scrollY;
                                 document.body.classList.add('calendar-open');
                             }
-                            
+
                             // Trigger the date picker
                             setTimeout(function() {
                                 if (datePickerIcon) {
@@ -712,27 +718,36 @@
                                 } else if (datePickerInput) {
                                     datePickerInput.click();
                                 }
-                                
+
                                 // For desktop: Position calendar near button after it opens (relative to document, not viewport)
                                 if (!isMobile && calendar) {
                                     setTimeout(function() {
-                                        const updatedButtonRect = datePickerBtn.getBoundingClientRect();
-                                        const wrapper = document.getElementById('timelineDatePickerWrapper');
-                                        
+                                        const updatedButtonRect = datePickerBtn
+                                            .getBoundingClientRect();
+                                        const wrapper = document.getElementById(
+                                            'timelineDatePickerWrapper');
+
                                         if (wrapper) {
                                             // Calculate button position in document coordinates (including scroll)
-                                            const buttonTopInDocument = updatedButtonRect.top + window.scrollY;
-                                            const buttonLeftInDocument = updatedButtonRect.left + window.scrollX;
-                                            
+                                            const buttonTopInDocument = updatedButtonRect.top +
+                                                window.scrollY;
+                                            const buttonLeftInDocument = updatedButtonRect
+                                                .left + window.scrollX;
+
                                             // Get wrapper position in document coordinates
                                             const wrapperRect = wrapper.getBoundingClientRect();
-                                            const wrapperTopInDocument = wrapperRect.top + window.scrollY;
-                                            const wrapperLeftInDocument = wrapperRect.left + window.scrollX;
-                                            
+                                            const wrapperTopInDocument = wrapperRect.top +
+                                                window.scrollY;
+                                            const wrapperLeftInDocument = wrapperRect.left +
+                                                window.scrollX;
+
                                             // Calculate position relative to wrapper (which is at 0,0 in its container)
-                                            const relativeTop = buttonTopInDocument - wrapperTopInDocument + updatedButtonRect.height + 8;
-                                            const relativeLeft = buttonLeftInDocument - wrapperLeftInDocument;
-                                            
+                                            const relativeTop = buttonTopInDocument -
+                                                wrapperTopInDocument + updatedButtonRect
+                                                .height + 8;
+                                            const relativeLeft = buttonLeftInDocument -
+                                                wrapperLeftInDocument;
+
                                             calendar.style.position = 'absolute';
                                             calendar.style.top = relativeTop + 'px';
                                             calendar.style.left = relativeLeft + 'px';
@@ -746,7 +761,7 @@
                         }
                     });
                 }
-                
+
                 // Remove body scroll lock when calendar closes
                 const calendar = document.getElementById('timelineDatePicker_calendar');
                 if (calendar) {
@@ -754,7 +769,8 @@
                     const observer = new MutationObserver(function(mutations) {
                         mutations.forEach(function(mutation) {
                             if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                                const isHidden = calendar.style.display === 'none' || !calendar.style.display;
+                                const isHidden = calendar.style.display === 'none' || !calendar.style
+                                    .display;
                                 if (isHidden) {
                                     const isMobile = window.innerWidth <= 768;
                                     if (isMobile) {
@@ -774,12 +790,12 @@
                             }
                         });
                     });
-                    
+
                     observer.observe(calendar, {
                         attributes: true,
                         attributeFilter: ['style']
                     });
-                    
+
                     // Also listen for backdrop clicks
                     document.addEventListener('click', function(e) {
                         if (calendar && calendar.style.display !== 'none') {
@@ -811,7 +827,7 @@
                 loadSafetyItems();
                 renderPhaseProgressFromServer();
             });
-            
+
 
             // Project data and edit functionality
             let currentProjectData = null;
@@ -941,7 +957,8 @@
                     const clearBtn = document.createElement('i');
                     clearBtn.className = 'fas fa-times clear-selection d-none';
                     clearBtn.id = 'clear' + fieldId.charAt(0).toUpperCase() + fieldId.slice(1) + 'Selection';
-                    clearBtn.style.cssText = 'position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;';
+                    clearBtn.style.cssText =
+                        'position: absolute; right: 35px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; z-index: 10;';
                     if (document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl') {
                         clearBtn.style.left = '35px';
                         clearBtn.style.right = 'auto';
@@ -982,7 +999,8 @@
                             input.style.cursor = 'pointer';
                             input.style.backgroundColor = '#f8f9fa';
                             clearBtn.classList.remove('d-none');
-                            const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                            const isRTL = document.documentElement.dir === 'rtl' || document.documentElement
+                                .getAttribute('dir') === 'rtl';
                             if (isRTL) {
                                 clearBtn.style.left = '35px';
                                 clearBtn.style.right = 'auto';
@@ -1296,18 +1314,18 @@
 
             function renderActivities(activities) {
                 const container = document.getElementById('activitiesContainer');
-                
+
                 // Filter activities by selected date (convert UTC to local timezone)
                 const filteredActivities = activities.filter(activity => {
                     if (!activity.created_at) return false;
                     const activityDate = getLocalDateString(activity.created_at);
                     return activityDate === selectedDate;
                 });
-                
+
                 // Update data availability flag
                 hasActivitiesData = filteredActivities.length > 0;
                 toggleUpdateButtonsVisibility();
-                
+
                 if (filteredActivities.length === 0) {
                     container.innerHTML = `
       <div class="text-center py-3 text-muted">
@@ -1326,11 +1344,11 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${filteredActivities.map(activity => `
-                                                        <li class="d-flex align-items-center mb-2">
-                                                          <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                                          <span class="flex-grow-1 text-wrap">${activity.description}</span>
-                                                        </li>
-                                                      `).join('')}
+                                                                <li class="d-flex align-items-center mb-2">
+                                                                  <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                                                  <span class="flex-grow-1 text-wrap">${activity.description}</span>
+                                                                </li>
+                                                              `).join('')}
     </ul>
   `;
             }
@@ -1353,18 +1371,18 @@
 
             function renderManpowerEquipment(items) {
                 const container = document.getElementById('manpowerContainer');
-                
+
                 // Filter manpower by selected date (convert UTC to local timezone)
                 const filteredItems = items.filter(item => {
                     if (!item.created_at) return false;
                     const itemDate = getLocalDateString(item.created_at);
                     return itemDate === selectedDate;
                 });
-                
+
                 // Update data availability flag
                 hasManpowerData = filteredItems.length > 0;
                 toggleUpdateButtonsVisibility();
-                
+
                 if (filteredItems.length === 0) {
                     container.innerHTML = `
       <div class="text-center py-3 text-muted">
@@ -1385,13 +1403,13 @@
       <table class="table table-borderless mb-0">
         <tbody>
           ${filteredItems.map(item => `
-                                                            <tr>
-                                                              <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
-                                                              <td class="text-end">
-                                                                <span class="text-primary fw-semibold">${item.count}</span>
-                                                              </td>
-                                                            </tr>
-                                                          `).join('')}
+                                                                    <tr>
+                                                                      <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
+                                                                      <td class="text-end">
+                                                                        <span class="text-primary fw-semibold">${item.count}</span>
+                                                                      </td>
+                                                                    </tr>
+                                                                  `).join('')}
         </tbody>
       </table>
     </div>
@@ -1416,18 +1434,18 @@
 
             function renderSafetyItems(items) {
                 const container = document.getElementById('safetyContainer');
-                
+
                 // Filter safety items by selected date (convert UTC to local timezone)
                 const filteredItems = items.filter(item => {
                     if (!item.created_at) return false;
                     const itemDate = getLocalDateString(item.created_at);
                     return itemDate === selectedDate;
                 });
-                
+
                 // Update data availability flag
                 hasSafetyData = filteredItems.length > 0;
                 toggleUpdateButtonsVisibility();
-                
+
                 if (filteredItems.length === 0) {
                     container.innerHTML = `
       <div class="text-center py-3 text-muted">
@@ -1446,15 +1464,15 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${filteredItems.map(item => `
-                                                        <li class="mb-2">
-                                                          <div class="d-flex align-items-center p-3 rounded bg4">
-                                                            <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
-                                                              <i class="fas fa-check-circle"></i>
-                                                            </span>
-                                                            <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
-                                                          </div>
-                                                        </li>
-                                                      `).join('')}
+                                                                <li class="mb-2">
+                                                                  <div class="d-flex align-items-center p-3 rounded bg4">
+                                                                    <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
+                                                                      <i class="fas fa-check-circle"></i>
+                                                                    </span>
+                                                                    <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
+                                                                  </div>
+                                                                </li>
+                                                              `).join('')}
     </ul>
   `;
             }
@@ -1676,12 +1694,12 @@
 
                         // Get submit button (it's outside the form, using form attribute)
                         const btn = document.querySelector('button[form="createPhaseForm"]');
-                        
+
                         // Check if button is already disabled (protection system handles this)
                         if (btn && btn.disabled) return;
 
                         const title = document.getElementById('title').value.trim();
-                        
+
                         // Validate title
                         if (!title) {
                             if (typeof toastr !== 'undefined') {
@@ -1691,7 +1709,7 @@
                             }
                             return;
                         }
-                        
+
                         // Collect milestones - find inputs by their actual name attribute, not by index
                         const milestones = [];
                         const milestoneItems = document.querySelectorAll('.milestone-item');
@@ -1704,17 +1722,19 @@
                             if (nameInput && nameInput.value.trim()) {
                                 milestones.push({
                                     milestone_name: nameInput.value.trim(),
-                                    days: daysInput && daysInput.value ? parseInt(daysInput.value) : null
+                                    days: daysInput && daysInput.value ? parseInt(daysInput
+                                        .value) : null
                                 });
                             }
                         });
 
                         try {
                             // Get project ID from URL or use default
-                            const projectId = typeof getProjectIdFromUrl === 'function' ? getProjectIdFromUrl() : 
-                                            (typeof currentProjectId !== 'undefined' ? currentProjectId : 
-                                            {{ request()->get('project_id', 1) }});
-                            
+                            const projectId = typeof getProjectIdFromUrl === 'function' ?
+                                getProjectIdFromUrl() :
+                                (typeof currentProjectId !== 'undefined' ? currentProjectId :
+                                    {{ request()->get('project_id', 1) }});
+
                             // Make API call and pass button element for automatic protection
                             const response = await api.makeRequest('projects/create_phase', {
                                 project_id: projectId,
@@ -1725,7 +1745,8 @@
 
                             if (response.code === 200) {
                                 // Close modal
-                                const modal = bootstrap.Modal.getInstance(document.getElementById('createPhaseModal'));
+                                const modal = bootstrap.Modal.getInstance(document.getElementById(
+                                    'createPhaseModal'));
                                 if (modal) modal.hide();
 
                                 // Show success message
@@ -2010,13 +2031,13 @@
                                     </div>
                                     <!-- Extended timeline info commented out - only showing status-based progress -->
                                     <!-- ${extensionDays > 0 ? `
-                                                        <div class="mt-1">
-                                                            <small class="text-warning text-wrap d-inline-block">
-                                                                <i class="fas fa-info-circle me-1"></i>
-                                                                Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                                            </small>
-                                                        </div>
-                                                    ` : ''} -->
+                                                                <div class="mt-1">
+                                                                    <small class="text-warning text-wrap d-inline-block">
+                                                                        <i class="fas fa-info-circle me-1"></i>
+                                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                                    </small>
+                                                                </div>
+                                                            ` : ''} -->
                                 </div>
                             </div>
                             <div class="timeline-milestones ps-5">
@@ -2024,65 +2045,65 @@
                                     const isExtended = milestone.is_extended;
                                     const isOverdue = milestone.is_overdue;
                                     return `
-                                                        <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
-                                                            <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
-                                                                <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                                                    <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
-                                                                    <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
-                                                                    ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
+                                                                <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
+                                                                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                                                                        <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                                                            <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
+                                                                            <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
+                                                                            ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
+                                                                        </div>
+                                                                        <div class="text-muted small" style="flex-shrink: 0;">
+                                                                            ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+                                                                        <span class="text-muted small fw-medium">Extend:</span>
+                                                                        <div class="d-flex align-items-center gap-1">
+                                                                            <input type="number" 
+                                                                                class="form-control form-control-sm milestone-extend-input" 
+                                                                                value="${milestone.extension_days || 0}" 
+                                                                                min="0" 
+                                                                                max="999" 
+                                                                                id="ext_${milestone.id}" 
+                                                                                placeholder="0"
+                                                                                onchange="extendMilestone(${milestone.id})"
+                                                                                onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
+                                                                            <span class="text-muted" style="font-size: 0.75rem;">days</span>
+                                                                        </div>
+                                                                        <div class="d-flex gap-1">
+                                                                            <button type="button" 
+                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                                onclick="quickExtend(${milestone.id}, 1)" 
+                                                                                title="Add 1 day">+1</button>
+                                                                            <button type="button" 
+                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                                onclick="quickExtend(${milestone.id}, 7)" 
+                                                                                title="Add 7 days">+7</button>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="text-muted small" style="flex-shrink: 0;">
-                                                                    ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
-                                                                </div>
-                                                            </div>
-                                                            <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
-                                                                <span class="text-muted small fw-medium">Extend:</span>
-                                                                <div class="d-flex align-items-center gap-1">
-                                                                    <input type="number" 
-                                                                        class="form-control form-control-sm milestone-extend-input" 
-                                                                        value="${milestone.extension_days || 0}" 
-                                                                        min="0" 
-                                                                        max="999" 
-                                                                        id="ext_${milestone.id}" 
-                                                                        placeholder="0"
-                                                                        onchange="extendMilestone(${milestone.id})"
-                                                                        onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
-                                                                    <span class="text-muted" style="font-size: 0.75rem;">days</span>
-                                                                </div>
-                                                                <div class="d-flex gap-1">
-                                                                    <button type="button" 
-                                                                        class="btn btn-sm btn-outline-primary px-2 py-1" 
-                                                                        style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
-                                                                        onclick="quickExtend(${milestone.id}, 1)" 
-                                                                        title="Add 1 day">+1</button>
-                                                                    <button type="button" 
-                                                                        class="btn btn-sm btn-outline-primary px-2 py-1" 
-                                                                        style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
-                                                                        onclick="quickExtend(${milestone.id}, 7)" 
-                                                                        title="Add 7 days">+7</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    `;
+                                                            `;
                                 }).join('') : '<div class="text-muted small">No milestones defined</div>'}
                                 ${extensionDays > 0 ? `
-                                                    <div class="mt-2">
-                                                        <small class="text-warning">
-                                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                                            Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
-                                                        </small>
-                                                    </div>
-                                                ` : ''}
+                                                            <div class="mt-2">
+                                                                <small class="text-warning">
+                                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                                    Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
+                                                                </small>
+                                                            </div>
+                                                        ` : ''}
                                 <div class="mt-2 d-flex gap-1 flex-wrap">
                                     <small class="text-muted me-2">Quick extend:</small>
                                     ${phase.milestones && phase.milestones.length === 1 ? `
-                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                            onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
-                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                            onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
-                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                            onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
-                                                    ` : ''}
+                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                    onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
+                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                    onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
+                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                    onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
+                                                            ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -2133,11 +2154,11 @@
 
                 if (!milestoneName || !milestoneDays || milestoneDays < 1) {
                     if (typeof toastr !== 'undefined') {
-                        toastr.warning('Please fill all fields correctly');
+                        toastr.warning('{{ __('messages.please_fill_fields_correctly') }}');
                     } else if (typeof showToast === 'function') {
-                        showToast('Please fill all fields correctly', 'warning');
+                        showToast('{{ __('messages.please_fill_fields_correctly') }}', 'warning');
                     } else {
-                        alert('Please fill all fields correctly');
+                        alert('{{ __('messages.please_fill_fields_correctly') }}');
                     }
                     return;
                 }
@@ -2154,9 +2175,9 @@
                     }
                     return;
                 }
-                
+
                 const originalText = saveBtn.innerHTML;
-                
+
                 // Protect button and show loading
                 if (window.protectButton) {
                     window.protectButton(saveBtn);
@@ -2183,7 +2204,7 @@
                                 extension_days: m.extension_days || 0,
                                 is_extended: m.is_extended || false
                             }));
-                            
+
                             // Add the new milestone
                             newMilestones.push({
                                 milestone_name: milestoneName,
@@ -2536,6 +2557,7 @@
             }
 
             @media (max-width: 375px) {
+
                 .d-flex.justify-content-between.align-items-center.mb-3 .d-flex.gap-2,
                 .d-flex.flex-wrap.justify-content-between.align-items-center.mb-3.gap-2 .d-flex {
                     flex-direction: column;
@@ -2819,7 +2841,8 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">Cancel</button>
-                        <button type="button" class="btn orange_btn api-action-btn" onclick="saveActivitiesUpdate()">
+                        <button type="button" class="btn orange_btn api-action-btn"
+                            onclick="saveActivitiesUpdate()">
                             <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
                         </button>
                     </div>
@@ -2880,12 +2903,12 @@
                 const saveBtnSpan = document.getElementById('activitiesSaveBtn');
                 if (titleEl) titleEl.textContent = '{{ __('messages.add_activity') }}';
                 if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.save') }}';
-                
+
                 const form = document.getElementById('activitiesForm');
                 const activityId = document.getElementById('activityId');
                 if (form) form.reset();
                 if (activityId) activityId.value = '';
-                
+
                 const container = document.getElementById('modalActivitiesContainer');
                 if (container) {
                     container.innerHTML = `
@@ -2895,7 +2918,7 @@
         </div>
     `;
                 }
-                
+
                 const removeBtn = document.getElementById('removeLastActivityBtn');
                 if (removeBtn) removeBtn.style.display = 'none';
                 new bootstrap.Modal(document.getElementById('activitiesModal')).show();
@@ -2906,12 +2929,12 @@
                 const saveBtnSpan = document.getElementById('manpowerSaveBtn');
                 if (titleEl) titleEl.textContent = '{{ __('messages.add_manpower_equipment') }}';
                 if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.save') }}';
-                
+
                 const form = document.getElementById('manpowerForm');
                 const manpowerId = document.getElementById('manpowerId');
                 if (form) form.reset();
                 if (manpowerId) manpowerId.value = '';
-                
+
                 const container = document.getElementById('modalManpowerContainer');
                 if (container) {
                     container.innerHTML = `
@@ -2929,7 +2952,7 @@
         </div>
     `;
                 }
-                
+
                 const removeBtn = document.getElementById('removeLastManpowerBtn');
                 if (removeBtn) removeBtn.style.display = 'none';
                 new bootstrap.Modal(document.getElementById('manpowerModal')).show();
@@ -2940,12 +2963,12 @@
                 const saveBtnSpan = document.getElementById('safetySaveBtn');
                 if (titleEl) titleEl.textContent = '{{ __('messages.add_safety_item') }}';
                 if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.save') }}';
-                
+
                 const form = document.getElementById('safetyForm');
                 const safetyId = document.getElementById('safetyId');
                 if (form) form.reset();
                 if (safetyId) safetyId.value = '';
-                
+
                 const container = document.getElementById('modalSafetyContainer');
                 if (container) {
                     container.innerHTML = `
@@ -2955,7 +2978,7 @@
         </div>
     `;
                 }
-                
+
                 const removeBtn = document.getElementById('removeLastSafetyBtn');
                 if (removeBtn) removeBtn.style.display = 'none';
                 new bootstrap.Modal(document.getElementById('safetyModal')).show();
@@ -3032,7 +3055,7 @@
 
             function updateRemoveButton(buttonId, container) {
                 const removeBtn = document.getElementById(buttonId);
-                    if (removeBtn) {
+                if (removeBtn) {
                     removeBtn.style.display = container.children.length > 1 ? 'inline-block' : 'none';
                 }
             }
@@ -3056,8 +3079,9 @@
 
                 // Get the button element (parent of the span with id activitiesSaveBtn)
                 const saveBtnSpan = document.getElementById('activitiesSaveBtn');
-                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#activitiesModal button[onclick="saveActivity()"]');
-                
+                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector(
+                    '#activitiesModal button[onclick="saveActivity()"]');
+
                 if (!saveBtn) {
                     console.error('Save button not found');
                     if (typeof toastr !== 'undefined') {
@@ -3067,19 +3091,21 @@
                     }
                     return;
                 }
-                
+
                 // Store original content
                 const originalContent = saveBtn.innerHTML;
-                
+
                 // Protect button and show loading
                 if (window.protectButton) {
                     window.protectButton(saveBtn);
                 } else {
                     saveBtn.disabled = true;
                     if (saveBtnSpan) {
-                        saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                        saveBtnSpan.innerHTML =
+                            '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
                     } else {
-                        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                        saveBtn.innerHTML =
+                            '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
                     }
                 }
 
@@ -3183,26 +3209,29 @@
 
                 // Get the button element (parent of the span with id manpowerSaveBtn)
                 const saveBtnSpan = document.getElementById('manpowerSaveBtn');
-                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#manpowerModal button[onclick="saveManpower()"]');
-                
+                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector(
+                    '#manpowerModal button[onclick="saveManpower()"]');
+
                 if (!saveBtn) {
                     console.error('Save button not found');
                     toastr.error('{{ __('messages.error_saving_manpower') }}');
                     return;
                 }
-                
+
                 // Store original content
                 const originalContent = saveBtn.innerHTML;
-                
+
                 // Protect button and show loading
                 if (window.protectButton) {
                     window.protectButton(saveBtn);
                 } else {
                     saveBtn.disabled = true;
                     if (saveBtnSpan) {
-                        saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                        saveBtnSpan.innerHTML =
+                            '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
                     } else {
-                        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                        saveBtn.innerHTML =
+                            '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
                     }
                 }
 
@@ -3274,8 +3303,9 @@
 
                 // Get the button element (parent of the span with id safetySaveBtn)
                 const saveBtnSpan = document.getElementById('safetySaveBtn');
-                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector('#safetyModal button[onclick="saveSafetyItem()"]');
-                
+                const saveBtn = saveBtnSpan ? saveBtnSpan.closest('button') : document.querySelector(
+                    '#safetyModal button[onclick="saveSafetyItem()"]');
+
                 if (!saveBtn) {
                     console.error('Save button not found');
                     if (typeof toastr !== 'undefined') {
@@ -3285,19 +3315,21 @@
                     }
                     return;
                 }
-                
+
                 // Store original content
                 const originalContent = saveBtn.innerHTML;
-                
+
                 // Protect button and show loading
                 if (window.protectButton) {
                     window.protectButton(saveBtn);
                 } else {
                     saveBtn.disabled = true;
                     if (saveBtnSpan) {
-                        saveBtnSpan.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                        saveBtnSpan.innerHTML =
+                            '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
                     } else {
-                        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
+                        saveBtn.innerHTML =
+                            '<i class="fas fa-spinner fa-spin {{ margin_end(2) }}"></i>{{ __('messages.saving') }}';
                     }
                 }
 
@@ -3355,7 +3387,7 @@
                 const titleEl = document.getElementById('activitiesModalTitle');
                 const saveBtnSpan = document.getElementById('activitiesSaveBtn');
                 const activityIdEl = document.getElementById('activityId');
-                
+
                 if (titleEl) titleEl.textContent = '{{ __('messages.edit_activity') }}';
                 if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.update') }}';
                 if (activityIdEl) activityIdEl.value = id;
@@ -3370,7 +3402,7 @@
         </div>
     `;
                 }
-                
+
                 const removeBtn = document.getElementById('removeLastActivityBtn');
                 const addMoreBtn = document.getElementById('addMoreActivityBtn');
                 if (removeBtn) removeBtn.style.display = 'none';
@@ -3382,7 +3414,7 @@
                 const titleEl = document.getElementById('manpowerModalTitle');
                 const saveBtnSpan = document.getElementById('manpowerSaveBtn');
                 const manpowerIdEl = document.getElementById('manpowerId');
-                
+
                 if (titleEl) titleEl.textContent = '{{ __('messages.edit_manpower_equipment') }}';
                 if (saveBtnSpan) saveBtnSpan.textContent = '{{ __('messages.update') }}';
                 if (manpowerIdEl) manpowerIdEl.value = id;
@@ -3405,7 +3437,7 @@
         </div>
     `;
                 }
-                
+
                 const removeBtn = document.getElementById('removeLastManpowerBtn');
                 const addMoreBtn = document.getElementById('addMoreManpowerBtn');
                 if (removeBtn) removeBtn.style.display = 'none';
@@ -3489,7 +3521,7 @@
 
             // Delete Functions
             async function deleteActivityItem(activityId, buttonElement) {
-                if (!confirm('{{ __("messages.confirm_delete_activity") }}')) {
+                if (!confirm('{{ __('messages.confirm_delete_activity') }}')) {
                     return;
                 }
 
@@ -3513,7 +3545,7 @@
                         // Reload activities list
                         loadActivities();
 
-                        toastr.success('{{ __("messages.activity_deleted_successfully") }}');
+                        toastr.success('{{ __('messages.activity_deleted_successfully') }}');
 
                         // Close modal if no items left
                         const container = document.getElementById('activitiesUpdateContainer');
@@ -3521,16 +3553,16 @@
                             bootstrap.Modal.getInstance(document.getElementById('activitiesUpdateModal')).hide();
                         }
                     } else {
-                        toastr.error(response.message || '{{ __("messages.failed_to_delete_activity") }}');
+                        toastr.error(response.message || '{{ __('messages.failed_to_delete_activity') }}');
                     }
                 } catch (error) {
                     console.error('Error deleting activity:', error);
-                    toastr.error('{{ __("messages.failed_to_delete_activity") }}');
+                    toastr.error('{{ __('messages.failed_to_delete_activity') }}');
                 }
             }
 
             async function deleteManpowerItem(itemId, buttonElement) {
-                if (!confirm('{{ __("messages.confirm_delete_manpower") }}')) {
+                if (!confirm('{{ __('messages.confirm_delete_manpower') }}')) {
                     return;
                 }
 
@@ -3554,7 +3586,7 @@
                         // Reload manpower list
                         loadManpowerEquipment();
 
-                        toastr.success('{{ __("messages.manpower_deleted_successfully") }}');
+                        toastr.success('{{ __('messages.manpower_deleted_successfully') }}');
 
                         // Close modal if no items left
                         const container = document.getElementById('manpowerUpdateContainer');
@@ -3562,16 +3594,16 @@
                             bootstrap.Modal.getInstance(document.getElementById('manpowerUpdateModal')).hide();
                         }
                     } else {
-                        toastr.error(response.message || '{{ __("messages.failed_to_delete_manpower") }}');
+                        toastr.error(response.message || '{{ __('messages.failed_to_delete_manpower') }}');
                     }
                 } catch (error) {
                     console.error('Error deleting manpower item:', error);
-                    toastr.error('{{ __("messages.failed_to_delete_manpower") }}');
+                    toastr.error('{{ __('messages.failed_to_delete_manpower') }}');
                 }
             }
 
             async function deleteSafetyItem(itemId, buttonElement) {
-                if (!confirm('{{ __("messages.confirm_delete_safety_item") }}')) {
+                if (!confirm('{{ __('messages.confirm_delete_safety_item') }}')) {
                     return;
                 }
 
@@ -3595,7 +3627,7 @@
                         // Reload safety items list
                         loadSafetyItems();
 
-                        toastr.success('{{ __("messages.safety_item_deleted_successfully") }}');
+                        toastr.success('{{ __('messages.safety_item_deleted_successfully') }}');
 
                         // Close modal if no items left
                         const container = document.getElementById('safetyUpdateContainer');
@@ -3603,11 +3635,11 @@
                             bootstrap.Modal.getInstance(document.getElementById('safetyUpdateModal')).hide();
                         }
                     } else {
-                        toastr.error(response.message || '{{ __("messages.failed_to_delete_safety_item") }}');
+                        toastr.error(response.message || '{{ __('messages.failed_to_delete_safety_item') }}');
                     }
                 } catch (error) {
                     console.error('Error deleting safety item:', error);
-                    toastr.error('{{ __("messages.failed_to_delete_safety_item") }}');
+                    toastr.error('{{ __('messages.failed_to_delete_safety_item') }}');
                 }
             }
 
@@ -3615,7 +3647,8 @@
             async function saveActivitiesUpdate() {
                 // Only get items that are still visible in the DOM (not deleted)
                 const activityItems = Array.from(document.querySelectorAll('.activity-item'));
-                const descInputs = activityItems.map(item => item.querySelector('input[name="activity_description[]"]')).filter(input => input);
+                const descInputs = activityItems.map(item => item.querySelector('input[name="activity_description[]"]'))
+                    .filter(input => input);
 
                 // Validate descriptions
                 for (let input of descInputs) {
@@ -3666,8 +3699,10 @@
             async function saveManpowerUpdate() {
                 // Only get items that are still visible in the DOM (not deleted)
                 const manpowerItems = Array.from(document.querySelectorAll('.manpower-item'));
-                const categoryInputs = manpowerItems.map(item => item.querySelector('input[name="manpower_category[]"]')).filter(input => input);
-                const countInputs = manpowerItems.map(item => item.querySelector('input[name="manpower_count[]"]')).filter(input => input);
+                const categoryInputs = manpowerItems.map(item => item.querySelector('input[name="manpower_category[]"]'))
+                    .filter(input => input);
+                const countInputs = manpowerItems.map(item => item.querySelector('input[name="manpower_count[]"]')).filter(
+                    input => input);
 
                 // Validate all fields
                 for (let i = 0; i < categoryInputs.length; i++) {
@@ -3736,7 +3771,8 @@
             async function saveSafetyUpdate() {
                 // Only get items that are still visible in the DOM (not deleted)
                 const safetyItems = Array.from(document.querySelectorAll('.safety-item'));
-                const itemInputs = safetyItems.map(item => item.querySelector('input[name="safety_item[]"]')).filter(input => input);
+                const itemInputs = safetyItems.map(item => item.querySelector('input[name="safety_item[]"]')).filter(
+                    input => input);
 
                 // Validate safety items
                 for (let input of itemInputs) {

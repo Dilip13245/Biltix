@@ -153,11 +153,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!isValid) {
       if (typeof showToast !== 'undefined') {
-        showToast('Please fill in all required fields.', 'error');
+        showToast('{{ __('messages.please_fill_required_fields') }}', 'error');
       } else if (typeof toastr !== 'undefined') {
-        toastr.error('Please fill in all required fields.');
+        toastr.error('{{ __('messages.please_fill_required_fields') }}');
       } else {
-        alert('Please fill in all required fields.');
+        alert('{{ __('messages.please_fill_required_fields') }}');
       }
     }
     

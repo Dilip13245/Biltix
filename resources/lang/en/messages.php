@@ -1182,6 +1182,10 @@ return [
     'confirm_mark_completed' => 'Are you sure you want to mark this project as completed?',
     'project_marked_completed' => 'Project marked as completed successfully',
     'updating' => 'Updating',
+    
+    // Validation messages
+    'please_fill_required_fields' => 'Please fill in all required fields.',
+    'please_fill_fields_correctly' => 'Please fill all fields correctly',
 ];
 
 

@@ -541,21 +541,21 @@
                             ${Array.from(input.files).map((file, index) => {
                                 const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                 return `
-                                                <div class="col-12">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="file_fileUpload_${index}" 
-                                                            onchange="toggleFileDescriptionInModal('fileUpload', ${index})">
-                                                        <label class="form-check-label d-flex align-items-center" for="file_fileUpload_${index}">
-                                                            <i class="${fileIcon} me-2"></i>
-                                                            <span class="text-truncate">${file.name}</span>
-                                                        </label>
+                                                    <div class="col-12">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="file_fileUpload_${index}" 
+                                                                onchange="toggleFileDescriptionInModal('fileUpload', ${index})">
+                                                            <label class="form-check-label d-flex align-items-center" for="file_fileUpload_${index}">
+                                                                <i class="${fileIcon} me-2"></i>
+                                                                <span class="text-truncate">${file.name}</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="ms-4 mt-2" id="desc_fileUpload_${index}" style="display: none;">
+                                                            <textarea class="form-control form-control-sm" name="file_notes_fileUpload_${index}" 
+                                                                placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                        </div>
                                                     </div>
-                                                    <div class="ms-4 mt-2" id="desc_fileUpload_${index}" style="display: none;">
-                                                        <textarea class="form-control form-control-sm" name="file_notes_fileUpload_${index}" 
-                                                            placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                                    </div>
-                                                </div>
-                                            `;
+                                                `;
                             }).join('')}
                         </div>
                     `;
@@ -1393,14 +1393,14 @@
                                     }
                                 </style>
                                 ${isRtl ? `
-                                            <div class="d-flex justify-content-between align-items-center w-100">
-                                                <h5 class="modal-title">${fileName}<i class="fas fa-image ms-2"></i></h5>
+                                                <div class="d-flex justify-content-between align-items-center w-100">
+                                                    <h5 class="modal-title">${fileName}<i class="fas fa-image ms-2"></i></h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                ` : `
+                                                <h5 class="modal-title"><i class="fas fa-image me-2"></i>${fileName}</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            ` : `
-                                            <h5 class="modal-title"><i class="fas fa-image me-2"></i>${fileName}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            `}
+                                                `}
                             </div>
                             <div class="modal-body text-center">
                                 <img src="${filePath}" class="img-fluid" alt="${fileName}" style="max-height: 70vh;">
@@ -1742,14 +1742,14 @@
                                 }
                             </style>
                             ${isRtl ? `
-                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <h5 class="modal-title mb-0">{{ __('messages.create_folder') }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            ` : `
                                             <h5 class="modal-title mb-0">{{ __('messages.create_folder') }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        ` : `
-                                        <h5 class="modal-title mb-0">{{ __('messages.create_folder') }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        `}
+                                            `}
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">

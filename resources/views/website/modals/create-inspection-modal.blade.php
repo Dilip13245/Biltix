@@ -592,7 +592,7 @@ function validateInspectionForm() {
   });
   
   if (!isValid) {
-    showToast('error', 'Please fill in all required fields.');
+    showToast('error', '{{ __('messages.please_fill_required_fields') }}');
   }
   
   return isValid;

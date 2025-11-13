@@ -14,7 +14,7 @@
                     #addTaskModal .modal-header {
                         position: relative !important;
                     }
-                    
+
                     /* Fix validation icon overlap - remove icon and set proper padding */
                     #addTaskModal .form-control.is-invalid,
                     #addTaskModal .Input_control.is-invalid,
@@ -26,7 +26,7 @@
                         padding-right: 0.75rem !important;
                         padding-left: 0.75rem !important;
                     }
-                    
+
                     [dir="rtl"] #addTaskModal .form-control.is-invalid,
                     [dir="rtl"] #addTaskModal .Input_control.is-invalid,
                     [dir="rtl"] #addTaskModal input.is-invalid,
@@ -35,7 +35,7 @@
                         padding-right: 0.75rem !important;
                         padding-left: 0.75rem !important;
                     }
-                    
+
                     /* For select fields - keep dropdown arrow, remove validation icon */
                     #addTaskModal .form-select.is-invalid:not([multiple]):not([size]),
                     #addTaskModal .form-select.is-invalid:not([multiple])[size="1"],
@@ -47,7 +47,7 @@
                         padding-right: 3rem !important;
                         border-color: #dc3545 !important;
                     }
-                    
+
                     [dir="rtl"] #addTaskModal .form-select.is-invalid:not([multiple]):not([size]),
                     [dir="rtl"] #addTaskModal .form-select.is-invalid:not([multiple])[size="1"],
                     [dir="rtl"] #addTaskModal select.is-invalid:not([multiple]):not([size]),
@@ -57,7 +57,7 @@
                         padding-left: 3rem !important;
                         border-color: #dc3545 !important;
                     }
-                    
+
                     /* Ensure invalid-feedback has proper spacing */
                     #addTaskModal .invalid-feedback {
                         display: block;
@@ -217,7 +217,7 @@
         }
 
         if (!isValid) {
-            showToast('Please fill in all required fields.', 'error');
+            showToast('{{ __('messages.please_fill_required_fields') }}', 'error');
         }
 
         return isValid;
@@ -331,7 +331,7 @@
                 btn.disabled = false;
                 btn.innerHTML = '{{ __('messages.next') }}';
             }
-            
+
             // Load data
             console.log('Loading users and phases...');
             if (window.loadUsers) {
@@ -342,7 +342,7 @@
                 await window.loadPhases();
                 console.log('Phases loaded');
             }
-            
+
             // Destroy and recreate dropdowns
             setTimeout(() => {
                 ['assignedTo', 'phaseSelect', 'taskPriority'].forEach(id => {

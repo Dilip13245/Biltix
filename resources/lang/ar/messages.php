@@ -1126,4 +1126,8 @@ return [
     'confirm_mark_completed' => 'هل أنت متأكد أنك تريد وضع علامة على هذا المشروع كمكتمل؟',
     'project_marked_completed' => 'تم وضع علامة على المشروع كمكتمل بنجاح',
     'updating' => 'جاري التحديث',
+    
+    // Validation messages
+    'please_fill_required_fields' => 'يرجى ملء جميع الحقول المطلوبة.',
+    'please_fill_fields_correctly' => 'يرجى ملء جميع الحقول بشكل صحيح',
 ];

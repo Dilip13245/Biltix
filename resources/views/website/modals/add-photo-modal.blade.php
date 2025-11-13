@@ -1,124 +1,126 @@
 <!-- Add Photo Modal -->
 <div class="modal fade" id="addPhotoModal" tabindex="-1" aria-labelledby="addPhotoModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <style>
-          #addPhotoModal .modal-header .btn-close {
-            position: static !important;
-            right: auto !important;
-            top: auto !important;
-            margin: 0 !important;
-          }
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <style>
+                    #addPhotoModal .modal-header .btn-close {
+                        position: static !important;
+                        right: auto !important;
+                        top: auto !important;
+                        margin: 0 !important;
+                    }
 
-          #addPhotoModal .modal-header {
-            position: relative !important;
-          }
-        </style>
-        @if (app()->getLocale() == 'ar')
-          <div class="d-flex justify-content-between align-items-center w-100">
-            <h5 class="modal-title" id="addPhotoModalLabel">
-              {{ __("messages.add_new") }} Photos<i class="fas fa-camera ms-2"></i>
-            </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-        @else
-          <h5 class="modal-title" id="addPhotoModalLabel">
-            <i class="fas fa-camera me-2"></i>{{ __("messages.add_new") }} Photos
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        @endif
-      </div>
-      <div class="modal-body">
-        <form id="addPhotoForm" enctype="multipart/form-data" novalidate>
-          @csrf
-          <div class="mb-4">
-            <label for="photoFiles" class="form-label fw-medium">Select Photos</label>
-            <input type="file" class="form-control Input_control" id="photoFiles" name="photos[]" 
-              accept="image/*" multiple>
-            <div class="form-text">You can select multiple photos. Supported formats: JPG, PNG, GIF (Max: 5MB each)</div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="photoCategory" class="form-label fw-medium">Category</label>
-              <select class="form-select Input_control" id="photoCategory" name="category">
-                <option value="">Select Category</option>
-                <option value="foundation">Foundation</option>
-                <option value="structure">Structure</option>
-                <option value="finishing">Finishing</option>
-                <option value="safety">Safety</option>
-                <option value="equipment">Equipment</option>
-                <option value="progress">Progress</option>
-              </select>
+                    #addPhotoModal .modal-header {
+                        position: relative !important;
+                    }
+                </style>
+                @if (app()->getLocale() == 'ar')
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title" id="addPhotoModalLabel">
+                            {{ __('messages.add_new') }} Photos<i class="fas fa-camera ms-2"></i>
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                @else
+                    <h5 class="modal-title" id="addPhotoModalLabel">
+                        <i class="fas fa-camera me-2"></i>{{ __('messages.add_new') }} Photos
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                @endif
             </div>
-            <div class="col-md-6 mb-3">
-              <label for="photoDate" class="form-label fw-medium">Date Taken</label>
-              @include('website.includes.date-picker', [
-                'id' => 'photoDate',
-                'name' => 'date_taken',
-                'placeholder' => 'Select photo date',
-                'value' => date('Y-m-d'),
-                'maxDate' => date('Y-m-d'),
-                'required' => true
-              ])
+            <div class="modal-body">
+                <form id="addPhotoForm" enctype="multipart/form-data" novalidate>
+                    @csrf
+                    <div class="mb-4">
+                        <label for="photoFiles" class="form-label fw-medium">Select Photos</label>
+                        <input type="file" class="form-control Input_control" id="photoFiles" name="photos[]"
+                            accept="image/*" multiple>
+                        <div class="form-text">You can select multiple photos. Supported formats: JPG, PNG, GIF (Max:
+                            5MB each)</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="photoCategory" class="form-label fw-medium">Category</label>
+                            <select class="form-select Input_control" id="photoCategory" name="category">
+                                <option value="">Select Category</option>
+                                <option value="foundation">Foundation</option>
+                                <option value="structure">Structure</option>
+                                <option value="finishing">Finishing</option>
+                                <option value="safety">Safety</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="progress">Progress</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="photoDate" class="form-label fw-medium">Date Taken</label>
+                            @include('website.includes.date-picker', [
+                                'id' => 'photoDate',
+                                'name' => 'date_taken',
+                                'placeholder' => 'Select photo date',
+                                'value' => date('Y-m-d'),
+                                'maxDate' => date('Y-m-d'),
+                                'required' => true,
+                            ])
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="photoDescription" class="form-label fw-medium">Description</label>
+                        <textarea class="form-control Input_control" id="photoDescription" name="description" rows="3"
+                            placeholder="Brief description of the photos..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="photographer" class="form-label fw-medium">Photographer</label>
+                        <input type="text" class="form-control Input_control" id="photographer" name="photographer"
+                            placeholder="Name of person who took the photos">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="location" class="form-label fw-medium">Location/Area</label>
+                        <input type="text" class="form-control Input_control" id="location" name="location"
+                            placeholder="e.g., Zone A, Ground Floor, etc.">
+                    </div>
+
+                    <!-- Photo Preview Area -->
+                    <div id="photoPreview" class="mt-3" style="display: none;">
+                        <h6 class="fw-medium mb-3">Photo Preview:</h6>
+                        <div id="previewContainer" class="row g-3"></div>
+                    </div>
+                </form>
             </div>
-          </div>
-
-          <div class="mb-3">
-            <label for="photoDescription" class="form-label fw-medium">Description</label>
-            <textarea class="form-control Input_control" id="photoDescription" name="description" rows="3"
-              placeholder="Brief description of the photos..."></textarea>
-          </div>
-
-          <div class="mb-3">
-            <label for="photographer" class="form-label fw-medium">Photographer</label>
-            <input type="text" class="form-control Input_control" id="photographer" name="photographer" 
-              placeholder="Name of person who took the photos">
-          </div>
-
-          <div class="mb-3">
-            <label for="location" class="form-label fw-medium">Location/Area</label>
-            <input type="text" class="form-control Input_control" id="location" name="location" 
-              placeholder="e.g., Zone A, Ground Floor, etc.">
-          </div>
-
-          <!-- Photo Preview Area -->
-          <div id="photoPreview" class="mt-3" style="display: none;">
-            <h6 class="fw-medium mb-3">Photo Preview:</h6>
-            <div id="previewContainer" class="row g-3"></div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
-        <button type="button" class="btn orange_btn api-action-btn" id="addPhotoBtn">
-          {{ __("messages.upload_photo") }}s
-        </button>
-      </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
+                <button type="button" class="btn orange_btn api-action-btn" id="addPhotoBtn">
+                    {{ __('messages.upload_photo') }}s
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const photoInput = document.getElementById('photoFiles');
-  const previewArea = document.getElementById('photoPreview');
-  const previewContainer = document.getElementById('previewContainer');
-  
-  if (photoInput) {
-    photoInput.addEventListener('change', function(e) {
-      const files = e.target.files;
-      previewContainer.innerHTML = '';
-      
-      if (files.length > 0) {
-        previewArea.style.display = 'block';
-        
-        Array.from(files).forEach((file, index) => {
-          if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              const previewHTML = `
+    document.addEventListener('DOMContentLoaded', function() {
+        const photoInput = document.getElementById('photoFiles');
+        const previewArea = document.getElementById('photoPreview');
+        const previewContainer = document.getElementById('previewContainer');
+
+        if (photoInput) {
+            photoInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                previewContainer.innerHTML = '';
+
+                if (files.length > 0) {
+                    previewArea.style.display = 'block';
+
+                    Array.from(files).forEach((file, index) => {
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const previewHTML = `
                 <div class="col-md-3">
                   <div class="card">
                     <img src="${e.target.result}" class="card-img-top" style="height: 120px; object-fit: cover;">
@@ -128,106 +130,110 @@ document.addEventListener('DOMContentLoaded', function() {
                   </div>
                 </div>
               `;
-              previewContainer.insertAdjacentHTML('beforeend', previewHTML);
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-      } else {
-        previewArea.style.display = 'none';
-      }
-    });
-  }
-  
-  // Validation function
-  function validatePhotoForm() {
-    const form = document.getElementById('addPhotoForm');
-    if (!form) return false;
-    
-    let isValid = true;
-    
-    // Clear previous errors
-    form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-    form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
-    
-    // Validate photos
-    const photoFiles = form.querySelector('#photoFiles');
-    if (!photoFiles.files || photoFiles.files.length === 0) {
-      showFieldError(photoFiles, 'Please select at least one photo');
-      isValid = false;
-    }
-    
-    // Validate category
-    const photoCategory = form.querySelector('#photoCategory');
-    if (!photoCategory.value) {
-      showFieldError(photoCategory, 'Category is required');
-      isValid = false;
-    }
-    
-    // Validate date
-    const photoDate = form.querySelector('#photoDate');
-    if (!photoDate.value) {
-      showFieldError(photoDate, 'Date Taken is required');
-      isValid = false;
-    }
-    
-    if (!isValid) {
-      if (typeof showToast !== 'undefined') {
-        showToast('Please fill in all required fields.', 'error');
-      } else if (typeof toastr !== 'undefined') {
-        toastr.error('Please fill in all required fields.');
-      } else {
-        alert('Please fill in all required fields.');
-      }
-    }
-    
-    return isValid;
-  }
-
-  function showFieldError(field, message) {
-    field.classList.add('is-invalid');
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'invalid-feedback';
-    errorDiv.textContent = message;
-    field.parentElement.appendChild(errorDiv);
-  }
-
-  // Form submit handler - handle both form submit and button click
-  const addPhotoForm = document.getElementById('addPhotoForm');
-  const submitBtn = document.getElementById('addPhotoBtn');
-  
-  if (addPhotoForm) {
-    addPhotoForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (!validatePhotoForm()) {
-        return false;
-      }
-    });
-  }
-  
-  // Also handle button click
-  if (submitBtn) {
-    submitBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const form = document.getElementById('addPhotoForm');
-      if (form && typeof validatePhotoForm === 'function') {
-        if (validatePhotoForm()) {
-          // Validation passed, trigger form submit
-          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
-          // Button protection
-          if (!this.disabled) {
-            this.disabled = true;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-            setTimeout(() => {
-              this.disabled = false;
-              this.innerHTML = '{{ __("messages.upload_photo") }}s';
-            }, 5000);
-          }
+                                previewContainer.insertAdjacentHTML('beforeend',
+                                    previewHTML);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                } else {
+                    previewArea.style.display = 'none';
+                }
+            });
         }
-      }
+
+        // Validation function
+        function validatePhotoForm() {
+            const form = document.getElementById('addPhotoForm');
+            if (!form) return false;
+
+            let isValid = true;
+
+            // Clear previous errors
+            form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+
+            // Validate photos
+            const photoFiles = form.querySelector('#photoFiles');
+            if (!photoFiles.files || photoFiles.files.length === 0) {
+                showFieldError(photoFiles, 'Please select at least one photo');
+                isValid = false;
+            }
+
+            // Validate category
+            const photoCategory = form.querySelector('#photoCategory');
+            if (!photoCategory.value) {
+                showFieldError(photoCategory, 'Category is required');
+                isValid = false;
+            }
+
+            // Validate date
+            const photoDate = form.querySelector('#photoDate');
+            if (!photoDate.value) {
+                showFieldError(photoDate, 'Date Taken is required');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                if (typeof showToast !== 'undefined') {
+                    showToast('{{ __('messages.please_fill_required_fields') }}', 'error');
+                } else if (typeof toastr !== 'undefined') {
+                    toastr.error('{{ __('messages.please_fill_required_fields') }}');
+                } else {
+                    alert('{{ __('messages.please_fill_required_fields') }}');
+                }
+            }
+
+            return isValid;
+        }
+
+        function showFieldError(field, message) {
+            field.classList.add('is-invalid');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback';
+            errorDiv.textContent = message;
+            field.parentElement.appendChild(errorDiv);
+        }
+
+        // Form submit handler - handle both form submit and button click
+        const addPhotoForm = document.getElementById('addPhotoForm');
+        const submitBtn = document.getElementById('addPhotoBtn');
+
+        if (addPhotoForm) {
+            addPhotoForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!validatePhotoForm()) {
+                    return false;
+                }
+            });
+        }
+
+        // Also handle button click
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const form = document.getElementById('addPhotoForm');
+                if (form && typeof validatePhotoForm === 'function') {
+                    if (validatePhotoForm()) {
+                        // Validation passed, trigger form submit
+                        form.dispatchEvent(new Event('submit', {
+                            bubbles: true,
+                            cancelable: true
+                        }));
+                        // Button protection
+                        if (!this.disabled) {
+                            this.disabled = true;
+                            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                            setTimeout(() => {
+                                this.disabled = false;
+                                this.innerHTML = '{{ __('messages.upload_photo') }}s';
+                            }, 5000);
+                        }
+                    }
+                }
+            });
+        }
     });
-  }
-});
 </script>
