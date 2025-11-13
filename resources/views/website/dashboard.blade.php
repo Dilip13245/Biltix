@@ -199,6 +199,13 @@
             border-left: 3px solid #F58D2E;
         }
 
+        /* User name truncation for mobile */
+        @media (max-width: 768px) {
+            .user-name-header {
+                max-width: 100px !important;
+            }
+        }
+
         /* Calendar icon positioning for RTL */
         [dir="rtl"] .vanilla-calendar-wrapper .fa-calendar-alt {
             left: 2.5rem !important;
@@ -474,11 +481,11 @@
         }
 
         /* When validation present, keep clear icon at original position */
-        .custom-combo-dropdown input.is-invalid ~ .clear-selection {
+        .custom-combo-dropdown input.is-invalid~.clear-selection {
             right: 35px !important;
         }
 
-        [dir="rtl"] .custom-combo-dropdown input.is-invalid ~ .clear-selection {
+        [dir="rtl"] .custom-combo-dropdown input.is-invalid~.clear-selection {
             left: 35px !important;
             right: auto !important;
         }
@@ -697,12 +704,12 @@
                 word-break: break-word;
             }
         }
-        
+
         /* Ensure all inputs in step 2 first row are same size */
-        #step2 .row > .col-md-4:first-child .custom-combo-dropdown {
+        #step2 .row>.col-md-4:first-child .custom-combo-dropdown {
             width: 100% !important;
         }
-        
+
         /* Match Project Type input height with date picker inputs */
         #step2 .custom-combo-dropdown .form-control.Input_control {
             width: 100% !important;
@@ -720,54 +727,54 @@
             color: #2d3748 !important;
             background: #ffffff !important;
         }
-        
+
         [dir="rtl"] #step2 .custom-combo-dropdown .form-control.Input_control {
             padding: 16px 20px 16px 55px !important;
         }
-        
+
         /* Adjust dropdown arrow position for larger padding */
         #step2 .custom-combo-dropdown .dropdown-arrow {
             right: 20px !important;
         }
-        
+
         [dir="rtl"] #step2 .custom-combo-dropdown .dropdown-arrow {
             left: 20px !important;
             right: auto !important;
         }
-        
+
         /* Adjust clear button position */
         #step2 .custom-combo-dropdown .clear-selection {
             right: 50px !important;
         }
-        
+
         [dir="rtl"] #step2 .custom-combo-dropdown .clear-selection {
             left: 50px !important;
             right: auto !important;
         }
-        
+
         /* Ensure date picker wrapper also takes full width for consistency */
         #step2 .modern-datepicker-wrapper {
             width: 100%;
         }
-        
+
         /* Match placeholder styling */
         #step2 .custom-combo-dropdown .form-control.Input_control::placeholder {
             color: #a0aec0 !important;
             font-weight: 400 !important;
         }
-        
+
         /* Match border and focus styles */
         #step2 .custom-combo-dropdown .form-control.Input_control:focus {
             border-color: #F58D2E !important;
             box-shadow: 0 0 0 4px rgba(245, 141, 46, 0.1), 0 4px 20px rgba(245, 141, 46, 0.15) !important;
             outline: none !important;
         }
-        
+
         /* Override default padding that might interfere */
         #step2 .custom-combo-dropdown input {
             padding-right: 55px !important;
         }
-        
+
         [dir="rtl"] #step2 .custom-combo-dropdown input {
             padding-left: 55px !important;
             padding-right: 20px !important;
@@ -825,8 +832,8 @@
 
                             <!-- Language Toggle - Custom Dropdown -->
                             <div class="custom-header-dropdown" id="langDropdownWrapper">
-                                <button class="btn btn-outline-primary btn-sm custom-header-dropdown-btn" type="button"
-                                    id="langDropdownBtn">
+                                <button class="btn btn-outline-primary btn-sm custom-header-dropdown-btn"
+                                    type="button" id="langDropdownBtn">
                                     <span id="currentLang">{{ is_rtl() ? 'العربية' : 'English' }}</span>
                                 </button>
                                 <ul class="custom-header-dropdown-menu" id="langDropdownMenu">
@@ -850,7 +857,8 @@
                                     <img id="headerProfileImage" src="{{ asset('website/images/icons/avatar.jpg') }}"
                                         alt="user img" class="User_iMg">
                                     <span class=" text-end">
-                                        <h6 class="fs14 fw-medium black_color">
+                                        <h6 class="fs14 fw-medium black_color text-truncate user-name-header"
+                                            title="@if (isset($currentUser)) {{ $currentUser->name }}@else{{ __('messages.john_smith') }} @endif">
                                             @if (isset($currentUser))
                                                 {{ $currentUser->name }}
                                             @else
@@ -1080,7 +1088,8 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label for="type"
-                                                class="form-label fw-medium">{{ __('messages.project_type_example') }} *</label>
+                                                class="form-label fw-medium">{{ __('messages.project_type_example') }}
+                                                *</label>
                                             <div class="custom-combo-dropdown position-relative">
                                                 <input type="text" class="form-control Input_control" id="type"
                                                     name="type" placeholder="{{ __('messages.select_type') }}"
@@ -1532,11 +1541,11 @@
                             <div class="d-flex align-items-start justify-content-between mb-3">
                                 ${isCompleted ? 
                                     `<div class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px; cursor: not-allowed;">
-                                        <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
-                                    </div>` :
+                                                                <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
+                                                            </div>` :
                                     `<a href="/website/project/${project.id}/plans" class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px;">
-                                        <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
-                                    </a>`
+                                                                <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
+                                                            </a>`
                                 }
                                 <div class="dropdown" style="flex-shrink: 0;">
                                     <i class="fas fa-ellipsis-v" style="color: #4A90E2; cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -1547,47 +1556,47 @@
                             </div>
                             ${isCompleted ? 
                                 `<div style="cursor: not-allowed;">
-                                    <hr style="border-color: #e0e0e0; margin: 12px 0;">
-                                    <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
-                                        <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                        <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
-                                    </div>
-                                    <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
-                                        <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                        <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <div class="d-flex align-items-center" style="gap: 6px;">
-                                            <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                            <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
-                                        </div>
-                                        <div class="d-flex align-items-center" style="gap: 6px;">
-                                            <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                            <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
-                                        </div>
-                                    </div>
-                                </div>` :
+                                                            <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                                                            <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                                                <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                                                            </div>
+                                                            <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                                                <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                                <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                    <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                    <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                    <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                    <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>` :
                                 `<a href="/website/project/${project.id}/plans" class="text-decoration-none">
-                                    <hr style="border-color: #e0e0e0; margin: 12px 0;">
-                                    <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
-                                        <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                        <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
-                                    </div>
-                                    <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
-                                        <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                        <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <div class="d-flex align-items-center" style="gap: 6px;">
-                                            <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                            <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
-                                        </div>
-                                        <div class="d-flex align-items-center" style="gap: 6px;">
-                                            <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                            <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
-                                        </div>
-                                    </div>
-                                </a>`
+                                                            <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                                                            <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                                                <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                                                            </div>
+                                                            <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                                                <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                                <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                    <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                    <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                                                </div>
+                                                                <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                    <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                    <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                                                </div>
+                                                            </div>
+                                                        </a>`
                             }
                         </div>
                     </div>
@@ -1825,7 +1834,8 @@
                     if (clearTypeBtn) {
                         clearTypeBtn.classList.add('d-none');
                         // Reset clear icon position
-                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement
+                            .getAttribute('dir') === 'rtl';
                         if (isRTL) {
                             clearTypeBtn.style.left = '35px';
                             clearTypeBtn.style.right = 'auto';
@@ -1930,7 +1940,8 @@
                         // Reset clear icon position when value is selected
                         if (clearTypeBtn) {
                             clearTypeBtn.classList.remove('d-none');
-                            const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                            const isRTL = document.documentElement.dir === 'rtl' || document
+                                .documentElement.getAttribute('dir') === 'rtl';
                             if (isRTL) {
                                 clearTypeBtn.style.left = '35px';
                                 clearTypeBtn.style.right = 'auto';
@@ -1971,7 +1982,7 @@
             // Check URL for filter parameter
             const urlParams = new URLSearchParams(window.location.search);
             const filterParam = urlParams.get('filter');
-            
+
             // Set initial filter based on URL parameter
             let initialFilter = 'active';
             if (filterParam === 'completed') {
@@ -1982,7 +1993,7 @@
                     filterText.textContent = '{{ __('messages.completed') }}';
                 }
             }
-            
+
             // Load notifications, profile image and projects on page load
             loadUserProfileImage();
             loadNotifications();
@@ -1995,7 +2006,7 @@
                     startDateInput.addEventListener('change', function() {
                         // Clear validation when date is selected
                         this.classList.remove('is-invalid');
-                        
+
                         if (this.value) {
                             // Parse date string directly to avoid timezone issues
                             const dateParts = this.value.split('-');
@@ -2042,7 +2053,8 @@
                             // Reset clear icon position
                             const clearIcon = document.getElementById('clearTypeSelection');
                             if (clearIcon) {
-                                const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                                const isRTL = document.documentElement.dir === 'rtl' || document
+                                    .documentElement.getAttribute('dir') === 'rtl';
                                 if (isRTL) {
                                     clearIcon.style.left = '35px';
                                     clearIcon.style.right = 'auto';
@@ -2250,7 +2262,8 @@
                     // Reset clear icon position
                     const clearIcon = document.getElementById('clearTypeSelection');
                     if (clearIcon && el.id === 'type') {
-                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                        const isRTL = document.documentElement.dir === 'rtl' || document.documentElement
+                            .getAttribute('dir') === 'rtl';
                         if (isRTL) {
                             clearIcon.style.left = '35px';
                             clearIcon.style.right = 'auto';
@@ -2265,11 +2278,11 @@
                     // Validate Step 1 fields - only check visible fields
                     const projectTitle = document.getElementById('project_title');
                     const contractorName = document.getElementById('contractor_name');
-                    
+
                     // Check if contractor_name field is visible
                     const contractorNameContainer = contractorName ? contractorName.closest('.col-md-6') : null;
-                    const isContractorNameVisible = contractorNameContainer ? 
-                        window.getComputedStyle(contractorNameContainer).display !== 'none' && 
+                    const isContractorNameVisible = contractorNameContainer ?
+                        window.getComputedStyle(contractorNameContainer).display !== 'none' &&
                         contractorNameContainer.style.display !== 'none' : false;
 
                     if (!projectTitle.value.trim()) {
@@ -2374,7 +2387,7 @@
 
                 // Clear validation errors
                 document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-                
+
                 // Clear date picker validation
                 const startDate = document.getElementById('project_start_date');
                 const dueDate = document.getElementById('project_due_date');
@@ -2394,7 +2407,7 @@
                     map.setCenter(saudiArabia);
                     map.setZoom(6);
                 }
-                
+
                 // Clear stored location data
                 window.projectLocationData = null;
 
@@ -2440,7 +2453,7 @@
                     if (hasFiles) {
                         // Store form data for later use
                         window.projectFormData = new FormData(createProjectForm);
-                        
+
                         // Store location data before closing modal (for validation)
                         const projectLocation = document.getElementById('project_location');
                         const latitude = document.getElementById('latitude');
@@ -2562,21 +2575,21 @@
                                 ${Array.from(input.files).map((file, index) => {
                                     const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                     return `
-                                                                    <div class="col-12">
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
-                                                                                onchange="toggleFileDescription('${containerId}', ${index})">
-                                                                            <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
-                                                                                <i class="${fileIcon} me-2"></i>
-                                                                                <span class="text-truncate">${file.name}</span>
-                                                                            </label>
-                                                                        </div>
-                                                                        <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
-                                                                            <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
-                                                                                placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                                                        </div>
-                                                                    </div>
-                                                                `;
+                                                                                            <div class="col-12">
+                                                                                                <div class="form-check">
+                                                                                                    <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
+                                                                                                        onchange="toggleFileDescription('${containerId}', ${index})">
+                                                                                                    <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
+                                                                                                        <i class="${fileIcon} me-2"></i>
+                                                                                                        <span class="text-truncate">${file.name}</span>
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                                <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
+                                                                                                    <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
+                                                                                                        placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        `;
                                 }).join('')}
                             </div>
                         `;
@@ -2688,12 +2701,12 @@
                 // Validate location is selected on map before submitting
                 // Get the stored form data first
                 const formData = window.projectFormData;
-                
+
                 // Get location values from FormData (more reliable than DOM when modal is closed)
                 const projectLocation = formData.get('project_location') || '';
                 const latitude = formData.get('latitude') || '';
                 const longitude = formData.get('longitude') || '';
-                
+
                 // Also check stored location data as fallback (in case FormData doesn't have it)
                 const locationData = window.projectLocationData || {};
                 const storedLocation = locationData.location || projectLocation;
@@ -2702,12 +2715,12 @@
 
                 // Check if location is selected on map (must have latitude and longitude)
                 // Only show error if location is actually missing (latitude and longitude are required)
-                const hasValidLocation = storedLatitude && storedLatitude.trim() !== '' && 
-                                        storedLongitude && storedLongitude.trim() !== '';
-                
+                const hasValidLocation = storedLatitude && storedLatitude.trim() !== '' &&
+                    storedLongitude && storedLongitude.trim() !== '';
+
                 if (!hasValidLocation) {
                     showToast('{{ __('messages.please_select_location') }}', 'warning');
-                    
+
                     // Re-enable button
                     const btn = document.querySelector('#createProjectModal .btn.orange_btn');
                     const drawingBtn = document.getElementById('saveDrawingBtn');
@@ -2717,7 +2730,8 @@
                     }
                     if (drawingBtn) {
                         drawingBtn.disabled = false;
-                        drawingBtn.innerHTML = '<i class="fas fa-save me-2"></i><span id="saveButtonText">Save</span>';
+                        drawingBtn.innerHTML =
+                            '<i class="fas fa-save me-2"></i><span id="saveButtonText">Save</span>';
                     }
                     return;
                 }
@@ -2881,7 +2895,7 @@
                 if (!projectLocation.value.trim() || !latitude.value || !longitude.value) {
                     projectLocation.classList.add('is-invalid');
                     showToast('{{ __('messages.please_select_location') }}', 'warning');
-                    
+
                     // Re-enable button
                     const btn = document.querySelector('#createProjectModal .btn.orange_btn');
                     if (btn) {

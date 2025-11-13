@@ -26,6 +26,13 @@
         .form-control.error {
             border-color: #ef4444;
         }
+
+        /* User name truncation for mobile */
+        @media (max-width: 768px) {
+            .user-name-header {
+                max-width: 100px !important;
+            }
+        }
     </style>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -39,7 +46,8 @@
                     <div class="col-12 d-flex align-items-center justify-content-between gap-2">
                         <a class="navbar-brand" href="{{ route('dashboard') }}">
                             <img src="{{ asset('website/images/icons/logo.svg') }}" alt="logo" class="img-fluid">
-                            <span class="Head_title fw-bold {{ margin_start(3) }} fs24 d-none d-lg-inline-block">{{ __('auth.my_profile') }}</span>
+                            <span
+                                class="Head_title fw-bold {{ margin_start(3) }} fs24 d-none d-lg-inline-block">{{ __('auth.my_profile') }}</span>
                         </a>
                         <div class="d-flex align-items-center justify-content-end gap-md-4 gap-3 w-100 flex-wrap">
                             <!-- Language Toggle -->
@@ -62,7 +70,8 @@
                                     <img id="headerProfileImage" src="{{ asset('website/images/icons/avatar.jpg') }}"
                                         alt="user img" class="User_iMg">
                                     <span class="{{ is_rtl() ? 'text-start' : 'text-end' }}">
-                                        <h6 class="fs14 fw-medium black_color">
+                                        <h6 class="fs14 fw-medium black_color text-truncate user-name-header"
+                                            title="@if (isset($currentUser)) {{ $currentUser->name }}@else{{ __('messages.john_smith') }} @endif">
                                             @if (isset($currentUser))
                                                 {{ $currentUser->name }}
                                             @else
@@ -346,7 +355,11 @@
                     const userData = response.data;
 
                     // Update profile information
-                    document.getElementById('userName').textContent = userData.name || 'N/A';
+                    const userNameElement = document.getElementById('userName');
+                    if (userNameElement) {
+                        userNameElement.textContent = userData.name || 'N/A';
+                        userNameElement.title = userData.name || 'N/A';
+                    }
                     document.getElementById('userRole').textContent = userData.role || 'N/A';
                     document.getElementById('companyName').textContent = userData.company_name || 'N/A';
                     document.getElementById('userPhone').textContent = userData.phone || 'N/A';
@@ -544,7 +557,11 @@
 
                 if (response.code === 200) {
                     // Update display values
-                    document.getElementById('userName').textContent = data.name;
+                    const userNameElement = document.getElementById('userName');
+                    if (userNameElement) {
+                        userNameElement.textContent = data.name;
+                        userNameElement.title = data.name;
+                    }
                     document.getElementById('companyName').textContent = data.company_name;
                     document.getElementById('userPhone').textContent = data.phone;
                     document.getElementById('userEmail').textContent = data.email;
