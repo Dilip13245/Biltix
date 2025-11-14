@@ -139,7 +139,7 @@
     padding: 1rem 2rem;
     border-left: 3px solid transparent;
     flex-direction: row;
-    text-align: left;
+    /* text-align: left; */
     min-width: auto;
     width: 100%;
   }

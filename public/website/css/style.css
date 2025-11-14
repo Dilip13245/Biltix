@@ -828,7 +828,7 @@ select {
   width: 100%;
   white-space: nowrap;
   flex-direction: row;
-  text-align: left;
+  /* text-align: left; */
   position: relative;
 }
 
