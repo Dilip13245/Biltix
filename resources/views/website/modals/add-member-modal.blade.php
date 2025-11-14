@@ -19,13 +19,13 @@
           <h5 class="modal-title" id="addMemberModalLabel">
             {{ __("messages.add_team_member") }}<i class="fas fa-user-plus ms-2"></i>
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
         </div>
         @else
         <h5 class="modal-title" id="addMemberModalLabel">
           <i class="fas fa-user-plus me-2"></i>{{ __("messages.add_team_member") }}
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
         @endif
       </div>
       <div class="modal-body">

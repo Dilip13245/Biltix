@@ -1662,11 +1662,11 @@
     <div class="row">
       <div class="col-8">
         <input type="text" class="form-control Input_control" name="milestones[${milestoneIndex}][milestone_name]" 
-          placeholder="Milestone name" maxlength="80" required>
+          placeholder="{{ __('messages.milestone_name') }}" maxlength="80" required>
       </div>
       <div class="col-3">
         <input type="number" class="form-control Input_control" name="milestones[${milestoneIndex}][days]" 
-          placeholder="Days" min="1" required>
+          placeholder="{{ __('messages.days') }}" min="1" required>
       </div>
       <div class="col-1">
         <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeMilestone(this)">
@@ -1817,7 +1817,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="phaseNavigationModalLabel">
-                            <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">Phase Management</span>
+                            <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">{{ __('messages.phase_management') }}</span>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="{{ __('messages.close') }}"></button>

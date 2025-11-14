@@ -20,13 +20,13 @@
                         <h5 class="modal-title" id="taskDetailsModalLabel">
                             {{ __('messages.task_details') }}<i class="fas fa-tasks ms-2"></i>
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="taskDetailsModalLabel">
                         <i class="fas fa-tasks me-2"></i>{{ __('messages.task_details') }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
@@ -35,7 +35,7 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h4 id="taskDetailTitle" class="fw-bold black_color mb-2">Task Title</h4>
+                                <h4 id="taskDetailTitle" class="fw-bold black_color mb-2">{{ __('messages.task_title') }}</h4>
                                 <div class="d-flex gap-3 flex-wrap mb-2">
                                     <span id="taskDetailStatus" class="badge badge3">{{ __('messages.todo') }}</span>
                                     <small class="text-muted"><i class="fas fa-hashtag me-1"></i><span id="taskDetailNumber">-</span></small>
@@ -91,7 +91,7 @@
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-semibold black_color mb-0"><i class="fas fa-images orange_color me-2"></i>{{ __('messages.images') }}</h6>
-                                    <button type="button" class="btn btn-sm orange_btn api-action-btn" id="addImagesBtn" onclick="addNewImages()" title="Add new images">
+                                    <button type="button" class="btn btn-sm orange_btn api-action-btn" id="addImagesBtn" onclick="addNewImages()" title="{{ __('messages.add_new_images') }}">
                                         {{ __('messages.add') }}
                                     </button>
                                 </div>

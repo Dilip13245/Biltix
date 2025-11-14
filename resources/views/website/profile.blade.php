@@ -664,13 +664,13 @@
 
                 // Validate file type
                 if (!file.type.startsWith('image/')) {
-                    toastr.error('Invalid image type');
+                    toastr.error('{{ __('messages.invalid_image_type') }}');
                     return;
                 }
 
                 // Validate file size (max 5MB)
                 if (file.size > 5 * 1024 * 1024) {
-                    toastr.error('Image too large (max 5MB)');
+                    toastr.error('{{ __('messages.image_too_large_max_5mb') }}');
                     return;
                 }
 
@@ -705,15 +705,15 @@
                             reader.readAsDataURL(file);
                         }
                         profileImg.style.opacity = '1';
-                        toastr.success('Profile image updated successfully');
+                        toastr.success('{{ __('messages.profile_image_updated_successfully') }}');
                     } else {
                         profileImg.style.opacity = '1';
-                        toastr.error(response.message || 'Image upload failed');
+                        toastr.error(response.message || '{{ __('messages.image_upload_failed') }}');
                     }
                 } catch (error) {
                     console.error('Profile image upload error:', error);
                     document.getElementById('profileImage').style.opacity = '1';
-                    toastr.error('Image upload failed');
+                    toastr.error('{{ __('messages.image_upload_failed') }}');
                 }
 
                 // Reset input

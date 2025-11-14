@@ -65,8 +65,8 @@ class FileController extends Controller
                     NotificationHelper::send(
                         $request->user_id,
                         'file_uploaded',
-                        $fileCount > 1 ? 'Files Uploaded Successfully' : 'File Uploaded Successfully',
-                        $fileCount > 1 ? "{$fileCount} files uploaded successfully" : "File '{$firstFile->original_name}' uploaded successfully",
+                        $fileCount > 1 ? trans('messages.new_files_uploaded') : trans('messages.new_file_uploaded'),
+                        $fileCount > 1 ? "{$fileCount} " . trans('messages.files_uploaded_notification') : trans('messages.file_uploaded_notification') . " '{$firstFile->original_name}'",
                         [
                             'file_id' => $firstFile->id,
                             'file_count' => $fileCount,
@@ -80,8 +80,8 @@ class FileController extends Controller
                     NotificationHelper::sendToProjectTeam(
                         $project->id,
                         'file_uploaded',
-                        $fileCount > 1 ? 'New Files Uploaded' : 'New File Uploaded',
-                        $fileCount > 1 ? "{$uploader->name} uploaded {$fileCount} files" : "{$uploader->name} uploaded '{$firstFile->original_name}'",
+                        $fileCount > 1 ? trans('messages.new_files_uploaded') : trans('messages.new_file_uploaded'),
+                        $fileCount > 1 ? "{$uploader->name} " . trans('messages.files_uploaded_notification') : "{$uploader->name} " . trans('messages.file_uploaded_notification') . " '{$firstFile->original_name}'",
                         [
                             'file_id' => $firstFile->id,
                             'file_count' => $fileCount,

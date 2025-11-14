@@ -24,13 +24,13 @@
             <form class="serchBar position-relative serchBar2">
                 @if (app()->getLocale() == 'ar')
                     <input class="form-control" type="search" id="searchInput"
-                        placeholder="{{ __('messages.search_task_name') }}" aria-label="Search" dir="auto"
+                        placeholder="{{ __('messages.search_task_name') }}" aria-label="{{ __('messages.search') }}" dir="auto"
                         style="padding-left: 45px; padding-right: 15px;" maxlength="100">
                     <span class="search_icon" style="left: 15px; right: auto; pointer-events: none;"><img
                             src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
                 @else
                     <input class="form-control" type="search" id="searchInput"
-                        placeholder="{{ __('messages.search_task_name') }}" aria-label="Search" dir="auto"
+                        placeholder="{{ __('messages.search_task_name') }}" aria-label="{{ __('messages.search') }}" dir="auto"
                         style="padding-right: 45px;" maxlength="100">
                     <span class="search_icon" style="right: 15px; pointer-events: none;"><img
                             src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>

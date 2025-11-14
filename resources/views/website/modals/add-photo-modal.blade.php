@@ -20,20 +20,20 @@
                         <h5 class="modal-title" id="addPhotoModalLabel">
                             {{ __('messages.add_new') }} Photos<i class="fas fa-camera ms-2"></i>
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="addPhotoModalLabel">
                         <i class="fas fa-camera me-2"></i>{{ __('messages.add_new') }} Photos
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
                 <form id="addPhotoForm" enctype="multipart/form-data" novalidate>
                     @csrf
                     <div class="mb-4">
-                        <label for="photoFiles" class="form-label fw-medium">Select Photos</label>
+                        <label for="photoFiles" class="form-label fw-medium">{{ __('messages.select_photos') }}</label>
                         <input type="file" class="form-control Input_control" id="photoFiles" name="photos[]"
                             accept="image/*" multiple>
                         <div class="form-text">You can select multiple photos. Supported formats: JPG, PNG, GIF (Max:
@@ -42,7 +42,7 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="photoCategory" class="form-label fw-medium">Category</label>
+                            <label for="photoCategory" class="form-label fw-medium">{{ __('messages.category') }}</label>
                             <select class="form-select Input_control" id="photoCategory" name="category">
                                 <option value="">{{ __('messages.select_category') }}</option>
                                 <option value="foundation">{{ __('messages.category_foundation') }}</option>
@@ -54,11 +54,11 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="photoDate" class="form-label fw-medium">Date Taken</label>
+                            <label for="photoDate" class="form-label fw-medium">{{ __('messages.date_taken') }}</label>
                             @include('website.includes.date-picker', [
                                 'id' => 'photoDate',
                                 'name' => 'date_taken',
-                                'placeholder' => 'Select photo date',
+                                'placeholder' => __('messages.select_photo_date'),
                                 'value' => date('Y-m-d'),
                                 'maxDate' => date('Y-m-d'),
                                 'required' => true,
@@ -67,26 +67,26 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="photoDescription" class="form-label fw-medium">Description</label>
+                        <label for="photoDescription" class="form-label fw-medium">{{ __('messages.description') }}</label>
                         <textarea class="form-control Input_control" id="photoDescription" name="description" rows="3"
-                            placeholder="Brief description of the photos..."></textarea>
+                            placeholder="{{ __('messages.brief_description_photos') }}"></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label for="photographer" class="form-label fw-medium">Photographer</label>
+                        <label for="photographer" class="form-label fw-medium">{{ __('messages.photographer') }}</label>
                         <input type="text" class="form-control Input_control" id="photographer" name="photographer"
-                            placeholder="Name of person who took the photos">
+                            placeholder="{{ __('messages.name_of_photographer') }}">
                     </div>
 
                     <div class="mb-3">
-                        <label for="location" class="form-label fw-medium">Location/Area</label>
+                        <label for="location" class="form-label fw-medium">{{ __('messages.location_area') }}</label>
                         <input type="text" class="form-control Input_control" id="location" name="location"
-                            placeholder="e.g., Zone A, Ground Floor, etc.">
+                            placeholder="{{ __('messages.location_example_zone') }}">
                     </div>
 
                     <!-- Photo Preview Area -->
                     <div id="photoPreview" class="mt-3" style="display: none;">
-                        <h6 class="fw-medium mb-3">Photo Preview:</h6>
+                        <h6 class="fw-medium mb-3">{{ __('messages.photo_preview') }}</h6>
                         <div id="previewContainer" class="row g-3"></div>
                     </div>
                 </form>

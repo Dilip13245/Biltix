@@ -20,13 +20,13 @@
             <h5 class="modal-title" id="addSafetyChecklistModalLabel">
               {{ __('messages.add_safety_checklist') }}<i class="fas fa-shield-alt ms-2"></i>
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
           </div>
         @else
           <h5 class="modal-title" id="addSafetyChecklistModalLabel">
             <i class="fas fa-shield-alt me-2"></i>{{ __('messages.add_safety_checklist') }}
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
         @endif
       </div>
       <div class="modal-body">

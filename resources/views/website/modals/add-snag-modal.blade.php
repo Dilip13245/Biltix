@@ -72,13 +72,13 @@
                         <h5 class="modal-title" id="addSnagModalLabel">
                             {{ __('messages.add_new_snag') }}<i class="fas fa-exclamation-triangle ms-2"></i>
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="addSnagModalLabel">
                         <i class="fas fa-exclamation-triangle me-2"></i>{{ __('messages.add_new_snag') }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">

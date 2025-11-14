@@ -20,13 +20,13 @@
             <h5 class="modal-title" id="taskDrawingModalLabel">
               {{ __('messages.drawing') }}<i class="fas fa-pencil-alt ms-2"></i>
             </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
           </div>
         @else
           <h5 class="modal-title" id="taskDrawingModalLabel">
             <i class="fas fa-pencil-alt me-2"></i>{{ __('messages.drawing') }}
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
         @endif
       </div>
       <div class="modal-body p-0">

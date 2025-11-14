@@ -72,13 +72,13 @@
                         <h5 class="modal-title" id="addTaskModalLabel">
                             {{ __('messages.add_new_task') }}<i class="fas fa-plus ms-2"></i>
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="addTaskModalLabel">
                         <i class="fas fa-plus me-2"></i>{{ __('messages.add_new_task') }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">

@@ -45,8 +45,8 @@ class CreateFile extends CreateRecord
             NotificationHelper::sendToProjectTeam(
                 $project->id,
                 'file_uploaded',
-                'New File Uploaded',
-                "New file '{$file->original_name}' uploaded to project",
+                trans('messages.new_file_uploaded'),
+                trans('messages.new_file_uploaded_to_project') . " '{$file->original_name}'",
                 [
                     'file_id' => $file->id,
                     'file_name' => $file->original_name,

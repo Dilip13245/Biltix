@@ -13,12 +13,12 @@
         .searchable-dropdown {
             opacity: 1;
         }
-        
+
         .custom-filter-dropdown {
             width: 100%;
         }
-        
-        .row.align-items-end > div {
+
+        .row.align-items-end>div {
             display: flex;
             flex-direction: column;
         }
@@ -45,12 +45,17 @@
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                                     <label class="fw-medium mb-2">{{ __('messages.status') }}</label>
                                     <div class="custom-filter-dropdown" id="statusFilterWrapper">
-                                        <div class="custom-filter-btn" id="statusFilterBtn">{{ __('messages.all_status') }}</div>
+                                        <div class="custom-filter-btn" id="statusFilterBtn">{{ __('messages.all_status') }}
+                                        </div>
                                         <div class="custom-filter-options" id="statusFilterOptions">
-                                            <div class="custom-filter-option selected" data-value="all">{{ __('messages.all_status') }}</div>
-                                            <div class="custom-filter-option" data-value="todo">{{ __('messages.todo') }}</div>
-                                            <div class="custom-filter-option" data-value="complete">{{ __('messages.complete') }}</div>
-                                            <div class="custom-filter-option" data-value="approve">{{ __('messages.approve') }}</div>
+                                            <div class="custom-filter-option selected" data-value="all">
+                                                {{ __('messages.all_status') }}</div>
+                                            <div class="custom-filter-option" data-value="todo">{{ __('messages.todo') }}
+                                            </div>
+                                            <div class="custom-filter-option" data-value="complete">
+                                                {{ __('messages.complete') }}</div>
+                                            <div class="custom-filter-option" data-value="approve">
+                                                {{ __('messages.approve') }}</div>
                                         </div>
                                         <select id="statusFilter" style="display: none;">
                                             <option value="all">{{ __('messages.all_status') }}</option>
@@ -66,17 +71,18 @@
                                     <form class="serchBar position-relative serchBar2">
                                         @if (app()->getLocale() == 'ar')
                                             <input class="form-control" type="search" id="searchInput"
-                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search"
-                                                dir="auto" style="padding-left: 45px; padding-right: 15px;"
-                                                maxlength="100">
+                                                placeholder="{{ __('messages.search_snags') }}"
+                                                aria-label="{{ __('messages.search') }}" dir="auto"
+                                                style="padding-left: 45px; padding-right: 15px;" maxlength="100">
                                             <span class="search_icon"
                                                 style="left: 15px; right: auto; pointer-events: none;"><img
                                                     src="{{ asset('website/images/icons/search.svg') }}"
                                                     alt="search"></span>
                                         @else
                                             <input class="form-control" type="search" id="searchInput"
-                                                placeholder="{{ __('messages.search_snags') }}" aria-label="Search"
-                                                dir="auto" style="padding-right: 45px;" maxlength="100">
+                                                placeholder="{{ __('messages.search_snags') }}"
+                                                aria-label="{{ __('messages.search') }}" dir="auto"
+                                                style="padding-right: 45px;" maxlength="100">
                                             <span class="search_icon" style="right: 15px; pointer-events: none;"><img
                                                     src="{{ asset('website/images/icons/search.svg') }}"
                                                     alt="search"></span>
@@ -120,7 +126,7 @@
                     }
                 });
             }
-            
+
             // Check if API is available before loading
             if (typeof api !== 'undefined' && api.getSnags) {
                 loadSnags();
@@ -188,7 +194,8 @@
                         users.forEach(user => {
                             const option = document.createElement('option');
                             option.value = user.id;
-                            option.textContent = user.name + (user.role_in_project ? ` (${user.role_in_project})` : '');
+                            option.textContent = user.name + (user.role_in_project ?
+                                ` (${user.role_in_project})` : '');
                             assignedToSelect.appendChild(option);
                         });
 
@@ -252,6 +259,7 @@
             container.style.alignItems = '';
             container.style.minHeight = '';
 
+            const viewDetailsText = '{{ __('messages.view_details') }}';
             container.innerHTML = snags.map(snag => {
                 const statusBadge = getStatusBadge(snag.status);
                 const imageDisplay = snag.image_urls && snag.image_urls.length > 0 ?
@@ -271,8 +279,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex-shrink-0 ms-2">
-                                    <a href="#" class="text-secondary" title="View Details" onclick="viewSnagDetails(${snag.id})">
+                                <div class="flex-shrink-0 ms-2"></div>
+                                    <a href="#" class="text-secondary" title="${viewDetailsText}" onclick="viewSnagDetails(${snag.id})">
                                         <i class="fas fa-eye fa-lg"></i>
                                     </a>
                                 </div>
@@ -337,7 +345,7 @@
             if (addSnagForm) {
                 addSnagForm.addEventListener('submit', function(e) {
                     e.preventDefault();
-                    
+
                     // Validate form first
                     if (typeof validateSnagForm === 'function') {
                         if (!validateSnagForm()) {
@@ -532,7 +540,7 @@
             if (approveBtn) {
                 approveBtn.style.display = 'none';
             }
-            
+
             const currentUserId = {{ auth()->id() ?? 1 }};
             const snagStatus = snag.status ? String(snag.status).toLowerCase().trim() : 'todo';
             const isAssignedUser = snag.assigned_to_id && parseInt(snag.assigned_to_id) === parseInt(currentUserId);
@@ -547,10 +555,10 @@
                          <h6 class="fw-semibold black_color mb-3"><i class="fas fa-images orange_color me-2"></i>{{ __('messages.images') }}</h6>
                          <div class="row g-2">
                            ${snag.image_urls.map(url => `
-                                 <div class="col-6">
-                                   <img src="${url}" alt="Snag" class="img-fluid rounded cursor-pointer" style="height: 120px; width: 100%; object-fit: cover;" onclick="window.open('${url}', '_blank')">
-                                 </div>
-                               `).join('')}
+                                         <div class="col-6">
+                                           <img src="${url}" alt="Snag" class="img-fluid rounded cursor-pointer" style="height: 120px; width: 100%; object-fit: cover;" onclick="window.open('${url}', '_blank')">
+                                         </div>
+                                       `).join('')}
                          </div>
                      </div>
                    </div>` :
@@ -600,11 +608,11 @@
                                     <p class="mb-0">${snag.description || 'No description provided'}</p>
                                 </div>
                                 ${snag.assigned_to ? `
-                                        <div class="mb-0">
-                                            <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
-                                            <p class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>${snag.assigned_to}</p>
-                                        </div>
-                                    ` : ''}
+                                                <div class="mb-0">
+                                                    <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
+                                                    <p class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>${snag.assigned_to}</p>
+                                                </div>
+                                            ` : ''}
                             </div>
                         </div>
                     </div>
@@ -623,42 +631,42 @@
                         </h6>
                         
                         ${snag.comment ? `
-                                <div class="comment-item border rounded p-3 mb-3 bg-light">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 12px;">
-                                                <i class="fas fa-user"></i>
+                                        <div class="comment-item border rounded p-3 mb-3 bg-light">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 12px;">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <div>
+                                                        <small class="fw-medium black_color">{{ __('messages.comment') }}</small>
+                                                        <br>
+                                                        <small class="text-muted">${snag.date}</small>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <small class="fw-medium black_color">{{ __('messages.comment') }}</small>
-                                                <br>
-                                                <small class="text-muted">${snag.date}</small>
-                                            </div>
+                                            <p class="mb-0 ms-5">${snag.comment}</p>
                                         </div>
-                                    </div>
-                                    <p class="mb-0 ms-5">${snag.comment}</p>
-                                </div>
-                            ` : `
-                                <div class="text-center py-4">
-                                    <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
-                                    <p class="text-muted mb-0">{{ __('messages.no_comments_yet') }}</p>
-                                </div>
-                            `}
+                                    ` : `
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
+                                            <p class="text-muted mb-0">{{ __('messages.no_comments_yet') }}</p>
+                                        </div>
+                                    `}
                         
                         ${canComment && !hasCommented && isAssignedUser ? `
-                                <div class="mt-4 pt-3 border-top" id="commentSection">
-                                    <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
-                                    <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
-                                    <button class="btn orange_btn api-action-btn" onclick="addComment(${snag.id})">
-                                        <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
-                                    </button>
-                                </div>
-                            ` : ''}
+                                        <div class="mt-4 pt-3 border-top" id="commentSection">
+                                            <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
+                                            <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
+                                            <button class="btn orange_btn api-action-btn" onclick="addComment(${snag.id})">
+                                                <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
+                                            </button>
+                                        </div>
+                                    ` : ''}
                         ${!isAssignedUser && !isApproved ? `
-                                <div class="alert alert-info mt-3">
-                                    <i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}
-                                </div>
-                            ` : ''}
+                                        <div class="alert alert-info mt-3">
+                                            <i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}
+                                        </div>
+                                    ` : ''}
                     </div>
                 </div>
             `;
@@ -762,27 +770,27 @@
                     if (window.currentSnagDetails) {
                         window.currentSnagDetails.status = 'approve';
                     }
-                    
+
                     // Update status badge in modal
                     const statusBadge = document.querySelector('#snagDetailsModal .badge');
                     if (statusBadge) {
                         statusBadge.textContent = 'Approve';
                         statusBadge.className = `badge ${getStatusBadgeClass('approve')}`;
                     }
-                    
+
                     // Update status select
                     const statusSelect = document.getElementById('snagStatusSelect');
                     if (statusSelect) {
                         statusSelect.value = 'approve';
                         statusSelect.disabled = true;
                     }
-                    
+
                     // Hide approve button
                     updateApproveButtonVisibility();
-                    
+
                     // Reload snags list
                     loadSnags();
-                    
+
                     // Show success message
                     toastr.success(response.message || '{{ __('messages.snag_approved_successfully') }}');
                 } else {
@@ -823,7 +831,7 @@
                 document.getElementById('snagStatusSelect').value = currentStatus;
                 return;
             }
-            
+
             // If status is 'approve', cannot change to 'todo' or 'complete'
             if (currentStatus === 'approve' && (newStatus === 'todo' || newStatus === 'complete')) {
                 toastr.error('{{ __('messages.cannot_change_from_approve') }}');

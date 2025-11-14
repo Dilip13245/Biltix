@@ -23,12 +23,12 @@
         .searchable-dropdown {
             opacity: 1;
         }
-        
+
         .custom-filter-dropdown {
             width: 100%;
         }
-        
-        .row.align-items-end > div {
+
+        .row.align-items-end>div {
             display: flex;
             flex-direction: column;
         }
@@ -73,12 +73,17 @@
                                     <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                                         <label class="fw-medium mb-2">{{ __('messages.status') }}</label>
                                         <div class="custom-filter-dropdown" id="statusFilterWrapper">
-                                            <div class="custom-filter-btn" id="statusFilterBtn">{{ __('messages.all_status') }}</div>
+                                            <div class="custom-filter-btn" id="statusFilterBtn">
+                                                {{ __('messages.all_status') }}</div>
                                             <div class="custom-filter-options" id="statusFilterOptions">
-                                                <div class="custom-filter-option selected" data-value="all">{{ __('messages.all_status') }}</div>
-                                                <div class="custom-filter-option" data-value="todo">{{ __('messages.todo') }}</div>
-                                                <div class="custom-filter-option" data-value="complete">{{ __('messages.complete') }}</div>
-                                                <div class="custom-filter-option" data-value="approve">{{ __('messages.approve') }}</div>
+                                                <div class="custom-filter-option selected" data-value="all">
+                                                    {{ __('messages.all_status') }}</div>
+                                                <div class="custom-filter-option" data-value="todo">
+                                                    {{ __('messages.todo') }}</div>
+                                                <div class="custom-filter-option" data-value="complete">
+                                                    {{ __('messages.complete') }}</div>
+                                                <div class="custom-filter-option" data-value="approve">
+                                                    {{ __('messages.approve') }}</div>
                                             </div>
                                             <select id="statusFilter" style="display: none;">
                                                 <option value="all">{{ __('messages.all_status') }}</option>
@@ -93,17 +98,18 @@
                                         <form class="serchBar position-relative serchBar2">
                                             @if (app()->getLocale() == 'ar')
                                                 <input class="form-control" type="search" id="searchInput"
-                                                    placeholder="{{ __('messages.search_snags') }}" aria-label="Search"
-                                                    dir="auto" style="padding-left: 45px; padding-right: 15px;"
-                                                    maxlength="100">
+                                                    placeholder="{{ __('messages.search_snags') }}"
+                                                    aria-label="{{ __('messages.search') }}" dir="auto"
+                                                    style="padding-left: 45px; padding-right: 15px;" maxlength="100">
                                                 <span class="search_icon"
                                                     style="left: 15px; right: auto; pointer-events: none;"><img
                                                         src="{{ asset('website/images/icons/search.svg') }}"
                                                         alt="search"></span>
                                             @else
                                                 <input class="form-control" type="search" id="searchInput"
-                                                    placeholder="{{ __('messages.search_snags') }}" aria-label="Search"
-                                                    dir="auto" style="padding-right: 45px;" maxlength="100">
+                                                    placeholder="{{ __('messages.search_snags') }}"
+                                                    aria-label="{{ __('messages.search') }}" dir="auto"
+                                                    style="padding-right: 45px;" maxlength="100">
                                                 <span class="search_icon"
                                                     style="right: 15px; pointer-events: none;"><img
                                                         src="{{ asset('website/images/icons/search.svg') }}"
@@ -206,7 +212,7 @@
                         }
                     });
                 }
-                
+
                 const addSnagModal = document.getElementById('addSnagModal');
                 if (addSnagModal) {
                     addSnagModal.addEventListener('show.bs.modal', async function() {
@@ -250,7 +256,7 @@
                             console.error('Error loading users:', error);
                         }
                     });
-                    
+
                     // Also setup when modal is fully shown
                     addSnagModal.addEventListener('shown.bs.modal', function() {
                         // Re-setup form handlers to ensure they work
@@ -285,6 +291,7 @@
                 container.style.alignItems = '';
                 container.style.minHeight = '';
 
+                const viewDetailsText = '{{ __('messages.view_details') }}';
                 container.innerHTML = snags.map(snag => {
                     const statusBadge = getStatusBadge(snag.status);
                     const imageDisplay = snag.image_urls && snag.image_urls.length > 0 ?
@@ -305,7 +312,7 @@
                                     </div>
                                 </div>
                                 <div class="flex-shrink-0 ms-2">
-                                    <a href="#" class="text-secondary" title="View Details" onclick="viewSnagDetails(${snag.id})">
+                                    <a href="#" class="text-secondary" title="${viewDetailsText}" onclick="viewSnagDetails(${snag.id})">
                                         <i class="fas fa-eye fa-lg"></i>
                                     </a>
                                 </div>
@@ -393,7 +400,7 @@
 
             function setupAddSnagForm() {
                 const addSnagForm = document.getElementById('addSnagForm');
-                
+
                 // Form submit handler (same as snag-list.blade.php)
                 if (addSnagForm) {
                     // Use capture phase and stop immediately to override other handlers
@@ -401,30 +408,30 @@
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
-                        
+
                         processSnagForm();
                         return false;
                     }, true); // Use capture phase
                 }
-                
+
                 // Button click handler - directly process form (override modal script)
                 const createBtn = document.getElementById('createSnagBtn');
                 if (createBtn) {
                     // Remove any existing onclick
                     createBtn.onclick = null;
-                    
+
                     // Add our handler with capture to run first
                     createBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
                         e.stopImmediatePropagation();
-                        
+
                         processSnagForm();
                         return false;
                     }, true); // Use capture phase
                 }
             }
-            
+
             function processSnagForm() {
                 // Validate form first
                 if (typeof validateSnagForm === 'function') {
@@ -540,7 +547,7 @@
                         toastr.success('Snag with markup saved successfully!');
                         document.getElementById('addSnagForm').reset();
                         loadSnags();
-                        
+
                         // Reset button state
                         if (createBtn) {
                             createBtn.disabled = false;
@@ -591,7 +598,7 @@
                         toastr.success('Snag created successfully!');
                         document.getElementById('addSnagForm').reset();
                         loadSnags();
-                        
+
                         // Reset button state
                         if (createBtn) {
                             createBtn.disabled = false;
@@ -674,7 +681,7 @@
                 if (approveBtn) {
                     approveBtn.style.display = 'none';
                 }
-                
+
                 const currentUserId = {{ auth()->id() ?? 1 }};
                 const snagStatus = snag.status ? String(snag.status).toLowerCase().trim() : 'todo';
                 const isAssignedUser = snag.assigned_to_id && parseInt(snag.assigned_to_id) === parseInt(currentUserId);
@@ -689,10 +696,10 @@
                          <h6 class="fw-semibold black_color mb-3"><i class="fas fa-images orange_color me-2"></i>{{ __('messages.images') }}</h6>
                          <div class="row g-2">
                            ${snag.image_urls.map(url => `
-                                             <div class="col-6">
-                                               <img src="${url}" alt="Snag" class="img-fluid rounded cursor-pointer" style="height: 120px; width: 100%; object-fit: cover;" onclick="window.open('${url}', '_blank')">
-                                             </div>
-                                           `).join('')}
+                                                     <div class="col-6">
+                                                       <img src="${url}" alt="Snag" class="img-fluid rounded cursor-pointer" style="height: 120px; width: 100%; object-fit: cover;" onclick="window.open('${url}', '_blank')">
+                                                     </div>
+                                                   `).join('')}
                          </div>
                      </div>
                    </div>` :
@@ -752,11 +759,11 @@
                                     <p class="mb-0">${snag.description || 'No description provided'}</p>
                                 </div>
                                 ${snag.assigned_to ? `
-                                                    <div class="mb-0">
-                                                        <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
-                                                        <p class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>${snag.assigned_to}</p>
-                                                    </div>
-                                                ` : ''}
+                                                            <div class="mb-0">
+                                                                <label class="small_tXt fw-medium">{{ __('messages.assigned_to') }}</label>
+                                                                <p class="mb-0"><i class="fas fa-user-check me-1 text-primary"></i>${snag.assigned_to}</p>
+                                                            </div>
+                                                        ` : ''}
                             </div>
                         </div>
                     </div>
@@ -775,42 +782,42 @@
                         </h6>
                         
                         ${snag.comment ? `
-                                            <div class="comment-item border rounded p-3 mb-3 bg-light">
-                                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 12px;">
-                                                            <i class="fas fa-user"></i>
+                                                    <div class="comment-item border rounded p-3 mb-3 bg-light">
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; font-size: 12px;">
+                                                                    <i class="fas fa-user"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <small class="fw-medium black_color">{{ __('messages.comment') }}</small>
+                                                                    <br>
+                                                                    <small class="text-muted">${snag.date}</small>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div>
-                                                            <small class="fw-medium black_color">{{ __('messages.comment') }}</small>
-                                                            <br>
-                                                            <small class="text-muted">${snag.date}</small>
-                                                        </div>
+                                                        <p class="mb-0 ms-5">${snag.comment}</p>
                                                     </div>
-                                                </div>
-                                                <p class="mb-0 ms-5">${snag.comment}</p>
-                                            </div>
-                                        ` : `
-                                            <div class="text-center py-4">
-                                                <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
-                                                <p class="text-muted mb-0">{{ __('messages.no_comments_yet') }}</p>
-                                            </div>
-                                        `}
+                                                ` : `
+                                                    <div class="text-center py-4">
+                                                        <i class="fas fa-comment-slash fa-2x text-muted mb-2"></i>
+                                                        <p class="text-muted mb-0">{{ __('messages.no_comments_yet') }}</p>
+                                                    </div>
+                                                `}
                         
                         ${canComment && !hasCommented && isAssignedUser ? `
-                                            <div class="mt-4 pt-3 border-top" id="commentSection">
-                                                <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
-                                                <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
-                                                <button class="btn orange_btn api-action-btn" onclick="addComment(${snag.id})">
-                                                    <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
-                                                </button>
-                                            </div>
-                                        ` : ''}
+                                                    <div class="mt-4 pt-3 border-top" id="commentSection">
+                                                        <label class="fw-medium mb-2 black_color">{{ __('messages.add_comment') }}</label>
+                                                        <textarea class="form-control mb-3" id="commentText" rows="3" placeholder="{{ __('messages.enter_comment') }}"></textarea>
+                                                        <button class="btn orange_btn api-action-btn" onclick="addComment(${snag.id})">
+                                                            <i class="fas fa-paper-plane me-2"></i>{{ __('messages.add_comment') }}
+                                                        </button>
+                                                    </div>
+                                                ` : ''}
                         ${!isAssignedUser && !isApproved ? `
-                                            <div class="alert alert-info mt-3">
-                                                <i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}
-                                            </div>
-                                        ` : ''}
+                                                    <div class="alert alert-info mt-3">
+                                                        <i class="fas fa-info-circle me-2"></i>{{ __('messages.only_assigned_user_can_modify') }}
+                                                    </div>
+                                                ` : ''}
                     </div>
                 </div>
             `;
@@ -944,7 +951,7 @@
                     document.getElementById('snagStatusSelect').value = currentStatus;
                     return;
                 }
-                
+
                 // If status is 'approve', cannot change to 'todo' or 'complete'
                 if (currentStatus === 'approve' && (newStatus === 'todo' || newStatus === 'complete')) {
                     toastr.error('{{ __('messages.cannot_change_from_approve') }}');
@@ -959,24 +966,24 @@
                         status: newStatus
                     });
 
-                if (response.code === 200) {
-                    window.currentSnagDetails.status = newStatus;
-                    // Update status badge in modal
-                    const statusBadge = document.querySelector('#snagDetailsModal .badge');
-                    if (statusBadge) {
-                        statusBadge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
-                        statusBadge.className = `badge ${getStatusBadgeClass(newStatus)}`;
+                    if (response.code === 200) {
+                        window.currentSnagDetails.status = newStatus;
+                        // Update status badge in modal
+                        const statusBadge = document.querySelector('#snagDetailsModal .badge');
+                        if (statusBadge) {
+                            statusBadge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                            statusBadge.className = `badge ${getStatusBadgeClass(newStatus)}`;
+                        }
+                        // Update approve button visibility based on new status
+                        updateApproveButtonVisibility();
+                        loadSnags();
+                        toastr.success(response.message || '{{ __('messages.snag_updated_successfully') }}');
+                    } else {
+                        // Show backend error message in toastr
+                        const errorMessage = response.message || '{{ __('messages.failed_to_update_snag') }}';
+                        toastr.error(errorMessage);
+                        document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
                     }
-                    // Update approve button visibility based on new status
-                    updateApproveButtonVisibility();
-                    loadSnags();
-                    toastr.success(response.message || '{{ __('messages.snag_updated_successfully') }}');
-                } else {
-                    // Show backend error message in toastr
-                    const errorMessage = response.message || '{{ __('messages.failed_to_update_snag') }}';
-                    toastr.error(errorMessage);
-                    document.getElementById('snagStatusSelect').value = window.currentSnagDetails.status;
-                }
                 } catch (error) {
                     console.error('Error updating snag status:', error);
                     toastr.error(error.message || '{{ __('messages.error_updating_snag') }}');
@@ -1002,27 +1009,27 @@
                         if (window.currentSnagDetails) {
                             window.currentSnagDetails.status = 'approve';
                         }
-                        
+
                         // Update status badge in modal
                         const statusBadge = document.querySelector('#snagDetailsModal .badge');
                         if (statusBadge) {
                             statusBadge.textContent = 'Approve';
                             statusBadge.className = `badge ${getStatusBadgeClass('approve')}`;
                         }
-                        
+
                         // Update status select
                         const statusSelect = document.getElementById('snagStatusSelect');
                         if (statusSelect) {
                             statusSelect.value = 'approve';
                             statusSelect.disabled = true;
                         }
-                        
+
                         // Hide approve button
                         updateApproveButtonVisibility();
-                        
+
                         // Reload snags list
                         loadSnags();
-                        
+
                         // Show success message
                         toastr.success(response.message || '{{ __('messages.snag_approved_successfully') }}');
                     } else {
@@ -1073,7 +1080,7 @@
                     const response = await api.getAllUsers();
                     if (response.code === 200 && Array.isArray(response.data)) {
                         select.innerHTML =
-                        '<option value="">{{ __('messages.select_user') }}</option>';
+                            '<option value="">{{ __('messages.select_user') }}</option>';
                         response.data.forEach(user => {
                             const opt = document.createElement("option");
                             opt.value = user.id;

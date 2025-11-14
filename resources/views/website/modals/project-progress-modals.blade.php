@@ -31,13 +31,13 @@
                     <h6 class="modal-title" id="activitiesModalLabel">
                         <span id="activitiesModalTitle">{{ __('messages.add_activity') }}</span><i class="fas fa-tasks ms-2 text-primary"></i>
                     </h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 </div>
                 @else
                 <h6 class="modal-title" id="activitiesModalLabel">
                     <i class="fas fa-tasks me-2 text-primary"></i><span id="activitiesModalTitle">{{ __('messages.add_activity') }}</span>
                 </h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
@@ -112,13 +112,13 @@
                     <h6 class="modal-title" id="manpowerModalLabel">
                         <span id="manpowerModalTitle">{{ __('messages.add_manpower_equipment') }}</span><i class="fas fa-users ms-2 text-success"></i>
                     </h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 </div>
                 @else
                 <h6 class="modal-title" id="manpowerModalLabel">
                     <i class="fas fa-users me-2 text-success"></i><span id="manpowerModalTitle">{{ __('messages.add_manpower_equipment') }}</span>
                 </h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
@@ -194,13 +194,13 @@
                     <h6 class="modal-title" id="safetyModalLabel">
                         <span id="safetyModalTitle">{{ __('messages.add_safety_item') }}</span><i class="fas fa-shield-alt ms-2 text-warning"></i>
                     </h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 </div>
                 @else
                 <h6 class="modal-title" id="safetyModalLabel">
                     <i class="fas fa-shield-alt me-2 text-warning"></i><span id="safetyModalTitle">{{ __('messages.add_safety_item') }}</span>
                 </h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">

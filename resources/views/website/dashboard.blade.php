@@ -853,7 +853,7 @@
                                 <i class="fas fa-search position-absolute top-50 translate-middle-y"
                                     style="color: #6c757d; pointer-events: none;"></i>
                                 <input class="form-control" type="search"
-                                    placeholder="{{ __('messages.search_projects') }}" aria-label="Search"
+                                    placeholder="{{ __('messages.search_projects') }}" aria-label="{{ __('messages.search') }}"
                                     data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
                             </form>
                             <div class="dropdown">
@@ -1031,14 +1031,14 @@
                                     {{ __('messages.create_new_project') }}<i class="fas fa-plus ms-2"></i>
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                                    aria-label="{{ __('messages.close') }}"></button>
                             </div>
                         @else
                             <h5 class="modal-title" id="createProjectModalLabel">
                                 <i class="fas fa-plus me-2"></i>{{ __('messages.create_new_project') }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                                aria-label="{{ __('messages.close') }}"></button>
                         @endif
                     </div>
                     <div class="modal-body">

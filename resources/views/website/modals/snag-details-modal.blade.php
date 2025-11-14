@@ -19,13 +19,13 @@
                         <h4 class="modal-title fw-semibold black_color" id="snagDetailsModalLabel">
                             {{ __('messages.snag_details') }}<i class="fas fa-exclamation-triangle orange_color ms-2"></i>
                         </h4>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h4 class="modal-title fw-semibold black_color" id="snagDetailsModalLabel">
                         <i class="fas fa-exclamation-triangle orange_color me-2"></i>{{ __('messages.snag_details') }}
                     </h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body px-4 pb-4">

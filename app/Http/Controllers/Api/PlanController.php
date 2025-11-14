@@ -71,8 +71,8 @@ class PlanController extends Controller
                     NotificationHelper::send(
                         $request->user_id,
                         'plan_uploaded',
-                        'Plan Uploaded Successfully',
-                        "Successfully uploaded {$planTitle}",
+                        trans('messages.plan_uploaded_successfully'),
+                        trans('messages.successfully_uploaded_plan') . " {$planTitle}",
                         [
                             'project_id' => $project->id,
                             'plan_id' => $firstPlan->id,

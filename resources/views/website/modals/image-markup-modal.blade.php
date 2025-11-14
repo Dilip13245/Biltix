@@ -19,13 +19,13 @@
           <h5 class="modal-title" id="imageMarkupModalLabel">
             Mark Issue on Image<i class="fas fa-edit ms-2"></i>
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
         </div>
         @else
         <h5 class="modal-title" id="imageMarkupModalLabel">
           <i class="fas fa-edit me-2"></i>Mark Issue on Image
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
         @endif
       </div>
       <div class="modal-body p-0">

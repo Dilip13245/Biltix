@@ -54,7 +54,7 @@
                             </button>
 
                             <!-- Close Button -->
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"
                                 style="position: static !important;"></button>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                             </button>
 
                             <!-- Close Button -->
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"
                                 style="position: static !important;"></button>
                         </div>
                     </div>

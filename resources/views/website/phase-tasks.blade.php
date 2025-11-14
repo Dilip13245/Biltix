@@ -61,7 +61,7 @@
                                 <div class="d-flex align-items-center gap-2 gap-md-3 flex-wrap">
                                     <form class="serchBar position-relative serchBar2 flex-grow-1" style="min-width: 200px;">
                                         <input class="form-control" type="search" placeholder="{{ __('messages.search_task_name') }}"
-                                            aria-label="Search" dir="auto" style="padding-right: 45px;" maxlength="100">
+                                            aria-label="{{ __('messages.search') }}" dir="auto" style="padding-right: 45px;" maxlength="100">
                                         <span class="search_icon" style="right: 15px; pointer-events: none;"><img
                                                 src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
                                     </form>

@@ -20,13 +20,13 @@
                         <h5 class="modal-title" id="searchModalLabel">
                             {{ __('messages.search_projects') }}<i class="fas fa-search ms-2"></i>
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="searchModalLabel">
                         <i class="fas fa-search me-2"></i>{{ __('messages.search_projects') }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">

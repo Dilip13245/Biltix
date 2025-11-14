@@ -143,7 +143,7 @@
                                     <!-- Overall Project Progress (Simple line like phases) -->
                                     <div class="mb-3 mb-md-4">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="text-muted small fw-medium">Completion Percentages</span>
+                                            <span class="text-muted small fw-medium">{{ __('messages.completion_percentages') }}</span>
                                             <span class="text-primary fw-semibold" id="overallProjectProgress">0%</span>
                                         </div>
                                         <div class="progress" style="height:12px; border-radius: 6px;">
@@ -1840,7 +1840,7 @@
                         <h5 class="modal-title" id="createPhaseModalLabel">
                             <i class="fas fa-layer-group me-2"></i>{{ __('messages.create_phase') }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     @endif
                 </div>
                 <div class="modal-body">
@@ -2107,16 +2107,16 @@
                     @if (app()->getLocale() == 'ar')
                         <div class="d-flex justify-content-between align-items-center w-100">
                             <h5 class="modal-title" id="phaseNavigationModalLabel">
-                                <span id="phaseModalTitle">Phase Management</span><i class="fas fa-layer-group ms-2"></i>
+                                <span id="phaseModalTitle">{{ __('messages.phase_management') }}</span><i class="fas fa-layer-group ms-2"></i>
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="{{ __('messages.close') }}"></button>
                         </div>
                     @else
                         <h5 class="modal-title" id="phaseNavigationModalLabel">
-                            <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">Phase Management</span>
+                            <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">{{ __('messages.phase_management') }}</span>
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     @endif
                 </div>
                 <div class="modal-body">
@@ -2176,7 +2176,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 </div>
                 <div class="modal-body text-center px-4 pb-4">
                     <div class="mb-3">

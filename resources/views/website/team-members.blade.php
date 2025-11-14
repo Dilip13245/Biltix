@@ -15,7 +15,7 @@
         <div class="gallery-filters d-flex align-items-center gap-3 flex-wrap">
             {{-- <form class="serchBar position-relative serchBar2">
                 <input class="form-control pe-5" type="search" placeholder="{{ __('messages.search_members') }}"
-                    aria-label="Search" id="searchInput" maxlength="100">
+                    aria-label="{{ __('messages.search') }}" id="searchInput" maxlength="100">
                 <span class="search_icon position-absolute" style="right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none;">
                     <img src="{{ asset('website/images/icons/search.svg') }}" alt="search" style="width: 16px; height: 16px;">
                 </span>

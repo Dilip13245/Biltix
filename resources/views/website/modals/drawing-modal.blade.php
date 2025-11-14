@@ -20,13 +20,13 @@
                         <h5 class="modal-title" id="drawingModalLabel">
                             <span id="drawingModalTitle">{{ __('messages.drawing') }}</span><i class="fas fa-pencil-alt ms-2"></i>
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="drawingModalLabel">
                         <i class="fas fa-pencil-alt me-2"></i><span id="drawingModalTitle">{{ __('messages.drawing') }}</span>
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body p-0">
@@ -40,27 +40,27 @@
                         <div class="mb-2 mb-md-3">
                             <div class="btn-group w-100 d-md-none mb-2" role="group">
                                 <button type="button" class="btn btn-outline-primary btn-sm active" id="penTool"
-                                    onclick="setTool('pen')" title="Pen">
+                                    onclick="setTool('pen')" title="{{ __('messages.pen') }}">
                                     <i class="fas fa-pen"></i>
                                 </button>
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="selectTool"
-                                    onclick="setTool('select')" title="Select">
+                                    onclick="setTool('select')" title="{{ __('messages.select') }}">
                                     <i class="fas fa-mouse-pointer"></i>
                                 </button>
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="circleTool"
-                                    onclick="setTool('circle')" title="Circle">
+                                    onclick="setTool('circle')" title="{{ __('messages.circle') }}">
                                     <i class="fas fa-circle"></i>
                                 </button>
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="rectangleTool"
-                                    onclick="setTool('rectangle')" title="Rectangle">
+                                    onclick="setTool('rectangle')" title="{{ __('messages.rectangle') }}">
                                     <i class="fas fa-square"></i>
                                 </button>
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="arrowTool"
-                                    onclick="setTool('arrow')" title="Arrow">
+                                    onclick="setTool('arrow')" title="{{ __('messages.arrow') }}">
                                     <i class="fas fa-arrow-right"></i>
                                 </button>
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="textTool"
-                                    onclick="setTool('text')" title="Text">
+                                    onclick="setTool('text')" title="{{ __('messages.text') }}">
                                     <i class="fas fa-font"></i>
                                 </button>
                                 <input type="color" class="btn" id="colorPicker" value="#ff0000"
@@ -75,7 +75,7 @@
                                     </button>
                                     <button type="button" class="btn btn-outline-primary btn-sm" id="selectToolDesktop"
                                         onclick="setTool('select')">
-                                        <i class="fas fa-mouse-pointer {{ margin_end(2) }}"></i>Select
+                                        <i class="fas fa-mouse-pointer {{ margin_end(2) }}"></i>{{ __('messages.select') }}
                                     </button>
                                     <button type="button" class="btn btn-outline-primary btn-sm" id="circleToolDesktop"
                                         onclick="setTool('circle')">
@@ -83,11 +83,11 @@
                                     </button>
                                     <button type="button" class="btn btn-outline-primary btn-sm" id="rectangleToolDesktop"
                                         onclick="setTool('rectangle')">
-                                        <i class="fas fa-square {{ margin_end(2) }}"></i>Rectangle
+                                        <i class="fas fa-square {{ margin_end(2) }}"></i>{{ __('messages.rectangle') }}
                                     </button>
                                     <button type="button" class="btn btn-outline-primary btn-sm" id="lineToolDesktop"
                                         onclick="setTool('line')">
-                                        <i class="fas fa-minus {{ margin_end(2) }}"></i>Line
+                                        <i class="fas fa-minus {{ margin_end(2) }}"></i>{{ __('messages.line') }}
                                     </button>
                                     <button type="button" class="btn btn-outline-primary btn-sm" id="arrowToolDesktop"
                                         onclick="setTool('arrow')">
@@ -129,13 +129,13 @@
 
                         <!-- Crop Tool -->
                         <div class="mb-3 d-none d-md-block">
-                            <label class="form-label fw-medium">Crop</label>
+                            <label class="form-label fw-medium">{{ __('messages.crop') }}</label>
                             <button type="button" class="btn btn-outline-secondary btn-sm w-100 mb-2" onclick="enterCropMode()">
-                                <i class="fas fa-crop {{ margin_end(2) }}"></i>Start Crop
+                                <i class="fas fa-crop {{ margin_end(2) }}"></i>{{ __('messages.start_crop') }}
                             </button>
                             <div id="cropControls" class="d-none">
                                 <button type="button" class="btn btn-success btn-sm w-100 mb-1" onclick="applyCrop()">
-                                    <i class="fas fa-check {{ margin_end(2) }}"></i>Apply Crop
+                                    <i class="fas fa-check {{ margin_end(2) }}"></i>{{ __('messages.apply_crop') }}
                                 </button>
                                 <button type="button" class="btn btn-secondary btn-sm w-100" onclick="exitCropMode()">
                                     <i class="fas fa-times {{ margin_end(2) }}"></i>Cancel
