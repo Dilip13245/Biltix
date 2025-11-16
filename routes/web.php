@@ -83,6 +83,7 @@ Route::middleware('web.auth')->prefix('website')->group(function () {
         Route::middleware('web.permission:tasks,view')->get('/tasks', [HomeController::class, 'tasks'])->name('website.project.tasks');
         Route::middleware('web.permission:inspections,view')->get('/inspections', [HomeController::class, 'inspections'])->name('website.project.inspections');
         Route::middleware('web.permission:daily_logs,view')->get('/daily-logs', [HomeController::class, 'dailyLogs'])->name('website.project.daily-logs');
+        Route::middleware('web.permission:daily_logs,view')->get('/daily-log-role-descriptions', [HomeController::class, 'dailyLogRoleDescriptions'])->name('website.project.daily-log-role-descriptions');
         Route::middleware('web.permission:progress,view')->get('/project-progress', [HomeController::class, 'projectProgress'])->name('website.project.progress');
         Route::middleware('web.permission:files,view')->get('/project-files', [HomeController::class, 'projectFiles'])->name('website.project.files');
         Route::middleware('web.permission:files,view')->get('/project-gallery', [HomeController::class, 'projectGallery'])->name('website.project.gallery');

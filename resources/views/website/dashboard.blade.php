@@ -400,6 +400,7 @@
         [dir="rtl"] .serchBar .fa-search {
             left: auto;
             right: 12px;
+            transform: scaleX(-1);
         }
 
         .serchBar input {
@@ -1593,13 +1594,13 @@
                                                                             <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
                                                                         </div>
                                                                         <div class="d-flex justify-content-between align-items-center mt-3">
-                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                            <div class="d-flex align-items-center" style="gap: 6px; {{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
                                                                                 <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
                                                                             </div>
-                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                            <div class="d-flex align-items-center" style="gap: 6px; {{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
                                                                                 <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>` :
@@ -1614,13 +1615,13 @@
                                                                             <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
                                                                         </div>
                                                                         <div class="d-flex justify-content-between align-items-center mt-3">
-                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                            <div class="d-flex align-items-center" style="gap: 6px; {{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
                                                                                 <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
                                                                             </div>
-                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                            <div class="d-flex align-items-center" style="gap: 6px; {{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
                                                                                 <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                <span class="text-muted" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
                                                                             </div>
                                                                         </div>
                                                                     </a>`

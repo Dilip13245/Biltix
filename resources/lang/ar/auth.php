@@ -4,6 +4,7 @@ return [
     'login' => 'تسجيل الدخول',
     'register' => 'التسجيل',
     'forgot_password' => 'نسيت كلمة المرور',
+    'email' => 'البريد الإلكتروني',
     'email_address' => 'عنوان البريد الإلكتروني',
     'password' => 'كلمة المرور',
     'remember_me' => 'تذكرني',

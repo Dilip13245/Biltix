@@ -104,6 +104,12 @@ class HomeController extends Controller
         return view('website.daily-logs', compact('project'));
     }
 
+    public function dailyLogRoleDescriptions($project_id)
+    {
+        $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];
+        return view('website.daily-log-role-descriptions', compact('project'));
+    }
+
     public function projectProgress($project_id)
     {
         $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];

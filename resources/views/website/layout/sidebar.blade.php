@@ -100,7 +100,7 @@
       
       @can('daily_logs', 'view')
       <li class="nav-item">
-        <a href="{{ route('website.project.daily-logs', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.daily-logs') ? 'active' : '' }}">
+        <a href="{{ route('website.project.daily-log-role-descriptions', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.daily-log-role-descriptions') ? 'active' : '' }}">
           <i class="fas fa-calendar-day"></i>
           <span>{{ __('messages.daily_logs') }}</span>
         </a>

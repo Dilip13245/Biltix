@@ -154,6 +154,7 @@ span.search_icon {
 [dir="rtl"] span.search_icon {
   right: auto;
   left: 12px;
+  transform: scaleX(-1);
 }
 .MessageBOx {
   width: 33.5px;
@@ -171,6 +172,11 @@ span.search_icon {
   align-items: center;
   justify-content: center;
   position: absolute;
+}
+
+[dir="rtl"] .MessageBOx span {
+  right: auto;
+  left: -3px;
 }
 
 .User_iMg {

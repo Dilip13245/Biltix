@@ -141,12 +141,17 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
 
     Route::prefix('daily_logs')->group(function () {
         Route::post('create', [DailyLogController::class, 'create']);
-        Route::post('list', [DailyLogController::class, 'list']);
+        // Route::post('list', [DailyLogController::class, 'list']);
         Route::post('details', [DailyLogController::class, 'details']);
-        Route::post('update', [DailyLogController::class, 'update']);
+        // Route::post('update', [DailyLogController::class, 'update']);
         Route::post('stats', [DailyLogController::class, 'stats']);
         Route::post('equipment_logs', [DailyLogController::class, 'equipmentLogs']);
         Route::post('staff_logs', [DailyLogController::class, 'staffLogs']);
+        
+        // Role-wise descriptions APIs
+        Route::post('add', [DailyLogController::class, 'addRoleDescription']);
+        Route::post('update', [DailyLogController::class, 'updateRoleDescription']);
+        Route::post('list', [DailyLogController::class, 'listRoleDescriptions']);
     });
 
     Route::prefix('team')->group(function () {

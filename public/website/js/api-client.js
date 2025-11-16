@@ -530,6 +530,19 @@ class ApiClient {
         return this.makeRequest('daily_logs/create', data);
     }
 
+    // Daily Log Role Description methods
+    async listRoleDescriptions(data) {
+        return this.makeRequest('daily_logs/list', data);
+    }
+
+    async addRoleDescription(data) {
+        return this.makeRequest('daily_logs/add', data);
+    }
+
+    async updateRoleDescription(data) {
+        return this.makeRequest('daily_logs/update', data);
+    }
+
     // Help Support methods
     async submitHelpSupport(data) {
         return this.makeRequest('general/help_support', data);

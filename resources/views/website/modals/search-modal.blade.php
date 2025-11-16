@@ -14,20 +14,17 @@
                     #searchModal .modal-header {
                         position: relative !important;
                     }
+                    
+                    /* Mirror search icon in RTL - all search icons in modal */
+                    [dir="rtl"] #searchModal .fa-search,
+                    [dir="rtl"] #searchModal i.fa-search {
+                        transform: scaleX(-1);
+                    }
                 </style>
-                @if (app()->getLocale() == 'ar')
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                        <h5 class="modal-title" id="searchModalLabel">
-                            {{ __('messages.search_projects') }}<i class="fas fa-search ms-2"></i>
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
-                    </div>
-                @else
-                    <h5 class="modal-title" id="searchModalLabel">
-                        <i class="fas fa-search me-2"></i>{{ __('messages.search_projects') }}
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
-                @endif
+                <h5 class="modal-title" id="searchModalLabel">
+                    {{ __('messages.search_projects') }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-4">
