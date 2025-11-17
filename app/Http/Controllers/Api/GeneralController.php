@@ -56,7 +56,7 @@ class GeneralController extends Controller
 
             $data = [
                 'type' => $type,
-                'content' => $content[$type] ?? 'Content not found'
+                'content' => $content[$type] ?? trans('api.general.content_not_found')
             ];
 
             return $this->toJsonEnc($data, trans('api.general.static_content_retrieved'), Config::get('constant.SUCCESS'));
@@ -73,11 +73,6 @@ class GeneralController extends Controller
                 'full_name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
                 'message' => 'required|string',
-            ], [
-                'full_name.required' => 'Full name is required',
-                'email.required' => 'Email is required',
-                'email.email' => 'Please enter a valid email address',
-                'message.required' => 'Message is required',
             ]);
 
             if ($validator->fails()) {

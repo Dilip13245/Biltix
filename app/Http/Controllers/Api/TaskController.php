@@ -811,7 +811,7 @@ class TaskController extends Controller
                 ];
             });
 
-            return $this->toJsonEnc($data, 'Task library retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($data, trans('api.tasks.library_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

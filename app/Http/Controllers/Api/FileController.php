@@ -340,7 +340,7 @@ class FileController extends Controller
 
             // Check if at least file or description is provided
             if (!$request->hasFile('file') && !$request->has('description')) {
-                return $this->toJsonEnc([], 'Please provide either a file or description to update.', Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.files.provide_file_or_description'), Config::get('constant.ERROR'));
             }
 
             // Update file if provided

@@ -190,7 +190,7 @@ class DailyLogController extends Controller
                     'log_date' => $log_date,
                     'has_log' => false
                 ];
-                return $this->toJsonEnc($stats, 'No daily log found for this date', Config::get('constant.SUCCESS'));
+                return $this->toJsonEnc($stats, trans('api.daily_logs.no_log_found'), Config::get('constant.SUCCESS'));
             }
 
             $equipmentCount = EquipmentLog::where('daily_log_id', $dailyLog->id)
@@ -243,7 +243,7 @@ class DailyLogController extends Controller
                 ->first();
 
             if (!$project) {
-                return $this->toJsonEnc([], 'Project not found or inactive', Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.daily_logs.project_not_found_or_inactive'), Config::get('constant.NOT_FOUND'));
             }
 
             // Store multiple descriptions as separate records with same role
@@ -260,7 +260,7 @@ class DailyLogController extends Controller
                 $createdDescriptions[] = $roleDescription;
             }
 
-            return $this->toJsonEnc($createdDescriptions, 'Role descriptions added successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($createdDescriptions, trans('api.daily_logs.role_descriptions_added'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -290,12 +290,12 @@ class DailyLogController extends Controller
                 ->first();
 
             if (!$roleDescription) {
-                return $this->toJsonEnc([], 'Role description not found', Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.daily_logs.role_description_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
             // Check if at least one field is provided for update
             if (!$request->has('role') && !$request->has('description') && !$request->has('is_active')) {
-                return $this->toJsonEnc([], 'Please provide at least one field to update (role, description, or is_active)', Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.daily_logs.provide_field_to_update'), Config::get('constant.ERROR'));
             }
 
             // Update fields if provided
@@ -313,7 +313,7 @@ class DailyLogController extends Controller
 
             $roleDescription->save();
 
-            return $this->toJsonEnc($roleDescription, 'Role description updated successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($roleDescription, trans('api.daily_logs.role_description_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -343,7 +343,7 @@ class DailyLogController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            return $this->toJsonEnc($roleDescriptions, 'Role descriptions retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($roleDescriptions, trans('api.daily_logs.role_descriptions_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }

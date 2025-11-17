@@ -45,6 +45,8 @@ return [
         'user_not_found_phone' => 'لم يتم العثور على مستخدم بهذا رقم الهاتف',
         'user_not_found_id' => 'لم يتم العثور على مستخدم بهذا المعرف',
         'otp_expired' => 'انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد',
+        'device_not_found' => 'الجهاز غير موجود. يرجى تسجيل الدخول مرة أخرى.',
+        'device_registered' => 'تم تسجيل الجهاز بنجاح',
     ],
     'general' => [
         'language_changed' => 'تم تغيير اللغة بنجاح',
@@ -59,6 +61,7 @@ return [
         'shared_success' => 'تم مشاركة الملف بنجاح',
         'search_results' => 'تم استرداد نتائج البحث في الملفات بنجاح',
         'replaced_success' => 'تم استبدال الملف بنجاح',
+        'provide_file_or_description' => 'يرجى تقديم ملف أو وصف للتحديث.',
     ],
     'tasks' => [
         'user_id_required' => 'معرف المستخدم مطلوب',
@@ -88,6 +91,7 @@ return [
         'team_members_retrieved' => 'تم استرداد أعضاء فريق المشروع بنجاح',
         'approved_success' => 'تم اعتماد المهمة بنجاح',
         'must_be_completed_first' => 'يجب إكمال المهمة قبل الاعتماد',
+        'library_retrieved' => 'تم استرداد مكتبة المهام بنجاح',
     ],
     'projects' => [
         'created_success' => 'تم إنشاء المشروع بنجاح',
@@ -108,6 +112,16 @@ return [
         'phase_progress_updated' => 'تم تحديث تقدم المرحلة بنجاح',
         'only_creator_can_delete' => 'يمكن لمنشئ المشروع فقط حذف هذا المشروع',
         'only_creator_can_complete' => 'يمكن لمنشئ المشروع فقط وضع علامة على هذا المشروع كمكتمل',
+        'list_retrieved' => 'تم استرداد المشاريع بنجاح',
+        'project_title_required' => 'عنوان المشروع مطلوب',
+        'type_required' => 'نوع المشروع إلزامي',
+        'location_required' => 'موقع المشروع إلزامي',
+        'start_date_required' => 'تاريخ بدء المشروع مطلوب',
+        'due_date_required' => 'تاريخ انتهاء المشروع مطلوب',
+        'due_date_after_start' => 'تاريخ انتهاء المشروع يجب أن يكون بعد تاريخ البدء',
+        'milestone_not_found' => 'المعالم غير موجودة',
+        'milestone_due_date_updated' => 'تم تحديث تاريخ استحقاق المعالم بنجاح',
+        'cannot_delete_incomplete_project' => 'لا يمكن حذف المشروع. يجب أن يكون اكتمال المشروع 100% للحذف. التقدم الحالي: :progress%',
     ],
     'inspections' => [
         'created_success' => 'تم إنشاء التفتيش بنجاح',
@@ -124,6 +138,7 @@ return [
         'results_retrieved' => 'تم استرداد النتائج بنجاح',
         'not_found' => 'التفتيش غير موجود',
         'submitted_success' => 'تم تقديم التفتيش بنجاح',
+        'phase_id_required' => 'معرف المرحلة مطلوب',
     ],
     'snags' => [
         'user_id_required' => 'معرف المستخدم مطلوب',
@@ -155,6 +170,13 @@ return [
         'stats_retrieved' => 'تم استرداد الإحصائيات بنجاح',
         'equipment_logged' => 'تم تسجيل المعدات بنجاح',
         'staff_logged' => 'تم تسجيل الموظفين بنجاح',
+        'no_log_found' => 'لم يتم العثور على سجل يومي لهذا التاريخ',
+        'project_not_found_or_inactive' => 'المشروع غير موجود أو غير نشط',
+        'role_descriptions_added' => 'تم إضافة أوصاف الأدوار بنجاح',
+        'role_description_not_found' => 'وصف الدور غير موجود',
+        'provide_field_to_update' => 'يرجى تقديم حقل واحد على الأقل للتحديث (الدور، الوصف، أو is_active)',
+        'role_description_updated' => 'تم تحديث وصف الدور بنجاح',
+        'role_descriptions_retrieved' => 'تم استرداد أوصاف الأدوار بنجاح',
     ],
     'team' => [
         'members_retrieved' => 'تم استرداد أعضاء الفريق بنجاح',
@@ -178,6 +200,7 @@ return [
         'approved_success' => 'تم اعتماد المخطط بنجاح',
         'replaced_success' => 'تم استبدال المخطط بنجاح',
         'not_found' => 'المخطط غير موجود',
+        'no_files_provided' => 'لم يتم تقديم ملفات',
     ],
     'photos' => [
         'uploaded_success' => 'تم رفع الصور بنجاح',
@@ -243,5 +266,6 @@ return [
         'static_content_retrieved' => 'تم استرداد المحتوى الثابت بنجاح',
         'help_support_submitted' => 'تم إرسال طلب المساعدة بنجاح',
         'language_changed' => 'تم تغيير اللغة بنجاح',
+        'content_not_found' => 'المحتوى غير موجود',
     ],
 ];

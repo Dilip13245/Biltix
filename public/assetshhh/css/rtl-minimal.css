@@ -1,8 +1,0 @@
-/* RTL Header - Minimal Clean Fix */
-[dir="rtl"] .project-header,
-[dir="rtl"] .project-title,
-[dir="rtl"] .project-details,
-[dir="rtl"] .detail-item,
-[dir="rtl"] .status-badge {
-    text-align: right;
-}

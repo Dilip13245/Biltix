@@ -33,7 +33,7 @@ class PlanController extends Controller
             $files = $request->file('files');
             
             if (!$files || count($files) === 0) {
-                return $this->toJsonEnc([], 'No files provided', Config::get('constant.ERROR'));
+                return $this->toJsonEnc([], trans('api.plans.no_files_provided'), Config::get('constant.ERROR'));
             }
             
             foreach ($files as $index => $file) {

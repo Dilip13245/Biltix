@@ -46,6 +46,8 @@ return [
         'user_not_found_id' => 'User not found with this ID',
         'otp_expired' => 'OTP has expired. Please request a new one',
         'signup_success' => 'Registration successful! Welcome to Biltix.',
+        'device_not_found' => 'Device not found. Please login again.',
+        'device_registered' => 'Device registered successfully',
     ],
     'general' => [
         'language_changed' => 'Language changed successfully',
@@ -60,6 +62,7 @@ return [
         'shared_success' => 'File shared successfully',
         'search_results' => 'File search results retrieved successfully',
         'replaced_success' => 'File replaced successfully',
+        'provide_file_or_description' => 'Please provide either a file or description to update.',
     ],
     'tasks' => [
         'user_id_required' => 'User ID is required',
@@ -89,6 +92,7 @@ return [
         'team_members_retrieved' => 'Project team members retrieved successfully',
         'approved_success' => 'Task approved successfully',
         'must_be_completed_first' => 'Task must be completed before approval',
+        'library_retrieved' => 'Task library retrieved successfully',
     ],
     'projects' => [
         'created_success' => 'Project created successfully',
@@ -110,6 +114,15 @@ return [
         'only_creator_can_delete' => 'Only project creator can delete this project',
         'only_creator_can_complete' => 'Only project creator can mark this project as completed',
         'cannot_delete_incomplete_project' => 'Cannot delete project. Project completion must be 100% to delete. Current progress: :progress%',
+        'list_retrieved' => 'Projects retrieved successfully',
+        'project_title_required' => 'Project Title is required',
+        'type_required' => 'Project Type is mandatory',
+        'location_required' => 'Project Location is mandatory',
+        'start_date_required' => 'Project Start Date is required',
+        'due_date_required' => 'Project Due Date is required',
+        'due_date_after_start' => 'Project Due Date must be after Start Date',
+        'milestone_not_found' => 'Milestone not found',
+        'milestone_due_date_updated' => 'Milestone due date updated successfully',
     ],
     'inspections' => [
         'created_success' => 'Inspection created successfully',
@@ -126,6 +139,7 @@ return [
         'results_retrieved' => 'Results retrieved successfully',
         'not_found' => 'Inspection not found',
         'submitted_success' => 'Inspection submitted successfully',
+        'phase_id_required' => 'Phase ID is required',
     ],
     'snags' => [
         'user_id_required' => 'User ID is required',
@@ -157,6 +171,13 @@ return [
         'stats_retrieved' => 'Statistics retrieved successfully',
         'equipment_logged' => 'Equipment logged successfully',
         'staff_logged' => 'Staff logged successfully',
+        'no_log_found' => 'No daily log found for this date',
+        'project_not_found_or_inactive' => 'Project not found or inactive',
+        'role_descriptions_added' => 'Role descriptions added successfully',
+        'role_description_not_found' => 'Role description not found',
+        'provide_field_to_update' => 'Please provide at least one field to update (role, description, or is_active)',
+        'role_description_updated' => 'Role description updated successfully',
+        'role_descriptions_retrieved' => 'Role descriptions retrieved successfully',
     ],
     'team' => [
         'members_retrieved' => 'Team members retrieved successfully',
@@ -180,6 +201,7 @@ return [
         'approved_success' => 'Plan approved successfully',
         'replaced_success' => 'Plan replaced successfully',
         'not_found' => 'Plan not found',
+        'no_files_provided' => 'No files provided',
     ],
     'photos' => [
         'uploaded_success' => 'Photos uploaded successfully',
@@ -245,5 +267,6 @@ return [
         'static_content_retrieved' => 'Static content retrieved successfully',
         'help_support_submitted' => 'Help support request submitted successfully',
         'language_changed' => 'Language changed successfully',
+        'content_not_found' => 'Content not found',
     ],
 ];

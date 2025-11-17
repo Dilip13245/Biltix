@@ -699,7 +699,7 @@ class AuthController extends Controller
                         'device_type' => $request->device_type,
                         'has_token_in_request' => !empty($token)
                     ]);
-                    return $this->toJsonEnc([], 'Device not found. Please login again.', Config::get('constant.ERROR'));
+                    return $this->toJsonEnc([], trans('api.auth.device_not_found'), Config::get('constant.ERROR'));
                 }
             }
 
@@ -729,7 +729,7 @@ class AuthController extends Controller
                 'device_id' => $device->id,
                 'device_type' => $device->device_type,
                 'push_notification_enabled' => $device->push_notification_enabled,
-            ], 'Device registered successfully', Config::get('constant.SUCCESS'));
+            ], trans('api.auth.device_registered'), Config::get('constant.SUCCESS'));
 
         } catch (\Exception $e) {
             Log::error('[Auth] Device registration error', [

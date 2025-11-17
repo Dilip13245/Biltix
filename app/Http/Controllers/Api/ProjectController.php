@@ -40,13 +40,6 @@ class ProjectController extends Controller
                 'gantt_chart' => 'nullable|array', 
                 'gantt_chart.*' => 'nullable|file|max:25600',
                 'file_notes' => 'nullable|string',
-            ], [
-                'project_title.required' => 'Project Title is required',
-                'type.required' => 'Project Type is mandatory',
-                'project_location.required' => 'Project Location is mandatory',
-                'project_start_date.required' => 'Project Start Date is required',
-                'project_due_date.required' => 'Project Due Date is required',
-                'project_due_date.after' => 'Project Due Date must be after Start Date',
             ]);
 
             if ($validator->fails()) {
@@ -247,7 +240,7 @@ class ProjectController extends Controller
                 'data' => $projects->items()
             ];
 
-            return $this->toJsonEnc($data, 'Projects retrieved successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($data, trans('api.projects.list_retrieved'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
@@ -924,7 +917,7 @@ class ProjectController extends Controller
                 ->first();
 
             if (!$milestone) {
-                return $this->toJsonEnc([], 'Milestone not found', Config::get('constant.NOT_FOUND'));
+                return $this->toJsonEnc([], trans('api.projects.milestone_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
             $extensionDays = $request->extension_days;
@@ -995,7 +988,7 @@ class ProjectController extends Controller
                 'is_overdue' => $milestone->is_overdue,
             ];
 
-            return $this->toJsonEnc($milestoneData, 'Milestone due date updated successfully', Config::get('constant.SUCCESS'));
+            return $this->toJsonEnc($milestoneData, trans('api.projects.milestone_due_date_updated'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
