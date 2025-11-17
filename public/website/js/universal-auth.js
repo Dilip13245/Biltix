@@ -5,7 +5,7 @@ window.UniversalAuth = {
     REMEMBER_KEY: 'biltix_remember',
     
     // Login function
-    login(userData, rememberMe = false) {
+    login(userData, rememberMe = false, skipRedirect = false) {
         const authData = {
             user: userData,
             token: userData.token,
@@ -23,8 +23,10 @@ window.UniversalAuth = {
             localStorage.removeItem(this.REMEMBER_KEY);
         }
         
-        // Redirect after successful login
-        window.location.href = '/dashboard';
+        // Only redirect if not skipped (caller will handle redirect after session setup)
+        if (!skipRedirect) {
+            window.location.href = '/dashboard';
+        }
     },
     
     // Logout function
@@ -161,6 +163,84 @@ window.UniversalAuth = {
         }
         
         return null;
+    },
+    
+    // Restore Laravel session from remember me data
+    async restoreSessionFromRememberMe() {
+        const rememberData = localStorage.getItem(this.REMEMBER_KEY);
+        if (!rememberData) {
+            return false;
+        }
+        
+        try {
+            const auth = JSON.parse(rememberData);
+            
+            // Check if expired (30 days)
+            if (Date.now() - auth.timestamp > 30 * 24 * 60 * 60 * 1000) {
+                localStorage.removeItem(this.REMEMBER_KEY);
+                return false;
+            }
+            
+            // Check if we have valid token and user data
+            if (!auth.token || !auth.user_id || !auth.user) {
+                return false;
+            }
+            
+            // Verify session is actually missing by checking current session
+            try {
+                const checkResponse = await fetch('/auth/check-session', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (checkResponse.ok) {
+                    const checkResult = await checkResponse.json();
+                    if (checkResult.authenticated) {
+                        console.log('Laravel session is valid, no restoration needed');
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.log('Session check failed, proceeding with restoration');
+            }
+            
+            // Session is missing, restore it
+            console.log('Restoring Laravel session from remember me data...');
+            const sessionData = {
+                user_id: auth.user_id,
+                token: auth.token,
+                user: auth.user,
+                remember_me: true
+            };
+            
+            const sessionResponse = await fetch('/auth/set-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                body: JSON.stringify(sessionData)
+            });
+            
+            if (sessionResponse.ok) {
+                const sessionResult = await sessionResponse.json();
+                if (sessionResult.success) {
+                    console.log('Laravel session restored successfully from remember me');
+                    // Reload page to apply restored session
+                    window.location.reload();
+                    return true;
+                }
+            }
+            
+            console.log('Failed to restore Laravel session');
+            return false;
+        } catch (error) {
+            console.error('Error restoring session from remember me:', error);
+            return false;
+        }
     }
 };
 
@@ -188,7 +268,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = '/login';
             });
         } else if (hasRememberMeData) {
-            console.log('Remember me data found, allowing access');
+            console.log('Remember me data found, checking if Laravel session needs restoration...');
+            // Try to restore Laravel session if it's expired
+            UniversalAuth.restoreSessionFromRememberMe();
         }
         return;
     }

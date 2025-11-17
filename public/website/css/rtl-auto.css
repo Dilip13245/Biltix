@@ -117,6 +117,15 @@
   margin-left: 0 !important;
 }
 
+/* Exception for back button icon in project files page - keep centered */
+[dir="rtl"] #backBtn .fas,
+[dir="rtl"] #backBtn .far,
+[dir="rtl"] #backBtn .fab {
+  padding-left: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
 /* Bootstrap margin utilities RTL override */
 [dir="rtl"] .me-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
 [dir="rtl"] .me-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }

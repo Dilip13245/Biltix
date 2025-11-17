@@ -36,9 +36,13 @@ class AuthController extends Controller
                 'last_activity' => time(),
                 'browser_session_id' => uniqid('browser_', true)
             ]);
+            // Remove remember me cookie if exists
+            cookie()->queue(cookie()->forget('remember_me_token'));
         } else {
             // Remember me: Still track activity for security
             session(['last_activity' => time()]);
+            // Set remember me cookie for middleware to detect
+            cookie()->queue(cookie('remember_me_token', $request->token, 30 * 24 * 60)); // 30 days
         }
 
         return response()->json(['success' => true]);
@@ -70,6 +74,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         session()->flush();
+        // Remove remember me cookie on logout
+        cookie()->queue(cookie()->forget('remember_me_token'));
         return response()->json(['success' => true]);
     }
 

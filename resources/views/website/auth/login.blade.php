@@ -399,9 +399,9 @@
                 console.log('API Login Response:', response);
                 
                 if (response && response.code === 200 && response.data) {
-                    // Store session data using UniversalAuth
+                    // Store session data using UniversalAuth (skip redirect - we'll handle it after session setup)
                     const rememberMe = document.getElementById('rememberMe').checked;
-                    UniversalAuth.login(response.data, rememberMe);
+                    UniversalAuth.login(response.data, rememberMe, true); // skipRedirect = true
                     
                     // Set Laravel session via direct endpoint call
                     const sessionData = {
@@ -436,14 +436,19 @@
                                 }, 500);
                             }
                             
+                            // Redirect after session is properly set
                             setTimeout(() => {
                                 window.location.href = '/dashboard';
-                            }, 1000);
+                            }, 500);
                         } else {
                             toastr.error('Session setup failed');
+                            loginBtn.disabled = false;
+                            spinner.classList.add('d-none');
                         }
                     } else {
                         toastr.error('Session setup failed');
+                        loginBtn.disabled = false;
+                        spinner.classList.add('d-none');
                     }
                 } else {
                     toastr.error(response?.message || 'Login failed');

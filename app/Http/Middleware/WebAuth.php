@@ -21,16 +21,13 @@ class WebAuth
         $sessionStartTime = session('session_start_time');
         $lastActivity = session('last_activity');
         
-        // Update last activity for active sessions
-        if ($userId && $sessionToken) {
-            session(['last_activity' => time()]);
-        }
-
-        // Check if session expired for non-remember-me logins
+        // Check if session expired for non-remember-me logins BEFORE updating last_activity
+        // This prevents false logout when user returns after short inactivity
         if (!$rememberMe && $lastActivity) {
             // For non-remember-me: expire after 30 minutes of inactivity
-            if (time() - $lastActivity > 30 * 60) {
-                \Log::info('Session expired due to inactivity', ['inactive_time' => time() - $lastActivity]);
+            $inactiveTime = time() - $lastActivity;
+            if ($inactiveTime > 30 * 60) {
+                \Log::info('Session expired due to inactivity', ['inactive_time' => $inactiveTime]);
                 session()->flush();
                 if ($request->expectsJson() || $request->ajax()) {
                     return response()->json(['authenticated' => false], 401);
@@ -38,13 +35,28 @@ class WebAuth
                 return redirect()->route('login')->with('error', 'Session expired due to inactivity. Please login again');
             }
         }
+        
+        // Update last activity for active sessions (after expiry check)
+        if ($userId && $sessionToken) {
+            session(['last_activity' => time()]);
+        }
 
         if (!$userId || !$sessionToken) {
-            // For AJAX requests, return JSON instead of redirect
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json(['authenticated' => false], 401);
+            // Check if remember me cookie exists - allow through for session restoration
+            $rememberMeCookie = $request->cookie('remember_me_token');
+            if ($rememberMeCookie) {
+                // Remember me user - allow request through, JavaScript will restore session
+                // This prevents redirect loop and allows session restoration
+                \Log::info('Session missing but remember me cookie found, allowing through for restoration');
+                // Skip user validation - let JavaScript restore session
+                return $next($request);
+            } else {
+                // No remember me - redirect to login
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json(['authenticated' => false], 401);
+                }
+                return redirect()->route('login')->with('error', 'Please login to continue');
             }
-            return redirect()->route('login')->with('error', 'Please login to continue');
         }
 
         // Verify token is still valid
