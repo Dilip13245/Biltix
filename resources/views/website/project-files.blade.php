@@ -40,6 +40,14 @@
         }
 
         /* RTL Support for File Upload Modal */
+        [dir="rtl"] .selected-files {
+            text-align: right;
+        }
+
+        [dir="rtl"] .file-item {
+            flex-direction: row-reverse;
+        }
+
         [dir="rtl"] .file-item i {
             margin-right: 0;
             margin-left: 8px;
@@ -541,21 +549,21 @@
                             ${Array.from(input.files).map((file, index) => {
                                 const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                 return `
-                                                    <div class="col-12">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="file_fileUpload_${index}" 
-                                                                onchange="toggleFileDescriptionInModal('fileUpload', ${index})">
-                                                            <label class="form-check-label d-flex align-items-center" for="file_fileUpload_${index}">
-                                                                <i class="${fileIcon} me-2"></i>
-                                                                <span class="text-truncate">${file.name}</span>
-                                                            </label>
+                                                        <div class="col-12">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" id="file_fileUpload_${index}" 
+                                                                    onchange="toggleFileDescriptionInModal('fileUpload', ${index})">
+                                                                <label class="form-check-label d-flex align-items-center" for="file_fileUpload_${index}">
+                                                                    <i class="${fileIcon} me-2"></i>
+                                                                    <span class="text-truncate">${file.name}</span>
+                                                                </label>
+                                                            </div>
+                                                            <div class="ms-4 mt-2" id="desc_fileUpload_${index}" style="display: none;">
+                                                                <textarea class="form-control form-control-sm" name="file_notes_fileUpload_${index}" 
+                                                                    placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                            </div>
                                                         </div>
-                                                        <div class="ms-4 mt-2" id="desc_fileUpload_${index}" style="display: none;">
-                                                            <textarea class="form-control form-control-sm" name="file_notes_fileUpload_${index}" 
-                                                                placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                                        </div>
-                                                    </div>
-                                                `;
+                                                    `;
                             }).join('')}
                         </div>
                     `;
@@ -725,8 +733,8 @@
             if (isImageFile(file.type)) {
                 // Open drawing modal for image markup
                 openDrawingModal({
-                    title: 'Add Markup to Image',
-                    saveButtonText: 'Upload File',
+                    title: '{{ __('messages.add_markup_to_image') }}',
+                    saveButtonText: '{{ __('messages.upload_file') }}',
                     mode: 'image',
                     onSave: function(imageData) {
                         uploadFileWithMarkup(imageData);
@@ -865,8 +873,8 @@
 
                 // Open drawing modal for all images
                 openDrawingModal({
-                    title: 'Add Markup to Images',
-                    saveButtonText: imageFiles.length > 1 ? 'Upload All Images' : 'Upload File',
+                    title: '{{ __('messages.add_markup_to_images') }}',
+                    saveButtonText: imageFiles.length > 1 ? '{{ __('messages.upload_all_images') }}' : '{{ __('messages.upload_file') }}',
                     mode: 'image',
                     onSave: function(imageDataArray) {
                         // imageDataArray is an array when multiple files, or single data URL when one file
@@ -1393,14 +1401,14 @@
                                     }
                                 </style>
                                 ${isRtl ? `
-                                                <div class="d-flex justify-content-between align-items-center w-100">
+                                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                                            <h5 class="modal-title">${fileName}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    ` : `
                                                         <h5 class="modal-title">${fileName}</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                ` : `
-                                                    <h5 class="modal-title">${fileName}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                `}
+                                                    `}
                             </div>
                             <div class="modal-body text-center">
                                 <img src="${filePath}" class="img-fluid" alt="${fileName}" style="max-height: 70vh;">
@@ -1742,14 +1750,14 @@
                                 }
                             </style>
                             ${isRtl ? `
-                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <div class="d-flex justify-content-between align-items-center w-100">
+                                                    <h5 class="modal-title mb-0">{{ __('messages.create_folder') }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                ` : `
                                                 <h5 class="modal-title mb-0">{{ __('messages.create_folder') }}</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            ` : `
-                                            <h5 class="modal-title mb-0">{{ __('messages.create_folder') }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            `}
+                                                `}
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
@@ -2117,7 +2125,8 @@
 
                     btn.disabled = true;
                     const originalText = btn.innerHTML;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.saving') }}';
+                    btn.innerHTML =
+                        '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.saving') }}';
 
                     const canvas = document.getElementById('canvas');
                     if (canvas) {

@@ -52,10 +52,10 @@ class WebAuth
                 return $next($request);
             } else {
                 // No remember me - redirect to login
-                if ($request->expectsJson() || $request->ajax()) {
-                    return response()->json(['authenticated' => false], 401);
-                }
-                return redirect()->route('login')->with('error', 'Please login to continue');
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['authenticated' => false], 401);
+            }
+            return redirect()->route('login')->with('error', 'Please login to continue');
             }
         }
 

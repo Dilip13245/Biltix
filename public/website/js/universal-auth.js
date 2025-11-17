@@ -25,7 +25,7 @@ window.UniversalAuth = {
         
         // Only redirect if not skipped (caller will handle redirect after session setup)
         if (!skipRedirect) {
-            window.location.href = '/dashboard';
+        window.location.href = '/dashboard';
         }
     },
     

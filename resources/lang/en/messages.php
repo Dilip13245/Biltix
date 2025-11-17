@@ -1319,6 +1319,9 @@ return [
     'markup_inspection_images' => 'Markup Inspection Images',
     'submit_inspection' => 'Submit Inspection',
     'markup_snag_images' => 'Markup Snag Images',
+    'add_markup_to_image' => 'Add Markup to Image',
+    'add_markup_to_images' => 'Add Markup to Images',
+    'upload_all_images' => 'Upload All Images',
     'save_snag' => 'Save Snag',
     
     // Validation Messages

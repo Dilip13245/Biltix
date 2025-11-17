@@ -1345,11 +1345,11 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${filteredActivities.map(activity => `
-                                                                                                                                <li class="d-flex align-items-center mb-2">
-                                                                                                                                  <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                                                                                                                  <span class="flex-grow-1 text-wrap">${activity.description}</span>
-                                                                                                                                </li>
-                                                                                                                              `).join('')}
+                                                                                                                                                                                        <li class="d-flex align-items-center mb-2">
+                                                                                                                                                                                          <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                                                                                                                                                                          <span class="flex-grow-1 text-wrap">${activity.description}</span>
+                                                                                                                                                                                        </li>
+                                                                                                                                                                                      `).join('')}
     </ul>
   `;
             }
@@ -1404,13 +1404,13 @@
       <table class="table table-borderless mb-0">
         <tbody>
           ${filteredItems.map(item => `
-                                                                                                                                    <tr>
-                                                                                                                                      <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
-                                                                                                                                      <td class="text-end">
-                                                                                                                                        <span class="text-primary fw-semibold">${item.count}</span>
-                                                                                                                                      </td>
-                                                                                                                                    </tr>
-                                                                                                                                  `).join('')}
+                                                                                                                                                                                            <tr>
+                                                                                                                                                                                              <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
+                                                                                                                                                                                              <td class="text-end">
+                                                                                                                                                                                                <span class="text-primary fw-semibold">${item.count}</span>
+                                                                                                                                                                                              </td>
+                                                                                                                                                                                            </tr>
+                                                                                                                                                                                          `).join('')}
         </tbody>
       </table>
     </div>
@@ -1465,15 +1465,15 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${filteredItems.map(item => `
-                                                                                                                                <li class="mb-2">
-                                                                                                                                  <div class="d-flex align-items-center p-3 rounded bg4">
-                                                                                                                                    <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
-                                                                                                                                      <i class="fas fa-check-circle"></i>
-                                                                                                                                    </span>
-                                                                                                                                    <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
-                                                                                                                                  </div>
-                                                                                                                                </li>
-                                                                                                                              `).join('')}
+                                                                                                                                                                                        <li class="mb-2">
+                                                                                                                                                                                          <div class="d-flex align-items-center p-3 rounded bg4" style="gap: 1rem;">
+                                                                                                                                                                                            <span class="text-success" style="font-size:1.3em; flex-shrink: 0;">
+                                                                                                                                                                                              <i class="fas fa-check-circle"></i>
+                                                                                                                                                                                            </span>
+                                                                                                                                                                                            <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
+                                                                                                                                                                                          </div>
+                                                                                                                                                                                        </li>
+                                                                                                                                                                                      `).join('')}
     </ul>
   `;
             }
@@ -2042,13 +2042,13 @@
                                     </div>
                                     <!-- Extended timeline info commented out - only showing status-based progress -->
                                     <!-- ${extensionDays > 0 ? `
-                                                                                                                                <div class="mt-1">
-                                                                                                                                    <small class="text-warning text-wrap d-inline-block">
-                                                                                                                                        <i class="fas fa-info-circle me-1"></i>
-                                                                                                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                                                                                                                    </small>
-                                                                                                                                </div>
-                                                                                                                            ` : ''} -->
+                                                                                                                                                                                        <div class="mt-1">
+                                                                                                                                                                                            <small class="text-warning text-wrap d-inline-block">
+                                                                                                                                                                                                <i class="fas fa-info-circle me-1"></i>
+                                                                                                                                                                                                Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                                                                                                                                                            </small>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    ` : ''} -->
                                 </div>
                             </div>
                             <div class="timeline-milestones ps-5">
@@ -2056,65 +2056,65 @@
                                     const isExtended = milestone.is_extended;
                                     const isOverdue = milestone.is_overdue;
                                     return `
-                                                                                                                                <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
-                                                                                                                                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
-                                                                                                                                        <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                                                                                                                            <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
-                                                                                                                                            <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} {{ __('messages.days') }}` : ''}</span>
-                                                                                                                                            ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
-                                                                                                                                        </div>
-                                                                                                                                        <div class="text-muted small" style="flex-shrink: 0;">
-                                                                                                                                            ${milestone.days || 0} {{ __('messages.days') }}${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
-                                                                                                                                        </div>
-                                                                                                                                    </div>
-                                                                                                                                    <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
-                                                                                                                                        <span class="text-muted small fw-medium">{{ __('messages.extend') }}:</span>
-                                                                                                                                        <div class="d-flex align-items-center gap-1">
-                                                                                                                                            <input type="number" 
-                                                                                                                                                class="form-control form-control-sm milestone-extend-input" 
-                                                                                                                                                value="${milestone.extension_days || 0}" 
-                                                                                                                                                min="0" 
-                                                                                                                                                max="999" 
-                                                                                                                                                id="ext_${milestone.id}" 
-                                                                                                                                                placeholder="0"
-                                                                                                                                                onchange="extendMilestone(${milestone.id})"
-                                                                                                                                                onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
-                                                                                                                                            <span class="text-muted" style="font-size: 0.75rem;">{{ __('messages.days') }}</span>
-                                                                                                                                        </div>
-                                                                                                                                        <div class="d-flex gap-1">
-                                                                                                                                            <button type="button" 
-                                                                                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
-                                                                                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
-                                                                                                                                                onclick="quickExtend(${milestone.id}, 1)" 
-                                                                                                                                                title="{{ __('messages.add_1_day') }}">+1</button>
-                                                                                                                                            <button type="button" 
-                                                                                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
-                                                                                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
-                                                                                                                                                onclick="quickExtend(${milestone.id}, 7)" 
-                                                                                                                                                title="{{ __('messages.add_7_days') }}">+7</button>
-                                                                                                                                        </div>
-                                                                                                                                    </div>
-                                                                                                                                </div>
-                                                                                                                            `;
+                                                                                                                                                                                        <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
+                                                                                                                                                                                            <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                                                                                                                                                                                                <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                                                                                                                                                                                    <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
+                                                                                                                                                                                                    <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} {{ __('messages.days') }}` : ''}</span>
+                                                                                                                                                                                                    ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                                <div class="text-muted small" style="flex-shrink: 0;">
+                                                                                                                                                                                                    ${milestone.days || 0} {{ __('messages.days') }}${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                            <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+                                                                                                                                                                                                <span class="text-muted small fw-medium">{{ __('messages.extend') }}:</span>
+                                                                                                                                                                                                <div class="d-flex align-items-center gap-1">
+                                                                                                                                                                                                    <input type="number" 
+                                                                                                                                                                                                        class="form-control form-control-sm milestone-extend-input" 
+                                                                                                                                                                                                        value="${milestone.extension_days || 0}" 
+                                                                                                                                                                                                        min="0" 
+                                                                                                                                                                                                        max="999" 
+                                                                                                                                                                                                        id="ext_${milestone.id}" 
+                                                                                                                                                                                                        placeholder="0"
+                                                                                                                                                                                                        onchange="extendMilestone(${milestone.id})"
+                                                                                                                                                                                                        onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
+                                                                                                                                                                                                    <span class="text-muted" style="font-size: 0.75rem;">{{ __('messages.days') }}</span>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                                <div class="d-flex gap-1">
+                                                                                                                                                                                                    <button type="button" 
+                                                                                                                                                                                                        class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                                                                                                                                                        style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                                                                                                                                                        onclick="quickExtend(${milestone.id}, 1)" 
+                                                                                                                                                                                                        title="{{ __('messages.add_1_day') }}">+1</button>
+                                                                                                                                                                                                    <button type="button" 
+                                                                                                                                                                                                        class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                                                                                                                                                        style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                                                                                                                                                        onclick="quickExtend(${milestone.id}, 7)" 
+                                                                                                                                                                                                        title="{{ __('messages.add_7_days') }}">+7</button>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    `;
                                 }).join('') : '<div class="text-muted small">{{ __('messages.no_milestones_defined') }}</div>'}
                                 ${extensionDays > 0 ? `
-                                                                                                                            <div class="mt-2">
-                                                                                                                                <small class="text-warning">
-                                                                                                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                                                                                                    ${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}
-                                                                                                                                </small>
-                                                                                                                            </div>
-                                                                                                                        ` : ''}
+                                                                                                                                                                                    <div class="mt-2">
+                                                                                                                                                                                        <small class="text-warning">
+                                                                                                                                                                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                                                                                                                                                                            ${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}
+                                                                                                                                                                                        </small>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                ` : ''}
                                 <div class="mt-2 d-flex gap-1 flex-wrap">
                                     <small class="text-muted me-2">{{ __('messages.quick_extend') }}:</small>
                                     ${phase.milestones && phase.milestones.length === 1 ? `
-                                                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 1)">{{ __('messages.add_1_day') }}</button>
-                                                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 3)">{{ __('messages.add_3_days') }}</button>
-                                                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 7)">{{ __('messages.add_7_days') }}</button>
-                                                                                                                            ` : ''}
+                                                                                                                                                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                                                                                                            onclick="quickExtend(${phase.milestones[0].id}, 1)">{{ __('messages.add_1_day') }}</button>
+                                                                                                                                                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                                                                                                            onclick="quickExtend(${phase.milestones[0].id}, 3)">{{ __('messages.add_3_days') }}</button>
+                                                                                                                                                                                        <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                                                                                                            onclick="quickExtend(${phase.milestones[0].id}, 7)">{{ __('messages.add_7_days') }}</button>
+                                                                                                                                                                                    ` : ''}
                                 </div>
                             </div>
                         </div>

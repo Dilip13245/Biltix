@@ -836,7 +836,7 @@
                     document.getElementById('taskStatusSelect').value = currentStatus;
                     return;
                 }
-
+                
                 // If status is 'complete', cannot change to 'todo' or 'in_progress'
                 if (currentStatus === 'complete' && (newStatus === 'todo' || newStatus === 'in_progress')) {
                     toastr.error('{{ __('messages.cannot_change_from_complete') }}');
@@ -884,13 +884,13 @@
                         statusBadge.textContent = statusInfo.text;
                         statusBadge.className = `badge ${statusInfo.class}`;
                         window.currentTaskDetails.status = newStatus;
-
+                        
                         // Update resolve button visibility based on new status
                         const resolveBtn = document.getElementById('resolveBtn');
                         const addImagesBtn = document.getElementById('addImagesBtn');
                         const isAssignedUser = window.currentTaskDetails.assigned_to && parseInt(window.currentTaskDetails
                             .assigned_to) === parseInt(currentUserId);
-
+                        
                         if (resolveBtn && addImagesBtn) {
                             if (newStatus === 'approve' || !isAssignedUser) {
                                 resolveBtn.style.display = 'none';
@@ -903,7 +903,7 @@
                                     'none';
                             }
                         }
-
+                        
                         loadTasks();
                         toastr.success(response.message || '{{ __('messages.task_updated_successfully') }}');
                     } else {

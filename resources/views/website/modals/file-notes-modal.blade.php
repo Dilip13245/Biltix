@@ -20,13 +20,15 @@
                         <h5 class="modal-title" id="fileUploadModalLabel">
                             {{ __('messages.upload_files') }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="fileUploadModalLabel">
                         {{ __('messages.upload_files') }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
@@ -38,8 +40,8 @@
                         </div>
                         <p class="text-muted mb-3">{{ __('messages.drag_drop_or_click') }}</p>
                         <small class="text-muted d-block">{{ __('messages.supported_formats_construction') }}</small>
-                        <input type="file" class="d-none" id="fileUploadMultiple"
-                            multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png,.gif,.txt"
+                        <input type="file" class="d-none" id="fileUploadMultiple" multiple
+                            accept=".pdf,.doc,.docx,.xls,.xlsx,.dwg,.jpg,.jpeg,.png,.gif,.txt"
                             onchange="handleMultipleFileSelection(this)">
                         <div id="fileUploadFilesList" class="selected-files mt-3"></div>
                     </div>
@@ -50,14 +52,26 @@
                 </div>
             </div>
             <div class="modal-footer d-flex gap-2">
-                <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">
-                    {{ __('messages.cancel') }}
-                </button>
-                <button type="button" class="btn orange_btn flex-fill" id="proceedFileUploadBtn" style="padding: 0.7rem 1.5rem;">
-                    {{ __('messages.proceed') }}
-                </button>
+                @if (app()->getLocale() == 'ar')
+                    <button type="button" class="btn orange_btn flex-fill" id="proceedFileUploadBtn"
+                        style="padding: 0.7rem 1.5rem;">
+                        {{ __('messages.proceed') }}
+                    </button>
+                    <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal"
+                        style="padding: 0.7rem 1.5rem;">
+                        {{ __('messages.cancel') }}
+                    </button>
+                @else
+                    <button type="button" class="btn btn-secondary flex-fill" data-bs-dismiss="modal"
+                        style="padding: 0.7rem 1.5rem;">
+                        {{ __('messages.cancel') }}
+                    </button>
+                    <button type="button" class="btn orange_btn flex-fill" id="proceedFileUploadBtn"
+                        style="padding: 0.7rem 1.5rem;">
+                        {{ __('messages.proceed') }}
+                    </button>
+                @endif
             </div>
         </div>
     </div>
 </div>
-

@@ -1268,6 +1268,9 @@ return [
     'markup_inspection_images' => 'تعليم صور الفحص',
     'submit_inspection' => 'إرسال الفحص',
     'markup_snag_images' => 'تعليم صور العيب',
+    'add_markup_to_image' => 'إضافة تعليمات على الصورة',
+    'add_markup_to_images' => 'إضافة تعليمات على الصور',
+    'upload_all_images' => 'رفع جميع الصور',
     'save_snag' => 'حفظ العيب',
     
     // Validation Messages
