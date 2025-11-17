@@ -42,6 +42,46 @@
   flex-direction: row-reverse !important;
 }
 
+/* Modal footer RTL fixes */
+[dir="rtl"] .modal-footer {
+  flex-direction: row-reverse !important;
+  justify-content: flex-start !important;
+}
+
+/* Plan Viewer Modal Sidebar RTL fixes */
+[dir="rtl"] #planViewerModal .modal-body .row,
+[dir="rtl"] #planViewerModal .modal-body .row.h-100 {
+  flex-direction: row-reverse !important;
+  display: flex !important;
+}
+
+/* Plan Viewer Modal Sidebar Content RTL fixes */
+[dir="rtl"] #planViewerModal .col-md-3,
+[dir="rtl"] #planViewerModal .col-md-3 > div,
+[dir="rtl"] #planViewerModal .col-md-3 .p-3 {
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+[dir="rtl"] #planViewerModal .col-md-3 h6,
+[dir="rtl"] #planViewerModal .col-md-3 strong,
+[dir="rtl"] #planViewerModal .col-md-3 p,
+[dir="rtl"] #planViewerModal .col-md-3 div,
+[dir="rtl"] #planViewerModal .col-md-3 .mb-3 {
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+[dir="rtl"] #planViewerModal .col-md-3 .mb-3 strong {
+  display: block;
+  text-align: right !important;
+}
+
+[dir="rtl"] #planViewerModal .col-md-3 .mb-3 p {
+  text-align: right !important;
+  margin-right: 0 !important;
+}
+
 /* Fix specific button classes with excessive gap */
 [dir="rtl"] .orange_btn,
 [dir="rtl"] .btn {
@@ -66,6 +106,15 @@
 [dir="rtl"] button:not(.orange_btn):not(.btn) .fab {
   padding-left: 0.25rem !important;
   margin-right: 0 !important;
+}
+
+/* Exception for download button icon in plan viewer modal - keep centered */
+[dir="rtl"] #planViewerModal .modal-header button[onclick="downloadPlan()"] .fas,
+[dir="rtl"] #planViewerModal .modal-header button[onclick="downloadPlan()"] .far,
+[dir="rtl"] #planViewerModal .modal-header button[onclick="downloadPlan()"] .fab {
+  padding-left: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
 }
 
 /* Bootstrap margin utilities RTL override */

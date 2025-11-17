@@ -89,21 +89,21 @@ function validateFileForm() {
     // Validate file title
     const fileTitle = form.querySelector('#fileTitle');
     if (!fileTitle.value.trim()) {
-        showFieldError(fileTitle, '{{ __('messages.file_title') }} is required');
+        showFieldError(fileTitle, '{{ __('messages.file_title') }} {{ __('messages.is_required') }}');
         isValid = false;
     }
     
     // Validate category
     const fileCategory = form.querySelector('#fileCategory');
     if (!fileCategory.value) {
-        showFieldError(fileCategory, '{{ __('messages.category') }} is required');
+        showFieldError(fileCategory, '{{ __('messages.category') }} {{ __('messages.is_required') }}');
         isValid = false;
     }
     
     // Validate file upload
     const fileUpload = form.querySelector('#fileUpload');
     if (!fileUpload.files || fileUpload.files.length === 0) {
-        showFieldError(fileUpload, '{{ __('messages.select_file') }} is required');
+        showFieldError(fileUpload, '{{ __('messages.select_file') }} {{ __('messages.is_required') }}');
         isValid = false;
     }
     

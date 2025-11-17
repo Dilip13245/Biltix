@@ -72,13 +72,15 @@
                         <h5 class="modal-title" id="addTaskModalLabel">
                             {{ __('messages.add_new_task') }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="addTaskModalLabel">
                         {{ __('messages.add_new_task') }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
@@ -174,21 +176,21 @@
         // Validate task name
         const taskName = form.querySelector('#taskName');
         if (!taskName.value.trim()) {
-            showFieldError(taskName, '{{ __('messages.task_name') }} is required');
+            showFieldError(taskName, '{{ __('messages.task_name') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
         // Validate task description
         const taskDescription = form.querySelector('#taskDescription');
         if (!taskDescription.value.trim()) {
-            showFieldError(taskDescription, '{{ __('messages.task_description') }} is required');
+            showFieldError(taskDescription, '{{ __('messages.task_description') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
         // Validate priority
         const taskPriority = form.querySelector('#taskPriority');
         if (!taskPriority.value) {
-            showFieldError(taskPriority, '{{ __('messages.priority') }} is required');
+            showFieldError(taskPriority, '{{ __('messages.priority') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
@@ -204,21 +206,21 @@
         }
 
         if (isPhaseFieldVisible && phaseSelect && !phaseSelect.value) {
-            showFieldError(phaseSelect, '{{ __('messages.phase') }} is required');
+            showFieldError(phaseSelect, '{{ __('messages.phase') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
         // Validate assigned to
         const assignedTo = form.querySelector('#assignedTo');
         if (!assignedTo.value) {
-            showFieldError(assignedTo, '{{ __('messages.assign_to') }} is required');
+            showFieldError(assignedTo, '{{ __('messages.assign_to') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
         // Validate due date
         const dueDate = form.querySelector('#dueDate');
         if (!dueDate.value) {
-            showFieldError(dueDate, '{{ __('messages.due_date') }} is required');
+            showFieldError(dueDate, '{{ __('messages.due_date') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
@@ -364,8 +366,10 @@
                         }
                         // Create new instance with translated placeholder
                         if (window.SearchableDropdown) {
-                            const placeholder = select.getAttribute('data-placeholder') || '{{ __('messages.search') }}...';
-                            const noResultsText = select.getAttribute('data-no-results') || '{{ __('messages.no_results_found') }}';
+                            const placeholder = select.getAttribute('data-placeholder') ||
+                                '{{ __('messages.search') }}...';
+                            const noResultsText = select.getAttribute('data-no-results') ||
+                                '{{ __('messages.no_results_found') }}';
                             select.searchableDropdown = new SearchableDropdown(select, {
                                 placeholder: placeholder,
                                 noResultsText: noResultsText

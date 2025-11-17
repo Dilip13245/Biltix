@@ -352,8 +352,8 @@
                         window.selectedFiles = fileInput.files;
 
                         openDrawingModal({
-                            title: 'Image Markup',
-                            saveButtonText: 'Save Snag',
+                            title: '{{ __('messages.markup_snag_images') }}',
+                            saveButtonText: '{{ __('messages.save_snag') }}',
                             mode: 'image',
                             onSave: function(imageData) {
                                 saveSnagWithMarkup(imageData);

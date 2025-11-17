@@ -173,21 +173,21 @@
         // Validate category
         const categorySelect = form.querySelector('#categorySelect');
         if (!categorySelect.value) {
-            showFieldError(categorySelect, '{{ __('messages.category') }} is required');
+            showFieldError(categorySelect, '{{ __('messages.category') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
         // Validate title
         const snagTitle = form.querySelector('#snagTitle');
         if (!snagTitle.value.trim()) {
-            showFieldError(snagTitle, '{{ __('messages.snag_title') }} is required');
+            showFieldError(snagTitle, '{{ __('messages.snag_title') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
         // Validate location
         const location = form.querySelector('#location');
         if (!location.value.trim()) {
-            showFieldError(location, '{{ __('messages.add_location') }} is required');
+            showFieldError(location, '{{ __('messages.add_location') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 
@@ -203,7 +203,7 @@
         }
 
         if (isPhaseFieldVisible && phaseSelect && !phaseSelect.value) {
-            showFieldError(phaseSelect, '{{ __('messages.phase') }} is required');
+            showFieldError(phaseSelect, '{{ __('messages.phase') }} {{ __('messages.is_required') }}');
             isValid = false;
         }
 

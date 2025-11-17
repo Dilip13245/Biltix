@@ -56,7 +56,7 @@
           </div>
         </form>
       </div>
-      <div class="modal-footer" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
+      <div class="modal-footer">
         @if(app()->getLocale() == 'ar')
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
           <button type="button" class="btn orange_btn api-action-btn" id="uploadPlanSubmitBtn">
@@ -88,7 +88,7 @@ function validatePlanForm() {
     // Validate files
     const planFiles = form.querySelector('#planFiles');
     if (!planFiles.files || planFiles.files.length === 0) {
-        showFieldError(planFiles, '{{ __('messages.plan_files') }} is required');
+        showFieldError(planFiles, '{{ __('messages.plan_files') }} {{ __('messages.is_required') }}');
         isValid = false;
     }
     

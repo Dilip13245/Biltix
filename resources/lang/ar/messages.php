@@ -1239,6 +1239,7 @@ return [
     'time_progress' => 'تقدم الوقت',
     'quick_extend' => 'تمديد سريع',
     'error_loading_timeline' => 'خطأ في تحميل الجدول الزمني',
+    'no_phases_found' => 'لم يتم العثور على مراحل',
     'no_phases_created_yet' => 'لم يتم إنشاء مراحل بعد',
     'create_first_phase_to_get_started' => 'قم بإنشاء أول مرحلة مشروع للبدء',
     'select_label' => 'اختر :label',
@@ -1258,4 +1259,17 @@ return [
     
     // Search and Dropdown
     'no_results_found' => 'لا توجد نتائج',
+    
+    // Drawing Modal Titles
+    'task_image_markup' => 'تعليم صورة المهمة',
+    'save_task' => 'حفظ المهمة',
+    'markup_additional_images' => 'تعليم الصور الإضافية',
+    'upload_images' => 'رفع الصور',
+    'markup_inspection_images' => 'تعليم صور الفحص',
+    'submit_inspection' => 'إرسال الفحص',
+    'markup_snag_images' => 'تعليم صور العيب',
+    'save_snag' => 'حفظ العيب',
+    
+    // Validation Messages
+    'is_required' => 'مطلوب',
 ];

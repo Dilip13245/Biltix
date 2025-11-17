@@ -1310,6 +1310,19 @@ return [
     
     // Search and Dropdown
     'no_results_found' => 'No results found',
+    
+    // Drawing Modal Titles
+    'task_image_markup' => 'Task Image Markup',
+    'save_task' => 'Save Task',
+    'markup_additional_images' => 'Markup Additional Images',
+    'upload_images' => 'Upload Images',
+    'markup_inspection_images' => 'Markup Inspection Images',
+    'submit_inspection' => 'Submit Inspection',
+    'markup_snag_images' => 'Markup Snag Images',
+    'save_snag' => 'Save Snag',
+    
+    // Validation Messages
+    'is_required' => 'is required',
 ];
 
 

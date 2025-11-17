@@ -648,8 +648,8 @@
         // Open drawing modal with proper configuration
         if (typeof openDrawingModal === 'function') {
             openDrawingModal({
-                title: 'Markup Inspection Images',
-                saveButtonText: 'Upload Images',
+                title: '{{ __('messages.markup_inspection_images') }}',
+                saveButtonText: '{{ __('messages.upload_images') }}',
                 mode: 'image',
                 onSave: function(imageData) {
                     uploadInspectionImagesWithDrawing(imageData);

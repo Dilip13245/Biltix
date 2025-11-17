@@ -42,7 +42,8 @@
                                 </div>
                             </div>
                             @can('tasks', 'create')
-                                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#taskSelectionModal">
+                                <button class="btn orange_btn py-2" data-bs-toggle="modal"
+                                    data-bs-target="#taskSelectionModal">
                                     <i class="fas fa-plus"></i>
                                     {{ __('messages.add_new_task') }}
                                 </button>
@@ -59,16 +60,18 @@
                         <div class="card B_shadow">
                             <div class="card-body px-md-3 py-md-3">
                                 <div class="d-flex align-items-center gap-2 gap-md-3 flex-wrap">
-                                    <form class="serchBar position-relative serchBar2 flex-grow-1" style="min-width: 200px;">
+                                    <form class="serchBar position-relative serchBar2 flex-grow-1"
+                                        style="min-width: 200px;">
                                         <input class="form-control" type="search" id="searchInput"
                                             placeholder="{{ __('messages.search_task_name') }}"
                                             aria-label="{{ __('messages.search') }}"
                                             dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" maxlength="100">
                                         <span class="search_icon"><img
-                                                src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
+                                                src="{{ asset('website/images/icons/search.svg') }}"
+                                                alt="search"></span>
                                     </form>
-                                    <select class="form-select w-auto searchable-select" id="statusFilter" style="min-width: 150px;"
-                                        data-placeholder="{{ __('messages.search') }}..."
+                                    <select class="form-select w-auto searchable-select" id="statusFilter"
+                                        style="min-width: 150px;" data-placeholder="{{ __('messages.search') }}..."
                                         data-no-results="{{ __('messages.no_results_found') }}">
                                         <option value="">{{ __('messages.all_status') }}</option>
                                         <option value="todo">{{ __('messages.todo') }}</option>
@@ -76,8 +79,8 @@
                                         <option value="complete">{{ __('messages.complete') }}</option>
                                         <option value="approve">{{ __('messages.approve') }}</option>
                                     </select>
-                                    <select class="form-select w-auto searchable-select" id="priorityFilter" style="min-width: 150px;"
-                                        data-placeholder="{{ __('messages.search') }}..."
+                                    <select class="form-select w-auto searchable-select" id="priorityFilter"
+                                        style="min-width: 150px;" data-placeholder="{{ __('messages.search') }}..."
                                         data-no-results="{{ __('messages.no_results_found') }}">
                                         <option value="">{{ __('messages.all_priorities') }}</option>
                                         <option value="low">{{ __('messages.low') }}</option>
@@ -602,7 +605,8 @@
                     if (resolveBtn) resolveBtn.style.display = 'none';
                 } else {
                     // Show add images button only if not completed
-                    if (addImagesBtn) addImagesBtn.style.display = task.status !== 'complete' && task.status !== 'approve' ? 'block' : 'none';
+                    if (addImagesBtn) addImagesBtn.style.display = task.status !== 'complete' && task.status !== 'approve' ?
+                        'block' : 'none';
                     // Show resolve button ONLY when status is 'complete'
                     if (resolveBtn) resolveBtn.style.display = task.status === 'complete' ? 'block' : 'none';
                 }
@@ -683,8 +687,8 @@
                     window.selectedTaskFiles = fileInput.files;
 
                     openDrawingModal({
-                        title: 'Task Image Markup',
-                        saveButtonText: 'Save Task',
+                        title: '{{ __('messages.task_image_markup') }}',
+                        saveButtonText: '{{ __('messages.save_task') }}',
                         mode: 'image',
                         onSave: function(imageData) {
                             saveTaskWithMarkup(imageData);
@@ -832,7 +836,7 @@
                     document.getElementById('taskStatusSelect').value = currentStatus;
                     return;
                 }
-                
+
                 // If status is 'complete', cannot change to 'todo' or 'in_progress'
                 if (currentStatus === 'complete' && (newStatus === 'todo' || newStatus === 'in_progress')) {
                     toastr.error('{{ __('messages.cannot_change_from_complete') }}');
@@ -880,12 +884,13 @@
                         statusBadge.textContent = statusInfo.text;
                         statusBadge.className = `badge ${statusInfo.class}`;
                         window.currentTaskDetails.status = newStatus;
-                        
+
                         // Update resolve button visibility based on new status
                         const resolveBtn = document.getElementById('resolveBtn');
                         const addImagesBtn = document.getElementById('addImagesBtn');
-                        const isAssignedUser = window.currentTaskDetails.assigned_to && parseInt(window.currentTaskDetails.assigned_to) === parseInt(currentUserId);
-                        
+                        const isAssignedUser = window.currentTaskDetails.assigned_to && parseInt(window.currentTaskDetails
+                            .assigned_to) === parseInt(currentUserId);
+
                         if (resolveBtn && addImagesBtn) {
                             if (newStatus === 'approve' || !isAssignedUser) {
                                 resolveBtn.style.display = 'none';
@@ -894,10 +899,11 @@
                                 // Show resolve button ONLY when status is 'complete'
                                 resolveBtn.style.display = newStatus === 'complete' ? 'block' : 'none';
                                 // Show add images button only if not completed
-                                addImagesBtn.style.display = newStatus !== 'complete' && newStatus !== 'approve' ? 'block' : 'none';
+                                addImagesBtn.style.display = newStatus !== 'complete' && newStatus !== 'approve' ? 'block' :
+                                    'none';
                             }
                         }
-                        
+
                         loadTasks();
                         toastr.success(response.message || '{{ __('messages.task_updated_successfully') }}');
                     } else {
@@ -1062,8 +1068,8 @@
 
                         setTimeout(() => {
                             openDrawingModal({
-                                title: 'Markup Additional Images',
-                                saveButtonText: 'Upload Images',
+                                title: '{{ __('messages.markup_additional_images') }}',
+                                saveButtonText: '{{ __('messages.upload_images') }}',
                                 mode: 'image',
                                 onSave: function(imageData) {
                                     submitAdditionalImages(imageData);
@@ -1143,6 +1149,8 @@
     <script src="{{ asset('website/js/api-encryption.js') }}"></script>
     <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+    <!-- FABRIC.JS - Advanced Canvas Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>
     <script src="{{ asset('website/js/searchable-dropdown.js') }}"></script>
     <script src="{{ asset('website/js/api-client.js') }}"></script>

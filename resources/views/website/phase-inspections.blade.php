@@ -372,6 +372,8 @@
         <script src="{{ asset('website/js/universal-auth.js') }}"></script>
         <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
         <script src="{{ asset('website/js/api-client.js') }}"></script>
+        <!-- FABRIC.JS - Advanced Canvas Library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
         <script src="{{ asset('website/js/drawing.js') }}"></script>
         <script src="{{ asset('website/js/searchable-dropdown.js') }}"></script>
         <script>

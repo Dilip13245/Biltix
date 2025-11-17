@@ -49,12 +49,12 @@
                             </div>
 
                             <!-- Download Button -->
-                            <button class="btn btn-sm orange_btn ms-4 api-action-btn" onclick="downloadPlan()">
-                                <span class="d-none d-sm-inline">{{ __('messages.download') }}</span>
+                            <button class="btn btn-sm btn-outline-primary ms-3 api-action-btn" onclick="downloadPlan()" title="{{ __('messages.download') }}">
+                                <i class="fas fa-download"></i>
                             </button>
 
                             <!-- Close Button -->
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"
+                            <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"
                                 style="position: static !important;"></button>
                         </div>
                     </div>
@@ -92,28 +92,28 @@
                             </div>
 
                             <!-- Download Button -->
-                            <button class="btn btn-sm orange_btn me-4 api-action-btn" onclick="downloadPlan()">
-                                <span class="d-none d-sm-inline">{{ __('messages.download') }}</span>
+                            <button class="btn btn-sm btn-outline-primary me-3 api-action-btn" onclick="downloadPlan()" title="{{ __('messages.download') }}">
+                                <i class="fas fa-download"></i>
                             </button>
 
                             <!-- Close Button -->
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"
+                            <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"
                                 style="position: static !important;"></button>
                         </div>
                     </div>
                 @endif
             </div>
             <div class="modal-body p-0">
-                <div class="row h-100" style="@if (app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
-                    <div class="col-md-9 p-0">
+                <div class="row h-100">
+                    <div class="col-md-9 p-0 @if (app()->getLocale() == 'ar') order-2 @else order-1 @endif">
                         <div id="planViewerContainer"
                             class="h-100 position-relative overflow-auto bg-light d-flex align-items-center justify-content-center">
                             <!-- Content will be dynamically loaded here -->
                             <div id="planContent"></div>
                         </div>
                     </div>
-                    <div class="col-md-3 @if (app()->getLocale() == 'ar') border-end @else border-start @endif">
-                        <div class="p-3">
+                    <div class="col-md-3 @if (app()->getLocale() == 'ar') border-end order-1 @else border-start order-2 @endif" @if (app()->getLocale() == 'ar') style="text-align: right !important; direction: rtl !important;" @endif>
+                        <div class="p-3" @if (app()->getLocale() == 'ar') style="text-align: right !important; direction: rtl !important;" @endif>
                             <h6 class="fw-bold mb-3">{{ __('messages.plan_information') }}</h6>
 
                             <div class="mb-3">

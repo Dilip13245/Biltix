@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Validate member selection
     const memberSelect = form.querySelector('#memberSelect');
     if (!memberSelect.value) {
-                showFieldError(memberSelect, '{{ __('messages.select_user') }} is required');
+                showFieldError(memberSelect, '{{ __('messages.select_user') }} {{ __('messages.is_required') }}');
       isValid = false;
     }
     
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!roleInProject || !roleInProject.value.trim()) {
       const roleDisplay = form.querySelector('#roleDisplay');
       if (roleDisplay) {
-                    showFieldError(roleDisplay, '{{ __('messages.role') }} is required');
+                    showFieldError(roleDisplay, '{{ __('messages.role') }} {{ __('messages.is_required') }}');
       }
       isValid = false;
     }

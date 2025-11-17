@@ -592,8 +592,8 @@
                 window.selectedTaskFiles = fileInput.files;
 
                 openDrawingModal({
-                    title: 'Task Image Markup',
-                    saveButtonText: 'Save Task',
+                    title: '{{ __('messages.task_image_markup') }}',
+                    saveButtonText: '{{ __('messages.save_task') }}',
                     mode: 'image',
                     onSave: function(imageData) {
                         saveTaskWithMarkup(imageData);
@@ -852,8 +852,8 @@
 
                     setTimeout(() => {
                         openDrawingModal({
-                            title: 'Markup Additional Images',
-                            saveButtonText: 'Upload Images',
+                            title: '{{ __('messages.markup_additional_images') }}',
+                            saveButtonText: '{{ __('messages.upload_images') }}',
                             mode: 'image',
                             onSave: function(imageData) {
                                 submitAdditionalImages(imageData);

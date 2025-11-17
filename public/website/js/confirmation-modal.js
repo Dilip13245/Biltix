@@ -24,12 +24,12 @@ class ConfirmationModal {
                                 }
                             </style>
                             ${isRtl ? `
-                                <div class="d-flex justify-content-between align-items-center w-100">
+                                <div class="d-flex justify-content-between align-items-center w-100" style="direction: rtl;">
                                     <h5 class="modal-title" id="confirmationTitle">Confirm Action</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                             ` : `
-                            <h5 class="modal-title" id="confirmationTitle">Confirm Action</h5>
+                                <h5 class="modal-title" id="confirmationTitle">Confirm Action</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             `}
                         </div>
@@ -47,7 +47,7 @@ class ConfirmationModal {
                 </div>
             </div>
         `;
-        
+
         if (!document.getElementById('confirmationModal')) {
             document.body.insertAdjacentHTML('beforeend', modalHtml);
         }
@@ -61,8 +61,8 @@ class ConfirmationModal {
             confirmText = 'Confirm',
             cancelText = 'Cancel',
             confirmClass = 'btn-danger',
-            onConfirm = () => {},
-            onCancel = () => {}
+            onConfirm = () => { },
+            onCancel = () => { }
         } = options;
 
         document.getElementById('confirmationTitle').textContent = title;
@@ -73,12 +73,12 @@ class ConfirmationModal {
         document.getElementById('confirmationConfirm').className = `btn ${confirmClass}`;
 
         const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-        
+
         document.getElementById('confirmationConfirm').onclick = () => {
             modal.hide();
             onConfirm();
         };
-        
+
         document.getElementById('confirmationCancel').onclick = () => {
             modal.hide();
             onCancel();

@@ -14,6 +14,17 @@
                     #drawingModal .modal-header {
                         position: relative !important;
                     }
+
+                    /* Drawing Modal Button Icon Spacing RTL fixes */
+                    [dir="rtl"] #drawingModal .btn i.fas {
+                        margin-left: 0.5rem !important;
+                        margin-right: 0 !important;
+                    }
+
+                    [dir="rtl"] #drawingModal .btn-group-vertical .btn i.fas {
+                        margin-left: 0.5rem !important;
+                        margin-right: 0 !important;
+                    }
                 </style>
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
