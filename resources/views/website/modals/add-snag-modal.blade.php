@@ -70,15 +70,17 @@
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h5 class="modal-title" id="addSnagModalLabel">
-                            {{ __('messages.add_new_snag') }}<i class="fas fa-exclamation-triangle ms-2"></i>
+                            {{ __('messages.add_new_snag') }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="addSnagModalLabel">
-                        <i class="fas fa-exclamation-triangle me-2"></i>{{ __('messages.add_new_snag') }}
+                        {{ __('messages.add_new_snag') }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
@@ -86,7 +88,9 @@
                     @csrf
                     <div class="mb-3">
                         <label for="categorySelect" class="form-label fw-medium">{{ __('messages.category') }}</label>
-                        <select class="form-select Input_control searchable-select" id="categorySelect" name="category">
+                        <select class="form-select Input_control searchable-select" id="categorySelect" name="category"
+                            data-placeholder="{{ __('messages.search') }}..."
+                            data-no-results="{{ __('messages.no_results_found') }}">
                             <option value="">{{ __('messages.select_category') }}</option>
                             <option value="Category 1">Category 1</option>
                             <option value="Category 2">Category 2</option>
@@ -96,14 +100,15 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="snagTitle" class="form-label fw-medium">{{ __('messages.snag_title') }}</label>
+                        <label for="snagTitle"
+                            class="form-label fw-medium"></label>{{ __('messages.snag_title') }}</label>
                         <input type="text" class="form-control Input_control" id="snagTitle" name="title"
-                            placeholder="Enter snag title" maxlength="100">
+                            placeholder="{{ __('messages.enter_snag_title') }}" maxlength="100">
                     </div>
 
                     <div class="mb-3">
-                        <label for="description" class="form-label fw-medium">{{ __('messages.add_description') }} <span
-                                class="text-muted">({{ __('messages.optional') }})</span></label>
+                        <label for="description" class="form-label fw-medium">{{ __('messages.add_description') }}
+                            <span class="text-muted">({{ __('messages.optional') }})</span></label>
                         <textarea class="form-control Input_control" id="description" name="description" rows="3"
                             placeholder="{{ __('messages.provide_detailed_description') }}" maxlength="1000"></textarea>
                     </div>
@@ -116,7 +121,9 @@
 
                     <div class="mb-3" id="phaseSelectContainer">
                         <label for="phaseSelect" class="form-label fw-medium">{{ __('messages.phase') }}</label>
-                        <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id">
+                        <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id"
+                            data-placeholder="{{ __('messages.search') }}..."
+                            data-no-results="{{ __('messages.no_results_found') }}">
                             <option value="">{{ __('messages.select_phase') }}</option>
                         </select>
                     </div>
@@ -125,7 +132,8 @@
                         <label for="assignedTo" class="form-label fw-medium">{{ __('messages.assign_to') }} <span
                                 class="text-muted">({{ __('messages.optional') }})</span></label>
                         <select class="form-select Input_control searchable-select" id="assignedTo"
-                            name="assigned_to">
+                            name="assigned_to" data-placeholder="{{ __('messages.search') }}..."
+                            data-no-results="{{ __('messages.no_results_found') }}">
                             <option value="">{{ __('messages.select_user') }}</option>
                         </select>
                     </div>
@@ -308,9 +316,16 @@
                             wrapper.remove();
                             select.style.display = '';
                         }
-                        // Create new instance
+                        // Create new instance with translated placeholder
                         if (window.SearchableDropdown) {
-                            select.searchableDropdown = new SearchableDropdown(select);
+                            const placeholder = select.getAttribute('data-placeholder') ||
+                                '{{ __('messages.search') }}...';
+                            const noResultsText = select.getAttribute('data-no-results') ||
+                                '{{ __('messages.no_results_found') }}';
+                            select.searchableDropdown = new SearchableDropdown(select, {
+                                placeholder: placeholder,
+                                noResultsText: noResultsText
+                            });
                         }
                     }
                 });

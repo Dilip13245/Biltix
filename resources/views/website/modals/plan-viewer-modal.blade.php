@@ -18,7 +18,7 @@
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h5 class="modal-title mb-0" id="planViewerModalLabel">
-                            {{ __('messages.plan_viewer') }}<i class="fas fa-drafting-compass ms-2"></i>
+                            {{ __('messages.plan_viewer') }}
                         </h5>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -61,7 +61,7 @@
                 @else
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h5 class="modal-title mb-0" id="planViewerModalLabel">
-                            <i class="fas fa-drafting-compass me-2"></i>{{ __('messages.plan_viewer') }}
+                            {{ __('messages.plan_viewer') }}
                         </h5>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">

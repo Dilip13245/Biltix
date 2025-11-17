@@ -255,12 +255,28 @@
                 <div class="modal fade" id="editProfileModal" tabindex="-1">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
-                            <div class="modal-header {{ is_rtl() ? 'justify-content-end' : '' }}">
-                                <h5 class="modal-title {{ is_rtl() ? 'order-2' : '' }}"><i
-                                        class="fas fa-edit {{ margin_end(2) }}"></i>{{ __('auth.edit_profile') }}
-                                </h5>
-                                <button type="button" class="btn-close {{ is_rtl() ? 'order-1' : '' }}"
-                                    data-bs-dismiss="modal"></button>
+                            <div class="modal-header">
+                                <style>
+                                    #editProfileModal .modal-header .btn-close {
+                                        position: static !important;
+                                        right: auto !important;
+                                        top: auto !important;
+                                        margin: 0 !important;
+                                    }
+
+                                    #editProfileModal .modal-header {
+                                        position: relative !important;
+                                    }
+                                </style>
+                                @if (app()->getLocale() == 'ar')
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <h5 class="modal-title">{{ __('auth.edit_profile') }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                                    </div>
+                                @else
+                                    <h5 class="modal-title">{{ __('auth.edit_profile') }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                                @endif
                             </div>
                             <div class="modal-body">
                                 <div class="row g-3">

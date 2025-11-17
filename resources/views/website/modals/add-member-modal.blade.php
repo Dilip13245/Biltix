@@ -10,22 +10,25 @@
             top: auto !important;
             margin: 0 !important;
           }
+
           #addMemberModal .modal-header {
             position: relative !important;
           }
         </style>
-        @if(app()->getLocale() == 'ar')
+                @if (app()->getLocale() == 'ar')
         <div class="d-flex justify-content-between align-items-center w-100">
           <h5 class="modal-title" id="addMemberModalLabel">
-            {{ __("messages.add_team_member") }}<i class="fas fa-user-plus ms-2"></i>
+                            {{ __('messages.add_team_member') }}
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
         </div>
         @else
         <h5 class="modal-title" id="addMemberModalLabel">
-          <i class="fas fa-user-plus me-2"></i>{{ __("messages.add_team_member") }}
+                        {{ __('messages.add_team_member') }}
         </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
         @endif
       </div>
       <div class="modal-body">
@@ -33,25 +36,28 @@
           @csrf
           
           <div class="mb-3">
-            <label for="memberSelect" class="form-label fw-medium">{{ __("messages.select_user") }}</label>
-            <select class="form-select Input_control" id="memberSelect" name="member_user_id">
-              <option value="">{{ __("messages.select_user") }}</option>
+                        <label for="memberSelect" class="form-label fw-medium">{{ __('messages.select_user') }}</label>
+                        <select class="form-select Input_control" id="memberSelect" name="member_user_id"
+                            data-placeholder="{{ __('messages.search') }}..."
+                            data-no-results="{{ __('messages.no_results_found') }}">
+                            <option value="">{{ __('messages.select_user') }}</option>
             </select>
           </div>
 
           <div class="mb-3">
-            <label for="roleDisplay" class="form-label fw-medium">{{ __("messages.role") }}</label>
-            <input type="text" class="form-control Input_control" id="roleDisplay" name="role_display" readonly
-              placeholder="{{ __("messages.role_will_display_here") }}" maxlength="50">
+                        <label for="roleDisplay" class="form-label fw-medium">{{ __('messages.role') }}</label>
+                        <input type="text" class="form-control Input_control" id="roleDisplay" name="role_display"
+                            readonly placeholder="{{ __('messages.role_will_display_here') }}" maxlength="50">
             <input type="hidden" id="roleInProject" name="role_in_project" value="">
           </div>
 
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __("messages.cancel") }}</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                    style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
         <button type="button" class="btn orange_btn api-action-btn" id="memberSubmitBtn">
-          {{ __("messages.add_member") }}
+                    {{ __('messages.add_member') }}
         </button>
       </div>
     </div>
@@ -69,7 +75,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const memberSelect = document.getElementById('memberSelect');
         
         if (response.code === 200 && memberSelect && response.data) {
-          memberSelect.innerHTML = '<option value="">{{ __("messages.select_user") }}</option>';
+                        // Destroy existing dropdown if any
+                        if (memberSelect.searchableDropdown) {
+                            const wrapper = memberSelect.closest('.searchable-dropdown');
+                            if (wrapper) {
+                                const parent = wrapper.parentElement;
+                                parent.insertBefore(memberSelect, wrapper);
+                                wrapper.remove();
+                                memberSelect.style.display = '';
+                            }
+                            memberSelect.searchableDropdown = null;
+                        }
+
+                        // Clear and populate options
+                        memberSelect.innerHTML =
+                            '<option value="">{{ __('messages.select_user') }}</option>';
           response.data.forEach(user => {
             const option = document.createElement('option');
             option.value = user.id || '';
@@ -80,10 +100,45 @@ document.addEventListener('DOMContentLoaded', function() {
             memberSelect.appendChild(option);
           });
           
-          // Initialize searchable dropdown after loading options
-          if (typeof SearchableDropdown !== 'undefined' && !memberSelect.searchableDropdown) {
-            memberSelect.searchableDropdown = new SearchableDropdown(memberSelect);
+                        // Wait for next tick to ensure options are in DOM
+                        setTimeout(() => {
+                            if (typeof SearchableDropdown !== 'undefined') {
+                                // Double check options are loaded
+                                const optionCount = memberSelect.options ? memberSelect
+                                    .options.length : 0;
+                                console.log('Options loaded:', optionCount);
+
+                                if (optionCount > 1) {
+                                    // Get placeholder from data attribute
+                                    const placeholder = memberSelect.getAttribute(
+                                            'data-placeholder') ||
+                                        '{{ __('messages.search') }}...';
+                                    const noResultsText = memberSelect.getAttribute(
+                                            'data-no-results') ||
+                                        '{{ __('messages.no_results_found') }}';
+
+                                    // Create new instance with all loaded options
+                                    try {
+                                        memberSelect.searchableDropdown =
+                                            new SearchableDropdown(
+                                                memberSelect, {
+                                                    placeholder: placeholder,
+                                                    noResultsText: noResultsText
+                                                });
+                                        console.log(
+                                            'SearchableDropdown initialized successfully'
+                                        );
+                                    } catch (error) {
+                                        console.error(
+                                            'Error initializing SearchableDropdown:',
+                                            error);
+                                    }
+                                } else {
+                                    console.warn(
+                                        'Not enough options to initialize dropdown');
           }
+                            }
+                        }, 200);
         }
       } catch (error) {
         console.error('Error loading users:', error);
@@ -137,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Validate member selection
     const memberSelect = form.querySelector('#memberSelect');
     if (!memberSelect.value) {
-      showFieldError(memberSelect, '{{ __("messages.select_user") }} is required');
+                showFieldError(memberSelect, '{{ __('messages.select_user') }} is required');
       isValid = false;
     }
     
@@ -146,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!roleInProject || !roleInProject.value.trim()) {
       const roleDisplay = form.querySelector('#roleDisplay');
       if (roleDisplay) {
-        showFieldError(roleDisplay, '{{ __("messages.role") }} is required');
+                    showFieldError(roleDisplay, '{{ __('messages.role') }} is required');
       }
       isValid = false;
     }
@@ -195,7 +250,10 @@ document.addEventListener('DOMContentLoaded', function() {
       if (form && typeof validateMemberForm === 'function') {
         if (validateMemberForm()) {
           // Validation passed, trigger form submit
-          form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                        form.dispatchEvent(new Event('submit', {
+                            bubbles: true,
+                            cancelable: true
+                        }));
         }
       }
     });
@@ -206,15 +264,29 @@ document.addEventListener('DOMContentLoaded', function() {
     addMemberModal.addEventListener('hidden.bs.modal', function() {
         const form = document.getElementById('addMemberForm');
         const btn = document.getElementById('memberSubmitBtn');
+                const memberSelect = document.getElementById('memberSelect');
         
         if (form) {
           form.reset();
-          form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+                    form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove(
+                        'is-invalid'));
           form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
         }
         if (btn) {
             btn.disabled = false;
-            btn.innerHTML = '{{ __("messages.add_member") }}';
+                    btn.innerHTML = '{{ __('messages.add_member') }}';
+                }
+
+                // Destroy searchable dropdown when modal is hidden
+                if (memberSelect && memberSelect.searchableDropdown) {
+                    const wrapper = memberSelect.closest('.searchable-dropdown');
+                    if (wrapper) {
+                        const parent = wrapper.parentElement;
+                        parent.insertBefore(memberSelect, wrapper);
+                        wrapper.remove();
+                        memberSelect.style.display = '';
+                    }
+                    memberSelect.searchableDropdown = null;
         }
     });
   }

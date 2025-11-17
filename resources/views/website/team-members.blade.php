@@ -4,8 +4,15 @@
 
 @section('content')
     <style>
-        select.searchable-select { opacity: 0; transition: opacity 0.2s; }
-        select.searchable-select.initialized, .searchable-dropdown { opacity: 1; }
+        select.searchable-select {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        select.searchable-select.initialized,
+        .searchable-dropdown {
+            opacity: 1;
+        }
     </style>
     <div class="content-header border-0 shadow-none mb-4 d-flex align-items-center justify-content-between gap-2 flex-wrap">
         <div>
@@ -46,14 +53,15 @@
                 </ul>
             </div> --}}
             @can('team', 'create')
-                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addMemberModal" onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
+                <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addMemberModal"
+                    onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
                     <i class="fas fa-plus"></i>
                     {{ __('messages.add_member') }}
                 </button>
             @endcan
         </div>
     </div>
-    
+
     <section class="px-md-4">
         <div class="container-fluid">
             <div class="row g-4" id="statsContainer">
@@ -65,8 +73,11 @@
                                 <div class="stat-value" id="totalMembers">0</div>
                             </div>
                             <span class="ms-auto stat-icon bg1">
-                                <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M4.5 0C5.16304 0 5.79893 0.263392 6.26777 0.732233C6.73661 1.20107 7 1.83696 7 2.5C7 3.16304 6.73661 3.79893 6.26777 4.26777C5.79893 4.73661 5.16304 5 4.5 5C3.83696 5 3.20107 4.73661 2.73223 4.26777C2.26339 3.79893 2 3.16304 2 2.5C2 1.83696 2.26339 1.20107 2.73223 0.732233C3.20107 0.263392 3.83696 0 4.5 0ZM16 0C16.663 0 17.2989 0.263392 17.7678 0.732233C18.2366 1.20107 18.5 1.83696 18.5 2.5C18.5 3.16304 18.2366 3.79893 17.7678 4.26777C17.2989 4.73661 16.663 5 16 5C15.337 5 14.7011 4.73661 14.2322 4.26777C13.7634 3.79893 13.5 3.16304 13.5 2.5C13.5 1.83696 13.7634 1.20107 14.2322 0.732233C14.7011 0.263392 15.337 0 16 0ZM0 9.33438C0 7.49375 1.49375 6 3.33437 6H4.66875C5.16562 6 5.6375 6.10938 6.0625 6.30312C6.02187 6.52812 6.00313 6.7625 6.00313 7C6.00313 8.19375 6.52812 9.26562 7.35625 10C7.35 10 7.34375 10 7.33437 10H0.665625C0.3 10 0 9.7 0 9.33438ZM12.6656 10C12.6594 10 12.6531 10 12.6438 10C13.475 9.26562 13.9969 8.19375 13.9969 7C13.9969 6.7625 13.975 6.53125 13.9375 6.30312C14.3625 6.10625 14.8344 6 15.3313 6H16.6656C18.5063 6 20 7.49375 20 9.33438C20 9.70312 19.7 10 19.3344 10H12.6656ZM7 7C7 6.20435 7.31607 5.44129 7.87868 4.87868C8.44129 4.31607 9.20435 4 10 4C10.7956 4 11.5587 4.31607 12.1213 4.87868C12.6839 5.44129 13 6.20435 13 7C13 7.79565 12.6839 8.55871 12.1213 9.12132C11.5587 9.68393 10.7956 10 10 10C9.20435 10 8.44129 9.68393 7.87868 9.12132C7.31607 8.55871 7 7.79565 7 7ZM4 15.1656C4 12.8656 5.86562 11 8.16562 11H11.8344C14.1344 11 16 12.8656 16 15.1656C16 15.625 15.6281 16 15.1656 16H4.83437C4.375 16 4 15.6281 4 15.1656Z" fill="#4477C4" />
+                                <svg width="20" height="16" viewBox="0 0 20 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M4.5 0C5.16304 0 5.79893 0.263392 6.26777 0.732233C6.73661 1.20107 7 1.83696 7 2.5C7 3.16304 6.73661 3.79893 6.26777 4.26777C5.79893 4.73661 5.16304 5 4.5 5C3.83696 5 3.20107 4.73661 2.73223 4.26777C2.26339 3.79893 2 3.16304 2 2.5C2 1.83696 2.26339 1.20107 2.73223 0.732233C3.20107 0.263392 3.83696 0 4.5 0ZM16 0C16.663 0 17.2989 0.263392 17.7678 0.732233C18.2366 1.20107 18.5 1.83696 18.5 2.5C18.5 3.16304 18.2366 3.79893 17.7678 4.26777C17.2989 4.73661 16.663 5 16 5C15.337 5 14.7011 4.73661 14.2322 4.26777C13.7634 3.79893 13.5 3.16304 13.5 2.5C13.5 1.83696 13.7634 1.20107 14.2322 0.732233C14.7011 0.263392 15.337 0 16 0ZM0 9.33438C0 7.49375 1.49375 6 3.33437 6H4.66875C5.16562 6 5.6375 6.10938 6.0625 6.30312C6.02187 6.52812 6.00313 6.7625 6.00313 7C6.00313 8.19375 6.52812 9.26562 7.35625 10C7.35 10 7.34375 10 7.33437 10H0.665625C0.3 10 0 9.7 0 9.33438ZM12.6656 10C12.6594 10 12.6531 10 12.6438 10C13.475 9.26562 13.9969 8.19375 13.9969 7C13.9969 6.7625 13.975 6.53125 13.9375 6.30312C14.3625 6.10625 14.8344 6 15.3313 6H16.6656C18.5063 6 20 7.49375 20 9.33438C20 9.70312 19.7 10 19.3344 10H12.6656ZM7 7C7 6.20435 7.31607 5.44129 7.87868 4.87868C8.44129 4.31607 9.20435 4 10 4C10.7956 4 11.5587 4.31607 12.1213 4.87868C12.6839 5.44129 13 6.20435 13 7C13 7.79565 12.6839 8.55871 12.1213 9.12132C11.5587 9.68393 10.7956 10 10 10C9.20435 10 8.44129 9.68393 7.87868 9.12132C7.31607 8.55871 7 7.79565 7 7ZM4 15.1656C4 12.8656 5.86562 11 8.16562 11H11.8344C14.1344 11 16 12.8656 16 15.1656C16 15.625 15.6281 16 15.1656 16H4.83437C4.375 16 4 15.6281 4 15.1656Z"
+                                        fill="#4477C4" />
                                 </svg>
                             </span>
                         </div>
@@ -80,8 +91,11 @@
                                 <div class="stat-value text-success" id="siteEngineers">0</div>
                             </div>
                             <span class="ms-auto stat-icon bg-green1">
-                                <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3 4C3 2.93913 3.42143 1.92172 4.17157 1.17157C4.92172 0.421427 5.93913 0 7 0C8.06087 0 9.07828 0.421427 9.82843 1.17157C10.5786 1.92172 11 2.93913 11 4C11 5.06087 10.5786 6.07828 9.82843 6.82843C9.07828 7.57857 8.06087 8 7 8C5.93913 8 4.92172 7.57857 4.17157 6.82843C3.42143 6.07828 3 5.06087 3 4ZM0 15.0719C0 11.9937 2.49375 9.5 5.57188 9.5H8.42813C11.5063 9.5 14 11.9937 14 15.0719C14 15.5844 13.5844 16 13.0719 16H0.928125C0.415625 16 0 15.5844 0 15.0719ZM19.5312 5.53125L15.5312 9.53125C15.2375 9.825 14.7625 9.825 14.4719 9.53125L12.4719 7.53125C12.1781 7.2375 12.1781 6.7625 12.4719 6.47188C12.7656 6.18125 13.2406 6.17813 13.5312 6.47188L15 7.94063L18.4688 4.46875C18.7625 4.175 19.2375 4.175 19.5281 4.46875C19.8188 4.7625 19.8219 5.2375 19.5281 5.52812L19.5312 5.53125Z" fill="#16A34A" />
+                                <svg width="20" height="16" viewBox="0 0 20 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M3 4C3 2.93913 3.42143 1.92172 4.17157 1.17157C4.92172 0.421427 5.93913 0 7 0C8.06087 0 9.07828 0.421427 9.82843 1.17157C10.5786 1.92172 11 2.93913 11 4C11 5.06087 10.5786 6.07828 9.82843 6.82843C9.07828 7.57857 8.06087 8 7 8C5.93913 8 4.92172 7.57857 4.17157 6.82843C3.42143 6.07828 3 5.06087 3 4ZM0 15.0719C0 11.9937 2.49375 9.5 5.57188 9.5H8.42813C11.5063 9.5 14 11.9937 14 15.0719C14 15.5844 13.5844 16 13.0719 16H0.928125C0.415625 16 0 15.5844 0 15.0719ZM19.5312 5.53125L15.5312 9.53125C15.2375 9.825 14.7625 9.825 14.4719 9.53125L12.4719 7.53125C12.1781 7.2375 12.1781 6.7625 12.4719 6.47188C12.7656 6.18125 13.2406 6.17813 13.5312 6.47188L15 7.94063L18.4688 4.46875C18.7625 4.175 19.2375 4.175 19.5281 4.46875C19.8188 4.7625 19.8219 5.2375 19.5281 5.52812L19.5312 5.53125Z"
+                                        fill="#16A34A" />
                                 </svg>
                             </span>
                         </div>
@@ -95,9 +109,12 @@
                                 <div class="stat-value orange_color" id="contractors">0</div>
                             </div>
                             <span class="ms-auto stat-icon bg2">
-                                <svg width="18" height="16" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="18" height="16" viewBox="0 0 18 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <path d="M18 16H0V0H18V16Z" stroke="#E5E7EB" />
-                                    <path d="M8 1C7.44688 1 7 1.44687 7 2V2.07188V5.18437C7 5.35938 6.85938 5.5 6.68437 5.5C6.57187 5.5 6.46563 5.44062 6.40938 5.34062L4.90938 2.71875C2.59375 3.85938 1 6.24375 1 9V11H17V8.925C16.9719 6.2 15.3844 3.85 13.0906 2.71875L11.5906 5.34062C11.5344 5.44062 11.4281 5.5 11.3156 5.5C11.1406 5.5 11 5.35938 11 5.18437V2.07188V2C11 1.44687 10.5531 1 10 1H8ZM0.51875 12C0.23125 12 0 12.2312 0 12.5188C0 12.6656 0.0625 12.8062 0.18125 12.8906C0.859375 13.3875 3.49375 15 9 15C14.5063 15 17.1406 13.3875 17.8188 12.8906C17.9375 12.8031 18 12.6656 18 12.5188C18 12.2312 17.7688 12 17.4813 12H0.51875Z" fill="#F58D2E" />
+                                    <path
+                                        d="M8 1C7.44688 1 7 1.44687 7 2V2.07188V5.18437C7 5.35938 6.85938 5.5 6.68437 5.5C6.57187 5.5 6.46563 5.44062 6.40938 5.34062L4.90938 2.71875C2.59375 3.85938 1 6.24375 1 9V11H17V8.925C16.9719 6.2 15.3844 3.85 13.0906 2.71875L11.5906 5.34062C11.5344 5.44062 11.4281 5.5 11.3156 5.5C11.1406 5.5 11 5.35938 11 5.18437V2.07188V2C11 1.44687 10.5531 1 10 1H8ZM0.51875 12C0.23125 12 0 12.2312 0 12.5188C0 12.6656 0.0625 12.8062 0.18125 12.8906C0.859375 13.3875 3.49375 15 9 15C14.5063 15 17.1406 13.3875 17.8188 12.8906C17.9375 12.8031 18 12.6656 18 12.5188C18 12.2312 17.7688 12 17.4813 12H0.51875Z"
+                                        fill="#F58D2E" />
                                 </svg>
                             </span>
                         </div>
@@ -111,9 +128,12 @@
                                 <div class="stat-value text-blue" id="consultants">0</div>
                             </div>
                             <span class="ms-auto stat-icon bg-blue1">
-                                <svg width="14" height="16" viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="14" height="16" viewBox="0 0 14 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <g clip-path="url(#clip0_861_3263)">
-                                        <path d="M7 8C5.93913 8 4.92172 7.57857 4.17157 6.82843C3.42143 6.07828 3 5.06087 3 4C3 2.93913 3.42143 1.92172 4.17157 1.17157C4.92172 0.421427 5.93913 0 7 0C8.06087 0 9.07828 0.421427 9.82843 1.17157C10.5786 1.92172 11 2.93913 11 4C11 5.06087 10.5786 6.07828 9.82843 6.82843C9.07828 7.57857 8.06087 8 7 8ZM6.53438 11.225L5.95312 10.2563C5.75313 9.92188 5.99375 9.5 6.38125 9.5H7H7.61562C8.00313 9.5 8.24375 9.925 8.04375 10.2563L7.4625 11.225L8.50625 15.0969L9.63125 10.5063C9.69375 10.2531 9.9375 10.0875 10.1906 10.1531C12.3813 10.7031 14 12.6844 14 15.0406C14 15.5719 13.5687 16 13.0406 16H8.92188C8.85625 16 8.79688 15.9875 8.74063 15.9656L8.75 16H5.25L5.25938 15.9656C5.20312 15.9875 5.14062 16 5.07812 16H0.959375C0.43125 16 0 15.5687 0 15.0406C0 12.6812 1.62188 10.7 3.80938 10.1531C4.0625 10.0906 4.30625 10.2563 4.36875 10.5063L5.49375 15.0969L6.5375 11.225H6.53438Z" fill="#9333EA" />
+                                        <path
+                                            d="M7 8C5.93913 8 4.92172 7.57857 4.17157 6.82843C3.42143 6.07828 3 5.06087 3 4C3 2.93913 3.42143 1.92172 4.17157 1.17157C4.92172 0.421427 5.93913 0 7 0C8.06087 0 9.07828 0.421427 9.82843 1.17157C10.5786 1.92172 11 2.93913 11 4C11 5.06087 10.5786 6.07828 9.82843 6.82843C9.07828 7.57857 8.06087 8 7 8ZM6.53438 11.225L5.95312 10.2563C5.75313 9.92188 5.99375 9.5 6.38125 9.5H7H7.61562C8.00313 9.5 8.24375 9.925 8.04375 10.2563L7.4625 11.225L8.50625 15.0969L9.63125 10.5063C9.69375 10.2531 9.9375 10.0875 10.1906 10.1531C12.3813 10.7031 14 12.6844 14 15.0406C14 15.5719 13.5687 16 13.0406 16H8.92188C8.85625 16 8.79688 15.9875 8.74063 15.9656L8.75 16H5.25L5.25938 15.9656C5.20312 15.9875 5.14062 16 5.07812 16H0.959375C0.43125 16 0 15.5687 0 15.0406C0 12.6812 1.62188 10.7 3.80938 10.1531C4.0625 10.0906 4.30625 10.2563 4.36875 10.5063L5.49375 15.0969L6.5375 11.225H6.53438Z"
+                                            fill="#9333EA" />
                                     </g>
                                     <defs>
                                         <clipPath id="clip0_861_3263">
@@ -126,7 +146,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="row gy-4 card_wraPper mt-4" id="teamContainer">
                 <!-- Loading state -->
                 <div class="col-12 text-center" id="loadingState">
@@ -168,7 +188,7 @@
             loadTeamMembers();
             setupAddMemberForm();
             // setupSearchAndFilter();
-            
+
             if (typeof initSearchableDropdowns === 'function') {
                 initSearchableDropdowns();
             }
@@ -213,7 +233,8 @@
             if (loadingState) loadingState.classList.add('d-none');
 
             if (!members || members.length === 0) {
-                const memberCards = container.querySelectorAll('.col-md-6:not(#loadingState):not(#noMembersState), .col-lg-4');
+                const memberCards = container.querySelectorAll(
+                    '.col-md-6:not(#loadingState):not(#noMembersState), .col-lg-4');
                 memberCards.forEach(card => card.remove());
                 if (noMembersState) noMembersState.classList.remove('d-none');
                 return;
@@ -223,12 +244,12 @@
 
             const membersHtml = members.map((member, index) => {
                 const delay = (index * 0.4).toFixed(1);
-                
+
                 const profileImage = member.user?.profile_image;
-                const imageHtml = profileImage 
-                    ? `<img src="${profileImage}" alt="${member.user.name}" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">`
-                    : `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;"><i class="fas fa-user" style="font-size: 24px;"></i></div>`;
-                
+                const imageHtml = profileImage ?
+                    `<img src="${profileImage}" alt="${member.user.name}" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">` :
+                    `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;"><i class="fas fa-user" style="font-size: 24px;"></i></div>`;
+
                 return `
                     <div class="col-lg-4 col-md-6 mb-4 wow fadeInUp" data-wow-delay="${delay}s">
                         <div class="card h-100 B_shadow team-member-card">
@@ -278,27 +299,27 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
             setTimeout(function() {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-user-plus me-2"></i>{{ __("messages.add_member") }}';
+                btn.innerHTML = '<i class="fas fa-user-plus me-2"></i>{{ __('messages.add_member') }}';
             }, 5000);
         }
 
         async function handleMemberSubmit(e) {
             e.preventDefault();
-            
+
             // Validate form first
             if (typeof validateMemberForm === 'function') {
                 if (!validateMemberForm()) {
                     return false;
                 }
             }
-            
+
             // Protect button
             const submitBtn = document.getElementById('memberSubmitBtn');
             if (submitBtn) protectMemberButton(submitBtn);
 
             try {
                 const formData = new FormData();
-                
+
                 formData.append('user_id', currentUserId);
                 formData.append('project_id', currentProjectId);
                 formData.append('member_user_id', document.getElementById('memberSelect').value);
@@ -309,7 +330,7 @@
                 if (response.code === 200) {
                     const addMemberModal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
                     if (addMemberModal) addMemberModal.hide();
-                    
+
                     toastr.success('{{ __('messages.member_added_successfully') }}');
                     document.getElementById('addMemberForm').reset();
                     loadTeamMembers();
@@ -349,30 +370,30 @@
             // Update total members (project members only)
             const totalEl = document.getElementById('totalMembers');
             if (totalEl) totalEl.textContent = members.length;
-            
+
             // Update role-specific counts
             const engineersEl = document.getElementById('siteEngineers');
             if (engineersEl) engineersEl.textContent = roleCounts['site_engineer'] || 0;
-            
+
             const contractorsEl = document.getElementById('contractors');
             if (contractorsEl) contractorsEl.textContent = roleCounts['contractor'] || 0;
-            
+
             const consultantsEl = document.getElementById('consultants');
             if (consultantsEl) consultantsEl.textContent = roleCounts['consultant'] || 0;
-            
+
             // Update stats container with all roles dynamically
             updateDynamicRoleStats(roleCounts, members.length);
         }
-        
+
         function updateDynamicRoleStats(roleCounts, totalActiveUsers) {
             const statsContainer = document.getElementById('statsContainer');
             const existingCards = statsContainer.querySelectorAll('.col-xxl-3');
-            
+
             // Keep first card (total), update others dynamically
             const firstCard = existingCards[0];
             statsContainer.innerHTML = '';
             statsContainer.appendChild(firstCard);
-            
+
             // Add role cards dynamically
             let index = 1;
             for (const [role, count] of Object.entries(roleCounts)) {
@@ -384,17 +405,70 @@
                 }
             }
         }
-        
+
         function createRoleCard(role, count, delay) {
-            const roleDisplay = role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-            const colors = {
-                'site_engineer': { bg: 'bg-green1', text: 'text-success', icon: '#16A34A' },
-                'contractor': { bg: 'bg2', text: 'orange_color', icon: '#F58D2E' },
-                'consultant': { bg: 'bg-blue1', text: 'text-blue', icon: '#9333EA' },
-                'project_manager': { bg: 'bg1', text: 'text-primary', icon: '#4477C4' }
+            // Role translation mapping
+            const roleTranslations = {
+                'site_engineer': '{{ __('messages.site_engineer') }}',
+                'contractor': '{{ __('messages.contractor') }}',
+                'consultant': '{{ __('messages.consultant') }}',
+                'project_manager': '{{ __('messages.project_manager') }}',
+                'client_viewer': '{{ __('messages.client_viewer') }}',
+                'stakeholder': '{{ __('messages.stakeholder') }}',
+                'super_admin': '{{ __('messages.super_admin') }}',
+                'support_staff': '{{ __('messages.support_staff') }}',
+                'unknown': '{{ __('messages.unknown') ?? 'Unknown' }}'
             };
-            const color = colors[role] || { bg: 'bg1', text: 'text-primary', icon: '#4477C4' };
-            
+            const roleDisplay = roleTranslations[role] || role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+            const colors = {
+                'site_engineer': {
+                    bg: 'bg-green1',
+                    text: 'text-success',
+                    icon: '#16A34A'
+                },
+                'contractor': {
+                    bg: 'bg2',
+                    text: 'orange_color',
+                    icon: '#F58D2E'
+                },
+                'consultant': {
+                    bg: 'bg-blue1',
+                    text: 'text-blue',
+                    icon: '#9333EA'
+                },
+                'project_manager': {
+                    bg: 'bg1',
+                    text: 'text-primary',
+                    icon: '#4477C4'
+                },
+                'client_viewer': {
+                    bg: 'bg1',
+                    text: 'text-primary',
+                    icon: '#4477C4'
+                },
+                'stakeholder': {
+                    bg: 'bg1',
+                    text: 'text-primary',
+                    icon: '#4477C4'
+                },
+                'super_admin': {
+                    bg: 'bg1',
+                    text: 'text-primary',
+                    icon: '#4477C4'
+                },
+                'support_staff': {
+                    bg: 'bg1',
+                    text: 'text-primary',
+                    icon: '#4477C4'
+                }
+            };
+            const color = colors[role] || {
+                bg: 'bg1',
+                text: 'text-primary',
+                icon: '#4477C4'
+            };
+
             return `
                 <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-12 wow fadeInUp" data-wow-delay="${delay}s">
                     <div class="card h-100 B_shadow">
@@ -461,7 +535,7 @@
             }
         }
     </script>
-    
+
 
 
 @endsection

@@ -22,19 +22,11 @@
         </div>
         <div class="d-flex align-items-center gap-2 gap-md-3 flex-wrap">
             <form class="serchBar position-relative serchBar2">
-                @if (app()->getLocale() == 'ar')
                     <input class="form-control" type="search" id="searchInput"
-                        placeholder="{{ __('messages.search_task_name') }}" aria-label="{{ __('messages.search') }}" dir="auto"
-                        style="padding-left: 45px; padding-right: 15px;" maxlength="100">
-                    <span class="search_icon" style="left: 15px; right: auto; pointer-events: none;"><img
+                    placeholder="{{ __('messages.search_task_name') }}" aria-label="{{ __('messages.search') }}"
+                    dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" maxlength="100">
+                <span class="search_icon"><img
                             src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
-                @else
-                    <input class="form-control" type="search" id="searchInput"
-                        placeholder="{{ __('messages.search_task_name') }}" aria-label="{{ __('messages.search') }}" dir="auto"
-                        style="padding-right: 45px;" maxlength="100">
-                    <span class="search_icon" style="right: 15px; pointer-events: none;"><img
-                            src="{{ asset('website/images/icons/search.svg') }}" alt="search"></span>
-                @endif
             </form>
             <div class="custom-filter-dropdown" id="statusFilterWrapper">
                 <div class="custom-filter-btn" id="statusFilterBtn">{{ __('messages.all_status') }}</div>
@@ -326,40 +318,54 @@
 
         function getStatusBadge(status) {
             const statusMap = {
-                'todo': 'badge3',
-                'in_progress': 'badge5',
-                'complete': 'badge1',
-                'approve': 'badge1'
+                'todo': {
+                    class: 'badge3',
+                    text: '{{ __('messages.todo') }}'
+                },
+                'in_progress': {
+                    class: 'badge5',
+                    text: '{{ __('messages.in_progress') }}'
+                },
+                'complete': {
+                    class: 'badge1',
+                    text: '{{ __('messages.complete') }}'
+                },
+                'approve': {
+                    class: 'badge1',
+                    text: '{{ __('messages.approve') }}'
+                }
             };
 
-            const badgeClass = statusMap[status] || 'badge3';
-            const statusText = status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
-
-            return `<span class="badge ${badgeClass} fw-normal" style="font-size: 0.9em;">${statusText}</span>`;
+            const statusInfo = statusMap[status] || statusMap['todo'];
+            return `<span class="badge ${statusInfo.class} fw-normal" style="font-size: 0.9em;">${statusInfo.text}</span>`;
         }
 
         function getPriorityBadge(priority) {
             const priorityMap = {
                 'low': {
                     class: 'bg-success',
-                    icon: 'fas fa-arrow-down'
+                    icon: 'fas fa-arrow-down',
+                    text: '{{ __('messages.low') }}'
                 },
                 'medium': {
                     class: 'bg-warning',
-                    icon: 'fas fa-minus'
+                    icon: 'fas fa-minus',
+                    text: '{{ __('messages.medium') }}'
                 },
                 'high': {
                     class: 'bg-danger',
-                    icon: 'fas fa-arrow-up'
+                    icon: 'fas fa-arrow-up',
+                    text: '{{ __('messages.high') }}'
                 },
                 'critical': {
                     class: 'bg-dark',
-                    icon: 'fas fa-exclamation-triangle'
+                    icon: 'fas fa-exclamation-triangle',
+                    text: '{{ __('messages.critical') }}'
                 }
             };
 
             const config = priorityMap[priority] || priorityMap['medium'];
-            const priorityText = priority ? priority.charAt(0).toUpperCase() + priority.slice(1) : 'Medium';
+            const priorityText = config.text || '{{ __('messages.medium') }}';
 
             return `<span class="badge ${config.class} fw-normal" style="font-size: 0.8em;"><i class="${config.icon} me-1"></i>${priorityText}</span>`;
         }
@@ -450,15 +456,28 @@
             document.getElementById('taskDetailAssignedTo').textContent = task.assigned_user_name || 'Unassigned';
             document.getElementById('taskDetailNumber').textContent = task.task_number || '-';
             const statusBadge = document.getElementById('taskDetailStatus');
-            statusBadge.textContent = task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('_', ' ');
-            // Set consistent status badge class
+            // Set consistent status badge class and text
             const statusMap = {
-                'todo': 'badge3',
-                'in_progress': 'badge5',
-                'complete': 'badge1',
-                'approve': 'badge1'
+                'todo': {
+                    class: 'badge3',
+                    text: '{{ __('messages.todo') }}'
+                },
+                'in_progress': {
+                    class: 'badge5',
+                    text: '{{ __('messages.in_progress') }}'
+                },
+                'complete': {
+                    class: 'badge1',
+                    text: '{{ __('messages.complete') }}'
+                },
+                'approve': {
+                    class: 'badge1',
+                    text: '{{ __('messages.approve') }}'
+                }
             };
-            statusBadge.className = `badge ${statusMap[task.status] || 'badge3'}`;
+            const statusInfo = statusMap[task.status] || statusMap['todo'];
+            statusBadge.textContent = statusInfo.text;
+            statusBadge.className = `badge ${statusInfo.class}`;
             document.getElementById('taskDetailPriority').innerHTML = getPriorityBadge(task.priority);
 
             loadTaskImages(task.images || []);

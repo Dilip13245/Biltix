@@ -153,6 +153,7 @@ return [
     
     // API Messages
     'signup_success' => 'Registration successful! Welcome to Biltix.',
+    'registration_successful' => 'Registration Successful!',
     'login_success' => 'Login successful! Welcome back.',
     'otp_sent' => 'OTP sent successfully to your mobile number',
     'otp_verified' => 'OTP verified successfully',

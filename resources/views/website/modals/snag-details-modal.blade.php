@@ -17,13 +17,13 @@
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h4 class="modal-title fw-semibold black_color" id="snagDetailsModalLabel">
-                            {{ __('messages.snag_details') }}<i class="fas fa-exclamation-triangle orange_color ms-2"></i>
+                            {{ __('messages.snag_details') }}
                         </h4>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h4 class="modal-title fw-semibold black_color" id="snagDetailsModalLabel">
-                        <i class="fas fa-exclamation-triangle orange_color me-2"></i>{{ __('messages.snag_details') }}
+                        {{ __('messages.snag_details') }}
                     </h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif

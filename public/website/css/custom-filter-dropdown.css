@@ -87,3 +87,24 @@
     color: #F58D2E;
     font-weight: 600;
 }
+
+/* RTL Support for Custom Filter Dropdown */
+[dir="rtl"] .custom-filter-btn {
+    padding: 8px 12px 8px 35px;
+    text-align: right;
+}
+
+[dir="rtl"] .custom-filter-btn:after {
+    right: auto;
+    left: 12px;
+}
+
+[dir="rtl"] .custom-filter-options {
+    left: auto;
+    right: 0;
+}
+
+[dir="rtl"] .custom-filter-option {
+    text-align: right;
+    direction: rtl;
+}

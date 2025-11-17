@@ -1345,11 +1345,11 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${filteredActivities.map(activity => `
-                                                                                                <li class="d-flex align-items-center mb-2">
-                                                                                                  <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
-                                                                                                  <span class="flex-grow-1 text-wrap">${activity.description}</span>
-                                                                                                </li>
-                                                                                              `).join('')}
+                                                                                                                <li class="d-flex align-items-center mb-2">
+                                                                                                                  <span class="{{ margin_end(2) }}" style="color:#F58D2E; font-size:1.2em;">&#9679;</span>
+                                                                                                                  <span class="flex-grow-1 text-wrap">${activity.description}</span>
+                                                                                                                </li>
+                                                                                                              `).join('')}
     </ul>
   `;
             }
@@ -1404,13 +1404,13 @@
       <table class="table table-borderless mb-0">
         <tbody>
           ${filteredItems.map(item => `
-                                                                                                    <tr>
-                                                                                                      <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
-                                                                                                      <td class="text-end">
-                                                                                                        <span class="text-primary fw-semibold">${item.count}</span>
-                                                                                                      </td>
-                                                                                                    </tr>
-                                                                                                  `).join('')}
+                                                                                                                    <tr>
+                                                                                                                      <td class="text-muted fw-medium text-wrap" style="max-width: 200px;">${item.category}</td>
+                                                                                                                      <td class="text-end">
+                                                                                                                        <span class="text-primary fw-semibold">${item.count}</span>
+                                                                                                                      </td>
+                                                                                                                    </tr>
+                                                                                                                  `).join('')}
         </tbody>
       </table>
     </div>
@@ -1465,15 +1465,15 @@
                 container.innerHTML = `
     <ul class="list-unstyled mb-0">
       ${filteredItems.map(item => `
-                                                                                                <li class="mb-2">
-                                                                                                  <div class="d-flex align-items-center p-3 rounded bg4">
-                                                                                                    <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
-                                                                                                      <i class="fas fa-check-circle"></i>
-                                                                                                    </span>
-                                                                                                    <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
-                                                                                                  </div>
-                                                                                                </li>
-                                                                                              `).join('')}
+                                                                                                                <li class="mb-2">
+                                                                                                                  <div class="d-flex align-items-center p-3 rounded bg4">
+                                                                                                                    <span class="{{ margin_end(3) }} text-success" style="font-size:1.3em;">
+                                                                                                                      <i class="fas fa-check-circle"></i>
+                                                                                                                    </span>
+                                                                                                                    <span class="flex-grow-1 text-wrap">${item.checklist_item}</span>
+                                                                                                                  </div>
+                                                                                                                </li>
+                                                                                                              `).join('')}
     </ul>
   `;
             }
@@ -1817,7 +1817,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="phaseNavigationModalLabel">
-                            <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">{{ __('messages.phase_management') }}</span>
+                            <i class="fas fa-layer-group me-2"></i><span
+                                id="phaseModalTitle">{{ __('messages.phase_management') }}</span>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                             aria-label="{{ __('messages.close') }}"></button>
@@ -1874,7 +1875,7 @@
 
         <script>
             function openPhaseModal(phaseName) {
-                document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
+                document.getElementById('phaseModalTitle').textContent = phaseName + ' - {{ __('messages.management') }}';
                 const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
                 modal.show();
             }
@@ -1901,12 +1902,12 @@
                         renderPhaseTimeline([phaseToShow]);
                     } else {
                         document.getElementById('timelineContent').innerHTML =
-                            '<div class="text-center py-4 text-muted">No phases found</div>';
+                            '<div class="text-center py-4 text-muted">{{ __('messages.no_phases_found') }}</div>';
                     }
                 } catch (error) {
                     console.error('Error loading timeline:', error);
                     document.getElementById('timelineContent').innerHTML =
-                        '<div class="text-center py-4 text-danger">Error loading timeline</div>';
+                        '<div class="text-center py-4 text-danger">{{ __('messages.error_loading_timeline') }}</div>';
                 }
             }
 
@@ -1999,7 +2000,8 @@
                 const container = document.getElementById('timelineContent');
 
                 if (!phases || phases.length === 0) {
-                    container.innerHTML = '<div class="text-center py-4 text-muted">No phases found</div>';
+                    container.innerHTML =
+                        '<div class="text-center py-4 text-muted">{{ __('messages.no_phases_found') }}</div>';
                     return;
                 }
 
@@ -2013,14 +2015,14 @@
                     let badgeClass, badgeText;
                     if (progress >= 100) {
                         badgeClass = 'badge1';
-                        badgeText = 'Completed';
+                        badgeText = '{{ __('messages.completed') }}';
                     } else if (extensionDays > 0) {
                         badgeClass = 'badge3';
-                        badgeText = 'Extended';
+                        badgeText = '{{ __('messages.extended') }}';
                     } else {
                         // Default to "In Progress" for all phases (including new ones with 0 progress)
                         badgeClass = 'badge4';
-                        badgeText = 'In Progress';
+                        badgeText = '{{ __('messages.in_progress') }}';
                     }
 
                     return `
@@ -2034,19 +2036,19 @@
                                         <h5 class="mb-0 fw-semibold text-wrap">${phase.title}</h5>
                                         <span class="badge ${badgeClass}">${badgeText}</span>
                                     </div>
-                                    <div class="text-muted small mb-1">${Math.round(progress)}% Time Progress</div>
+                                    <div class="text-muted small mb-1">${Math.round(progress)}% {{ __('messages.time_progress') }}</div>
                                     <div class="d-flex align-items-center gap-3 text-muted small flex-wrap">
-                                        <span><i class="fas fa-calendar me-1"></i>${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</span>
+                                        <span><i class="fas fa-calendar me-1"></i>${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} {{ __('messages.days') }}</span>
                                     </div>
                                     <!-- Extended timeline info commented out - only showing status-based progress -->
                                     <!-- ${extensionDays > 0 ? `
-                                                                                                <div class="mt-1">
-                                                                                                    <small class="text-warning text-wrap d-inline-block">
-                                                                                                        <i class="fas fa-info-circle me-1"></i>
-                                                                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                                                                                    </small>
-                                                                                                </div>
-                                                                                            ` : ''} -->
+                                                                                                                <div class="mt-1">
+                                                                                                                    <small class="text-warning text-wrap d-inline-block">
+                                                                                                                        <i class="fas fa-info-circle me-1"></i>
+                                                                                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                                                                                    </small>
+                                                                                                                </div>
+                                                                                                            ` : ''} -->
                                 </div>
                             </div>
                             <div class="timeline-milestones ps-5">
@@ -2054,65 +2056,65 @@
                                     const isExtended = milestone.is_extended;
                                     const isOverdue = milestone.is_overdue;
                                     return `
-                                                                                                <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
-                                                                                                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
-                                                                                                        <div class="d-flex align-items-center gap-2 flex-grow-1">
-                                                                                                            <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
-                                                                                                            <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}</span>
-                                                                                                            ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
-                                                                                                        </div>
-                                                                                                        <div class="text-muted small" style="flex-shrink: 0;">
-                                                                                                            ${milestone.days || 0} days${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
-                                                                                                        <span class="text-muted small fw-medium">Extend:</span>
-                                                                                                        <div class="d-flex align-items-center gap-1">
-                                                                                                            <input type="number" 
-                                                                                                                class="form-control form-control-sm milestone-extend-input" 
-                                                                                                                value="${milestone.extension_days || 0}" 
-                                                                                                                min="0" 
-                                                                                                                max="999" 
-                                                                                                                id="ext_${milestone.id}" 
-                                                                                                                placeholder="0"
-                                                                                                                onchange="extendMilestone(${milestone.id})"
-                                                                                                                onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
-                                                                                                            <span class="text-muted" style="font-size: 0.75rem;">days</span>
-                                                                                                        </div>
-                                                                                                        <div class="d-flex gap-1">
-                                                                                                            <button type="button" 
-                                                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
-                                                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
-                                                                                                                onclick="quickExtend(${milestone.id}, 1)" 
-                                                                                                                title="{{ __('messages.add_1_day') }}">+1</button>
-                                                                                                            <button type="button" 
-                                                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
-                                                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
-                                                                                                                onclick="quickExtend(${milestone.id}, 7)" 
-                                                                                                                title="{{ __('messages.add_7_days') }}">+7</button>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            `;
+                                                                                                                <div class="milestone-item py-2 px-3 mb-2 rounded ${isOverdue ? 'bg-danger bg-opacity-10' : 'bg-light'}">
+                                                                                                                    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                                                                                                                        <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                                                                                                            <i class="fas fa-circle text-primary" style="font-size: 8px; flex-shrink: 0;"></i>
+                                                                                                                            <span class="${isOverdue ? 'text-danger fw-medium' : ''} text-wrap">${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} {{ __('messages.days') }}` : ''}</span>
+                                                                                                                            ${isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px; flex-shrink: 0;"></i>' : ''}
+                                                                                                                        </div>
+                                                                                                                        <div class="text-muted small" style="flex-shrink: 0;">
+                                                                                                                            ${milestone.days || 0} {{ __('messages.days') }}${milestone.extension_days > 0 ? ` (+${milestone.extension_days})` : ''}
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                    <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+                                                                                                                        <span class="text-muted small fw-medium">{{ __('messages.extend') }}:</span>
+                                                                                                                        <div class="d-flex align-items-center gap-1">
+                                                                                                                            <input type="number" 
+                                                                                                                                class="form-control form-control-sm milestone-extend-input" 
+                                                                                                                                value="${milestone.extension_days || 0}" 
+                                                                                                                                min="0" 
+                                                                                                                                max="999" 
+                                                                                                                                id="ext_${milestone.id}" 
+                                                                                                                                placeholder="0"
+                                                                                                                                onchange="extendMilestone(${milestone.id})"
+                                                                                                                                onkeypress="if(event.key==='Enter') extendMilestone(${milestone.id})">
+                                                                                                                            <span class="text-muted" style="font-size: 0.75rem;">{{ __('messages.days') }}</span>
+                                                                                                                        </div>
+                                                                                                                        <div class="d-flex gap-1">
+                                                                                                                            <button type="button" 
+                                                                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                                                                                onclick="quickExtend(${milestone.id}, 1)" 
+                                                                                                                                title="{{ __('messages.add_1_day') }}">+1</button>
+                                                                                                                            <button type="button" 
+                                                                                                                                class="btn btn-sm btn-outline-primary px-2 py-1" 
+                                                                                                                                style="font-size: 0.75rem; line-height: 1.2; min-width: 35px;"
+                                                                                                                                onclick="quickExtend(${milestone.id}, 7)" 
+                                                                                                                                title="{{ __('messages.add_7_days') }}">+7</button>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            `;
                                 }).join('') : '<div class="text-muted small">{{ __('messages.no_milestones_defined') }}</div>'}
                                 ${extensionDays > 0 ? `
-                                                                                            <div class="mt-2">
-                                                                                                <small class="text-warning">
-                                                                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                                                                    ${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}
-                                                                                                </small>
-                                                                                            </div>
-                                                                                        ` : ''}
+                                                                                                            <div class="mt-2">
+                                                                                                                <small class="text-warning">
+                                                                                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                                                                                    ${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}
+                                                                                                                </small>
+                                                                                                            </div>
+                                                                                                        ` : ''}
                                 <div class="mt-2 d-flex gap-1 flex-wrap">
-                                    <small class="text-muted me-2">Quick extend:</small>
+                                    <small class="text-muted me-2">{{ __('messages.quick_extend') }}:</small>
                                     ${phase.milestones && phase.milestones.length === 1 ? `
-                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 1)">+1d</button>
-                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 3)">+3d</button>
-                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
-                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 7)">+7d</button>
-                                                                                            ` : ''}
+                                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 1)">{{ __('messages.add_1_day') }}</button>
+                                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 3)">{{ __('messages.add_3_days') }}</button>
+                                                                                                                <button class="btn btn-outline-warning btn-sm" style="font-size: 10px; padding: 1px 4px;" 
+                                                                                                                    onclick="quickExtend(${phase.milestones[0].id}, 7)">{{ __('messages.add_7_days') }}</button>
+                                                                                                            ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -2320,14 +2322,14 @@
                         @if (app()->getLocale() == 'ar')
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <h5 class="modal-title" id="timelineModalLabel">
-                                    {{ __('messages.project_timeline') }}<i class="fas fa-chart-line ms-2"></i>
+                                    {{ __('messages.project_timeline') }}
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="{{ __('messages.close') }}"></button>
                             </div>
                         @else
                             <h5 class="modal-title" id="timelineModalLabel">
-                                <i class="fas fa-chart-line me-2"></i>{{ __('messages.project_timeline') }}
+                                {{ __('messages.project_timeline') }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="{{ __('messages.close') }}"></button>
@@ -2764,14 +2766,14 @@
                         @if (app()->getLocale() == 'ar')
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <h5 class="modal-title" id="addMilestoneModalLabel">
-                                    {{ __('messages.add_milestone') }}<i class="fas fa-plus ms-2"></i>
+                                    {{ __('messages.add_milestone') }}
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="{{ __('messages.close') }}"></button>
                             </div>
                         @else
                             <h5 class="modal-title" id="addMilestoneModalLabel">
-                                <i class="fas fa-plus me-2"></i>{{ __('messages.add_milestone') }}
+                                {{ __('messages.add_milestone') }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="{{ __('messages.close') }}"></button>
@@ -2842,9 +2844,31 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">{{ __('messages.update') }} {{ __('messages.ongoing_activities') }}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <style>
+                            #activitiesUpdateModal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+
+                            #activitiesUpdateModal .modal-header {
+                                position: relative !important;
+                            }
+                        </style>
+                        @if (app()->getLocale() == 'ar')
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <h5 class="modal-title">{{ __('messages.update') }}
+                                    {{ __('messages.ongoing_activities') }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="{{ __('messages.close') }}"></button>
+                            </div>
+                        @else
+                            <h5 class="modal-title">{{ __('messages.update') }}
+                                {{ __('messages.ongoing_activities') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ __('messages.close') }}"></button>
+                        @endif
                     </div>
                     <div class="modal-body">
                         <div id="activitiesUpdateContainer"></div>
@@ -2866,9 +2890,31 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">{{ __('messages.update') }} {{ __('messages.manpower_equipment') }}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <style>
+                            #manpowerUpdateModal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+
+                            #manpowerUpdateModal .modal-header {
+                                position: relative !important;
+                            }
+                        </style>
+                        @if (app()->getLocale() == 'ar')
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <h5 class="modal-title">{{ __('messages.update') }}
+                                    {{ __('messages.manpower_equipment') }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="{{ __('messages.close') }}"></button>
+                            </div>
+                        @else
+                            <h5 class="modal-title">{{ __('messages.update') }}
+                                {{ __('messages.manpower_equipment') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ __('messages.close') }}"></button>
+                        @endif
                     </div>
                     <div class="modal-body">
                         <div id="manpowerUpdateContainer"></div>
@@ -2889,9 +2935,31 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">{{ __('messages.update') }} {{ __('messages.safety_category') }}
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <style>
+                            #safetyUpdateModal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+
+                            #safetyUpdateModal .modal-header {
+                                position: relative !important;
+                            }
+                        </style>
+                        @if (app()->getLocale() == 'ar')
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <h5 class="modal-title">{{ __('messages.update') }}
+                                    {{ __('messages.safety_category') }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="{{ __('messages.close') }}"></button>
+                            </div>
+                        @else
+                            <h5 class="modal-title">{{ __('messages.update') }}
+                                {{ __('messages.safety_category') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ __('messages.close') }}"></button>
+                        @endif
                     </div>
                     <div class="modal-body">
                         <div id="safetyUpdateContainer"></div>

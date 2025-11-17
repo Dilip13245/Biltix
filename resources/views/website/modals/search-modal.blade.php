@@ -1,5 +1,6 @@
 <!-- Search Modal -->
-<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true"
+    data-bs-backdrop="true" data-bs-keyboard="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -14,17 +15,28 @@
                     #searchModal .modal-header {
                         position: relative !important;
                     }
-                    
+
                     /* Mirror search icon in RTL - all search icons in modal */
                     [dir="rtl"] #searchModal .fa-search,
                     [dir="rtl"] #searchModal i.fa-search {
                         transform: scaleX(-1);
                     }
                 </style>
-                <h5 class="modal-title" id="searchModalLabel">
-                    {{ __('messages.search_projects') }}
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                @if (app()->getLocale() == 'ar')
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title" id="searchModalLabel">
+                            {{ __('messages.search_projects') }}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
+                    </div>
+                @else
+                    <h5 class="modal-title" id="searchModalLabel">
+                        {{ __('messages.search_projects') }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
+                @endif
             </div>
             <div class="modal-body">
                 <div class="mb-4">
@@ -42,8 +54,7 @@
                         <label class="form-label fw-medium">{{ __('messages.project_type') }}</label>
                         <div class="custom-combo-dropdown position-relative">
                             <input type="text" class="form-control Input_control" id="searchType"
-                                placeholder="{{ __('messages.all_types') }}"
-                                autocomplete="off" maxlength="50">
+                                placeholder="{{ __('messages.all_types') }}" autocomplete="off" maxlength="50">
                             <i class="fas fa-chevron-down dropdown-arrow"></i>
                             @if (!is_rtl())
                                 <i class="fas fa-times clear-selection d-none" id="clearSearchTypeSelection"
@@ -56,12 +67,18 @@
                             @endif
                             <div class="dropdown-options" id="searchTypeDropdown">
                                 <div class="dropdown-option" data-value="">{{ __('messages.all_types') }}</div>
-                                <div class="dropdown-option" data-value="{{ __('messages.villa') }}">{{ __('messages.villa') }}</div>
-                                <div class="dropdown-option" data-value="{{ __('messages.tower') }}">{{ __('messages.tower') }}</div>
-                                <div class="dropdown-option" data-value="{{ __('messages.hospital') }}">{{ __('messages.hospital') }}</div>
-                                <div class="dropdown-option" data-value="{{ __('messages.commercial') }}">{{ __('messages.commercial') }}</div>
-                                <div class="dropdown-option" data-value="{{ __('messages.residential') }}">{{ __('messages.residential') }}</div>
-                                <div class="dropdown-option" data-value="{{ __('messages.industrial') }}">{{ __('messages.industrial') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.villa') }}">
+                                    {{ __('messages.villa') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.tower') }}">
+                                    {{ __('messages.tower') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.hospital') }}">
+                                    {{ __('messages.hospital') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.commercial') }}">
+                                    {{ __('messages.commercial') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.residential') }}">
+                                    {{ __('messages.residential') }}</div>
+                                <div class="dropdown-option" data-value="{{ __('messages.industrial') }}">
+                                    {{ __('messages.industrial') }}</div>
                             </div>
                         </div>
                     </div>
@@ -73,13 +90,16 @@
                                 <i class="fas fa-chevron-down"></i>
                             </div>
                             <div class="custom-select-options" id="searchStatusOptions">
-                                <div class="custom-select-option" data-value="" onclick="selectCustomOption('searchStatus', '', '{{ __('messages.all_status') }}')">
+                                <div class="custom-select-option" data-value=""
+                                    onclick="selectCustomOption('searchStatus', '', '{{ __('messages.all_status') }}')">
                                     {{ __('messages.all_status') }}
                                 </div>
-                                <div class="custom-select-option" data-value="ongoing" onclick="selectCustomOption('searchStatus', 'ongoing', '{{ __('messages.active') }}')">
+                                <div class="custom-select-option" data-value="ongoing"
+                                    onclick="selectCustomOption('searchStatus', 'ongoing', '{{ __('messages.active') }}')">
                                     {{ __('messages.active') }}
                                 </div>
-                                <div class="custom-select-option" data-value="completed" onclick="selectCustomOption('searchStatus', 'completed', '{{ __('messages.completed') }}')">
+                                <div class="custom-select-option" data-value="completed"
+                                    onclick="selectCustomOption('searchStatus', 'completed', '{{ __('messages.completed') }}')">
                                     {{ __('messages.completed') }}
                                 </div>
                             </div>
@@ -94,19 +114,24 @@
                                 <i class="fas fa-chevron-down"></i>
                             </div>
                             <div class="custom-select-options" id="searchProgressOptions">
-                                <div class="custom-select-option" data-value="" onclick="selectCustomOption('searchProgress', '', '{{ __('messages.any_progress') }}')">
+                                <div class="custom-select-option" data-value=""
+                                    onclick="selectCustomOption('searchProgress', '', '{{ __('messages.any_progress') }}')">
                                     {{ __('messages.any_progress') }}
                                 </div>
-                                <div class="custom-select-option" data-value="0-25" onclick="selectCustomOption('searchProgress', '0-25', '0-25%')">
+                                <div class="custom-select-option" data-value="0-25"
+                                    onclick="selectCustomOption('searchProgress', '0-25', '0-25%')">
                                     0-25%
                                 </div>
-                                <div class="custom-select-option" data-value="26-50" onclick="selectCustomOption('searchProgress', '26-50', '26-50%')">
+                                <div class="custom-select-option" data-value="26-50"
+                                    onclick="selectCustomOption('searchProgress', '26-50', '26-50%')">
                                     26-50%
                                 </div>
-                                <div class="custom-select-option" data-value="51-75" onclick="selectCustomOption('searchProgress', '51-75', '51-75%')">
+                                <div class="custom-select-option" data-value="51-75"
+                                    onclick="selectCustomOption('searchProgress', '51-75', '51-75%')">
                                     51-75%
                                 </div>
-                                <div class="custom-select-option" data-value="76-100" onclick="selectCustomOption('searchProgress', '76-100', '76-100%')">
+                                <div class="custom-select-option" data-value="76-100"
+                                    onclick="selectCustomOption('searchProgress', '76-100', '76-100%')">
                                     76-100%
                                 </div>
                             </div>
@@ -212,7 +237,7 @@
                     .custom-select-wrapper {
                         position: relative;
                     }
-                    
+
                     .custom-select-trigger {
                         padding: 10px 12px;
                         border: 1px solid #dee2e6;
@@ -224,21 +249,22 @@
                         align-items: center;
                         transition: all 0.2s;
                     }
-                    
+
                     .custom-select-trigger:hover {
                         border-color: #F58D2E;
                     }
-                    
+
                     .custom-select-trigger i {
                         color: #6c757d;
                         font-size: 12px;
                         transition: transform 0.2s;
+                        flex-shrink: 0;
                     }
-                    
+
                     .custom-select-trigger.active i {
                         transform: rotate(180deg);
                     }
-                    
+
                     .custom-select-options {
                         position: absolute;
                         top: calc(100% + 4px);
@@ -247,53 +273,63 @@
                         background: white;
                         border: 1px solid #dee2e6;
                         border-radius: 8px;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                         max-height: 200px;
                         overflow-y: auto;
                         z-index: 1050;
                         display: none;
                     }
-                    
+
                     .custom-select-options.show {
                         display: block;
                     }
-                    
+
                     .custom-select-option {
                         padding: 10px 12px;
                         cursor: pointer;
                         transition: background-color 0.2s;
                     }
-                    
+
                     .custom-select-option:hover {
                         background-color: #f8f9fa;
                     }
-                    
+
                     .custom-select-option.selected {
                         background-color: #fff5f0;
                         color: #F58D2E;
                         font-weight: 500;
                     }
-                    
+
                     /* RTL Support */
                     [dir="rtl"] .custom-select-trigger {
-                        flex-direction: row-reverse;
+                        flex-direction: row;
+                        justify-content: space-between;
                     }
-                    
+
+                    [dir="rtl"] .custom-select-trigger span {
+                        text-align: right;
+                        flex: 1;
+                    }
+
+                    [dir="rtl"] .custom-select-trigger i {
+                        flex-shrink: 0;
+                    }
+
                     /* Scrollbar styling */
                     .custom-select-options::-webkit-scrollbar {
                         width: 6px;
                     }
-                    
+
                     .custom-select-options::-webkit-scrollbar-track {
                         background: #f1f1f1;
                         border-radius: 4px;
                     }
-                    
+
                     .custom-select-options::-webkit-scrollbar-thumb {
                         background: #F58D2E;
                         border-radius: 4px;
                     }
-                    
+
                     .custom-select-options::-webkit-scrollbar-thumb:hover {
                         background: #e07a1f;
                     }
@@ -310,7 +346,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" style="background-color: gray; border-color: gray; padding: 0.7rem 1.5rem;"
+                <button type="button" class="btn btn-secondary"
+                    style="background-color: gray; border-color: gray; padding: 0.7rem 1.5rem;"
                     data-bs-dismiss="modal">{{ __('messages.close') }}</button>
                 <button type="button" class="btn orange_btn api-action-btn" onclick="clearSearch()">
                     {{ __('messages.clear_filters') }}
@@ -327,7 +364,7 @@
         const searchType = searchTypeInput ? searchTypeInput.value.trim() : '';
         const searchStatus = document.getElementById('searchStatus').value;
         const searchProgress = document.getElementById('searchProgress').value;
-        
+
         // Allow search if any criteria is provided (including typing in searchType)
         // Don't prevent search if user is typing in searchType field
         if (!searchTerm && !searchType && !searchStatus && !searchProgress) {
@@ -339,7 +376,7 @@
             `;
             return;
         }
-        
+
         // Show loading
         document.getElementById('resultsContainer').innerHTML = `
             <div class="text-center py-4">
@@ -347,13 +384,13 @@
                 <div class="mt-2">{{ __('messages.searching') }}...</div>
             </div>
         `;
-        
+
         try {
             const searchParams = {
                 page: 1,
-                limit: 50  // Increased limit to get more results for filtering
+                limit: 50 // Increased limit to get more results for filtering
             };
-            
+
             // If searchType is provided, also include it in search parameter for API
             // This way API can search in type field as well
             if (searchTerm) {
@@ -363,19 +400,19 @@
                 // API searches in type field when search parameter is provided
                 searchParams.search = searchType;
             }
-            
+
             // Note: searchStatus is used for status filtering
             if (searchStatus) {
                 searchParams.status = searchStatus;
             }
-            
+
             const response = await api.getProjects(searchParams);
-            
+
             if (response.code === 200 && response.data) {
                 // Ensure we have an array to work with
-                let filteredProjects = Array.isArray(response.data) ? response.data : 
-                                     (Array.isArray(response.data.data) ? response.data.data : []);
-                
+                let filteredProjects = Array.isArray(response.data) ? response.data :
+                    (Array.isArray(response.data.data) ? response.data.data : []);
+
                 // Additional client-side filtering by project type if searchType was provided
                 // This ensures exact/partial matching even if API search didn't match exactly
                 if (searchType && searchTerm) {
@@ -397,7 +434,7 @@
                         return projectType === searchTypeLower || projectType.includes(searchTypeLower);
                     });
                 }
-                
+
                 // Filter by progress if selected
                 if (searchProgress) {
                     const [min, max] = searchProgress.split('-').map(Number);
@@ -406,7 +443,7 @@
                         return progress >= min && progress <= max;
                     });
                 }
-                
+
                 displaySearchResults(filteredProjects);
             } else {
                 displaySearchResults([]);
@@ -427,10 +464,10 @@
         if (!dateString) return 'N/A';
         try {
             const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric' 
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
             });
         } catch (e) {
             return dateString;
@@ -484,7 +521,7 @@
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <div class="d-flex align-items-center" style="gap: 6px;">
                                     <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                    <span class="text-muted" style="font-size: 13px;">Due date: ${formatDate(project.project_due_date)}</span>
+                                    <span class="text-muted" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
                                 </div>
                                 <div class="d-flex align-items-center" style="gap: 6px;">
                                     <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
@@ -510,7 +547,7 @@
     }
 
     function deleteProjectFromSearch(projectId) {
-        if (!confirm('{{ __("messages.delete_project_warning") }}')) {
+        if (!confirm('{{ __('messages.delete_project_warning') }}')) {
             return;
         }
 
@@ -518,20 +555,21 @@
         if (deleteBtn) {
             deleteBtn.disabled = true;
             const originalHTML = deleteBtn.innerHTML;
-            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __("messages.deleting") }}...';
-            
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.deleting') }}...';
+
             const userId = typeof currentUserId !== 'undefined' ? currentUserId : {{ auth()->id() ?? 1 }};
-            
+
             api.deleteProject({
                 project_id: projectId,
                 user_id: userId
             }).then(response => {
                 if (response.code === 200) {
                     if (typeof toastr !== 'undefined') {
-                        toastr.success('{{ __("messages.project_deleted_successfully") }}');
+                        toastr.success('{{ __('messages.project_deleted_successfully') }}');
                     }
                     // Remove the project card from search results
-                    const projectCard = document.querySelector(`[onclick*="/website/project/${projectId}/plans"]`);
+                    const projectCard = document.querySelector(
+                        `[onclick*="/website/project/${projectId}/plans"]`);
                     if (projectCard) {
                         projectCard.closest('.mb-3').remove();
                     }
@@ -547,7 +585,7 @@
                     }
                 } else {
                     if (typeof toastr !== 'undefined') {
-                        toastr.error(response.message || '{{ __("messages.failed_to_delete_project") }}');
+                        toastr.error(response.message || '{{ __('messages.failed_to_delete_project') }}');
                     }
                     deleteBtn.disabled = false;
                     deleteBtn.innerHTML = originalHTML;
@@ -555,7 +593,7 @@
             }).catch(error => {
                 console.error('Error deleting project:', error);
                 if (typeof toastr !== 'undefined') {
-                    toastr.error('{{ __("messages.error_deleting_project") }}');
+                    toastr.error('{{ __('messages.error_deleting_project') }}');
                 }
                 deleteBtn.disabled = false;
                 deleteBtn.innerHTML = originalHTML;
@@ -569,10 +607,10 @@
         const seed = project.id || 1;
         return ((seed * 17) % 80) + 20; // Always between 20-99%
     }
-    
+
     function clearSearch() {
         document.getElementById('searchInput').value = '';
-        
+
         // Clear search type combo dropdown
         const searchTypeInput = document.getElementById('searchType');
         if (searchTypeInput) {
@@ -592,15 +630,15 @@
                 });
             }
         }
-        
+
         document.getElementById('searchStatus').value = '';
         document.getElementById('searchProgress').value = '';
-        
+
         document.getElementById('searchStatusText').textContent = '{{ __('messages.all_status') }}';
         document.getElementById('searchProgressText').textContent = '{{ __('messages.any_progress') }}';
-        
+
         document.querySelectorAll('.custom-select-option.selected').forEach(el => el.classList.remove('selected'));
-        
+
         document.getElementById('resultsContainer').innerHTML = `
             <div class="text-center text-muted py-4">
                 <i class="fas fa-search fa-3x mb-3"></i>
@@ -608,26 +646,26 @@
             </div>
         `;
     }
-    
+
     function toggleCustomDropdown(id) {
         const optionsEl = document.getElementById(id + 'Options');
         const triggerEl = optionsEl.previousElementSibling;
-        
+
         document.querySelectorAll('.custom-select-options.show').forEach(el => {
             if (el.id !== id + 'Options') {
                 el.classList.remove('show');
                 el.previousElementSibling.classList.remove('active');
             }
         });
-        
+
         optionsEl.classList.toggle('show');
         triggerEl.classList.toggle('active');
     }
-    
+
     function selectCustomOption(id, value, text) {
         document.getElementById(id).value = value;
         document.getElementById(id + 'Text').textContent = text;
-        
+
         const optionsContainer = document.getElementById(id + 'Options');
         optionsContainer.querySelectorAll('.custom-select-option').forEach(el => {
             el.classList.remove('selected');
@@ -635,13 +673,13 @@
                 el.classList.add('selected');
             }
         });
-        
+
         optionsContainer.classList.remove('show');
         optionsContainer.previousElementSibling.classList.remove('active');
-        
+
         performSearch();
     }
-    
+
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.custom-select-wrapper')) {
             document.querySelectorAll('.custom-select-options.show').forEach(el => {
@@ -760,7 +798,7 @@
                 option.addEventListener('click', function() {
                     const selectedValue = this.getAttribute('data-value');
                     searchTypeInput.value = selectedValue;
-                    
+
                     if (selectedValue) {
                         // Make readonly when value is selected from dropdown
                         searchTypeInput.readOnly = true;
@@ -768,7 +806,8 @@
                         searchTypeInput.style.backgroundColor = '#f8f9fa';
                         if (clearSearchTypeBtn) {
                             clearSearchTypeBtn.classList.remove('d-none');
-                            const isRTL = document.documentElement.dir === 'rtl' || document.documentElement.getAttribute('dir') === 'rtl';
+                            const isRTL = document.documentElement.dir === 'rtl' || document
+                                .documentElement.getAttribute('dir') === 'rtl';
                             if (isRTL) {
                                 clearSearchTypeBtn.style.left = '35px';
                                 clearSearchTypeBtn.style.right = 'auto';
@@ -786,15 +825,15 @@
                             clearSearchTypeBtn.classList.add('d-none');
                         }
                     }
-                    
+
                     // Update selected state
                     searchTypeDropdown.querySelectorAll('.dropdown-option').forEach(opt => {
                         opt.classList.remove('selected');
                     });
                     this.classList.add('selected');
-                    
+
                     searchTypeDropdown.classList.remove('show');
-                    
+
                     // Trigger search
                     performSearch();
                 });
@@ -802,7 +841,7 @@
 
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (!searchTypeInput.contains(e.target) && !searchTypeDropdown.contains(e.target) && 
+                if (!searchTypeInput.contains(e.target) && !searchTypeDropdown.contains(e.target) &&
                     !clearSearchTypeBtn?.contains(e.target)) {
                     searchTypeDropdown.classList.remove('show');
                 }
@@ -817,7 +856,7 @@
                 searchTimeout = setTimeout(performSearch, 500);
             });
         }
-        
+
         const searchModal = document.getElementById('searchModal');
         if (searchModal) {
             searchModal.addEventListener('hidden.bs.modal', function() {

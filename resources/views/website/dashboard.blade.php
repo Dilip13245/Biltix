@@ -854,8 +854,9 @@
                                 <i class="fas fa-search position-absolute top-50 translate-middle-y"
                                     style="color: #6c757d; pointer-events: none;"></i>
                                 <input class="form-control" type="search"
-                                    placeholder="{{ __('messages.search_projects') }}" aria-label="{{ __('messages.search') }}"
-                                    data-bs-toggle="modal" data-bs-target="#searchModal" readonly>
+                                    placeholder="{{ __('messages.search_projects') }}"
+                                    aria-label="{{ __('messages.search') }}" data-bs-toggle="modal"
+                                    data-bs-target="#searchModal" readonly>
                             </form>
                             <div class="dropdown">
                                 <a href="#" class="d-flex align-items-center gap-2 gap-md-3" type="button"
@@ -942,7 +943,7 @@
                                     <div class="small_tXt">{{ __('messages.pending_tasks') }}</div>
                                     <div class="stat-value">{{ $stats['total_pending_tasks'] ?? 0 }}</div>
                                 </div>
-                                <span class="ms-auto stat-icon"><img
+                                <span class="ms-auto stat-icon bg2"><img
                                         src="{{ asset('website/images/icons/calendar.svg') }}" alt="calendar"></span>
                             </div>
                         </div>
@@ -1029,14 +1030,14 @@
                         @if (app()->getLocale() == 'ar')
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <h5 class="modal-title" id="createProjectModalLabel">
-                                    {{ __('messages.create_new_project') }}<i class="fas fa-plus ms-2"></i>
+                                    {{ __('messages.create_new_project') }}
                                 </h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="{{ __('messages.close') }}"></button>
                             </div>
                         @else
                             <h5 class="modal-title" id="createProjectModalLabel">
-                                <i class="fas fa-plus me-2"></i>{{ __('messages.create_new_project') }}
+                                {{ __('messages.create_new_project') }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="{{ __('messages.close') }}"></button>
@@ -1569,11 +1570,11 @@
                             <div class="d-flex align-items-start justify-content-between mb-3">
                                 ${isCompleted ? 
                                     `<div class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px; cursor: not-allowed;">
-                                                                            <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
-                                                                        </div>` :
+                                                                                                            <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
+                                                                                                        </div>` :
                                     `<a href="/website/project/${project.id}/plans" class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px;">
-                                                                            <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
-                                                                        </a>`
+                                                                                                            <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
+                                                                                                        </a>`
                                 }
                                 <div class="dropdown" style="flex-shrink: 0;">
                                     <i class="fas fa-ellipsis-v" style="color: #4A90E2; cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -1584,47 +1585,47 @@
                             </div>
                             ${isCompleted ? 
                                 `<div style="cursor: not-allowed;">
-                                                                        <hr style="border-color: #e0e0e0; margin: 12px 0;">
-                                                                        <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
-                                                                            <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                            <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
-                                                                        </div>
-                                                                        <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
-                                                                            <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                            <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
-                                                                        </div>
-                                                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                                                            <div class="d-flex align-items-center" style="gap: 6px; {{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
-                                                                                <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
-                                                                            </div>
-                                                                            <div class="d-flex align-items-center" style="gap: 6px; {{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
-                                                                                <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>` :
+                                                                                                        <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                                                                                                        <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                                                                                            <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                            <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                                                                                                        </div>
+                                                                                                        <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                                                                                            <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                            <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
+                                                                                                        </div>
+                                                                                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                                                                <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
+                                                                                                            </div>
+                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                                                                <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>` :
                                 `<a href="/website/project/${project.id}/plans" class="text-decoration-none">
-                                                                        <hr style="border-color: #e0e0e0; margin: 12px 0;">
-                                                                        <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
-                                                                            <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                            <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
-                                                                        </div>
-                                                                        <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
-                                                                            <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                            <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
-                                                                        </div>
-                                                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                                                            <div class="d-flex align-items-center" style="gap: 6px; {{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
-                                                                                <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
-                                                                            </div>
-                                                                            <div class="d-flex align-items-center" style="gap: 6px; {{ is_rtl() ? 'flex-direction: row-reverse;' : '' }}">
-                                                                                <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </a>`
+                                                                                                        <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                                                                                                        <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                                                                                            <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                            <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                                                                                                        </div>
+                                                                                                        <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                                                                                            <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                            <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
+                                                                                                        </div>
+                                                                                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                                                                <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
+                                                                                                            </div>
+                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                                                                <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </a>`
                             }
                         </div>
                     </div>
@@ -2492,53 +2493,53 @@
                             longitude: longitude ? longitude.value : ''
                         };
 
+                        // Collect only image files first to check if we need drawing modal
+                        let allImageFiles = [];
+                        fileInputs.forEach(input => {
+                            if (input.files && input.files.length > 0) {
+                                const imageFiles = Array.from(input.files).filter(
+                                    file => file.type.startsWith('image/'));
+                                allImageFiles = allImageFiles.concat(imageFiles);
+                            }
+                        });
+
                         // Close project modal
                         const projectModal = bootstrap.Modal.getInstance(document.getElementById(
                             'createProjectModal'));
                         if (projectModal) projectModal.hide();
 
-                        // Open drawing modal for markup
-                        setTimeout(() => {
-                            openDrawingModal({
-                                title: @json(__('messages.markup_project_files')),
-                                saveButtonText: @json(__('messages.create')),
-                                mode: 'image',
-                                onSave: function(markedUpImageData) {
-                                    // Create project with marked up images
-                                    createProjectWithMarkup(markedUpImageData);
-                                }
-                            });
+                        // Only open drawing modal if images are selected
+                        if (allImageFiles.length > 0) {
+                            // Open drawing modal for markup
+                            setTimeout(() => {
+                                openDrawingModal({
+                                    title: @json(__('messages.markup_project_files')),
+                                    saveButtonText: @json(__('messages.create')),
+                                    mode: 'image',
+                                    onSave: function(markedUpImageData) {
+                                        // Create project with marked up images
+                                        createProjectWithMarkup(markedUpImageData);
+                                    }
+                                });
 
-                            // Collect only image files for drawing modal
-                            let allFiles = [];
-                            fileInputs.forEach(input => {
-                                if (input.files && input.files.length > 0) {
-                                    const imageFiles = Array.from(input.files).filter(
-                                        file =>
-                                        file.type.startsWith('image/'));
-                                    allFiles = allFiles.concat(imageFiles);
-                                }
-                            });
+                                window.selectedFiles = allImageFiles;
 
-                            window.selectedFiles = allFiles;
-
-                            if (allFiles.length > 0) {
                                 document.getElementById('drawingModal').addEventListener(
                                     'shown.bs.modal',
                                     function() {
-                                        if (allFiles.length === 1) {
-                                            loadImageToCanvas(allFiles[0]);
+                                        if (allImageFiles.length === 1) {
+                                            loadImageToCanvas(allImageFiles[0]);
                                         } else {
-                                            loadMultipleFiles(allFiles);
+                                            loadMultipleFiles(allImageFiles);
                                         }
                                     }, {
                                         once: true
                                     });
-                            } else {
-                                // No images to markup, create project directly
-                                createProjectDirectly();
-                            }
-                        }, 300);
+                            }, 300);
+                        } else {
+                            // No images to markup, create project directly
+                            createProjectDirectly();
+                        }
                     } else {
                         // No files, create project directly
                         createProjectDirectly();
@@ -2603,21 +2604,21 @@
                                 ${Array.from(input.files).map((file, index) => {
                                     const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                     return `
-                                                                                                        <div class="col-12">
-                                                                                                            <div class="form-check">
-                                                                                                                <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
-                                                                                                                    onchange="toggleFileDescription('${containerId}', ${index})">
-                                                                                                                <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
-                                                                                                                    <i class="${fileIcon} me-2"></i>
-                                                                                                                    <span class="text-truncate">${file.name}</span>
-                                                                                                                </label>
-                                                                                                            </div>
-                                                                                                            <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
-                                                                                                                <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
-                                                                                                                    placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    `;
+                                                                                                                                        <div class="col-12">
+                                                                                                                                            <div class="form-check">
+                                                                                                                                                <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
+                                                                                                                                                    onchange="toggleFileDescription('${containerId}', ${index})">
+                                                                                                                                                <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
+                                                                                                                                                    <i class="${fileIcon} me-2"></i>
+                                                                                                                                                    <span class="text-truncate">${file.name}</span>
+                                                                                                                                                </label>
+                                                                                                                                            </div>
+                                                                                                                                            <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
+                                                                                                                                                <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
+                                                                                                                                                    placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                    `;
                                 }).join('')}
                             </div>
                         `;

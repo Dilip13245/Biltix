@@ -18,13 +18,13 @@
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h5 class="modal-title" id="drawingModalLabel">
-                            <span id="drawingModalTitle">{{ __('messages.drawing') }}</span><i class="fas fa-pencil-alt ms-2"></i>
+                            <span id="drawingModalTitle">{{ __('messages.drawing') }}</span>
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="drawingModalLabel">
-                        <i class="fas fa-pencil-alt me-2"></i><span id="drawingModalTitle">{{ __('messages.drawing') }}</span>
+                        <span id="drawingModalTitle">{{ __('messages.drawing') }}</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif

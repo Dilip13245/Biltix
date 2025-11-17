@@ -18,13 +18,13 @@
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h5 class="modal-title" id="taskDetailsModalLabel">
-                            {{ __('messages.task_details') }}<i class="fas fa-tasks ms-2"></i>
+                            {{ __('messages.task_details') }}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="taskDetailsModalLabel">
-                        <i class="fas fa-tasks me-2"></i>{{ __('messages.task_details') }}
+                        {{ __('messages.task_details') }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
@@ -92,7 +92,7 @@
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-semibold black_color mb-0"><i class="fas fa-images orange_color me-2"></i>{{ __('messages.images') }}</h6>
                                     <button type="button" class="btn btn-sm orange_btn api-action-btn" id="addImagesBtn" onclick="addNewImages()" title="{{ __('messages.add_new_images') }}">
-                                        {{ __('messages.add') }}
+                                        {{ __('messages.add_image') }}
                                     </button>
                                 </div>
                                 <div id="taskImagesContainer" class="row g-2">

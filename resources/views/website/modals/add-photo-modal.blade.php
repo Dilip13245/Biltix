@@ -18,13 +18,13 @@
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h5 class="modal-title" id="addPhotoModalLabel">
-                            {{ __('messages.add_new') }} Photos<i class="fas fa-camera ms-2"></i>
+                            {{ __('messages.add_new') }} Photos
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="addPhotoModalLabel">
-                        <i class="fas fa-camera me-2"></i>{{ __('messages.add_new') }} Photos
+                        {{ __('messages.add_new') }} Photos
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif

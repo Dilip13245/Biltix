@@ -45,17 +45,17 @@ class SearchableDropdown {
     populateOptions() {
         this.dropdown.innerHTML = '';
         if (!this.select.options || this.select.options.length === 0) return;
-        
+
         const options = Array.from(this.select.options);
-        
+
         options.forEach(option => {
             if (option.value === '') return;
-            
+
             const item = document.createElement('div');
             item.className = 'searchable-dropdown-item';
             item.textContent = option.textContent;
             item.dataset.value = option.value;
-            
+
             // Copy data attributes
             if (option.attributes) {
                 Array.from(option.attributes).forEach(attr => {
@@ -64,7 +64,7 @@ class SearchableDropdown {
                     }
                 });
             }
-            
+
             item.addEventListener('click', () => this.selectOption(option, item));
             this.dropdown.appendChild(item);
         });
@@ -73,7 +73,7 @@ class SearchableDropdown {
     bindEvents() {
         this.searchInput.addEventListener('click', () => this.toggleDropdown());
         this.searchInput.addEventListener('input', () => this.filterOptions());
-        
+
         document.addEventListener('click', (e) => {
             if (!this.wrapper.contains(e.target)) {
                 this.hideDropdown();
@@ -126,7 +126,7 @@ class SearchableDropdown {
         this.select.value = option.value;
         this.searchInput.value = option.textContent;
         this.hideDropdown();
-        
+
         // Trigger change event
         this.select.dispatchEvent(new Event('change'));
     }
@@ -196,10 +196,24 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Auto-initialize function
-window.initSearchableDropdowns = function() {
+window.initSearchableDropdowns = function () {
+    // Get locale from HTML dir attribute or meta tag
+    const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
+    const locale = isRTL ? 'ar' : 'en';
+
+    // Get translated placeholder text from data attribute or use default
     document.querySelectorAll('.searchable-select').forEach(select => {
         if (!select.searchableDropdown) {
-            select.searchableDropdown = new SearchableDropdown(select);
+            // Check if placeholder is set via data attribute
+            const placeholder = select.getAttribute('data-placeholder') ||
+                (isRTL ? 'بحث...' : 'Search...');
+            const noResultsText = select.getAttribute('data-no-results') ||
+                (isRTL ? 'لا توجد نتائج' : 'No results found');
+
+            select.searchableDropdown = new SearchableDropdown(select, {
+                placeholder: placeholder,
+                noResultsText: noResultsText
+            });
         }
     });
 };

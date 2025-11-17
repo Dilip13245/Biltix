@@ -10,9 +10,28 @@ class ConfirmationModal {
             <div class="modal fade" id="confirmationModal" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
-                        <div class="modal-header border-0" style="${isRtl ? 'flex-direction: row-reverse;' : ''}">
+                        <div class="modal-header border-0">
+                            <style>
+                                #confirmationModal .modal-header .btn-close {
+                                    position: static !important;
+                                    right: auto !important;
+                                    top: auto !important;
+                                    margin: 0 !important;
+                                }
+
+                                #confirmationModal .modal-header {
+                                    position: relative !important;
+                                }
+                            </style>
+                            ${isRtl ? `
+                                <div class="d-flex justify-content-between align-items-center w-100">
+                                    <h5 class="modal-title" id="confirmationTitle">Confirm Action</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                            ` : `
                             <h5 class="modal-title" id="confirmationTitle">Confirm Action</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            `}
                         </div>
                         <div class="modal-body text-center py-4">
                             <div class="mb-3">

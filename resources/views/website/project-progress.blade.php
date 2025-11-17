@@ -143,7 +143,8 @@
                                     <!-- Overall Project Progress (Simple line like phases) -->
                                     <div class="mb-3 mb-md-4">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="text-muted small fw-medium">{{ __('messages.completion_percentages') }}</span>
+                                            <span
+                                                class="text-muted small fw-medium">{{ __('messages.completion_percentages') }}</span>
                                             <span class="text-primary fw-semibold" id="overallProjectProgress">0%</span>
                                         </div>
                                         <div class="progress" style="height:12px; border-radius: 6px;">
@@ -650,7 +651,7 @@
         // Global function for opening phase modal
         function openPhaseModal(phaseName, phaseId) {
             currentPhaseId = phaseId;
-            document.getElementById('phaseModalTitle').textContent = phaseName + ' - Management';
+            document.getElementById('phaseModalTitle').textContent = phaseName + ' - {{ __('messages.management') }}';
             const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
             modal.show();
         }
@@ -1355,8 +1356,8 @@
                     <div class="col-12 text-center py-5">
                         <div class="text-muted">
                             <i class="fas fa-layer-group fa-3x mb-3"></i>
-                            <h5>No phases created yet</h5>
-                            <p>Create your first project phase to get started</p>
+                            <h5>{{ __('messages.no_phases_created_yet') }}</h5>
+                            <p>{{ __('messages.create_first_phase_to_get_started') }}</p>
                         </div>
                     </div>
                 `;
@@ -1376,14 +1377,14 @@
                 let badgeClass, badgeText;
                 if (progress >= 100) {
                     badgeClass = 'badge1';
-                    badgeText = 'Completed';
+                    badgeText = '{{ __('messages.completed') }}';
                 } else if (hasExtensions) {
                     badgeClass = 'badge3'; // Warning for extensions
-                    badgeText = 'Extended';
+                    badgeText = '{{ __('messages.extended') }}';
                 } else {
                     // Default to "In Progress" for all phases (including new ones with 0 progress)
                     badgeClass = 'badge4';
-                    badgeText = 'In Progress';
+                    badgeText = '{{ __('messages.in_progress') }}';
                 }
 
                 // Progress bar color based on status
@@ -1408,45 +1409,45 @@
                                     <div class="progress position-relative" style="height:12px;">
                                         <!-- Extended days progress bar commented out - only showing status-based progress -->
                                         <!-- ${hasExtensions ? `
-                                                                    Original timeline progress - COMMENTED OUT
-                                                                    <div class="progress-bar" role="progressbar" 
-                                                                        style="width: ${Math.min(progress, 100)}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
-                                                                        aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                    Extension area (lighter color)
-                                                                    <div class="progress-bar" role="progressbar" 
-                                                                        style="width: ${Math.max(0, Math.min(100 - progress, extensionDays / (totalDays / 100)))}%; background: rgba(255, 193, 7, 0.3); border-left: 2px solid #ffc107;"
-                                                                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                    Extension indicator
-                                                                    <div class="position-absolute top-0 h-100 d-flex align-items-center" style="left: ${Math.min(progress, 100)}%; transform: translateX(-50%);">
-                                                                        <div style="width: 2px; height: 100%; background: #ffc107;"></div>
-                                                                    </div>
-                                                                    <div class="position-absolute top-0 end-0 h-100 d-flex align-items-center" style="padding-right: 4px;">
-                                                                        <i class="fas fa-clock text-warning" title="${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}" style="font-size: 10px;"></i>
-                                                                    </div>
-                                                                ` : `
-                                                                    Normal progress bar
-                                                                    <div class="progress-bar" role="progressbar" 
-                                                                        style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
-                                                                        aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                `} -->
+                                                                            Original timeline progress - COMMENTED OUT
+                                                                            <div class="progress-bar" role="progressbar" 
+                                                                                style="width: ${Math.min(progress, 100)}%; background: linear-gradient(90deg, #4477C4 0%, #F58D2E 100%);"
+                                                                                aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                            Extension area (lighter color)
+                                                                            <div class="progress-bar" role="progressbar" 
+                                                                                style="width: ${Math.max(0, Math.min(100 - progress, extensionDays / (totalDays / 100)))}%; background: rgba(255, 193, 7, 0.3); border-left: 2px solid #ffc107;"
+                                                                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                            Extension indicator
+                                                                            <div class="position-absolute top-0 h-100 d-flex align-items-center" style="left: ${Math.min(progress, 100)}%; transform: translateX(-50%);">
+                                                                                <div style="width: 2px; height: 100%; background: #ffc107;"></div>
+                                                                            </div>
+                                                                            <div class="position-absolute top-0 end-0 h-100 d-flex align-items-center" style="padding-right: 4px;">
+                                                                                <i class="fas fa-clock text-warning" title="${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}" style="font-size: 10px;"></i>
+                                                                            </div>
+                                                                        ` : `
+                                                                            Normal progress bar
+                                                                            <div class="progress-bar" role="progressbar" 
+                                                                                style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
+                                                                                aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                        `} -->
                                         <!-- Status-based progress bar only -->
                                         <div class="progress-bar" role="progressbar" 
                                             style="width: ${Math.min(progress, 100)}%; background: ${progressColor};"
                                             aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                     <div class="d-flex justify-content-between mt-1">
-                                        <small class="text-muted">${Math.round(progress)}% Time Progress</small>
-                                        <small class="text-muted">${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} days</small>
+                                        <small class="text-muted">${Math.round(progress)}% {{ __('messages.time_progress') }}</small>
+                                        <small class="text-muted">${totalDays}${extensionDays > 0 ? ` (+${extensionDays})` : ''} {{ __('messages.days') }}</small>
                                     </div>
                                     <!-- Extended timeline info commented out -->
                                     <!-- ${hasExtensions ? `
-                                                                <div class="mt-1">
-                                                                    <small class="text-warning">
-                                                                        <i class="fas fa-info-circle me-1"></i>
-                                                                        Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
-                                                                    </small>
-                                                                </div>
-                                                            ` : ''} -->
+                                                                        <div class="mt-1">
+                                                                            <small class="text-warning">
+                                                                                <i class="fas fa-info-circle me-1"></i>
+                                                                                Original: ${Math.round(progress)}% | Extended timeline: ${Math.round((progress * totalDays) / (totalDays + extensionDays))}%
+                                                                            </small>
+                                                                        </div>
+                                                                    ` : ''} -->
                                 </div>
                                 <div class="small text-muted">
                                     ${phase.milestones ? phase.milestones.map(milestone => {
@@ -1456,20 +1457,20 @@
                                         const extendedIcon = isExtended ? '<i class="fas fa-clock text-warning ms-1" style="font-size: 10px;"></i>' : '';
                                         
                                         return `
-                                                                    <div class="d-flex justify-content-between align-items-center ${overdueClass} mb-1">
-                                                                        <span>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} days` : ''}${extendedIcon}</span>
-                                                                    </div>
-                                                                `;
-                                    }).join('') : '<div>No milestones defined</div>'}
+                                                                            <div class="d-flex justify-content-between align-items-center ${overdueClass} mb-1">
+                                                                                <span>• ${milestone.milestone_name}${milestone.days ? ` - ${milestone.days} {{ __('messages.days') }}` : ''}${extendedIcon}</span>
+                                                                            </div>
+                                                                        `;
+                                    }).join('') : '<div>{{ __('messages.no_milestones_defined') }}</div>'}
                                 </div>
                                 ${hasExtensions ? `
-                                                            <div class="mt-2">
-                                                                <small class="text-warning">
-                                                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                                                    Extended by ${extensionDays} day${extensionDays !== 1 ? 's' : ''}
-                                                                </small>
-                                                            </div>
-                                                        ` : ''}
+                                                                    <div class="mt-2">
+                                                                        <small class="text-warning">
+                                                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                                                            ${'{{ __('messages.extended_by_days') }}'.replace(':days', extensionDays)}
+                                                                        </small>
+                                                                    </div>
+                                                                ` : ''}
 
                             </div>
                         </div>
@@ -1831,16 +1832,17 @@
                     @if (app()->getLocale() == 'ar')
                         <div class="d-flex justify-content-between align-items-center w-100">
                             <h5 class="modal-title" id="createPhaseModalLabel">
-                                {{ __('messages.create_phase') }}<i class="fas fa-layer-group ms-2"></i>
+                                {{ __('messages.create_phase') }}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="{{ __('messages.close') }}"></button>
                         </div>
                     @else
                         <h5 class="modal-title" id="createPhaseModalLabel">
-                            <i class="fas fa-layer-group me-2"></i>{{ __('messages.create_phase') }}
+                            {{ __('messages.create_phase') }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
                     @endif
                 </div>
                 <div class="modal-body">
@@ -1852,7 +1854,7 @@
                         <div class="mb-3">
                             <label for="title" class="form-label fw-medium">{{ __('messages.phase_title') }}</label>
                             <input type="text" class="form-control Input_control" id="title" name="title"
-                                required placeholder="e.g., Foundation Work, Structure Phase, Finishing">
+                                required placeholder="{{ __('messages.phase_title_example') }}">
                         </div>
 
                         <div class="mb-3">
@@ -2107,16 +2109,17 @@
                     @if (app()->getLocale() == 'ar')
                         <div class="d-flex justify-content-between align-items-center w-100">
                             <h5 class="modal-title" id="phaseNavigationModalLabel">
-                                <span id="phaseModalTitle">{{ __('messages.phase_management') }}</span><i class="fas fa-layer-group ms-2"></i>
+                                <span id="phaseModalTitle">{{ __('messages.phase_management') }}</span>
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="{{ __('messages.close') }}"></button>
                         </div>
                     @else
                         <h5 class="modal-title" id="phaseNavigationModalLabel">
-                            <i class="fas fa-layer-group me-2"></i><span id="phaseModalTitle">{{ __('messages.phase_management') }}</span>
+                            <span id="phaseModalTitle">{{ __('messages.phase_management') }}</span>
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
                     @endif
                 </div>
                 <div class="modal-body">
@@ -2176,7 +2179,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
                 </div>
                 <div class="modal-body text-center px-4 pb-4">
                     <div class="mb-3">

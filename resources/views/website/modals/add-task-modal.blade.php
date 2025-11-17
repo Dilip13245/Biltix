@@ -70,13 +70,13 @@
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h5 class="modal-title" id="addTaskModalLabel">
-                            {{ __('messages.add_new_task') }}<i class="fas fa-plus ms-2"></i>
+                            {{ __('messages.add_new_task') }}
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="addTaskModalLabel">
-                        <i class="fas fa-plus me-2"></i>{{ __('messages.add_new_task') }}
+                        {{ __('messages.add_new_task') }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
                 @endif
@@ -99,21 +99,27 @@
 
                     <div class="mb-3" id="phaseSelectContainer">
                         <label for="phaseSelect" class="form-label fw-medium">{{ __('messages.phase') }}</label>
-                        <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id">
+                        <select class="form-select Input_control searchable-select" id="phaseSelect" name="phase_id"
+                            data-placeholder="{{ __('messages.search') }}..."
+                            data-no-results="{{ __('messages.no_results_found') }}">
                             <option value="">{{ __('messages.select_phase') }}</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label for="assignedTo" class="form-label fw-medium">{{ __('messages.assign_to') }}</label>
-                        <select class="form-select Input_control searchable-select" id="assignedTo" name="assigned_to">
+                        <select class="form-select Input_control searchable-select" id="assignedTo" name="assigned_to"
+                            data-placeholder="{{ __('messages.search') }}..."
+                            data-no-results="{{ __('messages.no_results_found') }}">
                             <option value="">{{ __('messages.select_user') }}</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label for="taskPriority" class="form-label fw-medium">{{ __('messages.priority') }}</label>
-                        <select class="form-select Input_control searchable-select" id="taskPriority" name="priority">
+                        <select class="form-select Input_control searchable-select" id="taskPriority" name="priority"
+                            data-placeholder="{{ __('messages.search') }}..."
+                            data-no-results="{{ __('messages.no_results_found') }}">
                             <option value="">{{ __('messages.select_priority') }}</option>
                             <option value="low">{{ __('messages.low') }}</option>
                             <option value="medium">{{ __('messages.medium') }}</option>
@@ -356,9 +362,14 @@
                             wrapper.remove();
                             select.style.display = '';
                         }
-                        // Create new instance
+                        // Create new instance with translated placeholder
                         if (window.SearchableDropdown) {
-                            select.searchableDropdown = new SearchableDropdown(select);
+                            const placeholder = select.getAttribute('data-placeholder') || '{{ __('messages.search') }}...';
+                            const noResultsText = select.getAttribute('data-no-results') || '{{ __('messages.no_results_found') }}';
+                            select.searchableDropdown = new SearchableDropdown(select, {
+                                placeholder: placeholder,
+                                noResultsText: noResultsText
+                            });
                         }
                     }
                 });

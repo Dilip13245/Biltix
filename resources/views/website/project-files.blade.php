@@ -419,7 +419,7 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <button class="btn btn-sm btn-outline-secondary" id="backBtn" onclick="goBack()"
                                         style="display: none;">
-                                        <i class="fas fa-arrow-left"></i>
+                                        <i class="fas {{ is_rtl() ? 'fa-arrow-right' : 'fa-arrow-left' }}"></i>
                                     </button>
                                     <h5 class="fw-semibold black_color mb-0" id="currentPath">{{ __('messages.folders') }}
                                     </h5>
@@ -1394,11 +1394,11 @@
                                 </style>
                                 ${isRtl ? `
                                                 <div class="d-flex justify-content-between align-items-center w-100">
-                                                    <h5 class="modal-title">${fileName}<i class="fas fa-image ms-2"></i></h5>
+                                                        <h5 class="modal-title">${fileName}</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 ` : `
-                                                <h5 class="modal-title"><i class="fas fa-image me-2"></i>${fileName}</h5>
+                                                    <h5 class="modal-title">${fileName}</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 `}
                             </div>

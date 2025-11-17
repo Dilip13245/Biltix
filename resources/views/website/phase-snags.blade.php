@@ -96,25 +96,13 @@
                                     <div class="col-lg-4 col-md-6 col-sm-6 col-12 mt-3 mt-md-0">
                                         <label class="fw-medium mb-2">{{ __('messages.search') }}</label>
                                         <form class="serchBar position-relative serchBar2">
-                                            @if (app()->getLocale() == 'ar')
                                                 <input class="form-control" type="search" id="searchInput"
                                                     placeholder="{{ __('messages.search_snags') }}"
-                                                    aria-label="{{ __('messages.search') }}" dir="auto"
-                                                    style="padding-left: 45px; padding-right: 15px;" maxlength="100">
-                                                <span class="search_icon"
-                                                    style="left: 15px; right: auto; pointer-events: none;"><img
+                                                aria-label="{{ __('messages.search') }}"
+                                                dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" maxlength="100">
+                                            <span class="search_icon"><img
                                                         src="{{ asset('website/images/icons/search.svg') }}"
                                                         alt="search"></span>
-                                            @else
-                                                <input class="form-control" type="search" id="searchInput"
-                                                    placeholder="{{ __('messages.search_snags') }}"
-                                                    aria-label="{{ __('messages.search') }}" dir="auto"
-                                                    style="padding-right: 45px;" maxlength="100">
-                                                <span class="search_icon"
-                                                    style="right: 15px; pointer-events: none;"><img
-                                                        src="{{ asset('website/images/icons/search.svg') }}"
-                                                        alt="search"></span>
-                                            @endif
                                         </form>
                                     </div>
                                 </div>
@@ -305,7 +293,7 @@
                                 <div class="d-flex align-items-start gap-3 flex-grow-1" style="min-width: 0;">
                                     ${imageDisplay}
                                     <div class="flex-grow-1" style="min-width: 0;">
-                                        <h5 class="mb-2 fw-semibold" style="word-wrap: break-word; overflow-wrap: break-word; margin-right: 10px;">${snag.snag_number} - ${snag.title}</h5>
+                                        <h5 class="mb-2 fw-semibold" style="word-wrap: break-word; overflow-wrap: break-word;">${snag.snag_number} - ${snag.title}</h5>
                                         <div class="d-flex gap-2 mb-0">
                                             ${statusBadge}
                                         </div>
@@ -333,18 +321,21 @@
             function getStatusBadge(status) {
                 const statusMap = {
                     'todo': {
-                        class: 'badge3'
+                        class: 'badge3',
+                        text: '{{ __('messages.todo') }}'
                     },
                     'complete': {
-                        class: 'badge1'
+                        class: 'badge1',
+                        text: '{{ __('messages.complete') }}'
                     },
                     'approve': {
-                        class: 'badge1'
+                        class: 'badge1',
+                        text: '{{ __('messages.approve') }}'
                     }
                 };
 
                 const statusInfo = statusMap[status.toLowerCase()] || statusMap['todo'];
-                return `<span class="badge ${statusInfo.class}">${status}</span>`;
+                return `<span class="badge ${statusInfo.class}">${statusInfo.text}</span>`;
             }
 
             function getPriorityBadge(priority) {
@@ -728,7 +719,7 @@
                             <div class="col-md-8">
                                 <h5 class="fw-semibold black_color mb-2">${snag.snag_number} - ${snag.title}</h5>
                                 <div class="d-flex gap-3 flex-wrap">
-                                    <span class="badge ${getStatusBadgeClass(snag.status)}">${snag.status}</span>
+                                    <span class="badge ${getStatusBadgeClass(snag.status)}">${getStatusText(snag.status)}</span>
                                     <small class="text-muted"><i class="fas fa-calendar-alt me-1"></i>${snag.date}</small>
                                     <small class="text-muted"><i class="fas fa-user me-1"></i>${snag.reported_by}</small>
                                 </div>
@@ -867,6 +858,15 @@
                 return statusMap[status.toLowerCase()] || 'badge3';
             }
 
+            function getStatusText(status) {
+                const statusTexts = {
+                    'todo': '{{ __('messages.todo') }}',
+                    'complete': '{{ __('messages.complete') }}',
+                    'approve': '{{ __('messages.approve') }}'
+                };
+                return statusTexts[status.toLowerCase()] || status;
+            }
+
             async function addComment(snagId) {
                 const commentText = document.getElementById('commentText').value.trim();
                 if (!commentText) {
@@ -971,7 +971,7 @@
                         // Update status badge in modal
                         const statusBadge = document.querySelector('#snagDetailsModal .badge');
                         if (statusBadge) {
-                            statusBadge.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                            statusBadge.textContent = getStatusText(newStatus);
                             statusBadge.className = `badge ${getStatusBadgeClass(newStatus)}`;
                         }
                         // Update approve button visibility based on new status
@@ -1013,7 +1013,7 @@
                         // Update status badge in modal
                         const statusBadge = document.querySelector('#snagDetailsModal .badge');
                         if (statusBadge) {
-                            statusBadge.textContent = 'Approve';
+                            statusBadge.textContent = getStatusText('approve');
                             statusBadge.className = `badge ${getStatusBadgeClass('approve')}`;
                         }
 

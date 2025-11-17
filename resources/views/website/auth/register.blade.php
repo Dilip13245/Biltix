@@ -195,10 +195,9 @@
             transition: all 0.2s ease;
             {{ is_rtl() ? 'text-align: right; direction: rtl;' : '' }}
         }
-        
+
         .form-select {
-            {{ is_rtl() ? 'padding-left: 48px; padding-right: 16px;' : 'padding-right: 48px; padding-left: 16px;' }}
-            line-height: 1.2;
+            {{ is_rtl() ? 'padding-left: 48px; padding-right: 16px;' : 'padding-right: 48px; padding-left: 16px;' }} line-height: 1.2;
         }
 
         .input-icon {
@@ -209,12 +208,12 @@
             z-index: 10;
             font-size: 16px;
         }
-        
+
         .input-icon.clickable {
             pointer-events: auto;
             cursor: pointer;
         }
-        
+
         .input-icon.clickable:hover {
             color: #4A90E2;
         }
@@ -231,6 +230,10 @@
         }
 
         .form-control.error {
+            border-color: #ef4444;
+        }
+
+        .custom-filter-btn.error {
             border-color: #ef4444;
         }
 
@@ -442,9 +445,11 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.password') }}</label>
                                         <div class="position-relative">
-                                            <input type="password" class="form-control" name="password" id="password"
-                                                placeholder="{{ __('auth.create_password') }}" required minlength="6">
-                                            <i class="fas fa-eye input-icon clickable" onclick="togglePassword('password', this)"></i>
+                                            <input type="password" class="form-control" name="password"
+                                                id="password" placeholder="{{ __('auth.create_password') }}"
+                                                required minlength="6">
+                                            <i class="fas fa-eye input-icon clickable"
+                                                onclick="togglePassword('password', this)"></i>
                                         </div>
                                     </div>
                                     <div class="error-message" id="passwordError"></div>
@@ -453,9 +458,11 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.confirm_password') }}</label>
                                         <div class="position-relative">
-                                            <input type="password" class="form-control" name="confirm_password" id="confirm_password"
+                                            <input type="password" class="form-control" name="confirm_password"
+                                                id="confirm_password"
                                                 placeholder="{{ __('auth.confirm_password_placeholder') }}" required>
-                                            <i class="fas fa-eye input-icon clickable" onclick="togglePassword('confirm_password', this)"></i>
+                                            <i class="fas fa-eye input-icon clickable"
+                                                onclick="togglePassword('confirm_password', this)"></i>
                                         </div>
                                     </div>
                                     <div class="error-message" id="confirmPasswordError"></div>
@@ -469,16 +476,18 @@
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.company_name') }}</label>
-                                        <input type="text" class="form-control" name="company_name" id="company_name"
-                                            placeholder="{{ __('auth.enter_company_name') }}" required>
+                                        <input type="text" class="form-control" name="company_name"
+                                            id="company_name" placeholder="{{ __('auth.enter_company_name') }}"
+                                            required>
                                     </div>
                                     <div class="error-message" id="companyNameError"></div>
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.total_employees') }}</label>
-                                        <input type="number" class="form-control" name="employee_count" id="employee_count"
-                                            placeholder="{{ __('auth.enter_employee_count') }}" required min="1">
+                                        <input type="number" class="form-control" name="employee_count"
+                                            id="employee_count" placeholder="{{ __('auth.enter_employee_count') }}"
+                                            required min="1">
                                     </div>
                                     <div class="error-message" id="employeeCountError"></div>
                                 </div>
@@ -486,21 +495,29 @@
                                     <div class="mb-3">
                                         <label class="form-label">{{ __('auth.designation') }}</label>
                                         <div class="custom-filter-dropdown" id="designationDropdown">
-                                            <select name="designation" id="designation" required style="display: none;">
+                                            <select name="designation" id="designation" required
+                                                style="display: none;">
                                                 <option value="">{{ __('auth.select_designation') }}</option>
                                                 <option value="consultant">{{ __('auth.consultant') }}</option>
                                                 <option value="contractor">{{ __('auth.contractor') }}</option>
                                                 <option value="site_engineer">{{ __('auth.site_engineer') }}</option>
-                                                <option value="project_manager">{{ __('auth.project_manager') }}</option>
+                                                <option value="project_manager">{{ __('auth.project_manager') }}
+                                                </option>
                                                 <option value="stakeholder">{{ __('auth.stakeholder') }}</option>
                                             </select>
-                                            <div class="custom-filter-btn" id="designationBtn">{{ __('auth.select_designation') }}</div>
+                                            <div class="custom-filter-btn" id="designationBtn">
+                                                {{ __('auth.select_designation') }}</div>
                                             <div class="custom-filter-options" id="designationOptions">
-                                                <div class="custom-filter-option" data-value="consultant">{{ __('auth.consultant') }}</div>
-                                                <div class="custom-filter-option" data-value="contractor">{{ __('auth.contractor') }}</div>
-                                                <div class="custom-filter-option" data-value="site_engineer">{{ __('auth.site_engineer') }}</div>
-                                                <div class="custom-filter-option" data-value="project_manager">{{ __('auth.project_manager') }}</div>
-                                                <div class="custom-filter-option" data-value="stakeholder">{{ __('auth.stakeholder') }}</div>
+                                                <div class="custom-filter-option" data-value="consultant">
+                                                    {{ __('auth.consultant') }}</div>
+                                                <div class="custom-filter-option" data-value="contractor">
+                                                    {{ __('auth.contractor') }}</div>
+                                                <div class="custom-filter-option" data-value="site_engineer">
+                                                    {{ __('auth.site_engineer') }}</div>
+                                                <div class="custom-filter-option" data-value="project_manager">
+                                                    {{ __('auth.project_manager') }}</div>
+                                                <div class="custom-filter-option" data-value="stakeholder">
+                                                    {{ __('auth.stakeholder') }}</div>
                                             </div>
                                         </div>
                                         <div class="error-message" id="designationError"></div>
@@ -577,7 +594,7 @@
         const validator = new RegistrationValidator();
         let currentStep = 1;
         let memberCount = 1;
-        
+
         function togglePassword(inputId, icon) {
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
@@ -687,6 +704,9 @@
                 } else if (!/^[a-zA-Z0-9\s\-\&\.\_\,\(\)]+$/.test(companyValue)) {
                     showError('company_name', 'companyNameError', '{{ __('auth.company_name_invalid') }}');
                     isValid = false;
+                } else {
+                    // Clear error if valid
+                    clearError('company_name', 'companyNameError');
                 }
 
                 // Employee count validation
@@ -703,15 +723,36 @@
                 } else if (parseInt(empCount) > 50000) {
                     showError('employee_count', 'employeeCountError', '{{ __('auth.employee_count_max') }}');
                     isValid = false;
+                } else {
+                    // Clear error if valid
+                    clearError('employee_count', 'employeeCountError');
                 }
 
                 // Designation validation
                 if (!designation.value) {
                     showError('designation', 'designationError', '{{ __('auth.designation_required') }}');
+                    // Also add error class to the visible button
+                    const designationBtn = document.getElementById('designationBtn');
+                    if (designationBtn) {
+                        designationBtn.classList.add('error');
+                    }
                     isValid = false;
-                } else if (!['consultant', 'contractor', 'site_engineer', 'project_manager', 'stakeholder'].includes(designation.value)) {
+                } else if (!['consultant', 'contractor', 'site_engineer', 'project_manager', 'stakeholder'].includes(
+                        designation.value)) {
                     showError('designation', 'designationError', '{{ __('auth.designation_invalid') }}');
+                    // Also add error class to the visible button
+                    const designationBtn = document.getElementById('designationBtn');
+                    if (designationBtn) {
+                        designationBtn.classList.add('error');
+                    }
                     isValid = false;
+                } else {
+                    // Clear error if valid
+                    clearError('designation', 'designationError');
+                    const designationBtn = document.getElementById('designationBtn');
+                    if (designationBtn) {
+                        designationBtn.classList.remove('error');
+                    }
                 }
             }
             // Step 3 validation commented out - feature disabled
@@ -783,30 +824,45 @@
                 errorElement.classList.add('show');
             }
         }
-        
+
+        function clearError(fieldId, errorElementId) {
+            const fieldElement = document.getElementById(fieldId);
+            const errorElement = document.getElementById(errorElementId);
+            if (fieldElement) fieldElement.classList.remove('error');
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.classList.remove('show');
+            }
+        }
+
         function clearErrors() {
             document.querySelectorAll('.error-message').forEach(el => {
                 el.classList.remove('show');
                 el.textContent = '';
             });
             document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('error'));
+            // Also clear error from custom dropdown buttons
+            const designationBtn = document.getElementById('designationBtn');
+            if (designationBtn) {
+                designationBtn.classList.remove('error');
+            }
         }
 
         function isValidProfessionalEmail(email) {
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(email) || email.length > 255) return false;
-            
+
             // Block test/example domains
             const domain = email.split('@')[1]?.toLowerCase();
             const testDomains = ['example.com', 'example.org', 'test.com', 'localhost', 'domain.com'];
             if (testDomains.includes(domain)) return false;
-            
+
             return true;
         }
-        
+
         function isDisposableEmail(email) {
             const disposableDomains = [
-                'tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 
+                'tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com',
                 'temp-mail.org', 'throwaway.email', 'yopmail.com', 'maildrop.cc',
                 'sharklasers.com', 'example.com', 'example.org', 'test.com'
             ];
@@ -820,27 +876,27 @@
             const phoneRegex = /^[\+]?[0-9]\d{9,14}$/;
             return phoneRegex.test(cleanPhone) && !/[a-zA-Z]/.test(cleanPhone);
         }
-        
+
         function isStrongPassword(password) {
             const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
             return strongRegex.test(password);
         }
-        
 
-        
+
+
         // Additional validation helpers
         function hasSpecialChars(text) {
             return /[<>"&\\]/.test(text); // Removed apostrophe from forbidden chars
         }
-        
+
         function isValidName(name) {
             // Only letters, spaces, hyphens, apostrophes, and dots allowed
             return /^[a-zA-Z\s\-\'\.\.]+$/.test(name) && !/\d/.test(name);
         }
-        
+
         function showMemberError(inputElement, message) {
             inputElement.classList.add('error');
-            
+
             // Create or find error element
             let errorEl = inputElement.parentNode.querySelector('.error-message');
             if (!errorEl) {
@@ -848,7 +904,7 @@
                 errorEl.className = 'error-message';
                 inputElement.parentNode.appendChild(errorEl);
             }
-            
+
             errorEl.textContent = message;
             errorEl.classList.add('show');
         }
@@ -859,13 +915,15 @@
             if (step > 2) {
                 return true;
             }
-            
+
             const form = document.getElementById('registrationForm');
             const formData = new FormData(form);
-            
+
             // Prepare step data
-            let stepData = { step: step };
-            
+            let stepData = {
+                step: step
+            };
+
             if (step === 1) {
                 stepData = {
                     step: 1,
@@ -886,21 +944,21 @@
                     employee_count: formData.get('employee_count')
                 };
             }
-            
+
             try {
                 // Show loading state
                 const nextBtn = document.getElementById('nextBtn');
                 const originalText = nextBtn.textContent;
                 nextBtn.disabled = true;
                 nextBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Validating...';
-                
+
                 // Call step validation API
                 const response = await api.validateSignupStep(stepData);
-                
+
                 // Restore button
                 nextBtn.disabled = false;
                 nextBtn.textContent = originalText;
-                
+
                 if (response.code === 200) {
                     return true; // Validation passed
                 } else {
@@ -910,13 +968,13 @@
                     }
                     return false;
                 }
-                
+
             } catch (error) {
                 // Restore button on error
                 const nextBtn = document.getElementById('nextBtn');
                 nextBtn.disabled = false;
                 nextBtn.textContent = originalText;
-                
+
                 // On network error, allow to continue
                 console.warn('Step validation failed:', error);
                 toastr.warning('Could not validate with server. Please check your connection.');
@@ -961,45 +1019,53 @@
 
         // Add member row function commented out - feature disabled
         /*
-        function addMemberRow() {
-            const container = document.getElementById('membersContainer');
-            const newRow = document.createElement('div');
-            newRow.className = 'member-row';
-            newRow.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-12 col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
-                            <input type="text" class="form-control" name="members[${memberCount}][name]" placeholder="{{ __('auth.enter_member_name') }}">
-                        </div>
-                        <div class="error-message" id="memberNameError${memberCount}"></div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
-                            <input type="tel" class="form-control" name="members[${memberCount}][phone]" placeholder="{{ __('auth.enter_member_phone') }}">
-                        </div>
-                        <div class="error-message" id="memberPhoneError${memberCount}"></div>
-                    </div>
+                        function addMemberRow() {
+                            const container = document.getElementById('membersContainer');
+                            const newRow = document.createElement('div');
+                            newRow.className = 'member-row';
+                            newRow.innerHTML = `
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
+                    <input type="text" class="form-control" name="members[${memberCount}][name]" placeholder="{{ __('auth.enter_member_name') }}">
                 </div>
-            `;
-            container.appendChild(newRow);
-            memberCount++;
-        }
-        */
+                <div class="error-message" id="memberNameError${memberCount}"></div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="mb-3">
+                    <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
+                    <input type="tel" class="form-control" name="members[${memberCount}][phone]" placeholder="{{ __('auth.enter_member_phone') }}">
+                </div>
+                <div class="error-message" id="memberPhoneError${memberCount}"></div>
+            </div>
+        </div>
+    `;
+                            container.appendChild(newRow);
+                            memberCount++;
+                        }
+                        */
 
         let isSubmitting = false; // Prevent duplicate submissions
-        
+
         async function submitForm() {
             // Prevent duplicate submissions
             if (isSubmitting) {
                 return;
             }
-            
-            // Step 3 validation removed - only 2 steps now
-            
+
+            // Validate step 2 before submitting
+            if (!validateStep(2)) {
+                return;
+            }
+
+            // Backend validation for step 2
+            if (!(await validateStepWithBackend(2))) {
+                return;
+            }
+
             isSubmitting = true;
-            
+
             const form = document.getElementById('registrationForm');
             const formData = new FormData(form);
 
@@ -1051,7 +1117,7 @@
             const originalText = registerBtn.textContent;
             registerBtn.disabled = true;
             registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...';
-            
+
             try {
                 const response = await api.signup(data);
 
@@ -1062,7 +1128,7 @@
                         token: response.data.token,
                         id: response.data.id
                     };
-                    
+
                     // Store using UniversalAuth system
                     const authData = {
                         user: userData,
@@ -1070,10 +1136,10 @@
                         user_id: userData.id,
                         timestamp: Date.now()
                     };
-                    
+
                     sessionStorage.setItem('biltix_session', JSON.stringify(authData));
                     sessionStorage.setItem('browser_session_active', 'true');
-                    
+
                     // Also keep old format for compatibility
                     sessionStorage.setItem('user', JSON.stringify(response.data));
                     sessionStorage.setItem('user_id', response.data.id);
@@ -1097,18 +1163,20 @@
                     });
 
                     if (sessionResponse.ok) {
-                        toastr.success(response.message);
-                        
-                        // Update button to show success
-                        registerBtn.innerHTML = '<i class="fas fa-check me-2"></i>Registration Successful!';
+                        // Use dynamic translation for toastr message
+                        toastr.success('{{ __('auth.signup_success') }}');
+
+                        // Update button to show success with dynamic text
+                        registerBtn.innerHTML =
+                            '<i class="fas fa-check me-2"></i>{{ __('auth.registration_successful') }}';
                         registerBtn.classList.remove('btn-next');
                         registerBtn.classList.add('btn-success');
-                        
+
                         // Wait longer and verify token before redirect
                         setTimeout(() => {
                             const finalToken = sessionStorage.getItem('token');
                             console.log('Pre-redirect token check:', finalToken ? 'exists' : 'missing');
-                            
+
                             if (finalToken && !window.redirecting) {
                                 window.redirecting = true;
                                 window.location.replace('/dashboard');

@@ -17,13 +17,13 @@
         @if(app()->getLocale() == 'ar')
         <div class="d-flex justify-content-between align-items-center w-100">
           <h5 class="modal-title" id="uploadFileModalLabel">
-            {{ __('messages.upload_file') }}<i class="fas fa-upload ms-2"></i>
+            {{ __('messages.upload_file') }}
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
         </div>
         @else
         <h5 class="modal-title" id="uploadFileModalLabel">
-          <i class="fas fa-upload me-2"></i>{{ __('messages.upload_file') }}
+          {{ __('messages.upload_file') }}
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
         @endif
