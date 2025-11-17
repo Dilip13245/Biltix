@@ -33,6 +33,26 @@
                 max-width: 100px !important;
             }
         }
+
+        /* Camera icon centering fix for RTL */
+        [dir="rtl"] .position-absolute.bg-primary.d-flex {
+            left: 0 !important;
+            right: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        [dir="rtl"] .position-absolute.bg-primary.d-flex i {
+            margin: 0 !important;
+            line-height: 1 !important;
+        }
+
+        /* Green status indicator RTL fix */
+        [dir="rtl"] .position-absolute.bg-success.bottom-0 {
+            left: 0 !important;
+            right: auto !important;
+        }
     </style>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>

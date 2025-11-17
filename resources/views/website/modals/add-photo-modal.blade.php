@@ -225,7 +225,7 @@
                         // Button protection
                         if (!this.disabled) {
                             this.disabled = true;
-                            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                            this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.loading') }}';
                             setTimeout(() => {
                                 this.disabled = false;
                                 this.innerHTML = '{{ __('messages.upload_photo') }}s';

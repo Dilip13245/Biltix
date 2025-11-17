@@ -150,3 +150,54 @@
   margin-right: 0 !important;
   margin-left: 0.25rem !important;
 }
+
+/* Loader/Spinner RTL fixes */
+[dir="rtl"] .spinner-border,
+[dir="rtl"] .spinner-border-sm {
+  direction: ltr; /* Keep spinner rotation direction consistent */
+}
+
+[dir="rtl"] .text-center .spinner-border,
+[dir="rtl"] .text-center .spinner-border-sm {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Loading text alignment in RTL */
+[dir="rtl"] .text-center p.text-muted,
+[dir="rtl"] .text-center div.text-muted {
+  text-align: center !important;
+  direction: rtl;
+}
+
+/* Loading overlay RTL fix */
+[dir="rtl"] .loading-overlay {
+  direction: rtl;
+}
+
+/* Spinner with text RTL fix */
+[dir="rtl"] .spinner-border + .mt-2,
+[dir="rtl"] .spinner-border-sm + .ms-2,
+[dir="rtl"] .spinner-border-sm + .mt-2 {
+  text-align: center;
+  direction: rtl;
+}
+
+/* Spinner with inline text (spinner and text in same line) */
+[dir="rtl"] .spinner-border-sm + span,
+[dir="rtl"] .spinner-border + span {
+  margin-right: 0.5rem !important;
+  margin-left: 0 !important;
+}
+
+/* Font Awesome spinner icon RTL fix */
+[dir="rtl"] .fa-spinner.fa-spin {
+  direction: ltr; /* Keep rotation direction consistent */
+}
+
+/* Button with spinner icon RTL fix */
+[dir="rtl"] button .fa-spinner,
+[dir="rtl"] .btn .fa-spinner {
+  margin-right: 0.5rem !important;
+  margin-left: 0 !important;
+}

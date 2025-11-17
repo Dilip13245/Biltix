@@ -124,7 +124,7 @@ function protectButton(btn) {
   btn.disabled = true;
   const originalText = btn.innerHTML;
   btn.setAttribute('data-original-text', originalText);
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.loading') }}';
   // Store timeout ID so it can be cleared if needed
   btn.setAttribute('data-timeout-id', setTimeout(function() {
     resetFormSubmission('createInspectionForm');

@@ -237,7 +237,7 @@
                     .custom-select-wrapper {
                         position: relative;
                     }
-
+                    
                     .custom-select-trigger {
                         padding: 10px 12px;
                         border: 1px solid #dee2e6;
@@ -249,22 +249,22 @@
                         align-items: center;
                         transition: all 0.2s;
                     }
-
+                    
                     .custom-select-trigger:hover {
                         border-color: #F58D2E;
                     }
-
+                    
                     .custom-select-trigger i {
                         color: #6c757d;
                         font-size: 12px;
                         transition: transform 0.2s;
                         flex-shrink: 0;
                     }
-
+                    
                     .custom-select-trigger.active i {
                         transform: rotate(180deg);
                     }
-
+                    
                     .custom-select-options {
                         position: absolute;
                         top: calc(100% + 4px);
@@ -279,27 +279,27 @@
                         z-index: 1050;
                         display: none;
                     }
-
+                    
                     .custom-select-options.show {
                         display: block;
                     }
-
+                    
                     .custom-select-option {
                         padding: 10px 12px;
                         cursor: pointer;
                         transition: background-color 0.2s;
                     }
-
+                    
                     .custom-select-option:hover {
                         background-color: #f8f9fa;
                     }
-
+                    
                     .custom-select-option.selected {
                         background-color: #fff5f0;
                         color: #F58D2E;
                         font-weight: 500;
                     }
-
+                    
                     /* RTL Support */
                     [dir="rtl"] .custom-select-trigger {
                         flex-direction: row;
@@ -314,22 +314,22 @@
                     [dir="rtl"] .custom-select-trigger i {
                         flex-shrink: 0;
                     }
-
+                    
                     /* Scrollbar styling */
                     .custom-select-options::-webkit-scrollbar {
                         width: 6px;
                     }
-
+                    
                     .custom-select-options::-webkit-scrollbar-track {
                         background: #f1f1f1;
                         border-radius: 4px;
                     }
-
+                    
                     .custom-select-options::-webkit-scrollbar-thumb {
                         background: #F58D2E;
                         border-radius: 4px;
                     }
-
+                    
                     .custom-select-options::-webkit-scrollbar-thumb:hover {
                         background: #e07a1f;
                     }
@@ -364,7 +364,7 @@
         const searchType = searchTypeInput ? searchTypeInput.value.trim() : '';
         const searchStatus = document.getElementById('searchStatus').value;
         const searchProgress = document.getElementById('searchProgress').value;
-
+        
         // Allow search if any criteria is provided (including typing in searchType)
         // Don't prevent search if user is typing in searchType field
         if (!searchTerm && !searchType && !searchStatus && !searchProgress) {
@@ -376,7 +376,7 @@
             `;
             return;
         }
-
+        
         // Show loading
         document.getElementById('resultsContainer').innerHTML = `
             <div class="text-center py-4">
@@ -384,13 +384,13 @@
                 <div class="mt-2">{{ __('messages.searching') }}...</div>
             </div>
         `;
-
+        
         try {
             const searchParams = {
                 page: 1,
                 limit: 50 // Increased limit to get more results for filtering
             };
-
+            
             // If searchType is provided, also include it in search parameter for API
             // This way API can search in type field as well
             if (searchTerm) {
@@ -400,19 +400,19 @@
                 // API searches in type field when search parameter is provided
                 searchParams.search = searchType;
             }
-
+            
             // Note: searchStatus is used for status filtering
             if (searchStatus) {
                 searchParams.status = searchStatus;
             }
-
+            
             const response = await api.getProjects(searchParams);
-
+            
             if (response.code === 200 && response.data) {
                 // Ensure we have an array to work with
-                let filteredProjects = Array.isArray(response.data) ? response.data :
-                    (Array.isArray(response.data.data) ? response.data.data : []);
-
+                let filteredProjects = Array.isArray(response.data) ? response.data : 
+                                     (Array.isArray(response.data.data) ? response.data.data : []);
+                
                 // Additional client-side filtering by project type if searchType was provided
                 // This ensures exact/partial matching even if API search didn't match exactly
                 if (searchType && searchTerm) {
@@ -434,7 +434,7 @@
                         return projectType === searchTypeLower || projectType.includes(searchTypeLower);
                     });
                 }
-
+                
                 // Filter by progress if selected
                 if (searchProgress) {
                     const [min, max] = searchProgress.split('-').map(Number);
@@ -443,7 +443,7 @@
                         return progress >= min && progress <= max;
                     });
                 }
-
+                
                 displaySearchResults(filteredProjects);
             } else {
                 displaySearchResults([]);
@@ -464,10 +464,10 @@
         if (!dateString) return 'N/A';
         try {
             const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
             });
         } catch (e) {
             return dateString;
@@ -556,9 +556,9 @@
             deleteBtn.disabled = true;
             const originalHTML = deleteBtn.innerHTML;
             deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.deleting') }}...';
-
+            
             const userId = typeof currentUserId !== 'undefined' ? currentUserId : {{ auth()->id() ?? 1 }};
-
+            
             api.deleteProject({
                 project_id: projectId,
                 user_id: userId
@@ -607,10 +607,10 @@
         const seed = project.id || 1;
         return ((seed * 17) % 80) + 20; // Always between 20-99%
     }
-
+    
     function clearSearch() {
         document.getElementById('searchInput').value = '';
-
+        
         // Clear search type combo dropdown
         const searchTypeInput = document.getElementById('searchType');
         if (searchTypeInput) {
@@ -630,15 +630,15 @@
                 });
             }
         }
-
+        
         document.getElementById('searchStatus').value = '';
         document.getElementById('searchProgress').value = '';
-
+        
         document.getElementById('searchStatusText').textContent = '{{ __('messages.all_status') }}';
         document.getElementById('searchProgressText').textContent = '{{ __('messages.any_progress') }}';
-
+        
         document.querySelectorAll('.custom-select-option.selected').forEach(el => el.classList.remove('selected'));
-
+        
         document.getElementById('resultsContainer').innerHTML = `
             <div class="text-center text-muted py-4">
                 <i class="fas fa-search fa-3x mb-3"></i>
@@ -646,26 +646,26 @@
             </div>
         `;
     }
-
+    
     function toggleCustomDropdown(id) {
         const optionsEl = document.getElementById(id + 'Options');
         const triggerEl = optionsEl.previousElementSibling;
-
+        
         document.querySelectorAll('.custom-select-options.show').forEach(el => {
             if (el.id !== id + 'Options') {
                 el.classList.remove('show');
                 el.previousElementSibling.classList.remove('active');
             }
         });
-
+        
         optionsEl.classList.toggle('show');
         triggerEl.classList.toggle('active');
     }
-
+    
     function selectCustomOption(id, value, text) {
         document.getElementById(id).value = value;
         document.getElementById(id + 'Text').textContent = text;
-
+        
         const optionsContainer = document.getElementById(id + 'Options');
         optionsContainer.querySelectorAll('.custom-select-option').forEach(el => {
             el.classList.remove('selected');
@@ -673,13 +673,13 @@
                 el.classList.add('selected');
             }
         });
-
+        
         optionsContainer.classList.remove('show');
         optionsContainer.previousElementSibling.classList.remove('active');
-
+        
         performSearch();
     }
-
+    
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.custom-select-wrapper')) {
             document.querySelectorAll('.custom-select-options.show').forEach(el => {
@@ -798,7 +798,7 @@
                 option.addEventListener('click', function() {
                     const selectedValue = this.getAttribute('data-value');
                     searchTypeInput.value = selectedValue;
-
+                    
                     if (selectedValue) {
                         // Make readonly when value is selected from dropdown
                         searchTypeInput.readOnly = true;
@@ -825,15 +825,15 @@
                             clearSearchTypeBtn.classList.add('d-none');
                         }
                     }
-
+                    
                     // Update selected state
                     searchTypeDropdown.querySelectorAll('.dropdown-option').forEach(opt => {
                         opt.classList.remove('selected');
                     });
                     this.classList.add('selected');
-
+                    
                     searchTypeDropdown.classList.remove('show');
-
+                    
                     // Trigger search
                     performSearch();
                 });
@@ -841,7 +841,7 @@
 
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (!searchTypeInput.contains(e.target) && !searchTypeDropdown.contains(e.target) &&
+                if (!searchTypeInput.contains(e.target) && !searchTypeDropdown.contains(e.target) && 
                     !clearSearchTypeBtn?.contains(e.target)) {
                     searchTypeDropdown.classList.remove('show');
                 }
@@ -856,7 +856,7 @@
                 searchTimeout = setTimeout(performSearch, 500);
             });
         }
-
+        
         const searchModal = document.getElementById('searchModal');
         if (searchModal) {
             searchModal.addEventListener('hidden.bs.modal', function() {

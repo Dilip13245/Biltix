@@ -950,7 +950,8 @@
                 const nextBtn = document.getElementById('nextBtn');
                 const originalText = nextBtn.textContent;
                 nextBtn.disabled = true;
-                nextBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Validating...';
+                nextBtn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2"></span>{{ __('messages.validating') }}...';
 
                 // Call step validation API
                 const response = await api.validateSignupStep(stepData);
@@ -1019,11 +1020,11 @@
 
         // Add member row function commented out - feature disabled
         /*
-                        function addMemberRow() {
-                            const container = document.getElementById('membersContainer');
-                            const newRow = document.createElement('div');
-                            newRow.className = 'member-row';
-                            newRow.innerHTML = `
+                            function addMemberRow() {
+                                const container = document.getElementById('membersContainer');
+                                const newRow = document.createElement('div');
+                                newRow.className = 'member-row';
+                                newRow.innerHTML = `
         <div class="row g-3">
             <div class="col-12 col-md-6">
                 <div class="mb-3">
@@ -1041,10 +1042,10 @@
             </div>
         </div>
     `;
-                            container.appendChild(newRow);
-                            memberCount++;
-                        }
-                        */
+                                container.appendChild(newRow);
+                                memberCount++;
+                            }
+                            */
 
         let isSubmitting = false; // Prevent duplicate submissions
 
@@ -1116,7 +1117,8 @@
             const registerBtn = document.getElementById('nextBtn');
             const originalText = registerBtn.textContent;
             registerBtn.disabled = true;
-            registerBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating Account...';
+            registerBtn.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-2"></span>{{ __('messages.creating_account') }}...';
 
             try {
                 const response = await api.signup(data);

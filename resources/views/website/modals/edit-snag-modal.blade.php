@@ -18,28 +18,32 @@
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
                         <h5 class="modal-title" id="editSnagModalLabel">{{ __('messages.edit_snag') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="editSnagModalLabel">{{ __('messages.edit_snag') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
                 <form id="editSnagForm">
                     <input type="hidden" id="editSnagId" name="snag_id">
-                    
+
                     <!-- Issue Type -->
                     <div class="mb-3">
-                        <label for="editIssueType" class="form-label fw-medium">{{ __('messages.type_of_issue') }}</label>
+                        <label for="editIssueType"
+                            class="form-label fw-medium">{{ __('messages.type_of_issue') }}</label>
                         <input type="text" class="form-control" id="editIssueType" name="issue_type" readonly>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-3">
-                        <label for="editDescription" class="form-label fw-medium">{{ __('messages.description') }}</label>
-                        <textarea class="form-control" id="editDescription" name="description" rows="3" 
-                                placeholder="{{ __('messages.provide_detailed_description') }}" required></textarea>
+                        <label for="editDescription"
+                            class="form-label fw-medium">{{ __('messages.description') }}</label>
+                        <textarea class="form-control" id="editDescription" name="description" rows="3"
+                            placeholder="{{ __('messages.provide_detailed_description') }}" required></textarea>
                     </div>
 
                     <!-- Location -->
@@ -72,13 +76,17 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer" style="@if(app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
-                @if(app()->getLocale() == 'ar')
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
-                    <button type="submit" form="editSnagForm" class="btn orange_btn api-action-btn" id="editSnagBtn">{{ __('messages.update_snag') }}</button>
+            <div class="modal-footer" style="@if (app()->getLocale() == 'ar') flex-direction: row-reverse; @endif">
+                @if (app()->getLocale() == 'ar')
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
+                    <button type="submit" form="editSnagForm" class="btn orange_btn api-action-btn"
+                        id="editSnagBtn">{{ __('messages.update_snag') }}</button>
                 @else
-                    <button type="submit" form="editSnagForm" class="btn orange_btn api-action-btn" id="editSnagBtn">{{ __('messages.update_snag') }}</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
+                    <button type="submit" form="editSnagForm" class="btn orange_btn api-action-btn"
+                        id="editSnagBtn">{{ __('messages.update_snag') }}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                 @endif
             </div>
         </div>
@@ -86,22 +94,22 @@
 </div>
 
 <script>
-function protectEditSnagButton() {
-  var btn = document.getElementById('editSnagBtn');
-  if (btn && !btn.disabled) {
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-    setTimeout(function() {
-      btn.disabled = false;
-      btn.innerHTML = '{{ __('messages.update_snag') }}';
-    }, 5000);
-  }
-}
+    function protectEditSnagButton() {
+        var btn = document.getElementById('editSnagBtn');
+        if (btn && !btn.disabled) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.loading') }}';
+            setTimeout(function() {
+                btn.disabled = false;
+                btn.innerHTML = '{{ __('messages.update_snag') }}';
+            }, 5000);
+        }
+    }
 
-document.addEventListener('DOMContentLoaded', function() {
-  var btn = document.getElementById('editSnagBtn');
-  if (btn) {
-    btn.addEventListener('click', protectEditSnagButton);
-  }
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        var btn = document.getElementById('editSnagBtn');
+        if (btn) {
+            btn.addEventListener('click', protectEditSnagButton);
+        }
+    });
 </script>

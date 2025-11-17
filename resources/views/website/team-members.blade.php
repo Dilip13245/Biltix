@@ -61,7 +61,7 @@
             @endcan
         </div>
     </div>
-
+    
     <section class="px-md-4">
         <div class="container-fluid">
             <div class="row g-4" id="statsContainer">
@@ -146,7 +146,7 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="row gy-4 card_wraPper mt-4" id="teamContainer">
                 <!-- Loading state -->
                 <div class="col-12 text-center" id="loadingState">
@@ -188,7 +188,7 @@
             loadTeamMembers();
             setupAddMemberForm();
             // setupSearchAndFilter();
-
+            
             if (typeof initSearchableDropdowns === 'function') {
                 initSearchableDropdowns();
             }
@@ -244,12 +244,12 @@
 
             const membersHtml = members.map((member, index) => {
                 const delay = (index * 0.4).toFixed(1);
-
+                
                 const profileImage = member.user?.profile_image;
                 const imageHtml = profileImage ?
                     `<img src="${profileImage}" alt="${member.user.name}" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">` :
                     `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;"><i class="fas fa-user" style="font-size: 24px;"></i></div>`;
-
+                
                 return `
                     <div class="col-lg-4 col-md-6 mb-4 wow fadeInUp" data-wow-delay="${delay}s">
                         <div class="card h-100 B_shadow team-member-card">
@@ -296,7 +296,7 @@
         function protectMemberButton(btn) {
             if (btn.disabled) return;
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.loading') }}';
             setTimeout(function() {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-user-plus me-2"></i>{{ __('messages.add_member') }}';
@@ -305,21 +305,21 @@
 
         async function handleMemberSubmit(e) {
             e.preventDefault();
-
+            
             // Validate form first
             if (typeof validateMemberForm === 'function') {
                 if (!validateMemberForm()) {
                     return false;
                 }
             }
-
+            
             // Protect button
             const submitBtn = document.getElementById('memberSubmitBtn');
             if (submitBtn) protectMemberButton(submitBtn);
 
             try {
                 const formData = new FormData();
-
+                
                 formData.append('user_id', currentUserId);
                 formData.append('project_id', currentProjectId);
                 formData.append('member_user_id', document.getElementById('memberSelect').value);
@@ -330,7 +330,7 @@
                 if (response.code === 200) {
                     const addMemberModal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
                     if (addMemberModal) addMemberModal.hide();
-
+                    
                     toastr.success('{{ __('messages.member_added_successfully') }}');
                     document.getElementById('addMemberForm').reset();
                     loadTeamMembers();
@@ -370,30 +370,30 @@
             // Update total members (project members only)
             const totalEl = document.getElementById('totalMembers');
             if (totalEl) totalEl.textContent = members.length;
-
+            
             // Update role-specific counts
             const engineersEl = document.getElementById('siteEngineers');
             if (engineersEl) engineersEl.textContent = roleCounts['site_engineer'] || 0;
-
+            
             const contractorsEl = document.getElementById('contractors');
             if (contractorsEl) contractorsEl.textContent = roleCounts['contractor'] || 0;
-
+            
             const consultantsEl = document.getElementById('consultants');
             if (consultantsEl) consultantsEl.textContent = roleCounts['consultant'] || 0;
-
+            
             // Update stats container with all roles dynamically
             updateDynamicRoleStats(roleCounts, members.length);
         }
-
+        
         function updateDynamicRoleStats(roleCounts, totalActiveUsers) {
             const statsContainer = document.getElementById('statsContainer');
             const existingCards = statsContainer.querySelectorAll('.col-xxl-3');
-
+            
             // Keep first card (total), update others dynamically
             const firstCard = existingCards[0];
             statsContainer.innerHTML = '';
             statsContainer.appendChild(firstCard);
-
+            
             // Add role cards dynamically
             let index = 1;
             for (const [role, count] of Object.entries(roleCounts)) {
@@ -405,7 +405,7 @@
                 }
             }
         }
-
+        
         function createRoleCard(role, count, delay) {
             // Role translation mapping
             const roleTranslations = {
@@ -468,7 +468,7 @@
                 text: 'text-primary',
                 icon: '#4477C4'
             };
-
+            
             return `
                 <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 col-12 wow fadeInUp" data-wow-delay="${delay}s">
                     <div class="card h-100 B_shadow">
@@ -535,7 +535,7 @@
             }
         }
     </script>
-
+    
 
 
 @endsection

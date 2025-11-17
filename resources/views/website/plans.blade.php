@@ -966,7 +966,7 @@
 
                     // Disable button
                     uploadPlanBtn.disabled = true;
-                    uploadPlanBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                    uploadPlanBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.loading') }}';
 
                     // Store form data
                     const form = document.getElementById('uploadPlanForm');
@@ -1021,7 +1021,7 @@
                                     if (drawingBtn && drawingBtn.disabled) return;
                                     if (drawingBtn) {
                                         drawingBtn.disabled = true;
-                                        drawingBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                                        drawingBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.saving') }}';
                                     }
                                     uploadMixedFiles(markedUpImageData);
                                 }

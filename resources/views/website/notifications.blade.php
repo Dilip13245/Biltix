@@ -37,9 +37,9 @@
             <div id="notifications-container" style="max-height: 500px; overflow-y: auto; padding-{{ app()->getLocale() == 'ar' ? 'left' : 'right' }}: 10px;">
               <div class="text-center py-4">
                 <div class="spinner-border text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
+                  <span class="visually-hidden">{{ __('messages.loading') }}</span>
                 </div>
-                <p class="mt-2 text-muted">Loading notifications...</p>
+                <p class="mt-2 text-muted">{{ __('messages.loading_notifications') }}...</p>
               </div>
             </div>
             <div class="text-center mt-3" id="view-all-btn" style="display: none;">
@@ -150,7 +150,7 @@ async function loadNotifications() {
   } catch (error) {
     console.error('Error loading notifications:', error);
     document.getElementById('notifications-container').innerHTML = 
-      '<div class="text-center py-4"><p class="text-danger">Error loading notifications</p></div>';
+      '<div class="text-center py-4"><p class="text-danger">{{ __('messages.error_loading_notifications') }}</p></div>';
   }
 }
 

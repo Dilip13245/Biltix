@@ -2117,7 +2117,7 @@
 
                     btn.disabled = true;
                     const originalText = btn.innerHTML;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.saving') }}';
 
                     const canvas = document.getElementById('canvas');
                     if (canvas) {

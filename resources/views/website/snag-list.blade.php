@@ -439,7 +439,7 @@
             try {
                 const createBtn = document.getElementById('createSnagBtn');
                 const originalText = createBtn.innerHTML;
-                createBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+                createBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.creating') }}...';
                 createBtn.disabled = true;
 
                 const formData = new FormData();

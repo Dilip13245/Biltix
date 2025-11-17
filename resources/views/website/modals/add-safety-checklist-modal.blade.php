@@ -129,7 +129,7 @@ function protectSafetyChecklistButton() {
   var btn = document.getElementById('safetyChecklistBtn');
   if (btn && !btn.disabled) {
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.loading') }}';
     setTimeout(function() {
       btn.disabled = false;
       btn.innerHTML = '{{ __('messages.create_checklist') }}';

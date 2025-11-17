@@ -1464,7 +1464,7 @@
                     hasMoreProjects = true;
                     currentFilter = filter;
                     document.getElementById('projectsContainer').innerHTML =
-                        '<div class="col-12 text-center py-4"><div class="spinner-border" role="status"></div><div class="mt-2">Loading projects...</div></div>';
+                        '<div class="col-12 text-center py-4"><div class="spinner-border" role="status"></div><div class="mt-2">{{ __('messages.loading_projects') }}...</div></div>';
                 }
 
                 const type = filter === 'all' ? '' : (filter === 'active' ? 'ongoing' : 'completed');
@@ -1570,11 +1570,11 @@
                             <div class="d-flex align-items-start justify-content-between mb-3">
                                 ${isCompleted ? 
                                     `<div class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px; cursor: not-allowed;">
-                                                                                                            <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
-                                                                                                        </div>` :
+                                                                                                                            <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${project.project_title}</h6>
+                                                                                                                        </div>` :
                                     `<a href="/website/project/${project.id}/plans" class="text-decoration-none" style="flex: 1; min-width: 0; padding-right: 12px;">
-                                                                                                            <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${project.project_title}">${project.project_title}</h6>
-                                                                                                        </a>`
+                                                                                                                            <h6 class="mb-0 fw-semibold" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${project.project_title}</h6>
+                                                                                                                        </a>`
                                 }
                                 <div class="dropdown" style="flex-shrink: 0;">
                                     <i class="fas fa-ellipsis-v" style="color: #4A90E2; cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -1585,47 +1585,47 @@
                             </div>
                             ${isCompleted ? 
                                 `<div style="cursor: not-allowed;">
-                                                                                                        <hr style="border-color: #e0e0e0; margin: 12px 0;">
-                                                                                                        <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
-                                                                                                            <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                                            <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
-                                                                                                        </div>
-                                                                                                        <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
-                                                                                                            <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                                            <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
-                                                                                                        </div>
-                                                                                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
-                                                                                                                <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
-                                                                                                            </div>
-                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
-                                                                                                                <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>` :
+                                                                                                                        <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                                                                                                                        <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                                                                                                            <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                            <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                                                                                                                        </div>
+                                                                                                                        <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                                                                                                            <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                            <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
+                                                                                                                        </div>
+                                                                                                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                                                                                <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
+                                                                                                                            </div>
+                                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                                                                                <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>` :
                                 `<a href="/website/project/${project.id}/plans" class="text-decoration-none">
-                                                                                                        <hr style="border-color: #e0e0e0; margin: 12px 0;">
-                                                                                                        <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
-                                                                                                            <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                                            <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
-                                                                                                        </div>
-                                                                                                        <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
-                                                                                                            <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                                            <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
-                                                                                                        </div>
-                                                                                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
-                                                                                                                <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
-                                                                                                            </div>
-                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
-                                                                                                                <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
-                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </a>`
+                                                                                                                        <hr style="border-color: #e0e0e0; margin: 12px 0;">
+                                                                                                                        <div class="mb-2 d-flex align-items-center" style="gap: 6px;">
+                                                                                                                            <i class="fas fa-building" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                            <span class="text-muted" style="font-size: 14px;">${project.type || 'N/A'}</span>
+                                                                                                                        </div>
+                                                                                                                        <div class="mb-2 d-flex align-items-center" style="min-width: 0; gap: 6px;">
+                                                                                                                            <i class="fas fa-map-marker-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                            <span class="text-muted" style="font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0;">${project.project_location || 'N/A'}</span>
+                                                                                                                        </div>
+                                                                                                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                                                                                <i class="far fa-calendar-alt" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">{{ __('messages.due_date') }}: ${formatDate(project.project_due_date)}</span>
+                                                                                                                            </div>
+                                                                                                                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                                                                                                                <i class="far fa-id-badge" style="color: #4A90E2; font-size: 16px; flex-shrink: 0;"></i>
+                                                                                                                                <span class="text-muted {{ text_align() }}" style="font-size: 13px;">${project.project_code || 'N/A'}</span>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </a>`
                             }
                         </div>
                     </div>
@@ -2467,7 +2467,8 @@
                     if (btn && btn.disabled) return;
                     if (btn) {
                         btn.disabled = true;
-                        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+                        btn.innerHTML =
+                            '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.creating') }}...';
                     }
 
                     const fileInputs = document.querySelectorAll('input[type="file"]');
@@ -2604,21 +2605,21 @@
                                 ${Array.from(input.files).map((file, index) => {
                                     const fileIcon = file.type.startsWith('image/') ? 'fas fa-image text-success' : 'fas fa-file text-primary';
                                     return `
-                                                                                                                                        <div class="col-12">
-                                                                                                                                            <div class="form-check">
-                                                                                                                                                <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
-                                                                                                                                                    onchange="toggleFileDescription('${containerId}', ${index})">
-                                                                                                                                                <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
-                                                                                                                                                    <i class="${fileIcon} me-2"></i>
-                                                                                                                                                    <span class="text-truncate">${file.name}</span>
-                                                                                                                                                </label>
-                                                                                                                                            </div>
-                                                                                                                                            <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
-                                                                                                                                                <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
-                                                                                                                                                    placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
-                                                                                                                                            </div>
-                                                                                                                                        </div>
-                                                                                                                                    `;
+                                                                                                                                                        <div class="col-12">
+                                                                                                                                                            <div class="form-check">
+                                                                                                                                                                <input class="form-check-input" type="checkbox" id="file_${containerId}_${index}" 
+                                                                                                                                                                    onchange="toggleFileDescription('${containerId}', ${index})">
+                                                                                                                                                                <label class="form-check-label d-flex align-items-center" for="file_${containerId}_${index}">
+                                                                                                                                                                    <i class="${fileIcon} me-2"></i>
+                                                                                                                                                                    <span class="text-truncate">${file.name}</span>
+                                                                                                                                                                </label>
+                                                                                                                                                            </div>
+                                                                                                                                                            <div class="ms-4 mt-2" id="desc_${containerId}_${index}" style="display: none;">
+                                                                                                                                                                <textarea class="form-control form-control-sm" name="file_notes_${containerId}_${index}" 
+                                                                                                                                                                    placeholder="{{ __('messages.add_note_for_this_image') }}" rows="2"></textarea>
+                                                                                                                                                            </div>
+                                                                                                                                                        </div>
+                                                                                                                                                    `;
                                 }).join('')}
                             </div>
                         `;

@@ -662,7 +662,7 @@
             function protectTaskButton(btn) {
                 if (btn.disabled) return;
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('messages.loading') }}';
                 setTimeout(function() {
                     btn.disabled = false;
                     btn.innerHTML = '{{ __('messages.next') }}';
