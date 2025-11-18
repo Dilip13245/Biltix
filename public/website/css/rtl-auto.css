@@ -117,6 +117,26 @@
   margin-left: 0 !important;
 }
 
+/* Exception for zoom buttons icons in plan viewer modal - keep centered */
+[dir="rtl"] #planViewerModal .modal-header .btn-group button .fas,
+[dir="rtl"] #planViewerModal .modal-header .btn-group button .far,
+[dir="rtl"] #planViewerModal .modal-header .btn-group button .fab,
+[dir="rtl"] #planViewerModal .modal-header .d-flex.d-md-none button .fas,
+[dir="rtl"] #planViewerModal .modal-header .d-flex.d-md-none button .far,
+[dir="rtl"] #planViewerModal .modal-header .d-flex.d-md-none button .fab {
+  padding-left: 0 !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* Center zoom buttons in plan viewer modal (same as download button) */
+[dir="rtl"] #planViewerModal .modal-header .btn-group button,
+[dir="rtl"] #planViewerModal .modal-header .d-flex.d-md-none button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 /* Exception for back button icon in project files page - keep centered */
 [dir="rtl"] #backBtn .fas,
 [dir="rtl"] #backBtn .far,

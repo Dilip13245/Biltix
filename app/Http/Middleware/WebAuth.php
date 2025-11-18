@@ -24,9 +24,9 @@ class WebAuth
         // Check if session expired for non-remember-me logins BEFORE updating last_activity
         // This prevents false logout when user returns after short inactivity
         if (!$rememberMe && $lastActivity) {
-            // For non-remember-me: expire after 30 minutes of inactivity
+            // For non-remember-me: expire after 8 hours of inactivity
             $inactiveTime = time() - $lastActivity;
-            if ($inactiveTime > 30 * 60) {
+            if ($inactiveTime > 8 * 60 * 60) {
                 \Log::info('Session expired due to inactivity', ['inactive_time' => $inactiveTime]);
                 session()->flush();
                 if ($request->expectsJson() || $request->ajax()) {

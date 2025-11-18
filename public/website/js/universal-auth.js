@@ -3,7 +3,7 @@ window.UniversalAuth = {
     // Storage keys
     SESSION_KEY: 'biltix_session',
     REMEMBER_KEY: 'biltix_remember',
-    
+
     // Login function
     login(userData, rememberMe = false, skipRedirect = false) {
         const authData = {
@@ -12,7 +12,7 @@ window.UniversalAuth = {
             user_id: userData.id,
             timestamp: Date.now()
         };
-        
+
         if (rememberMe) {
             localStorage.setItem(this.REMEMBER_KEY, JSON.stringify(authData));
             sessionStorage.removeItem(this.SESSION_KEY);
@@ -22,22 +22,22 @@ window.UniversalAuth = {
             sessionStorage.setItem('browser_session_active', 'true');
             localStorage.removeItem(this.REMEMBER_KEY);
         }
-        
+
         // Only redirect if not skipped (caller will handle redirect after session setup)
         if (!skipRedirect) {
-        window.location.href = '/dashboard';
+            window.location.href = '/dashboard';
         }
     },
-    
+
     // Logout function
     logout() {
         sessionStorage.removeItem(this.SESSION_KEY);
         localStorage.removeItem(this.REMEMBER_KEY);
         window.location.href = '/login';
     },
-    
 
-    
+
+
     // Check if logged in
     isLoggedIn() {
         // For session-only login, only check sessionStorage
@@ -53,7 +53,7 @@ window.UniversalAuth = {
                 return false;
             }
         }
-        
+
         // For remember me, check localStorage
         const rememberData = localStorage.getItem(this.REMEMBER_KEY);
         console.log('Remember data:', rememberData ? 'exists' : 'null');
@@ -73,11 +73,11 @@ window.UniversalAuth = {
                 return false;
             }
         }
-        
+
         console.log('No auth data found, should redirect to login');
         return false;
     },
-    
+
     // Get current user
     getUser() {
         // Check sessionStorage first
@@ -90,7 +90,7 @@ window.UniversalAuth = {
                 return null;
             }
         }
-        
+
         // Check localStorage for remember me
         const rememberData = localStorage.getItem(this.REMEMBER_KEY);
         if (rememberData) {
@@ -103,10 +103,10 @@ window.UniversalAuth = {
                 return null;
             }
         }
-        
+
         return null;
     },
-    
+
     // Get token
     getToken() {
         // Check sessionStorage first
@@ -119,7 +119,7 @@ window.UniversalAuth = {
                 return null;
             }
         }
-        
+
         // Check localStorage for remember me
         const rememberData = localStorage.getItem(this.REMEMBER_KEY);
         if (rememberData) {
@@ -132,10 +132,10 @@ window.UniversalAuth = {
                 return null;
             }
         }
-        
+
         return null;
     },
-    
+
     // Get user ID
     getUserId() {
         // Check sessionStorage first
@@ -148,7 +148,7 @@ window.UniversalAuth = {
                 return null;
             }
         }
-        
+
         // Check localStorage for remember me
         const rememberData = localStorage.getItem(this.REMEMBER_KEY);
         if (rememberData) {
@@ -161,31 +161,31 @@ window.UniversalAuth = {
                 return null;
             }
         }
-        
+
         return null;
     },
-    
+
     // Restore Laravel session from remember me data
     async restoreSessionFromRememberMe() {
         const rememberData = localStorage.getItem(this.REMEMBER_KEY);
         if (!rememberData) {
             return false;
         }
-        
+
         try {
             const auth = JSON.parse(rememberData);
-            
+
             // Check if expired (30 days)
             if (Date.now() - auth.timestamp > 30 * 24 * 60 * 60 * 1000) {
                 localStorage.removeItem(this.REMEMBER_KEY);
                 return false;
             }
-            
+
             // Check if we have valid token and user data
             if (!auth.token || !auth.user_id || !auth.user) {
                 return false;
             }
-            
+
             // Verify session is actually missing by checking current session
             try {
                 const checkResponse = await fetch('/auth/check-session', {
@@ -195,7 +195,7 @@ window.UniversalAuth = {
                         'Accept': 'application/json'
                     }
                 });
-                
+
                 if (checkResponse.ok) {
                     const checkResult = await checkResponse.json();
                     if (checkResult.authenticated) {
@@ -206,7 +206,7 @@ window.UniversalAuth = {
             } catch (e) {
                 console.log('Session check failed, proceeding with restoration');
             }
-            
+
             // Session is missing, restore it
             console.log('Restoring Laravel session from remember me data...');
             const sessionData = {
@@ -215,7 +215,7 @@ window.UniversalAuth = {
                 user: auth.user,
                 remember_me: true
             };
-            
+
             const sessionResponse = await fetch('/auth/set-session', {
                 method: 'POST',
                 headers: {
@@ -224,7 +224,7 @@ window.UniversalAuth = {
                 },
                 body: JSON.stringify(sessionData)
             });
-            
+
             if (sessionResponse.ok) {
                 const sessionResult = await sessionResponse.json();
                 if (sessionResult.success) {
@@ -234,7 +234,7 @@ window.UniversalAuth = {
                     return true;
                 }
             }
-            
+
             console.log('Failed to restore Laravel session');
             return false;
         } catch (error) {
@@ -245,42 +245,47 @@ window.UniversalAuth = {
 };
 
 // Universal page handler - works on ALL pages
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Skip auth check if disabled (Laravel middleware handles it)
     if (window.DISABLE_JS_AUTH_CHECK) {
         console.log('JavaScript auth check disabled - Laravel middleware handling auth');
-        
-        // But still check for browser session expiry (only for non-remember-me)
-        const browserSessionActive = sessionStorage.getItem('browser_session_active');
+
+        // Check for remember me data first (before browser session check)
         const hasRememberMeData = localStorage.getItem(UniversalAuth.REMEMBER_KEY);
-        
-        if (!browserSessionActive && !hasRememberMeData) {
-            // New browser session and no remember me data, clear Laravel session
-            console.log('New browser session detected (no remember me), clearing server session');
-            fetch('/auth/logout', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-                }
-            }).then(() => {
-                window.location.href = '/login';
-            }).catch(() => {
-                window.location.href = '/login';
-            });
-        } else if (hasRememberMeData) {
+
+        if (hasRememberMeData) {
             console.log('Remember me data found, checking if Laravel session needs restoration...');
             // Try to restore Laravel session if it's expired
+            // Remember me users should stay logged in even after browser close/reopen
             UniversalAuth.restoreSessionFromRememberMe();
+        } else {
+            // Only check browser session for non-remember-me users
+            const browserSessionActive = sessionStorage.getItem('browser_session_active');
+
+            if (!browserSessionActive) {
+                // New browser session and no remember me data, clear Laravel session
+                console.log('New browser session detected (no remember me), clearing server session');
+                fetch('/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                    }
+                }).then(() => {
+                    window.location.href = '/login';
+                }).catch(() => {
+                    window.location.href = '/login';
+                });
+            }
         }
         return;
     }
-    
+
     const currentPath = window.location.pathname;
     console.log('Current page:', currentPath);
-    
+
     const publicPages = ['/login', '/register', '/forgot-password'];
     const isPublicPage = publicPages.includes(currentPath);
-    
+
     if (isPublicPage) {
         // Public page - allow access, no redirects
         console.log('Public page loaded, no auth check needed');
@@ -288,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Protected page - check auth
         const isLoggedIn = UniversalAuth.isLoggedIn();
         console.log('Protected page auth check result:', isLoggedIn);
-        
+
         if (!isLoggedIn) {
             console.log('Not logged in, redirecting to login...');
             window.location.href = '/login';
