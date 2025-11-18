@@ -33,7 +33,7 @@ window.UniversalAuth = {
     logout() {
         sessionStorage.removeItem(this.SESSION_KEY);
         localStorage.removeItem(this.REMEMBER_KEY);
-        window.location.href = '/login';
+        // Don't redirect here - let caller handle redirect after all operations complete
     },
 
 
@@ -257,7 +257,36 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('Remember me data found, checking if Laravel session needs restoration...');
             // Try to restore Laravel session if it's expired
             // Remember me users should stay logged in even after browser close/reopen
-            UniversalAuth.restoreSessionFromRememberMe();
+            // Wait for restoration to complete before proceeding
+            UniversalAuth.restoreSessionFromRememberMe().then(restored => {
+                if (!restored) {
+                    console.log('Session restoration failed, but remember me data exists - checking if session is valid...');
+                    // If restoration failed, check if session is actually valid
+                    // This handles the case where cookie wasn't set but localStorage exists
+                    fetch('/auth/check-session', {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                            'Accept': 'application/json'
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        return { authenticated: false };
+                    }).then(result => {
+                        if (!result.authenticated) {
+                            // Session is missing, try to restore it again
+                            console.log('Session not authenticated, attempting restoration...');
+                            UniversalAuth.restoreSessionFromRememberMe();
+                        }
+                    }).catch(err => {
+                        console.error('Error checking session:', err);
+                    });
+                }
+            }).catch(err => {
+                console.error('Error during session restoration:', err);
+            });
         } else {
             // Only check browser session for non-remember-me users
             const browserSessionActive = sessionStorage.getItem('browser_session_active');

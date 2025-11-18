@@ -42,20 +42,23 @@ class WebAuth
         }
 
         if (!$userId || !$sessionToken) {
-            // Check if remember me cookie exists - allow through for session restoration
+            // Check if remember me cookie exists
             $rememberMeCookie = $request->cookie('remember_me_token');
             if ($rememberMeCookie) {
-                // Remember me user - allow request through, JavaScript will restore session
-                // This prevents redirect loop and allows session restoration
-                \Log::info('Session missing but remember me cookie found, allowing through for restoration');
-                // Skip user validation - let JavaScript restore session
-                return $next($request);
+                // Remember me cookie exists but session is missing
+                // Redirect to login page where JavaScript will restore the session
+                // This prevents accessing protected routes without valid session
+                \Log::info('Session missing but remember me cookie found, redirecting to login for restoration');
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json(['authenticated' => false, 'redirect' => route('login')], 401);
+                }
+                return redirect()->route('login');
             } else {
                 // No remember me - redirect to login
-            if ($request->expectsJson() || $request->ajax()) {
-                return response()->json(['authenticated' => false], 401);
-            }
-            return redirect()->route('login')->with('error', 'Please login to continue');
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json(['authenticated' => false], 401);
+                }
+                return redirect()->route('login')->with('error', 'Please login to continue');
             }
         }
 

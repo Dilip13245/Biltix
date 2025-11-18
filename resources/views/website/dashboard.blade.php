@@ -3105,14 +3105,14 @@
                 confirmClass: 'btn-danger',
                 onConfirm: async () => {
                     try {
+                        // Clear browser storage first
+                        UniversalAuth.logout();
+
                         // Call API logout
                         await api.logout({});
 
-                        // Clear browser storage
-                        UniversalAuth.logout();
-
                         // Clear Laravel session
-                        fetch('/auth/logout', {
+                        await fetch('/auth/logout', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -3123,15 +3123,17 @@
 
                         toastr.success('{{ __('auth.logged_out_successfully') }}');
 
-                        // Force redirect
+                        // Force redirect after all operations complete
                         setTimeout(() => {
                             window.location.replace('/login');
                         }, 500);
 
                     } catch (error) {
                         console.error('Logout failed:', error);
+                        // Clear everything on error
                         sessionStorage.clear();
                         localStorage.clear();
+                        // Force redirect even on error
                         window.location.replace('/login');
                     }
                 }

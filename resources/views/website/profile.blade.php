@@ -626,10 +626,13 @@
                 confirmClass: 'btn-danger',
                 onConfirm: async () => {
                     try {
+                        // Clear browser storage first
+                        UniversalAuth.logout();
+
                         // Call API logout
                         await api.logout({});
 
-                        // Clear Laravel session first
+                        // Clear Laravel session
                         await fetch('/auth/logout', {
                             method: 'POST',
                             headers: {
@@ -638,9 +641,6 @@
                                     ?.getAttribute('content')
                             }
                         });
-
-                        // Clear browser storage
-                        UniversalAuth.logout();
 
                         toastr.success('{{ __('auth.logged_out_successfully') }}');
 
@@ -656,7 +656,10 @@
 
                     } catch (error) {
                         console.error('Logout failed:', error);
-                        UniversalAuth.logout();
+                        // Clear everything on error
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        // Force redirect even on error
                         window.location.replace('/login');
                     }
                 }
@@ -681,6 +684,7 @@
                             toastr.success(response.message);
                             setTimeout(() => {
                                 UniversalAuth.logout();
+                                window.location.replace('/login');
                             }, 2000);
                         } else {
                             toastr.error(response.message);

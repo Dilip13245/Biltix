@@ -42,7 +42,9 @@ class AuthController extends Controller
             // Remember me: Still track activity for security
             session(['last_activity' => time()]);
             // Set remember me cookie for middleware to detect
-            cookie()->queue(cookie('remember_me_token', $request->token, 30 * 24 * 60)); // 30 days
+            // Cookie will persist for 30 days and be available across tabs
+            $cookie = cookie('remember_me_token', $request->token, 30 * 24 * 60); // 30 days
+            cookie()->queue($cookie);
         }
 
         return response()->json(['success' => true]);
@@ -73,10 +75,32 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $userId = session('user_id');
+        $sessionToken = session('token');
+        
+        // Invalidate device token in database
+        if ($userId && $sessionToken) {
+            UserDevice::where('user_id', $userId)
+                ->where('token', $sessionToken)
+                ->update([
+                    'token' => '',
+                    'is_active' => false
+                ]);
+        }
+        
+        // Clear session
         session()->flush();
+        
         // Remove remember me cookie on logout
         cookie()->queue(cookie()->forget('remember_me_token'));
-        return response()->json(['success' => true]);
+        
+        // For AJAX requests, return JSON
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        
+        // For regular requests, redirect to login
+        return redirect()->route('login')->with('success', 'Logged out successfully');
     }
 
     public function showLogin()

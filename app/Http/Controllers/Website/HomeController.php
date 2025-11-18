@@ -30,6 +30,11 @@ class HomeController extends Controller
     {
         $user = request()->attributes->get('user');
         
+        // Safety check: if user is null, redirect to login
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Please login to continue');
+        }
+        
         // Get project IDs created by user
         $createdProjectIds = Project::where('created_by', $user->id)
             ->where('is_active', 1)

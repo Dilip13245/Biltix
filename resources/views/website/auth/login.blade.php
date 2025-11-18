@@ -297,6 +297,22 @@
     <script src="{{ asset('website/js/api-client.js') }}"></script>
     <script src="{{ asset('website/js/universal-auth.js') }}"></script>
     <script>
+        // Check for remember me data on login page and auto-restore session
+        document.addEventListener('DOMContentLoaded', function() {
+            const hasRememberMeData = localStorage.getItem(UniversalAuth.REMEMBER_KEY);
+            if (hasRememberMeData) {
+                console.log('Remember me data found on login page, attempting to restore session...');
+                UniversalAuth.restoreSessionFromRememberMe().then(restored => {
+                    if (restored) {
+                        console.log('Session restored successfully, redirecting to dashboard...');
+                        window.location.href = '/dashboard';
+                    }
+                }).catch(err => {
+                    console.error('Error restoring session on login page:', err);
+                });
+            }
+        });
+        
         function togglePassword(icon) {
             const input = icon.previousElementSibling;
             if (input.type === 'password') {
