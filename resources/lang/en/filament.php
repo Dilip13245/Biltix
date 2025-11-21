@@ -353,6 +353,11 @@ return [
         'enter_task_description' => 'Enter task description (max 500 characters)',
         'active_members_only' => 'Active Only',
         'inactive_members_only' => 'Inactive Only',
+        'admin_role_super_admin' => 'Full system access',
+        'admin_role_admin' => 'Standard admin permissions',
+        'admin_role_moderator' => 'Limited content management',
+        'email_copied' => 'Email copied!',
+        'all_admins' => 'All admins',
     ],
     
     'project_types' => [
@@ -396,17 +401,7 @@ return [
         'gantt_charts_help' => 'Upload project timeline charts and scheduling documents',
     ],
     
-    'placeholders' => [
-        'role_example' => 'e.g., project_manager',
-        'display_example' => 'e.g., Project Manager',
-        'role_description' => 'Brief description of this role...',
-        'permission_description' => 'What does this permission allow?',
-        'admin_role_super_admin' => 'Full system access',
-        'admin_role_admin' => 'Standard admin permissions',
-        'admin_role_moderator' => 'Limited content management',
-        'email_copied' => 'Email copied!',
-        'all_admins' => 'All admins',
-    ],
+
     
     'dashboard' => [
         'system_users' => 'System Users',

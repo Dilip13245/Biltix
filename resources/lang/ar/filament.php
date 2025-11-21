@@ -326,6 +326,11 @@ return [
         'enter_task_description' => 'أدخل وصف المهمة (الحد الأقصى 500 حرف)',
         'active_members_only' => 'النشطون فقط',
         'inactive_members_only' => 'غير النشطين فقط',
+        'admin_role_super_admin' => 'وصول كامل للنظام',
+        'admin_role_admin' => 'صلاحيات مسؤول قياسية',
+        'admin_role_moderator' => 'إدارة محتوى محدودة',
+        'email_copied' => 'تم نسخ البريد الإلكتروني!',
+        'all_admins' => 'جميع المسؤولين',
     ],
     
     'project_types' => [
@@ -368,17 +373,7 @@ return [
         'gantt_charts_help' => 'رفع مخططات الجدول الزمني ووثائق الجدولة',
     ],
     
-    'placeholders' => [
-        'role_example' => 'مثال: project_manager',
-        'display_example' => 'مثال: مدير المشروع',
-        'role_description' => 'وصف موجز لهذا الدور...',
-        'permission_description' => 'ماذا تسمح هذه الصلاحية؟',
-        'admin_role_super_admin' => 'وصول كامل للنظام',
-        'admin_role_admin' => 'صلاحيات مسؤول قياسية',
-        'admin_role_moderator' => 'إدارة محتوى محدودة',
-        'email_copied' => 'تم نسخ البريد الإلكتروني!',
-        'all_admins' => 'جميع المسؤولين',
-    ],
+
     
     'dashboard' => [
         'system_users' => 'مستخدمي النظام',
