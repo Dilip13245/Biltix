@@ -105,13 +105,13 @@ class ProjectResource extends Resource
                     ->label(__('filament.fields.project_type'))
                     ->required()
                     ->options([
-                        'commercial' => 'Commercial',
-                        'residential' => 'Residential',
-                        'industrial' => 'Industrial',
-                        'renovation' => 'Renovation',
+                        'commercial' => __('filament.project_types.commercial'),
+                        'residential' => __('filament.project_types.residential'),
+                        'industrial' => __('filament.project_types.industrial'),
+                        'renovation' => __('filament.project_types.renovation'),
                     ])
                     ->native(false)
-                    ->placeholder('Select project type'),
+                    ->placeholder(__('filament.placeholders.select_project_type')),
             ])->columns(2),
             
             Forms\Components\Section::make(__('filament.fields.project_details'))->schema([
@@ -120,7 +120,7 @@ class ProjectResource extends Resource
                     ->required()
                     ->minLength(5)
                     ->maxLength(500)
-                    ->placeholder('123 Main Street, Downtown District, City'),
+                    ->placeholder(__('filament.placeholders.project_location_example')),
                 Forms\Components\DatePicker::make('project_start_date')
                     ->label(__('filament.fields.start_date'))
                     ->required()

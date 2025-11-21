@@ -20,7 +20,7 @@ class TaskLibraryResource extends Resource
     
     public static function getNavigationLabel(): string
     {
-        return 'Task Library';
+        return __('filament.navigation.task_library');
     }
     
     public static function getNavigationGroup(): ?string
@@ -56,42 +56,42 @@ class TaskLibraryResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Task Library Information')
+            Forms\Components\Section::make(__('filament.sections.task_library_information'))
                 ->schema([
                     Forms\Components\TextInput::make('title')
-                        ->label('Task Title')
+                        ->label(__('filament.fields.task_title'))
                         ->required()
                         ->maxLength(255)
-                        ->placeholder('Enter task title'),
+                        ->placeholder(__('filament.placeholders.enter_task_title')),
                     
                     Forms\Components\Repeater::make('descriptions')
-                        ->label('Descriptions')
+                        ->label(__('filament.fields.descriptions'))
                         ->relationship('descriptions')
                         ->schema([
                             Forms\Components\Textarea::make('description')
-                                ->label('Description')
+                                ->label(__('filament.fields.description'))
                                 ->required()
                                 ->maxLength(500)
                                 ->rows(3)
-                                ->placeholder('Enter task description (max 500 characters)')
-                                ->helperText('Maximum 500 characters allowed. This matches the task description field limit.')
+                                ->placeholder(__('filament.placeholders.enter_task_description'))
+                                ->helperText(__('filament.helpers.max_500_characters'))
                                 ->columnSpanFull(),
                             
                             Forms\Components\TextInput::make('sort_order')
-                                ->label('Sort Order')
+                                ->label(__('filament.fields.sort_order'))
                                 ->numeric()
                                 ->default(0)
                                 ->minValue(0),
                             
                             Forms\Components\Toggle::make('is_active')
-                                ->label('Active')
+                                ->label(__('filament.fields.active'))
                                 ->default(true),
                         ])
                         ->defaultItems(1)
                         ->minItems(1)
                         ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['description'] ?? 'New Description')
-                        ->addActionLabel('Add Description')
+                        ->itemLabel(fn (array $state): ?string => $state['description'] ?? __('filament.fields.new_description'))
+                        ->addActionLabel(__('filament.actions.add_description'))
                         ->reorderableWithButtons()
                         ->orderColumn('sort_order'),
                 ])
@@ -105,19 +105,19 @@ class TaskLibraryResource extends Resource
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScope('active'))
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Task Title')
+                    ->label(__('filament.fields.task_title'))
                     ->searchable()
                     ->sortable()
                     ->limit(50),
                 
                 Tables\Columns\TextColumn::make('descriptions_count')
-                    ->label('Descriptions Count')
+                    ->label(__('filament.fields.descriptions_count'))
                     ->counts('descriptions')
                     ->badge()
                     ->color('info'),
                 
                 Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
+                    ->label(__('filament.fields.active'))
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
@@ -125,17 +125,17 @@ class TaskLibraryResource extends Resource
                     ->falseColor('danger'),
                 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created At')
+                    ->label(__('filament.fields.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active Status')
-                    ->placeholder('All Tasks')
-                    ->trueLabel('Active Only')
-                    ->falseLabel('Inactive Only'),
+                    ->label(__('filament.fields.active_status'))
+                    ->placeholder(__('filament.placeholders.all_tasks'))
+                    ->trueLabel(__('filament.placeholders.active_only'))
+                    ->falseLabel(__('filament.placeholders.inactive_only')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

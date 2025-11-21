@@ -58,17 +58,17 @@ class TeamMemberResource extends Resource
     {
         return $form->schema([
             Forms\Components\Select::make('project_id')
-                ->label('Project')
+                ->label(__('filament.fields.project'))
                 ->options(Project::pluck('project_title', 'id'))
                 ->required()
                 ->searchable(),
             Forms\Components\Select::make('user_id')
-                ->label('Team Member')
+                ->label(__('filament.fields.team_member'))
                 ->options(User::where('is_active', true)->pluck('name', 'id'))
                 ->required()
                 ->searchable(),
             Forms\Components\TextInput::make('role_in_project')
-                ->label('Role in Project')
+                ->label(__('filament.fields.role_in_project'))
                 ->required()
                 ->maxLength(255),
             Forms\Components\Hidden::make('assigned_by')
@@ -83,45 +83,45 @@ class TeamMemberResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('project.project_title')
-                    ->label('Project')
+                    ->label(__('filament.fields.project'))
                     ->searchable()
                     ->sortable()
                     ->limit(20),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Member Name')
+                    ->label(__('filament.fields.member_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.email')
-                    ->label('Email')
+                    ->label(__('filament.fields.email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('role_in_project')
-                    ->label('Project Role')
+                    ->label(__('filament.fields.project_role'))
                     ->searchable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('assignedBy.name')
-                    ->label('Assigned By')
+                    ->label(__('filament.fields.assigned_by'))
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
+                    ->label(__('filament.fields.active'))
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger'),
                 Tables\Columns\TextColumn::make('assigned_at')
-                    ->label('Assigned Date')
+                    ->label(__('filament.fields.assigned_date'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('project_id')
-                    ->label('Project')
+                    ->label(__('filament.fields.project'))
                     ->options(Project::pluck('project_title', 'id')),
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active Status')
-                    ->placeholder('All Members')
-                    ->trueLabel('Active Only')
-                    ->falseLabel('Inactive Only'),
+                    ->label(__('filament.fields.active_status'))
+                    ->placeholder(__('filament.placeholders.all_members'))
+                    ->trueLabel(__('filament.placeholders.active_members_only'))
+                    ->falseLabel(__('filament.placeholders.inactive_members_only')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -137,8 +137,8 @@ class TeamMemberResource extends Resource
                             \App\Helpers\NotificationHelper::send(
                                 $teamMember->user_id,
                                 'team_member_removed',
-                                'Removed from Project Team',
-                                "You have been removed from project '{$project->project_title}' team",
+                                __('filament.placeholders.team_member_removed_title'),
+                                __('filament.placeholders.team_member_removed_message', ['project' => $project->project_title]),
                                 [
                                     'project_id' => $project->id,
                                     'project_title' => $project->project_title,
@@ -166,8 +166,8 @@ class TeamMemberResource extends Resource
                                     \App\Helpers\NotificationHelper::send(
                                         $teamMember->user_id,
                                         'team_member_removed',
-                                        'Removed from Project Team',
-                                        "You have been removed from project '{$project->project_title}' team",
+                                        __('filament.placeholders.team_member_removed_title'),
+                                        __('filament.placeholders.team_member_removed_message', ['project' => $project->project_title]),
                                         [
                                             'project_id' => $project->id,
                                             'project_title' => $project->project_title,

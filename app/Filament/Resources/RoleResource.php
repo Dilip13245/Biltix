@@ -32,7 +32,7 @@ class RoleResource extends Resource
     
     public static function getNavigationGroup(): ?string
     {
-        return 'Admin Management';
+        return __('filament.navigation.admin_management');
     }
     
     protected static ?int $navigationSort = 1;
@@ -172,10 +172,10 @@ class RoleResource extends Resource
             ->defaultSort('display_name')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Status')
-                    ->placeholder('All roles')
-                    ->trueLabel('Active only')
-                    ->falseLabel('Inactive only'),
+                    ->label(__('filament.fields.status'))
+                    ->placeholder(__('filament.options.all_roles'))
+                    ->trueLabel(__('filament.options.active_only'))
+                    ->falseLabel(__('filament.options.inactive_only')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -187,7 +187,7 @@ class RoleResource extends Resource
                             ->send();
                     }),
                 Tables\Actions\Action::make('delete')
-                    ->label('Delete')
+                    ->label(__('filament.actions.delete'))
                     ->icon('heroicon-o-trash')
                     ->color('danger')
                     ->requiresConfirmation()
@@ -202,7 +202,7 @@ class RoleResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('delete')
-                        ->label('Delete')
+                        ->label(__('filament.actions.delete'))
                         ->icon('heroicon-o-trash')
                         ->color('danger')
                         ->action(fn ($records) => $records->each->update(['is_deleted' => true])),

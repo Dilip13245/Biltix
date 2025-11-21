@@ -22,7 +22,7 @@ class SnagResource extends Resource
     
     public static function getNavigationLabel(): string
     {
-        return 'Snags';
+        return __('filament.navigation.snags');
     }
     
     public static function getNavigationGroup(): ?string
@@ -59,43 +59,43 @@ class SnagResource extends Resource
     {
         return $form->schema([
             Forms\Components\TextInput::make('title')
-                ->label('Snag Title')
+                ->label(__('filament.fields.snag_title'))
                 ->required()
                 ->maxLength(255),
             Forms\Components\Textarea::make('description')
-                ->label('Description')
+                ->label(__('filament.fields.description'))
                 ->required()
                 ->rows(3),
             Forms\Components\Select::make('project_id')
-                ->label('Project')
+                ->label(__('filament.fields.project'))
                 ->options(Project::pluck('project_title', 'id'))
                 ->required()
                 ->searchable(),
             Forms\Components\Select::make('phase_id')
-                ->label('Phase')
+                ->label(__('filament.fields.phase'))
                 ->options(ProjectPhase::where('is_active', true)
                     ->where('is_deleted', false)
                     ->pluck('title', 'id'))
                 ->searchable(),
             Forms\Components\TextInput::make('location')
-                ->label('Location')
+                ->label(__('filament.fields.location'))
                 ->required()
                 ->maxLength(255),
             Forms\Components\Select::make('assigned_to')
-                ->label('Assign To')
+                ->label(__('filament.fields.assign_to'))
                 ->options(User::where('is_active', true)->pluck('name', 'id'))
                 ->searchable(),
             Forms\Components\Select::make('status')
-                ->label('Status')
+                ->label(__('filament.fields.status'))
                 ->options([
-                    'todo' => 'Todo',
-                    'complete' => 'Complete',
-                    'approve' => 'Approve',
+                    'todo' => __('filament.options.todo'),
+                    'complete' => __('filament.options.completed'),
+                    'approve' => __('filament.options.approve'),
                 ])
                 ->default('todo')
                 ->required(),
             Forms\Components\Textarea::make('comment')
-                ->label('Comment')
+                ->label(__('filament.fields.comment'))
                 ->rows(2),
             Forms\Components\Hidden::make('reported_by')
                 ->default(auth()->id()),
@@ -107,25 +107,25 @@ class SnagResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('snag_number')
-                    ->label('Snag #')
+                    ->label(__('filament.fields.snag_number'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('project.project_title')
-                    ->label('Project')
+                    ->label(__('filament.fields.project'))
                     ->searchable()
                     ->sortable()
                     ->limit(20),
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Title')
+                    ->label(__('filament.fields.title'))
                     ->searchable()
                     ->sortable()
                     ->limit(30),
                 Tables\Columns\TextColumn::make('location')
-                    ->label('Location')
+                    ->label(__('filament.fields.location'))
                     ->searchable()
                     ->limit(20),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
+                    ->label(__('filament.fields.status'))
                     ->badge()
                     ->formatStateUsing(fn (?string $state): string => $state ? ucfirst(str_replace('_', ' ', $state)) : 'Todo')
                     ->color(fn (?string $state): string => match ($state) {
@@ -135,38 +135,38 @@ class SnagResource extends Resource
                         default => 'warning',
                     }),
                 Tables\Columns\TextColumn::make('reporter.name')
-                    ->label('Reported By')
+                    ->label(__('filament.fields.reported_by'))
                     ->searchable()
-                    ->default('Unknown'),
+                    ->default(__('filament.options.unknown')),
                 Tables\Columns\TextColumn::make('assignedUser.name')
-                    ->label('Assigned To')
+                    ->label(__('filament.fields.assigned_to'))
                     ->searchable()
-                    ->default('Unassigned'),
+                    ->default(__('filament.options.unassigned')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label(__('filament.fields.created_at'))
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('project_id')
-                    ->label('Project')
+                    ->label(__('filament.fields.project'))
                     ->options(Project::pluck('project_title', 'id')),
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('Status')
+                    ->label(__('filament.fields.status'))
                     ->options([
-                        'todo' => 'Todo',
-                        'complete' => 'Complete',
-                        'approve' => 'Approve',
+                        'todo' => __('filament.options.todo'),
+                        'complete' => __('filament.options.completed'),
+                        'approve' => __('filament.options.approve'),
                     ]),
                 Tables\Filters\SelectFilter::make('assigned_to')
-                    ->label('Assigned To')
+                    ->label(__('filament.fields.assigned_to'))
                     ->options(User::where('is_active', true)->pluck('name', 'id')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('resolve')
-                    ->label('Resolve')
+                    ->label(__('filament.actions.resolve'))
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn ($record) => $record->status !== 'complete' && $record->status !== 'approve')
@@ -191,8 +191,8 @@ class SnagResource extends Resource
                                 \App\Helpers\NotificationHelper::send(
                                     $recipients,
                                     'snag_resolved',
-                                    'Snag Resolved',
-                                    "Snag '{$record->title}' has been resolved by {$resolver->name}",
+                                    __('filament.placeholders.snag_resolved_title'),
+                                    __('filament.placeholders.snag_resolved_message', ['title' => $record->title, 'resolver' => $resolver->name]),
                                     [
                                         'snag_id' => $record->id,
                                         'snag_title' => $record->title,

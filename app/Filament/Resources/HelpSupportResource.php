@@ -220,7 +220,7 @@ class HelpSupportResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('delete')
-                        ->label('Delete')
+                        ->label(__('filament.actions.delete'))
                         ->icon('heroicon-o-trash')
                         ->color('danger')
                         ->action(fn ($records) => $records->each->update(['is_deleted' => true])),

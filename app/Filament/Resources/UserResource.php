@@ -92,21 +92,21 @@ class UserResource extends Resource
                     ->minLength(2)
                     ->maxLength(100)
                     ->regex('/^[a-zA-Z\s\-\'\.\.]+$/')
-                    ->placeholder('John Doe'),
+                    ->placeholder(__('filament.placeholders.john_doe')),
                 Forms\Components\TextInput::make('email')
                     ->label(__('filament.fields.email_address'))
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    ->placeholder('john@company.com'),
+                    ->placeholder(__('filament.placeholders.john_email')),
                 Forms\Components\TextInput::make('phone')
                     ->label(__('filament.fields.phone_number'))
                     ->tel()
                     ->required()
                     ->regex('/^[\+]?[0-9]\d{9,14}$/')
                     ->maxLength(20)
-                    ->placeholder('966501234567')
+                    ->placeholder(__('filament.placeholders.phone_example'))
                     ->extraInputAttributes([
                         'dir' => 'ltr',
                         'style' => app()->getLocale() === 'ar' ? 'text-align: right; direction: ltr;' : ''
@@ -115,14 +115,14 @@ class UserResource extends Resource
                     ->label(__('filament.fields.role'))
                     ->required()
                     ->options([
-                        'contractor' => 'Contractor',
-                        'consultant' => 'Consultant', 
-                        'project_manager' => 'Project Manager',
-                        'site_engineer' => 'Site Engineer',
-                        'stakeholder' => 'Stakeholder'
+                        'contractor' => __('filament.roles.contractor'),
+                        'consultant' => __('filament.roles.consultant'), 
+                        'project_manager' => __('filament.roles.project_manager'),
+                        'site_engineer' => __('filament.roles.site_engineer'),
+                        'stakeholder' => __('filament.roles.stakeholder')
                     ])
                     ->native(false)
-                    ->placeholder('Select a role'),
+                    ->placeholder(__('filament.placeholders.select_role')),
             ])->columns(2),
             
             Forms\Components\Section::make(__('filament.fields.company_details'))->schema([
@@ -132,18 +132,18 @@ class UserResource extends Resource
                     ->minLength(2)
                     ->maxLength(200)
                     ->regex('/^[a-zA-Z0-9\s\-\&\.\_\,\(\)\']+$/')
-                    ->placeholder('ABC Construction Ltd'),
+                    ->placeholder(__('filament.placeholders.abc_construction')),
                 Forms\Components\TextInput::make('designation')
                     ->label(__('filament.fields.designation'))
                     ->maxLength(255)
-                    ->placeholder('Senior Engineer'),
+                    ->placeholder(__('filament.placeholders.senior_engineer')),
                 Forms\Components\TextInput::make('employee_count')
                     ->label(__('filament.fields.employee_count'))
                     ->numeric()
                     ->required()
                     ->minValue(1)
                     ->maxValue(50000)
-                    ->placeholder('50'),
+                    ->placeholder(__('filament.placeholders.employee_count_example')),
             ])->columns(2),
             
             Forms\Components\Section::make(__('filament.fields.account_settings'))->schema([

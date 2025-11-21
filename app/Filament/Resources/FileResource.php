@@ -204,8 +204,8 @@ class FileResource extends Resource
                             \App\Helpers\NotificationHelper::sendToProjectTeam(
                                 $project->id,
                                 'file_deleted',
-                                'File Deleted',
-                                "File '{$file->original_name}' has been deleted from project",
+                                __('filament.placeholders.file_deleted_title'),
+                                __('filament.placeholders.file_deleted_message', ['file' => $file->original_name]),
                                 [
                                     'file_id' => $file->id,
                                     'file_name' => $file->original_name,
@@ -234,8 +234,8 @@ class FileResource extends Resource
                                     \App\Helpers\NotificationHelper::sendToProjectTeam(
                                         $project->id,
                                         'file_deleted',
-                                        'File Deleted',
-                                        "File '{$file->original_name}' has been deleted from project",
+                                        __('filament.placeholders.file_deleted_title'),
+                                        __('filament.placeholders.file_deleted_message', ['file' => $file->original_name]),
                                         [
                                             'file_id' => $file->id,
                                             'file_name' => $file->original_name,

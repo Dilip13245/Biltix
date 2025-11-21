@@ -34,7 +34,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Public routes (no token required)
 Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language'])->group(function () {
 
-    Route::prefix('auth')->group(function () {
+    Route::prefix('auth')->middleware('throttle:6,1')->group(function () {
         Route::post('signup', [AuthController::class, 'signup']);
         Route::post('login', [AuthController::class, 'login']);
         Route::post('send_otp', [AuthController::class, 'sendOtp']);
@@ -46,7 +46,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language'])->group(
     Route::prefix('general')->group(function () {
         Route::get('project_types', [GeneralController::class, 'projectTypes']);
         Route::get('user_roles', [GeneralController::class, 'userRoles']);
-        Route::post('static_content', [GeneralController::class, 'getStaticContent']);
+        Route::post('static_content', [GeneralController::class, 'getStaticContent'])->middleware('throttle:60,1');
         Route::post('help_support', [GeneralController::class, 'submitHelpSupport'])->middleware(['tokencheck', 'throttle:5,1']);
         Route::post('change_language', [GeneralController::class, 'changeLanguage'])->middleware('tokencheck');
     });

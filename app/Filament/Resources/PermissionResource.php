@@ -29,7 +29,7 @@ class PermissionResource extends Resource
     
     public static function getNavigationGroup(): ?string
     {
-        return 'Admin Management';
+        return __('filament.navigation.admin_management');
     }
     
     protected static ?int $navigationSort = 2;
@@ -106,19 +106,19 @@ class PermissionResource extends Resource
                             ->searchable()
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('new_module')
-                                    ->label('New Module Name')
+                                    ->label(__('filament.fields.new_module_name'))
                                     ->required()
-                                    ->placeholder('e.g., inventory, billing, etc.')
+                                    ->placeholder(__('filament.placeholders.module_example'))
                                     ->regex('/^[a-z_]+$/')
-                                    ->helperText('Use lowercase letters and underscores only')
+                                    ->helperText(__('filament.helpers.use_lowercase'))
                             ])
                             ->createOptionUsing(function (array $data) {
                                 return $data['new_module'];
                             })
                             ->createOptionAction(function (Forms\Components\Actions\Action $action) {
                                 return $action
-                                    ->modalHeading('Add New Module')
-                                    ->modalSubmitActionLabel('Add Module')
+                                    ->modalHeading(__('filament.actions.add_new_module'))
+                                    ->modalSubmitActionLabel(__('filament.actions.add_module'))
                                     ->modalWidth('md');
                             })
                             ->searchable()
@@ -165,19 +165,19 @@ class PermissionResource extends Resource
                             ->searchable()
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('new_action')
-                                    ->label('New Action Name')
+                                    ->label(__('filament.fields.new_action_name'))
                                     ->required()
-                                    ->placeholder('e.g., export, import, etc.')
+                                    ->placeholder(__('filament.placeholders.action_example'))
                                     ->regex('/^[a-z_]+$/')
-                                    ->helperText('Use lowercase letters and underscores only')
+                                    ->helperText(__('filament.helpers.use_lowercase'))
                             ])
                             ->createOptionUsing(function (array $data) {
                                 return $data['new_action'];
                             })
                             ->createOptionAction(function (Forms\Components\Actions\Action $action) {
                                 return $action
-                                    ->modalHeading('Add New Action')
-                                    ->modalSubmitActionLabel('Add Action')
+                                    ->modalHeading(__('filament.actions.add_new_action'))
+                                    ->modalSubmitActionLabel(__('filament.actions.add_action'))
                                     ->modalWidth('md');
                             })
                             ->searchable()
@@ -294,7 +294,7 @@ class PermissionResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('delete')
-                        ->label('Delete')
+                        ->label(__('filament.actions.delete'))
                         ->icon('heroicon-o-trash')
                         ->color('danger')
                         ->action(fn ($records) => $records->each->update(['is_deleted' => true])),

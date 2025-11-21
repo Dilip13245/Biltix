@@ -74,9 +74,9 @@ class AdminResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
-            'Email' => $record->email,
-            'Phone' => $record->phone,
-            'Status' => $record->is_active ? 'Active' : 'Inactive',
+            'Email' => __('filament.fields.email'),
+            'Phone' => __('filament.fields.phone'),
+            'Status' => __('filament.fields.status'),
         ];
     }
 
@@ -126,9 +126,9 @@ class AdminResource extends Resource
                                     ->get()
                                     ->mapWithKeys(function ($role) {
                                         $descriptions = [
-                                            'super_admin' => 'Full system access',
-                                            'admin' => 'Standard admin permissions', 
-                                            'moderator' => 'Limited content management'
+                                            'super_admin' => __('filament.placeholders.admin_role_super_admin'),
+                                            'admin' => __('filament.placeholders.admin_role_admin'), 
+                                            'moderator' => __('filament.placeholders.admin_role_moderator')
                                         ];
                                         return [$role->id => $role->display_name . ' - ' . $descriptions[$role->name]];
                                     });
@@ -151,7 +151,7 @@ class AdminResource extends Resource
                     ->label(__('filament.fields.email'))
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('Email copied!')
+                    ->copyMessage(__('filament.placeholders.email_copied'))
                     ->icon('heroicon-m-envelope'),
                 Tables\Columns\TextColumn::make('roles.display_name')
                     ->label(__('filament.fields.roles'))
@@ -177,7 +177,7 @@ class AdminResource extends Resource
                     ->since()
                     ->placeholder(__('filament.fields.never')),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label(__('filament.fields.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -185,10 +185,10 @@ class AdminResource extends Resource
             ->defaultSort('name')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Status')
-                    ->placeholder('All admins')
-                    ->trueLabel('Active only')
-                    ->falseLabel('Inactive only'),
+                    ->label(__('filament.fields.status'))
+                    ->placeholder(__('filament.placeholders.all_admins'))
+                    ->trueLabel(__('filament.placeholders.active_only'))
+                    ->falseLabel(__('filament.placeholders.inactive_only')),
             ])
             ->filters([
                 //
@@ -196,7 +196,7 @@ class AdminResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('delete')
-                    ->label('Delete')
+                    ->label(__('filament.actions.delete'))
                     ->icon('heroicon-o-trash')
                     ->color('danger')
                     ->requiresConfirmation()
@@ -205,7 +205,7 @@ class AdminResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('delete')
-                        ->label('Delete')
+                        ->label(__('filament.actions.delete'))
                         ->icon('heroicon-o-trash')
                         ->color('danger')
                         ->action(fn ($records) => $records->each->update(['is_deleted' => true])),

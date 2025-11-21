@@ -193,8 +193,8 @@ class TaskResource extends Resource
                             \App\Helpers\NotificationHelper::send(
                                 $recipients,
                                 'task_status_changed',
-                                'Task Completed',
-                                "Task '{$record->title}' has been marked as completed",
+                                __('filament.placeholders.task_completed_title'),
+                                __('filament.placeholders.task_completed_message', ['title' => $record->title]),
                                 [
                                     'task_id' => $record->id,
                                     'task_title' => $record->title,

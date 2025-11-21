@@ -26,25 +26,25 @@ class ViewTeamMember extends ViewRecord
     {
         return $infolist
             ->schema([
-                Section::make('Team Member Details')
+                Section::make(__('filament.fields.team_member_details'))
                     ->schema([
                         TextEntry::make('project.project_title')
-                            ->label('Project'),
+                            ->label(__('filament.fields.project')),
                         TextEntry::make('user.name')
-                            ->label('Member Name')
+                            ->label(__('filament.fields.member_name'))
                             ->weight(FontWeight::Bold),
                         TextEntry::make('user.email')
-                            ->label('Email'),
+                            ->label(__('filament.fields.email')),
                         TextEntry::make('role_in_project')
-                            ->label('Project Role')
+                            ->label(__('filament.fields.project_role'))
                             ->badge(),
                         TextEntry::make('assignedBy.name')
-                            ->label('Assigned By'),
+                            ->label(__('filament.fields.assigned_by')),
                         TextEntry::make('assigned_at')
-                            ->label('Assigned Date')
+                            ->label(__('filament.fields.assigned_date'))
                             ->dateTime(),
                         IconEntry::make('is_active')
-                            ->label('Active')
+                            ->label(__('filament.fields.active'))
                             ->boolean()
                             ->trueIcon('heroicon-o-check-circle')
                             ->falseIcon('heroicon-o-x-circle')

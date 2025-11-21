@@ -41,16 +41,16 @@ class ProjectProgressResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('project_title')
-                    ->label('Project')
+                    ->label(__('filament.fields.project'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('activities_count')
-                    ->label('Activities')
+                    ->label(__('filament.fields.activities'))
                     ->counts('activities'),
                 Tables\Columns\TextColumn::make('manpower_equipment_count')
-                    ->label('Manpower & Equipment')
+                    ->label(__('filament.fields.manpower_equipment'))
                     ->counts('manpowerEquipment'),
                 Tables\Columns\TextColumn::make('safety_items_count')
-                    ->label('Safety Items')
+                    ->label(__('filament.fields.safety_items'))
                     ->counts('safetyItems'),
             ])
             ->actions([
