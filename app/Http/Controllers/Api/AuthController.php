@@ -799,4 +799,113 @@ class AuthController extends Controller
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
     }
+
+    public function addTeamMember(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:users,id',
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'phone' => 'required|unique:users,phone',
+                'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
+                'role' => 'required|in:contractor,consultant,site_engineer,project_manager,stakeholder',
+            ], [
+                'user_id.required' => trans('api.auth.user_id_required'),
+                'name.required' => trans('api.auth.name_required'),
+                'email.required' => trans('api.auth.email_required'),
+                'email.unique' => trans('api.auth.email_unique'),
+                'phone.required' => trans('api.auth.phone_number_required'),
+                'phone.unique' => trans('api.auth.phone_number_unique'),
+                'password.required' => trans('api.auth.password_required'),
+                'role.required' => trans('api.auth.role_required'),
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $parentUser = User::find($request->user_id);
+
+            if (!$parentUser || $parentUser->is_deleted || !$parentUser->is_active) {
+                return $this->toJsonEnc([], trans('api.auth.invalid_user'), Config::get('constant.ERROR'));
+            }
+
+            if ($parentUser->is_sub_user) {
+                return $this->toJsonEnc([], trans('api.auth.sub_users_cannot_add'), Config::get('constant.ERROR'));
+            }
+
+            $subUser = new User();
+            $subUser->name = $request->name;
+            $subUser->email = $request->email;
+            $subUser->phone = $request->phone;
+            $subUser->password = Hash::make($request->password);
+            $subUser->role = $request->role;
+            $subUser->company_name = $parentUser->company_name;
+            $subUser->designation = $request->designation ?? '';
+            $subUser->is_sub_user = true;
+            $subUser->parent_user_id = $parentUser->id;
+            $subUser->is_active = true;
+            $subUser->is_verified = true;
+            $subUser->save();
+
+            NotificationHelper::send(
+                $subUser->id,
+                'account_created',
+                'Account Created',
+                "Your account has been created by {$parentUser->name}. You can now login with your credentials.",
+                ['user_id' => $subUser->id],
+                'medium'
+            );
+
+            return $this->toJsonEnc([
+                'id' => $subUser->id,
+                'name' => $subUser->name,
+                'email' => $subUser->email,
+                'role' => $subUser->role,
+            ], trans('api.auth.team_member_added'), Config::get('constant.SUCCESS'));
+
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function listTeamMembers(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:users,id',
+            ], [
+                'user_id.required' => trans('api.auth.user_id_required'),
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $parentUser = User::find($request->user_id);
+
+            if (!$parentUser || $parentUser->is_deleted || !$parentUser->is_active) {
+                return $this->toJsonEnc([], trans('api.auth.invalid_user'), Config::get('constant.ERROR'));
+            }
+
+            if ($parentUser->is_sub_user) {
+                return $this->toJsonEnc([], trans('api.auth.sub_users_cannot_add'), Config::get('constant.ERROR'));
+            }
+
+            $subUsers = User::where('parent_user_id', $parentUser->id)
+                ->where('is_deleted', false)
+                ->select('id', 'name', 'email', 'role', 'designation', 'is_active', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return $this->toJsonEnc([
+                'total_members' => $subUsers->count(),
+                'members' => $subUsers,
+            ], trans('api.auth.team_members_retrieved'), Config::get('constant.SUCCESS'));
+
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
 }

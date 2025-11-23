@@ -2,6 +2,7 @@
 
 return [
     'auth' => [
+        'user_id_required' => 'User ID is required',
         'email_required' => 'Email is required',
         'email_invalid' => 'Invalid email format',
         'email_unique' => 'Email already exists',
@@ -48,6 +49,11 @@ return [
         'signup_success' => 'Registration successful! Welcome to Biltix.',
         'device_not_found' => 'Device not found. Please login again.',
         'device_registered' => 'Device registered successfully',
+        'team_member_added' => 'Team member added successfully',
+        'sub_users_cannot_add' => 'Sub-users cannot add team members',
+        'team_members_retrieved' => 'Team members retrieved successfully',
+        'employee_count_required' => 'Employee count is required',
+        'signup_success' => 'Registration successful! Welcome to Biltix.',
     ],
     'general' => [
         'language_changed' => 'Language changed successfully',

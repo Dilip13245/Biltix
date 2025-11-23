@@ -17,7 +17,7 @@ class User extends Authenticatable
         'name', 'email', 'phone', 'password', 'role', 'company_name',
         'designation', 'employee_count', 'member_number', 'member_name',
         'profile_image', 'language', 'timezone', 'last_login_at', 'otp',
-        'is_active', 'is_deleted'
+        'is_active', 'is_deleted', 'is_sub_user', 'parent_user_id'
     ];
 
     protected $hidden = ['password', 'remember_token', 'otp'];
@@ -27,6 +27,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
+        'is_sub_user' => 'boolean',
         'last_login_at' => 'datetime',
     ];
 
@@ -55,6 +56,16 @@ class User extends Authenticatable
     public function assignedTasks()
     {
         return $this->hasMany(Task::class, 'assigned_to', 'id');
+    }
+
+    public function parentUser()
+    {
+        return $this->belongsTo(User::class, 'parent_user_id', 'id');
+    }
+
+    public function subUsers()
+    {
+        return $this->hasMany(User::class, 'parent_user_id', 'id');
     }
 
     // Permission methods

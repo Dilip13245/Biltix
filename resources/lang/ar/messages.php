@@ -1,6 +1,22 @@
 <?php
 
 return [
+    // Team Members
+    'my_team' => 'فريقي',
+    'team_members_list' => 'قائمة أعضاء الفريق',
+    'add_new_member' => 'إضافة عضو جديد',
+    'member_name' => 'اسم العضو',
+    'member_email' => 'البريد الإلكتروني للعضو',
+    'member_phone' => 'هاتف العضو',
+    'member_role' => 'دور العضو',
+    'member_password' => 'كلمة المرور',
+    'no_members_found' => 'لم يتم العثور على أعضاء الفريق',
+    'add_your_first_team_member' => 'أضف عضو فريقك الأول للبدء',
+    'member_added_successfully' => 'تمت إضافة عضو الفريق بنجاح!',
+    'failed_to_add_team_member' => 'فشل في إضافة عضو الفريق',
+    'loading_team_members' => 'جاري تحميل أعضاء الفريق...',
+    'total_team_members' => 'إجمالي أعضاء الفريق',
+    'failed_to_load_team_members' => 'فشل في تحميل أعضاء الفريق',
     // Common
     'welcome' => 'مرحباً',
     'notifications' => 'الإشعارات',

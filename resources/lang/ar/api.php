@@ -2,6 +2,7 @@
 
 return [
     'auth' => [
+        'user_id_required' => 'معرف المستخدم مطلوب',
         'email_required' => 'البريد الإلكتروني مطلوب',
         'email_invalid' => 'تنسيق البريد الإلكتروني غير صحيح',
         'email_unique' => 'البريد الإلكتروني موجود بالفعل',
@@ -47,6 +48,11 @@ return [
         'otp_expired' => 'انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد',
         'device_not_found' => 'الجهاز غير موجود. يرجى تسجيل الدخول مرة أخرى.',
         'device_registered' => 'تم تسجيل الجهاز بنجاح',
+        'team_member_added' => 'تم إضافة عضو الفريق بنجاح',
+        'sub_users_cannot_add' => 'المستخدمون الفرعيون لا يمكنهم إضافة أعضاء الفريق',
+        'team_members_retrieved' => 'تم استرداد أعضاء الفريق بنجاح',
+        'employee_count_required' => 'عدد الموظفين مطلوب',
+        'signup_success' => 'تم التسجيل بنجاح! مرحباً بك في Biltix.',
     ],
     'general' => [
         'language_changed' => 'تم تغيير اللغة بنجاح',

@@ -1326,6 +1326,23 @@ return [
     
     // Validation Messages
     'is_required' => 'is required',
+    
+    // Team Members
+    'my_team' => 'My Team',
+    'team_members_list' => 'Team Members List',
+    'add_new_member' => 'Add New Member',
+    'member_name' => 'Member Name',
+    'member_email' => 'Member Email',
+    'member_phone' => 'Member Phone',
+    'member_role' => 'Member Role',
+    'member_password' => 'Password',
+    'no_members_found' => 'No team members found',
+    'add_your_first_team_member' => 'Add your first team member to get started',
+    'member_added_successfully' => 'Team member added successfully!',
+    'failed_to_add_team_member' => 'Failed to add team member',
+    'loading_team_members' => 'Loading team members...',
+    'total_team_members' => 'Total Team Members',
+    'failed_to_load_team_members' => 'Failed to load team members',
 ];
 
 
