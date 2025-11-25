@@ -807,7 +807,7 @@ class AuthController extends Controller
                 'user_id' => 'required|exists:users,id',
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
-                'phone' => 'required|unique:users,phone',
+                'phone' => 'nullable|unique:users,phone',
                 'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
                 'role' => 'required|in:contractor,consultant,site_engineer,project_manager,stakeholder',
             ], [
@@ -815,7 +815,6 @@ class AuthController extends Controller
                 'name.required' => trans('api.auth.name_required'),
                 'email.required' => trans('api.auth.email_required'),
                 'email.unique' => trans('api.auth.email_unique'),
-                'phone.required' => trans('api.auth.phone_number_required'),
                 'phone.unique' => trans('api.auth.phone_number_unique'),
                 'password.required' => trans('api.auth.password_required'),
                 'role.required' => trans('api.auth.role_required'),
@@ -825,44 +824,62 @@ class AuthController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            $parentUser = User::find($request->user_id);
+            $currentUser = User::find($request->user_id);
 
-            if (!$parentUser || $parentUser->is_deleted || !$parentUser->is_active) {
+            if (!$currentUser || $currentUser->is_deleted || !$currentUser->is_active) {
                 return $this->toJsonEnc([], trans('api.auth.invalid_user'), Config::get('constant.ERROR'));
             }
 
-            if ($parentUser->is_sub_user) {
-                return $this->toJsonEnc([], trans('api.auth.sub_users_cannot_add'), Config::get('constant.ERROR'));
+            // Determine company_id (main user)
+            // If current user is sub user, use their parent_user_id as company_id
+            // If current user is main user, use their own id as company_id
+            $companyId = $currentUser->is_sub_user ? $currentUser->parent_user_id : $currentUser->id;
+            
+            // Get company owner for company_name
+            $companyOwner = User::find($companyId);
+            if (!$companyOwner) {
+                return $this->toJsonEnc([], 'Company owner not found', Config::get('constant.ERROR'));
             }
 
-            $subUser = new User();
-            $subUser->name = $request->name;
-            $subUser->email = $request->email;
-            $subUser->phone = $request->phone;
-            $subUser->password = Hash::make($request->password);
-            $subUser->role = $request->role;
-            $subUser->company_name = $parentUser->company_name;
-            $subUser->designation = $request->designation ?? '';
-            $subUser->is_sub_user = true;
-            $subUser->parent_user_id = $parentUser->id;
-            $subUser->is_active = true;
-            $subUser->is_verified = true;
-            $subUser->save();
+            // Create new team member user
+            $newMember = new User();
+            $newMember->name = $request->name;
+            $newMember->email = $request->email;
+            $newMember->phone = $request->phone ?? null;
+            $newMember->password = Hash::make($request->password);
+            $newMember->role = $request->role;
+            $newMember->company_name = $companyOwner->company_name;
+            $newMember->designation = $request->designation ?? '';
+            $newMember->is_sub_user = true;
+            $newMember->parent_user_id = $companyId;
+            $newMember->is_active = true;
+            $newMember->is_verified = true;
+            $newMember->save();
+
+            // Add to company_teams table
+            \App\Models\CompanyTeam::create([
+                'company_id' => $companyId,
+                'member_user_id' => $newMember->id,
+                'added_by' => $currentUser->id,
+                'role' => $request->role,
+                'is_active' => true,
+                'is_deleted' => false,
+            ]);
 
             NotificationHelper::send(
-                $subUser->id,
+                $newMember->id,
                 'account_created',
                 'Account Created',
-                "Your account has been created by {$parentUser->name}. You can now login with your credentials.",
-                ['user_id' => $subUser->id],
+                "Your account has been created by {$currentUser->name}. You can now login with your credentials.",
+                ['user_id' => $newMember->id],
                 'medium'
             );
 
             return $this->toJsonEnc([
-                'id' => $subUser->id,
-                'name' => $subUser->name,
-                'email' => $subUser->email,
-                'role' => $subUser->role,
+                'id' => $newMember->id,
+                'name' => $newMember->name,
+                'email' => $newMember->email,
+                'role' => $newMember->role,
             ], trans('api.auth.team_member_added'), Config::get('constant.SUCCESS'));
 
         } catch (\Exception $e) {
@@ -883,25 +900,39 @@ class AuthController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            $parentUser = User::find($request->user_id);
+            $currentUser = User::find($request->user_id);
 
-            if (!$parentUser || $parentUser->is_deleted || !$parentUser->is_active) {
+            if (!$currentUser || $currentUser->is_deleted || !$currentUser->is_active) {
                 return $this->toJsonEnc([], trans('api.auth.invalid_user'), Config::get('constant.ERROR'));
             }
 
-            if ($parentUser->is_sub_user) {
-                return $this->toJsonEnc([], trans('api.auth.sub_users_cannot_add'), Config::get('constant.ERROR'));
-            }
+            // Determine company_id
+            $companyId = $currentUser->is_sub_user ? $currentUser->parent_user_id : $currentUser->id;
 
-            $subUsers = User::where('parent_user_id', $parentUser->id)
+            // Get all team members from company_teams table
+            $teamMembers = \App\Models\CompanyTeam::where('company_id', $companyId)
                 ->where('is_deleted', false)
-                ->select('id', 'name', 'email', 'role', 'designation', 'is_active', 'created_at')
+                ->with(['member:id,name,email,role,designation,is_active,created_at', 'addedBy:id,name'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
+            // Format the response
+            $members = $teamMembers->map(function ($team) {
+                return [
+                    'id' => $team->member->id,
+                    'name' => $team->member->name,
+                    'email' => $team->member->email,
+                    'role' => $team->member->role,
+                    'designation' => $team->member->designation,
+                    'is_active' => $team->member->is_active,
+                    'created_at' => $team->member->created_at,
+                    'added_by' => $team->addedBy->name ?? 'Unknown',
+                ];
+            });
+
             return $this->toJsonEnc([
-                'total_members' => $subUsers->count(),
-                'members' => $subUsers,
+                'total_members' => $members->count(),
+                'members' => $members,
             ], trans('api.auth.team_members_retrieved'), Config::get('constant.SUCCESS'));
 
         } catch (\Exception $e) {

@@ -13,6 +13,55 @@
                     #teamMembersModal .modal-header {
                         position: relative !important;
                     }
+                    
+                    /* Validation error messages styling */
+                    #teamMemberForm .invalid-feedback {
+                        display: block;
+                        color: #dc3545;
+                        font-size: 0.875rem;
+                        margin-top: 0.25rem;
+                    }
+                    
+                    #teamMemberForm .form-control.is-invalid {
+                        border-color: #dc3545;
+                        padding-right: calc(1.5em + 0.75rem);
+                        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+                        background-repeat: no-repeat;
+                        background-position: right calc(0.375em + 0.1875rem) center;
+                        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+                    }
+                    
+                    /* Password toggle icon */
+                    #togglePassword {
+                        z-index: 10;
+                        transition: color 0.2s ease;
+                    }
+                    
+                    #togglePassword:hover {
+                        color: #495057;
+                    }
+                    
+                    /* RTL support for validation */
+                    [dir="rtl"] #teamMemberForm .form-control.is-invalid {
+                        padding-right: 0.75rem;
+                        padding-left: calc(1.5em + 0.75rem);
+                        background-position: left calc(0.375em + 0.1875rem) center;
+                    }
+                    
+                    [dir="rtl"] #teamMemberForm .invalid-feedback {
+                        text-align: right;
+                    }
+                    
+                    /* RTL support for password toggle */
+                    [dir="rtl"] #member_password {
+                        padding-right: 0.75rem !important;
+                        padding-left: 2.5rem !important;
+                    }
+                    
+                    [dir="rtl"] #togglePassword {
+                        right: auto !important;
+                        left: 0.75rem !important;
+                    }
                 </style>
                 @if (app()->getLocale() == 'ar')
                     <div class="d-flex justify-content-between align-items-center w-100">
@@ -32,9 +81,11 @@
                 <!-- Add Member Button -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0">{{ __('messages.team_members_list') }}</h6>
+                    @can('team_management', 'create')
                     <button class="btn btn-sm orange_btn" onclick="showAddMemberForm()">
                         {{ __('messages.add_new_member') }}
                     </button>
+                    @endcan
                 </div>
 
                 <!-- Add Member Form (Hidden by default) -->
@@ -46,14 +97,20 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ __('messages.member_name') }} *</label>
                                     <input type="text" class="form-control Input_control" id="member_name">
+                                    <div class="invalid-feedback" id="member_name_error"></div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ __('messages.member_email') }} *</label>
                                     <input type="email" class="form-control Input_control" id="member_email">
+                                    <div class="invalid-feedback" id="member_email_error"></div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ __('messages.member_password') }} *</label>
-                                    <input type="password" class="form-control Input_control" id="member_password">
+                                    <div class="position-relative">
+                                        <input type="password" class="form-control Input_control" id="member_password" style="padding-right: 2.5rem;">
+                                        <i class="fas fa-eye-slash position-absolute" id="togglePassword" style="right: 0.75rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6c757d;"></i>
+                                    </div>
+                                    <div class="invalid-feedback" id="member_password_error"></div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ __('messages.member_role') }} *</label>
@@ -64,6 +121,7 @@
                                             <div class="text-center py-2"><div class="spinner-border spinner-border-sm"></div></div>
                                         </div>
                                     </div>
+                                    <div class="invalid-feedback" id="member_role_error"></div>
                                 </div>
                             </div>
                             <div class="d-flex gap-2">
@@ -91,6 +149,15 @@
 </div>
 
 <script>
+    // Format role name: convert underscores to spaces and capitalize each word
+    function formatRoleName(role) {
+        if (!role) return '';
+        return role
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
+
     // Load roles from API
     async function loadUserRoles() {
         try {
@@ -99,7 +166,7 @@
             const roleDropdown = document.getElementById('roleDropdown');
             if (response.code === 200 && response.data) {
                 roleDropdown.innerHTML = response.data.map(role => 
-                    `<div class="dropdown-option" data-value="${role.id}">${role.id}</div>`
+                    `<div class="dropdown-option" data-value="${role.id}">${formatRoleName(role.id)}</div>`
                 ).join('');
                 
                 // Attach click handlers
@@ -107,6 +174,7 @@
                     option.addEventListener('click', function() {
                         document.getElementById('member_role').value = this.getAttribute('data-value');
                         document.getElementById('member_role').classList.remove('is-invalid');
+                        document.getElementById('member_role_error').textContent = '';
                         roleDropdown.classList.remove('show');
                     });
                 });
@@ -148,12 +216,47 @@
         document.getElementById('addMemberForm').style.display = 'none';
         document.getElementById('teamMemberForm').reset();
         document.querySelectorAll('#teamMemberForm .is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        document.querySelectorAll('#teamMemberForm .invalid-feedback').forEach(el => el.textContent = '');
     }
+
+    // Clear validation errors on input
+    ['member_name', 'member_email', 'member_password'].forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                document.getElementById(fieldId + '_error').textContent = '';
+            });
+        }
+    });
+
+    // Clear role validation error when role is selected
+    document.getElementById('member_role').addEventListener('change', function() {
+        this.classList.remove('is-invalid');
+        document.getElementById('member_role_error').textContent = '';
+    });
+
+    // Password visibility toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('member_password');
+    
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            // Toggle password visibility
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle eye icon
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    }
+
 
     // Load Team Members
     async function loadTeamMembers() {
         try {
-            const response = await api.makeRequest('auth/list_team_members', {
+            const response = await api.makeRequest('team_management/list_members', {
                 user_id: {{ auth()->id() ?? 1 }}
             });
 
@@ -190,7 +293,7 @@
                                             </div>
                                             <div class="d-flex align-items-center gap-1">
                                                 <i class="fas fa-briefcase text-warning"></i>
-                                                <span>${member.role}</span>
+                                                <span>${formatRoleName(member.role)}</span>
                                             </div>
                                             <div class="d-flex align-items-center gap-1">
                                                 <i class="fas fa-lock"></i>
@@ -240,6 +343,7 @@
 
         // Clear previous errors
         document.querySelectorAll('#teamMemberForm .is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        document.querySelectorAll('#teamMemberForm .invalid-feedback').forEach(el => el.textContent = '');
 
         // Get form values
         const name = document.getElementById('member_name').value.trim();
@@ -252,31 +356,42 @@
         // Validate name
         if (!name) {
             document.getElementById('member_name').classList.add('is-invalid');
+            document.getElementById('member_name_error').textContent = '{{ __('messages.name_is_required') }}';
             isValid = false;
         }
 
         // Validate email
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email || !emailRegex.test(email)) {
+        if (!email) {
             document.getElementById('member_email').classList.add('is-invalid');
+            document.getElementById('member_email_error').textContent = '{{ __('messages.email_is_required') }}';
+            isValid = false;
+        } else if (!emailRegex.test(email)) {
+            document.getElementById('member_email').classList.add('is-invalid');
+            document.getElementById('member_email_error').textContent = '{{ __('messages.valid_email_required') }}';
             isValid = false;
         }
 
         // Validate password (min 8 chars, uppercase, lowercase, number, special char)
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!password || !passwordRegex.test(password)) {
+        if (!password) {
             document.getElementById('member_password').classList.add('is-invalid');
+            document.getElementById('member_password_error').textContent = '{{ __('messages.password_is_required') }}';
+            isValid = false;
+        } else if (!passwordRegex.test(password)) {
+            document.getElementById('member_password').classList.add('is-invalid');
+            document.getElementById('member_password_error').textContent = '{{ __('messages.password_requirements') }}';
             isValid = false;
         }
 
         // Validate role
         if (!role) {
             document.getElementById('member_role').classList.add('is-invalid');
+            document.getElementById('member_role_error').textContent = '{{ __('messages.role_is_required') }}';
             isValid = false;
         }
 
         if (!isValid) {
-            showToast('{{ __('messages.please_fill_required_fields') }}', 'error');
             return;
         }
 
@@ -287,11 +402,10 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{{ __('messages.adding') }}...';
 
         try {
-            const response = await api.makeRequest('auth/add_team_member', {
+            const response = await api.makeRequest('team_management/add_member', {
                 user_id: {{ auth()->id() ?? 1 }},
                 name: name,
                 email: email,
-                phone: email,
                 password: password,
                 role: role
             });

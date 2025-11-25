@@ -1343,6 +1343,14 @@ return [
     'loading_team_members' => 'Loading team members...',
     'total_team_members' => 'Total Team Members',
     'failed_to_load_team_members' => 'Failed to load team members',
+    
+    // Team member validation messages
+    'name_is_required' => 'Name is required',
+    'email_is_required' => 'Email is required',
+    'valid_email_required' => 'Please enter a valid email address',
+    'password_is_required' => 'Password is required',
+    'password_requirements' => 'Password must be at least 8 characters with uppercase, lowercase, number and special character',
+    'role_is_required' => 'Role is required',
 ];
 
 

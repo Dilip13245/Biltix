@@ -66,8 +66,12 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('register_device', [AuthController::class, 'registerDevice']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('delete_account', [AuthController::class, 'deleteAccount']);
-        Route::post('add_team_member', [AuthController::class, 'addTeamMember']);
-        Route::post('list_team_members', [AuthController::class, 'listTeamMembers']);
+    });
+    
+    // Team Management Routes (with permission check)
+    Route::prefix('team_management')->group(function () {
+        Route::post('add_member', [AuthController::class, 'addTeamMember']);
+        Route::post('list_members', [AuthController::class, 'listTeamMembers']);
     });
 
     Route::prefix('projects')->group(function () {

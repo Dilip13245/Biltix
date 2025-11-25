@@ -71,6 +71,12 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'team.remove', 'display_name' => 'Remove Team Members', 'module' => 'team', 'action' => 'remove'],
             ['name' => 'team.coordinate', 'display_name' => 'Coordinate Team', 'module' => 'team', 'action' => 'coordinate'],
             
+            // Team Management (Company Level)
+            ['name' => 'team_management.create', 'display_name' => 'Manage Team - Add Members', 'module' => 'team_management', 'action' => 'create'],
+            ['name' => 'team_management.view', 'display_name' => 'Manage Team - View Members', 'module' => 'team_management', 'action' => 'view'],
+            ['name' => 'team_management.edit', 'display_name' => 'Manage Team - Edit Members', 'module' => 'team_management', 'action' => 'edit'],
+            ['name' => 'team_management.delete', 'display_name' => 'Manage Team - Remove Members', 'module' => 'team_management', 'action' => 'delete'],
+            
             // Notifications
             ['name' => 'notifications.view', 'display_name' => 'View Notifications', 'module' => 'notifications', 'action' => 'view'],
             ['name' => 'notifications.update', 'display_name' => 'Update Notifications', 'module' => 'notifications', 'action' => 'update'],
@@ -160,6 +166,7 @@ class RolePermissionSeeder extends Seeder
                     'photos.upload', 'photos.view', 'photos.delete',
                     'daily_logs.create', 'daily_logs.view', 'daily_logs.edit',
                     'team.add', 'team.view', 'team.remove', 'team.coordinate',
+                    'team_management.create', 'team_management.view', 'team_management.edit', 'team_management.delete',
                     'notifications.view', 'notifications.update', 'notifications.delete',
                     'reports.view', 'reports.create',
                     'timeline.view', 'timeline.edit', 'progress.view', 'progress.update'
@@ -189,6 +196,7 @@ class RolePermissionSeeder extends Seeder
                     'files.upload', 'files.view', 'files.download', 'files.delete',
                     'photos.upload', 'photos.view', 'daily_logs.create', 'daily_logs.view', 'daily_logs.edit',
                     'team.add', 'team.view', 'team.remove', 'team.coordinate',
+                    'team_management.create', 'team_management.view', 'team_management.edit', 'team_management.delete',
                     'notifications.view', 'notifications.update', 'notifications.delete',
                     'reports.view', 'reports.create', 'timeline.view', 'timeline.edit',
                     'progress.view', 'progress.update'

@@ -40,8 +40,8 @@ class AutoPermission
         
         // Extract module from URL path
         if (preg_match('/api\/v1\/(\w+)\/(\w+)/', $path, $matches)) {
-            $module = $matches[1]; // projects, tasks, etc.
-            $endpoint = $matches[2]; // create, list, etc.
+            $module = $matches[1]; // projects, tasks, team_management, etc.
+            $endpoint = $matches[2]; // create, list, add_member, etc.
             
             // Override module for phase operations
             if (in_array($endpoint, ['create_phase', 'list_phases', 'update_phase', 'delete_phase', 'update_phase_progress'])) {
@@ -77,6 +77,8 @@ class AutoPermission
             'update_profile' => 'edit',
             'logout' => 'view',
             'delete_account' => 'delete',
+            'add_member' => 'create',
+            'list_members' => 'view',
             'dashboard_stats' => 'view',
             'progress_report' => 'view',
             'create_phase' => 'create',
@@ -100,7 +102,6 @@ class AutoPermission
             'equipment_logs' => 'view',
             'staff_logs' => 'view',
             'list_members' => 'view',
-            'add_member' => 'create',
             'remove_member' => 'delete',
             'assign_project' => 'assign',
             'member_details' => 'view',

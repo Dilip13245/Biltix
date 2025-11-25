@@ -961,11 +961,13 @@
                         @endif
                     </h5>
                     <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-primary py-2" data-bs-toggle="modal"
-                            data-bs-target="#teamMembersModal">
-                            <i class="fas fa-users"></i>
-                            {{ __('messages.my_team') }}
-                        </button>
+                        @can('team_management', 'view')
+                            <button class="btn btn-primary py-2" data-bs-toggle="modal"
+                                data-bs-target="#teamMembersModal">
+                                <i class="fas fa-users"></i>
+                                {{ __('messages.my_team') }}
+                            </button>
+                        @endcan
                         @can('projects', 'create')
                             <button class="btn orange_btn py-2" data-bs-toggle="modal"
                                 data-bs-target="#createProjectModal">
