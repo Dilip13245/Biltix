@@ -129,10 +129,10 @@ class PhotoResource extends Resource
                     ->formatStateUsing(fn (int $state): string => number_format($state / 1024, 2) . ' KB')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('taken_at')
-                    ->label(__('filament.fields.taken_at'))
-                    ->dateTime()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('taken_at')
+                //     ->label(__('filament.fields.taken_at'))
+                //     ->dateTime()
+                //     ->sortable(),
 
                 Tables\Columns\TextColumn::make('uploader.name')
                     ->label(__('filament.fields.taken_by'))
@@ -145,10 +145,10 @@ class PhotoResource extends Resource
                     ->options(Project::active()->pluck('project_title', 'id'))
                     ->searchable(),
 
-                Tables\Filters\SelectFilter::make('phase_id')
-                    ->label(__('filament.fields.phase'))
-                    ->options(ProjectPhase::active()->pluck('title', 'id'))
-                    ->searchable(),
+                // Tables\Filters\SelectFilter::make('phase_id')
+                //     ->label(__('filament.fields.phase'))
+                //     ->options(ProjectPhase::active()->pluck('title', 'id'))
+                //     ->searchable(),
 
                 Tables\Filters\Filter::make('taken_at')
                     ->label(__('filament.fields.taken_date'))

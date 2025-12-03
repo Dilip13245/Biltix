@@ -192,17 +192,17 @@ class InspectionResource extends Resource
                 Tables\Filters\SelectFilter::make('project_id')
                     ->label(__('filament.fields.project'))
                     ->options(Project::pluck('project_title', 'id')),
-                Tables\Filters\SelectFilter::make('category')
-                    ->label(__('filament.fields.category'))
-                    ->options([
-                        'structural' => __('filament.options.structural'),
-                        'electrical' => __('filament.options.electrical'),
-                        'plumbing' => __('filament.options.plumbing'),
-                        'safety' => __('filament.options.safety'),
-                        'quality' => __('filament.options.quality'),
-                        'mechanical' => __('filament.options.mechanical'),
-                        'finishing' => __('filament.options.finishing'),
-                    ]),
+                // Tables\Filters\SelectFilter::make('category')
+                //     ->label(__('filament.fields.category'))
+                //     ->options([
+                //         'structural' => __('filament.options.structural'),
+                //         'electrical' => __('filament.options.electrical'),
+                //         'plumbing' => __('filament.options.plumbing'),
+                //         'safety' => __('filament.options.safety'),
+                //         'quality' => __('filament.options.quality'),
+                //         'mechanical' => __('filament.options.mechanical'),
+                //         'finishing' => __('filament.options.finishing'),
+                //     ]),
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('filament.fields.status'))
                     ->options([

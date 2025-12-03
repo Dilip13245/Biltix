@@ -187,7 +187,7 @@ class FileResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('download')
                     ->label(__('filament.actions.download'))
                     ->icon('heroicon-o-arrow-down-tray')

@@ -108,7 +108,8 @@ class ViewProjectProgress extends ViewRecord
                                                                     Infolists\Components\TextEntry::make('description')
                                                                         ->label(__('filament.fields.activity'))
                                                                         ->weight('medium')
-                                                                        ->size('sm'),
+                                                                        ->size('sm')
+                                                                        ->extraAttributes(['style' => 'word-break: break-word; overflow-wrap: break-word;']),
                                                                     Infolists\Components\TextEntry::make('created_at')
                                                                         ->label(__('filament.fields.created'))
                                                                         ->dateTime()
@@ -185,7 +186,8 @@ class ViewProjectProgress extends ViewRecord
                                                                     Infolists\Components\TextEntry::make('category')
                                                                         ->label(__('filament.fields.category'))
                                                                         ->weight('medium')
-                                                                        ->size('sm'),
+                                                                        ->size('sm')
+                                                                        ->extraAttributes(['style' => 'word-break: break-word; overflow-wrap: break-word;']),
                                                                     Infolists\Components\TextEntry::make('count')
                                                                         ->label(__('filament.fields.count'))
                                                                         ->badge()
@@ -266,7 +268,8 @@ class ViewProjectProgress extends ViewRecord
                                                                     Infolists\Components\TextEntry::make('checklist_item')
                                                                         ->label(__('filament.fields.safety_item'))
                                                                         ->weight('medium')
-                                                                        ->size('sm'),
+                                                                        ->size('sm')
+                                                                        ->extraAttributes(['style' => 'word-break: break-word; overflow-wrap: break-word;']),
                                                                     Infolists\Components\TextEntry::make('created_at')
                                                                         ->label(__('filament.fields.created'))
                                                                         ->dateTime()

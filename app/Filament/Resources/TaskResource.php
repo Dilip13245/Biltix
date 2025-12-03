@@ -84,18 +84,19 @@ class TaskResource extends Resource
                 ->searchable(),
             Forms\Components\Hidden::make('created_by')
                 ->default(auth()->id()),
-            Forms\Components\DatePicker::make('due_date')
-                ->label(__('filament.fields.due_date'))
-                ->required()
-                ->native(false),
+            // Forms\Components\DatePicker::make('due_date')
+            //     ->label(__('filament.fields.due_date'))
+            //     ->required()
+            //     ->native(false),
             Forms\Components\Select::make('status')
                 ->label(__('filament.fields.status'))
                 ->options([
-                    'pending' => __('filament.options.pending'),
+                    'todo' => __('filament.options.todo'),
                     'in_progress' => __('filament.options.in_progress'),
-                    'completed' => __('filament.options.completed'),
+                    'complete' => __('filament.options.complete'),
+                    'approve' => __('filament.options.approve'),
                 ])
-                ->default('in_progress')
+                ->default('todo')
                 ->required(),
         ]);
     }
@@ -125,30 +126,24 @@ class TaskResource extends Resource
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('filament.fields.status'))
                     ->badge()
-                    ->getStateUsing(function ($record) {
-                        if ($record->status !== 'completed' && $record->due_date && now()->format('Y-m-d') >= $record->due_date->format('Y-m-d')) {
-                            return 'overdue';
-                        }
-                        return $record->status;
-                    })
                     ->formatStateUsing(fn (?string $state): string => match($state) {
-                        'overdue' => __('filament.options.overdue'),
-                        'pending' => __('filament.options.pending'),
+                        'todo' => __('filament.options.todo'),
                         'in_progress' => __('filament.options.in_progress'),
-                        'completed' => __('filament.options.completed'),
-                        default => __('filament.options.pending')
+                        'complete' => __('filament.options.complete'),
+                        'approve' => __('filament.options.approve'),
+                        default => __('filament.options.todo')
                     })
                     ->color(fn (?string $state): string => match ($state) {
-                        'overdue' => 'danger',
-                        'pending' => 'gray',
+                        'todo' => 'warning',
                         'in_progress' => 'info',
-                        'completed' => 'success',
-                        default => 'gray',
+                        'complete' => 'success',
+                        'approve' => 'primary',
+                        default => 'warning',
                     }),
-                Tables\Columns\TextColumn::make('due_date')
-                    ->label(__('filament.fields.due_date'))
-                    ->date()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('due_date')
+                //     ->label(__('filament.fields.due_date'))
+                //     ->date()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('filament.fields.created_at'))
                     ->dateTime()
@@ -161,9 +156,10 @@ class TaskResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('filament.fields.status'))
                     ->options([
-                        'pending' => __('filament.options.pending'),
+                        'todo' => __('filament.options.todo'),
                         'in_progress' => __('filament.options.in_progress'),
-                        'completed' => __('filament.options.completed'),
+                        'complete' => __('filament.options.complete'),
+                        'approve' => __('filament.options.approve'),
                     ]),
                 Tables\Filters\SelectFilter::make('assigned_to')
                     ->label(__('filament.fields.assigned_to'))
@@ -176,10 +172,10 @@ class TaskResource extends Resource
                     ->label(__('filament.actions.mark_completed'))
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn ($record) => $record->status !== 'completed')
+                    ->visible(fn ($record) => $record->status !== 'complete' && $record->status !== 'approve')
                     ->action(function ($record) {
                         $oldStatus = $record->status;
-                        $record->update(['status' => 'completed', 'completed_at' => now()]);
+                        $record->update(['status' => 'complete', 'completed_at' => now()]);
                         
                         // Send notification for task completion
                         $project = \App\Models\Project::find($record->project_id);
@@ -199,7 +195,7 @@ class TaskResource extends Resource
                                     'task_id' => $record->id,
                                     'task_title' => $record->title,
                                     'old_status' => $oldStatus,
-                                    'new_status' => 'completed',
+                                    'new_status' => 'complete',
                                     'completed_by' => auth()->id(),
                                     'project_id' => $record->project_id,
                                     'action_url' => "/tasks/{$record->id}"

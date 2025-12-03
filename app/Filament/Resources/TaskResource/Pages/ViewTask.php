@@ -96,7 +96,8 @@ class ViewTask extends ViewRecord
                         TextEntry::make('description')
                             ->label('Description')
                             ->columnSpanFull()
-                            ->placeholder('No description provided'),
+                            ->placeholder('No description provided')
+                            ->extraAttributes(['style' => 'word-break: break-word; overflow-wrap: break-word;']),
                         TextEntry::make('project.project_title')
                             ->label('Project'),
                         TextEntry::make('phase.title')

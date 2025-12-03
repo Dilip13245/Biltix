@@ -121,85 +121,85 @@ class ProjectResource extends Resource
                     ->minLength(5)
                     ->maxLength(500)
                     ->placeholder(__('filament.placeholders.project_location_example')),
-                Forms\Components\DatePicker::make('project_start_date')
-                    ->label(__('filament.fields.start_date'))
-                    ->required()
-                    ->native(false),
-                Forms\Components\DatePicker::make('project_due_date')
-                    ->label(__('filament.fields.due_date'))
-                    ->required()
-                    ->native(false)
-                    ->after('project_start_date'),
+                // Forms\Components\DatePicker::make('project_start_date')
+                //     ->label(__('filament.fields.start_date'))
+                //     ->required()
+                //     ->native(false),
+                // Forms\Components\DatePicker::make('project_due_date')
+                //     ->label(__('filament.fields.due_date'))
+                //     ->required()
+                //     ->native(false)
+                //     ->after('project_start_date'),
 
-            ])->columns(2),
+            ])->columns(1),
             
-            Forms\Components\Section::make(__('filament.fields.project_files'))->schema([
-                Forms\Components\FileUpload::make('construction_plans')
-                    ->label(__('filament.fields.construction_plans'))
-                    ->multiple()
-                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'image/jpeg', 'image/jpg', 'image/png'])
-                    ->maxSize(25600) // 25MB
-                    ->directory('projects/documents')
-                    ->visibility('public')
-                    ->downloadable()
-                    ->previewable(false)
-                    ->deletable(true)
-                    ->helperText(__('filament.helpers.construction_plans_help')),
-                Forms\Components\FileUpload::make('gantt_chart')
-                    ->label(__('filament.fields.gantt_charts'))
-                    ->multiple()
-                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'image/jpeg', 'image/jpg', 'image/png'])
-                    ->maxSize(25600) // 25MB
-                    ->directory('projects/documents')
-                    ->visibility('public')
-                    ->downloadable()
-                    ->previewable(false)
-                    ->deletable(true)
-                    ->helperText(__('filament.helpers.gantt_charts_help')),
-            ])->columns(2),
+            // Forms\Components\Section::make(__('filament.fields.project_files'))->schema([
+            //     Forms\Components\FileUpload::make('construction_plans')
+            //         ->label(__('filament.fields.construction_plans'))
+            //         ->multiple()
+            //         ->acceptedFileTypes(['application/pdf', 'application/msword', 'image/jpeg', 'image/jpg', 'image/png'])
+            //         ->maxSize(25600) // 25MB
+            //         ->directory('projects/documents')
+            //         ->visibility('public')
+            //         ->downloadable()
+            //         ->previewable(false)
+            //         ->deletable(true)
+            //         ->helperText(__('filament.helpers.construction_plans_help')),
+            //     Forms\Components\FileUpload::make('gantt_chart')
+            //         ->label(__('filament.fields.gantt_charts'))
+            //         ->multiple()
+            //         ->acceptedFileTypes(['application/pdf', 'application/msword', 'image/jpeg', 'image/jpg', 'image/png'])
+            //         ->maxSize(25600) // 25MB
+            //         ->directory('projects/documents')
+            //         ->visibility('public')
+            //         ->downloadable()
+            //         ->previewable(false)
+            //         ->deletable(true)
+            //         ->helperText(__('filament.helpers.gantt_charts_help')),
+            // ])->columns(2),
             
-            Forms\Components\Section::make(__('filament.fields.team_assignment'))->schema([
-                Forms\Components\Select::make('project_manager_id')
-                    ->label(__('filament.fields.project_manager'))
-                    ->options(function () {
-                        return User::where('role', 'project_manager')
-                            ->where('is_active', true)
-                            ->where('is_deleted', false)
-                            ->get()
-                            ->mapWithKeys(fn ($user) => [$user->id => "{$user->name} ({$user->email})"]);
-                    })
-                    ->searchable()
-                    ->placeholder('Select project manager')
-                    ->helperText(__('filament.helpers.project_manager_help')),
-                Forms\Components\Select::make('technical_engineer_id')
-                    ->label(__('filament.fields.technical_engineer'))
-                    ->options(function () {
-                        return User::where('role', 'site_engineer')
-                            ->where('is_active', true)
-                            ->where('is_deleted', false)
-                            ->get()
-                            ->mapWithKeys(fn ($user) => [$user->id => "{$user->name} ({$user->email})"]);
-                    })
-                    ->searchable()
-                    ->placeholder('Select technical engineer')
-                    ->helperText(__('filament.helpers.technical_engineer_help')),
-                Forms\Components\Select::make('status')
-                    ->label(__('filament.fields.status'))
-                    ->required()
-                    ->options([
-                        'planning' => 'Planning',
-                        'active' => 'Active',
-                        'on_hold' => 'On Hold',
-                        'completed' => 'Completed',
-                        'cancelled' => 'Cancelled',
-                    ])
-                    ->default('planning')
-                    ->native(false),
-                Forms\Components\Toggle::make('is_active')
-                    ->label(__('filament.fields.active'))
-                    ->default(true)
-                    ->helperText(__('filament.helpers.inactive_projects')),
-            ])->columns(2),
+            // Forms\Components\Section::make(__('filament.fields.team_assignment'))->schema([
+            //     Forms\Components\Select::make('project_manager_id')
+            //         ->label(__('filament.fields.project_manager'))
+            //         ->options(function () {
+            //             return User::where('role', 'project_manager')
+            //                 ->where('is_active', true)
+            //                 ->where('is_deleted', false)
+            //                 ->get()
+            //                 ->mapWithKeys(fn ($user) => [$user->id => "{$user->name} ({$user->email})"]);
+            //         })
+            //         ->searchable()
+            //         ->placeholder('Select project manager')
+            //         ->helperText(__('filament.helpers.project_manager_help')),
+            //     Forms\Components\Select::make('technical_engineer_id')
+            //         ->label(__('filament.fields.technical_engineer'))
+            //         ->options(function () {
+            //             return User::where('role', 'site_engineer')
+            //                 ->where('is_active', true)
+            //                 ->where('is_deleted', false)
+            //                 ->get()
+            //                 ->mapWithKeys(fn ($user) => [$user->id => "{$user->name} ({$user->email})"]);
+            //         })
+            //         ->searchable()
+            //         ->placeholder('Select technical engineer')
+            //         ->helperText(__('filament.helpers.technical_engineer_help')),
+            //     Forms\Components\Select::make('status')
+            //         ->label(__('filament.fields.status'))
+            //         ->required()
+            //         ->options([
+            //             'planning' => 'Planning',
+            //             'active' => 'Active',
+            //             'on_hold' => 'On Hold',
+            //             'completed' => 'Completed',
+            //             'cancelled' => 'Cancelled',
+            //         ])
+            //         ->default('planning')
+            //         ->native(false),
+            //     Forms\Components\Toggle::make('is_active')
+            //         ->label(__('filament.fields.active'))
+            //         ->default(true)
+            //         ->helperText(__('filament.helpers.inactive_projects')),
+            // ])->columns(2),
         ]);
     }
 
@@ -234,10 +234,10 @@ class ProjectResource extends Resource
                         'renovation' => 'primary',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('projectManager.name')
-                    ->label(__('filament.fields.project_manager'))
-                    ->searchable()
-                    ->toggleable(),
+                // Tables\Columns\TextColumn::make('projectManager.name')
+                //     ->label(__('filament.fields.project_manager'))
+                //     ->searchable()
+                //     ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('filament.fields.status'))
                     ->badge()
@@ -256,11 +256,11 @@ class ProjectResource extends Resource
                     ->date()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('project_due_date')
-                    ->label(__('filament.fields.due_date'))
-                    ->date()
-                    ->sortable()
-                    ->toggleable(),
+                // Tables\Columns\TextColumn::make('project_due_date')
+                //     ->label(__('filament.fields.due_date'))
+                //     ->date()
+                //     ->sortable()
+                //     ->toggleable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label(__('filament.fields.active'))
                     ->boolean()
@@ -270,34 +270,38 @@ class ProjectResource extends Resource
                     ->falseColor('danger'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('type')
-                    ->label(__('filament.fields.project_type'))
-                    ->options([
-                        'commercial' => 'Commercial',
-                        'residential' => 'Residential',
-                        'industrial' => 'Industrial',
-                        'renovation' => 'Renovation',
-                    ]),
+                // Tables\Filters\SelectFilter::make('type')
+                //     ->label(__('filament.fields.project_type'))
+                //     ->options([
+                //         'commercial' => 'Commercial',
+                //         'residential' => 'Residential',
+                //         'industrial' => 'Industrial',
+                //         'renovation' => 'Renovation',
+                //     ]),
                 Tables\Filters\SelectFilter::make('status')
                     ->label(__('filament.fields.status'))
                     ->options([
-                        'planning' => 'Planning',
-                        'active' => 'Active',
-                        'on_hold' => 'On Hold',
+                        'ongoing' => 'Ongoing',
                         'completed' => 'Completed',
-                        'cancelled' => 'Cancelled',
-                    ]),
+                    ])
+                    ->query(function ($query, $state) {
+                        if ($state['value'] === 'completed') {
+                            return $query->where('status', 'completed');
+                        } elseif ($state['value'] === 'ongoing') {
+                            return $query->whereIn('status', ['planning', 'active', 'on_hold']);
+                        }
+                    }),
 
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label(__('filament.fields.status'))
-                    ->placeholder(__('filament.options.all_projects'))
-                    ->trueLabel(__('filament.options.active_only'))
-                    ->falseLabel(__('filament.options.inactive_only')),
-                Tables\Filters\TernaryFilter::make('is_deleted')
-                    ->label(__('filament.fields.deleted_status'))
-                    ->placeholder(__('filament.options.all_projects'))
-                    ->trueLabel(__('filament.options.deleted_only'))
-                    ->falseLabel(__('filament.options.not_deleted')),
+                // Tables\Filters\TernaryFilter::make('is_active')
+                //     ->label(__('filament.fields.status'))
+                //     ->placeholder(__('filament.options.all_projects'))
+                //     ->trueLabel(__('filament.options.active_only'))
+                //     ->falseLabel(__('filament.options.inactive_only')),
+                // Tables\Filters\TernaryFilter::make('is_deleted')
+                //     ->label(__('filament.fields.deleted_status'))
+                //     ->placeholder(__('filament.options.all_projects'))
+                //     ->trueLabel(__('filament.options.deleted_only'))
+                //     ->falseLabel(__('filament.options.not_deleted')),
             ])
             ->actionsColumnLabel('Actions')
             ->actions([

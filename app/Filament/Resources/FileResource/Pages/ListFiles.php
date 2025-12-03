@@ -22,8 +22,8 @@ class ListFiles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->visible(fn () => $this->selectedProjectId !== null),
+            // Actions\CreateAction::make()
+            //     ->visible(fn () => $this->selectedProjectId !== null),
             Actions\Action::make('back_to_projects')
                 ->label(__('filament.actions.back_to_projects'))
                 ->icon('heroicon-o-arrow-left')

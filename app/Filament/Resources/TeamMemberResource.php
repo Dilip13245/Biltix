@@ -98,16 +98,16 @@ class TeamMemberResource extends Resource
                     ->label(__('filament.fields.project_role'))
                     ->searchable()
                     ->badge(),
-                Tables\Columns\TextColumn::make('assignedBy.name')
-                    ->label(__('filament.fields.assigned_by'))
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label(__('filament.fields.active'))
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger'),
+                // Tables\Columns\TextColumn::make('assignedBy.name')
+                //     ->label(__('filament.fields.assigned_by'))
+                //     ->searchable(),
+                // Tables\Columns\IconColumn::make('is_active')
+                //     ->label(__('filament.fields.active'))
+                //     ->boolean()
+                //     ->trueIcon('heroicon-o-check-circle')
+                //     ->falseIcon('heroicon-o-x-circle')
+                //     ->trueColor('success')
+                //     ->falseColor('danger'),
                 Tables\Columns\TextColumn::make('assigned_at')
                     ->label(__('filament.fields.assigned_date'))
                     ->dateTime()
@@ -117,11 +117,11 @@ class TeamMemberResource extends Resource
                 Tables\Filters\SelectFilter::make('project_id')
                     ->label(__('filament.fields.project'))
                     ->options(Project::pluck('project_title', 'id')),
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label(__('filament.fields.active_status'))
-                    ->placeholder(__('filament.placeholders.all_members'))
-                    ->trueLabel(__('filament.placeholders.active_members_only'))
-                    ->falseLabel(__('filament.placeholders.inactive_members_only')),
+                // Tables\Filters\TernaryFilter::make('is_active')
+                //     ->label(__('filament.fields.active_status'))
+                //     ->placeholder(__('filament.placeholders.all_members'))
+                //     ->trueLabel(__('filament.placeholders.active_members_only'))
+                //     ->falseLabel(__('filament.placeholders.inactive_members_only')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

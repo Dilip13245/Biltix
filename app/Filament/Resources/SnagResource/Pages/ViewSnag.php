@@ -19,13 +19,13 @@ class ViewSnag extends ViewRecord
         return [
             Actions\EditAction::make(),
             Actions\Action::make('resolve')
-                ->label('Mark Resolved')
+                ->label(__('filament.actions.resolve'))
                 ->icon('heroicon-o-check-circle')
                 ->color('success')
-                ->visible(fn () => $this->record->status !== 'resolved')
+                ->visible(fn () => $this->record->status !== 'complete' && $this->record->status !== 'approve')
                 ->action(function () {
                     $this->record->update([
-                        'status' => 'resolved',
+                        'status' => 'complete',
                         'resolved_at' => now(),
                         'resolved_by' => auth()->id(),
                     ]);
@@ -90,7 +90,7 @@ class ViewSnag extends ViewRecord
                             ->columnSpanFull()
                             ->placeholder('No resolution notes'),
                     ])
-                    ->visible(fn ($record) => $record->status === 'resolved'),
+                    ->visible(fn ($record) => $record->status === 'complete' || $record->status === 'approve'),
             ]);
     }
 }

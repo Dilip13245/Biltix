@@ -47,9 +47,9 @@ class ViewProject extends ViewRecord
                         Infolists\Components\TextEntry::make('project_start_date')
                             ->label(__('filament.fields.start_date'))
                             ->date(),
-                        Infolists\Components\TextEntry::make('project_due_date')
-                            ->label(__('filament.fields.due_date'))
-                            ->date(),
+                        // Infolists\Components\TextEntry::make('project_due_date')
+                        //     ->label(__('filament.fields.due_date'))
+                        //     ->date(),
                         Infolists\Components\TextEntry::make('status')
                             ->label(__('filament.fields.status'))
                             ->badge()
