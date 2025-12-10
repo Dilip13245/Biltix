@@ -21,6 +21,7 @@ return [
             'tasks' => ['create', 'assign', 'update', 'complete', 'delete', 'view'],
             'snags' => ['create', 'assign', 'resolve', 'comment', 'view'],
             'inspections' => ['create', 'conduct', 'approve', 'view'],
+            'raw_materials' => ['create', 'approve', 'reject', 'view'],
             'daily_logs' => ['create', 'edit', 'view'],
             'team' => ['add', 'remove', 'assign', 'view'],
             'notifications' => ['view', 'mark_read', 'delete'],
@@ -39,6 +40,7 @@ return [
             'tasks' => ['create', 'assign', 'update_status', 'view'], // Limited: update status only
             'snags' => ['create', 'assign', 'resolve', 'comment', 'view'],
             'inspections' => ['create', 'conduct', 'approve', 'view'],
+            'raw_materials' => ['create', 'approve', 'reject', 'view'],
             'daily_logs' => ['create', 'edit', 'view'],
             'team' => ['add', 'remove', 'assign', 'view'],
             'notifications' => ['view', 'mark_read', 'delete'],
@@ -57,6 +59,7 @@ return [
             'tasks' => ['create', 'assign', 'update', 'complete', 'delete', 'view'],
             'snags' => ['create', 'assign', 'resolve', 'comment', 'view'],
             'inspections' => ['create', 'conduct', 'approve', 'view'],
+            'raw_materials' => ['create', 'approve', 'reject', 'view'],
             'daily_logs' => ['create', 'edit', 'view'],
             'team' => ['add', 'remove', 'assign', 'view'],
             'notifications' => ['view', 'mark_read', 'delete'],
@@ -75,6 +78,7 @@ return [
             'tasks' => ['view'], // Can view all tasks
             'snags' => ['create', 'view'], // Can view all snags and create
             'inspections' => ['create', 'view'], // Can view all inspections and create
+            'raw_materials' => ['create', 'view'], // Can create and view raw materials
             'daily_logs' => ['create', 'edit', 'view'], // Full access to daily logs
             'team' => ['view'], // Can view all team members
             'notifications' => ['view', 'mark_read', 'delete'],
@@ -93,6 +97,7 @@ return [
             'tasks' => ['view'], // View-only
             'snags' => ['view'], // View-only
             'inspections' => ['view'], // View-only
+            'raw_materials' => ['view'], // View-only
             'daily_logs' => ['view'], // View-only
             'team' => ['view'], // View-only
             'notifications' => ['view', 'mark_read', 'delete'],

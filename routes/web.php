@@ -96,6 +96,7 @@ Route::middleware('web.auth')->prefix('website')->group(function () {
         Route::middleware('web.permission:progress,view')->get('/phase-timeline', [HomeController::class, 'phaseTimeline'])->name('website.phase.timeline');
         Route::get('/notifications', [HomeController::class, 'notifications'])->name('website.project.notifications');
         Route::get('/help-support', [HomeController::class, 'helpSupport'])->name('website.project.help-support');
+        Route::get('/raw-materials', [App\Http\Controllers\Website\RawMaterialController::class, 'index'])->name('website.project.raw-materials');
     });
 });
 

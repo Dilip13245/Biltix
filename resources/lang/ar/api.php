@@ -273,5 +273,14 @@ return [
         'help_support_submitted' => 'تم إرسال طلب المساعدة بنجاح',
         'language_changed' => 'تم تغيير اللغة بنجاح',
         'content_not_found' => 'المحتوى غير موجود',
+        'validation_error' => 'خطأ في التحقق',
+    ],
+    'raw_materials' => [
+        'created_success' => 'تم إنشاء المادة الخام بنجاح',
+        'list_retrieved' => 'تم استرداد قائمة المواد الخام بنجاح',
+        'details_retrieved' => 'تم استرداد تفاصيل المادة الخام بنجاح',
+        'approved_success' => 'تم قبول المادة الخام بنجاح',
+        'rejected_success' => 'تم رفض المادة الخام بنجاح',
+        'not_found' => 'المادة الخام غير موجودة',
     ],
 ];

@@ -222,4 +222,12 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('update_safety_item', [\App\Http\Controllers\Api\ProjectProgressController::class, 'updateSafetyItem']);
         Route::post('delete_safety_item', [\App\Http\Controllers\Api\ProjectProgressController::class, 'deleteSafetyItem']);
     });
+    
+    Route::prefix('raw-materials')->group(function () {
+        Route::post('create', [\App\Http\Controllers\Api\RawMaterialController::class, 'create']);
+        Route::post('list', [\App\Http\Controllers\Api\RawMaterialController::class, 'list']);
+        Route::post('details', [\App\Http\Controllers\Api\RawMaterialController::class, 'details']);
+        Route::post('approve', [\App\Http\Controllers\Api\RawMaterialController::class, 'approve']);
+        Route::post('reject', [\App\Http\Controllers\Api\RawMaterialController::class, 'reject']);
+    });
 });

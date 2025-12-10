@@ -274,5 +274,14 @@ return [
         'help_support_submitted' => 'Help support request submitted successfully',
         'language_changed' => 'Language changed successfully',
         'content_not_found' => 'Content not found',
+        'validation_error' => 'Validation error',
+    ],
+    'raw_materials' => [
+        'created_success' => 'Raw material created successfully',
+        'list_retrieved' => 'Raw materials list retrieved successfully',
+        'details_retrieved' => 'Raw material details retrieved successfully',
+        'approved_success' => 'Raw material approved successfully',
+        'rejected_success' => 'Raw material rejected successfully',
+        'not_found' => 'Raw material not found',
     ],
 ];

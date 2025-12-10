@@ -108,6 +108,13 @@
       @endcan
       
       <li class="nav-item">
+        <a href="{{ route('website.project.raw-materials', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.raw-materials') ? 'active' : '' }}">
+          <i class="fas fa-cubes"></i>
+          <span>{{ __('messages.raw_materials') }}</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
         <a href="{{ route('website.project.notifications', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.notifications') ? 'active' : '' }}">
           <i class="fas fa-bell notifaction-icon"></i>
           <span>{{ __('messages.notifications') }}</span>

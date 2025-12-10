@@ -548,6 +548,30 @@ class ApiClient {
         return this.makeRequest('general/help_support', data);
     }
 
+    // Raw Materials methods
+    async createRawMaterial(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('raw-materials/create', data);
+        }
+        return this.makeRequest('raw-materials/create', data);
+    }
+
+    async listRawMaterials(data) {
+        return this.makeRequest('raw-materials/list', data);
+    }
+
+    async getRawMaterialDetails(data) {
+        return this.makeRequest('raw-materials/details', data);
+    }
+
+    async approveRawMaterial(data) {
+        return this.makeRequest('raw-materials/approve', data);
+    }
+
+    async rejectRawMaterial(data) {
+        return this.makeRequest('raw-materials/reject', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic
