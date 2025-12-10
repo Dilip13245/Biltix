@@ -360,17 +360,24 @@ document.addEventListener('DOMContentLoaded', function() {
         const attendeesList = document.getElementById('detailAttendeesList');
         
         if (details.attendees.length > 0) {
-            attendeesList.innerHTML = details.attendees.map(attendee => `
-                <div class="attendee-item">
-                    <div class="attendee-avatar">
-                        ${attendee.profile_image ? `<img src="${attendee.profile_image}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : attendee.name.charAt(0)}
+            attendeesList.innerHTML = details.attendees.map(attendee => {
+                const hasImage = attendee.profile_image && attendee.profile_image !== null && attendee.profile_image !== '';
+                const avatarHtml = hasImage 
+                    ? `<img src="${attendee.profile_image}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='${attendee.name.charAt(0)}';this.parentElement.style.padding=''">`
+                    : attendee.name.charAt(0);
+                
+                return `
+                    <div class="attendee-item">
+                        <div class="attendee-avatar" style="${hasImage ? 'padding:0;' : ''}">
+                            ${avatarHtml}
+                        </div>
+                        <div class="attendee-info">
+                            <div class="attendee-name">${attendee.name}</div>
+                            <div class="attendee-role">${attendee.pivot && attendee.pivot.role ? attendee.pivot.role : 'Member'}</div>
+                        </div>
                     </div>
-                    <div class="attendee-info">
-                        <div class="attendee-name">${attendee.name}</div>
-                        <div class="attendee-role">${attendee.pivot && attendee.pivot.role ? attendee.pivot.role : 'Member'}</div>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         } else {
             attendeesList.innerHTML = '<div class="text-muted small p-3">{{ __('messages.no_attendees') }}</div>';
         }
