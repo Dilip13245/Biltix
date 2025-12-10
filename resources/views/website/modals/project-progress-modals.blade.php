@@ -798,3 +798,9 @@ async function saveSafetyItem() {
     }
 }
 </script>
+
+{{-- Meeting Modals --}}
+@include('website.modals.meetings.create-meeting-modal')
+
+@include('website.modals.meetings.scheduled-meetings-modal')
+@include('website.modals.meetings.meeting-details-modal')

@@ -16,13 +16,13 @@ class ApiClient {
             },
             data: data
         };
-        
+
         console.log('Making API request to:', `${this.baseUrl}/${endpoint}`);
         console.log('Request data:', data);
-        
+
         // Apply interceptors
         const interceptorResult = ApiInterceptors.beforeRequest(config);
-        
+
         // If interceptor returns null, don't make the request
         if (interceptorResult === null) {
             // Release button if provided
@@ -31,7 +31,7 @@ class ApiClient {
             }
             return { code: 401, message: 'No token available', data: {} };
         }
-        
+
         // Create promise for API call
         const apiPromise = (async () => {
             try {
@@ -39,7 +39,7 @@ class ApiClient {
                     method: config.method,
                     headers: config.headers
                 };
-                
+
                 // Handle GET requests with query parameters
                 let requestUrl = `${this.baseUrl}/${endpoint}`;
                 if (config.method === 'GET' && Object.keys(config.data).length > 0) {
@@ -48,14 +48,14 @@ class ApiClient {
                 } else if (config.method !== 'GET') {
                     fetchOptions.body = JSON.stringify(config.data);
                 }
-                
+
                 const response = await fetch(requestUrl, fetchOptions);
-                
+
                 console.log('Response status:', response.status);
-                
+
                 const result = await response.json();
                 console.log('API Response:', result);
-                
+
                 // Don't throw error for HTTP status, let the API response handle it
                 return ApiInterceptors.afterResponse(result) || result;
             } catch (error) {
@@ -64,17 +64,17 @@ class ApiClient {
                 throw error;
             }
         })();
-        
+
         // Register button with API call
         // Use provided button or auto-detect from button protection system
         const btn = buttonElement || (window.getCurrentActiveButton && window.getCurrentActiveButton());
         if (btn && window.registerButtonApiCall) {
             window.registerButtonApiCall(btn, apiPromise);
         }
-        
+
         return apiPromise;
     }
-    
+
     async makeFormDataRequest(endpoint, formData, buttonElement = null) {
         const config = {
             method: 'POST',
@@ -85,12 +85,12 @@ class ApiClient {
                 // Don't set Content-Type for FormData - browser will set it with boundary
             }
         };
-        
+
         console.log('Making FormData API request to:', `${this.baseUrl}/${endpoint}`);
-        
+
         // Apply interceptors for FormData
         ApiInterceptors.beforeFormDataRequest(config, formData);
-        
+
         // Create promise for API call
         const apiPromise = (async () => {
             try {
@@ -99,12 +99,12 @@ class ApiClient {
                     headers: config.headers,
                     body: formData
                 });
-                
+
                 console.log('Response status:', response.status);
-                
+
                 const result = await response.json();
                 console.log('API Response:', result);
-                
+
                 return ApiInterceptors.afterResponse(result) || result;
             } catch (error) {
                 console.error('FormData API Request failed:', error);
@@ -112,14 +112,14 @@ class ApiClient {
                 throw error;
             }
         })();
-        
+
         // Register button with API call
         // Use provided button or auto-detect from button protection system
         const btn = buttonElement || (window.getCurrentActiveButton && window.getCurrentActiveButton());
         if (btn && window.registerButtonApiCall) {
             window.registerButtonApiCall(btn, apiPromise);
         }
-        
+
         return apiPromise;
     }
 
@@ -187,24 +187,24 @@ class ApiClient {
     async listPhases(data) {
         return this.makeRequest('projects/list_phases', data);
     }
-    
+
     async getDashboardStats() {
         return this.makeRequest('projects/dashboard_stats', {});
     }
-    
+
     // User methods - For dropdowns
     async getProjectManagers() {
         return this.makeRequest('users/project-managers', {}, 'GET');
     }
-    
+
     async getTechnicalEngineers() {
         return this.makeRequest('users/technical-engineers', {}, 'GET');
     }
-    
+
     async getUsersByRole(role) {
         return this.makeRequest(`users/by-role?role=${role}`, {}, 'GET');
     }
-    
+
     async getAllUsers() {
         return this.makeRequest('users/by-role', {}, 'GET');
     }
@@ -280,19 +280,19 @@ class ApiClient {
     async getNotifications(data = {}) {
         return this.makeRequest('notifications/list', data);
     }
-    
+
     async getNotificationCount(data = {}) {
         return this.makeRequest('notifications/get_count', data);
     }
-    
+
     async markNotificationAsRead(data) {
         return this.makeRequest('notifications/mark_read', data);
     }
-    
+
     async markAllNotificationsAsRead(data = {}) {
         return this.makeRequest('notifications/mark_all_read', data);
     }
-    
+
     async deleteAllNotifications(data = {}) {
         return this.makeRequest('notifications/delete_all', data);
     }
@@ -570,6 +570,33 @@ class ApiClient {
 
     async rejectRawMaterial(data) {
         return this.makeRequest('raw-materials/reject', data);
+    }
+
+    // Meeting methods
+    async createMeeting(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('meetings/create', data);
+        }
+        return this.makeRequest('meetings/create', data);
+    }
+
+    async listMeetings(data) {
+        return this.makeRequest('meetings/list', data);
+    }
+
+    async getMeetingDetails(id) {
+        return this.makeRequest(`meetings/details/${id}`, {}, 'GET');
+    }
+
+    async updateMeeting(id, data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest(`meetings/update/${id}`, data);
+        }
+        return this.makeRequest(`meetings/update/${id}`, data);
+    }
+
+    async deleteMeeting(id) {
+        return this.makeRequest(`meetings/delete/${id}`, {});
     }
 
     // Utility methods

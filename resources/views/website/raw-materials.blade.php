@@ -269,9 +269,27 @@
                                 font-size: 14px;
                             }
                         }
+
+                        #addMaterialModal .modal-header .btn-close {
+                            position: static !important;
+                            right: auto !important;
+                            top: auto !important;
+                            margin: 0 !important;
+                        }
+
+                        #addMaterialModal .modal-header {
+                            position: relative !important;
+                        }
                     </style>
-                    <h5 class="modal-title">{{ __('messages.raw_materials') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    @if (app()->getLocale() == 'ar')
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <h5 class="modal-title">{{ __('messages.raw_materials') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        </div>
+                    @else
+                        <h5 class="modal-title">{{ __('messages.raw_materials') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                    @endif
                 </div>
                 <div class="modal-body pt-4">
                     <form id="addMaterialForm" class="protected-form" enctype="multipart/form-data" novalidate>

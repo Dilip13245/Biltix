@@ -634,6 +634,8 @@
 
         // Get project ID from controller
         let currentProjectId = {{ $project->id ?? 1 }};
+        window.projectId = currentProjectId;
+        window.userId = {{ auth()->id() ?? 1 }};
 
         // Google Maps variables
         let projectMap, projectMarker;
@@ -646,12 +648,19 @@
         let mapInitialized = false;
 
         // Global variables for phase management
-        let currentPhaseId = null;
+        window.currentPhaseId = null;
 
         // Global function for opening phase modal
         function openPhaseModal(phaseName, phaseId) {
-            currentPhaseId = phaseId;
+            window.currentPhaseId = phaseId;
             document.getElementById('phaseModalTitle').textContent = phaseName + ' - {{ __('messages.management') }}';
+            
+            // Set phase_id on meeting buttons
+            const createMeetingBtn = document.getElementById('createMeetingBtn');
+            const scheduledMeetingsBtn = document.getElementById('scheduledMeetingsBtn');
+            if (createMeetingBtn) createMeetingBtn.setAttribute('data-phase-id', phaseId);
+            if (scheduledMeetingsBtn) scheduledMeetingsBtn.setAttribute('data-phase-id', phaseId);
+            
             const modal = new bootstrap.Modal(document.getElementById('phaseNavigationModal'));
             modal.show();
         }
@@ -2129,6 +2138,38 @@
                     @endif
                 </div>
                 <div class="modal-body">
+                    {{-- Meeting Buttons at Top --}}
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            @can('meetings', 'create')
+                            <button class="btn w-100 d-flex align-items-center justify-content-center gap-2 py-3" 
+                                    id="createMeetingBtn"
+                                    style="background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%); border: none; color: white; border-radius: 0.75rem; box-shadow: 0 4px 12px rgba(74, 144, 226, 0.25); transition: transform 0.2s;"
+                                    data-bs-toggle="modal" data-bs-target="#createMeetingModal"
+                                    data-bs-dismiss="modal"
+                                    onmouseover="this.style.transform='translateY(-2px)'"
+                                    onmouseout="this.style.transform='translateY(0)'">
+                                <i class="fas fa-plus-circle fa-lg"></i>
+                                <span style="font-weight: 500;">{{ __('messages.create_meeting') }}</span>
+                            </button>
+                            @endcan
+                        </div>
+                        <div class="col-md-6">
+                            @can('meetings', 'view')
+                            <button class="btn w-100 d-flex align-items-center justify-content-center gap-2 py-3" 
+                                    id="scheduledMeetingsBtn"
+                                    style="background: white; border: 2px solid #4A90E2; color: #4A90E2; border-radius: 0.75rem; transition: all 0.2s;"
+                                    data-bs-toggle="modal" data-bs-target="#scheduledMeetingsModal"
+                                    data-bs-dismiss="modal"
+                                    onmouseover="this.style.background='#EBF5FF'; this.style.transform='translateY(-2px)'"
+                                    onmouseout="this.style.background='white'; this.style.transform='translateY(0)'">
+                                <i class="fas fa-calendar-check fa-lg"></i>
+                                <span style="font-weight: 500;">{{ __('messages.scheduled_meetings') }}</span>
+                            </button>
+                            @endcan
+                        </div>
+                    </div>
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="card h-100 border-primary" style="cursor: pointer;"
@@ -2178,6 +2219,12 @@
 
 
     @include('website.modals.add-safety-checklist-modal')
+
+    {{-- Meeting Modals --}}
+    @include('website.modals.meetings.create-meeting-modal')
+
+    @include('website.modals.meetings.scheduled-meetings-modal')
+    @include('website.modals.meetings.meeting-details-modal')
 
     <!-- Delete Project Confirmation Modal -->
     <div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-labelledby="deleteProjectModalLabel"

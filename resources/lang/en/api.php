@@ -284,4 +284,12 @@ return [
         'rejected_success' => 'Raw material rejected successfully',
         'not_found' => 'Raw material not found',
     ],
+    'meetings' => [
+        'created_success' => 'Meeting created successfully',
+        'list_retrieved' => 'Meetings list retrieved successfully',
+        'details_retrieved' => 'Meeting details retrieved successfully',
+        'updated_success' => 'Meeting updated successfully',
+        'deleted_success' => 'Meeting deleted successfully',
+        'not_found' => 'Meeting not found',
+    ],
 ];

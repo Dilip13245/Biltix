@@ -230,4 +230,12 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('approve', [\App\Http\Controllers\Api\RawMaterialController::class, 'approve']);
         Route::post('reject', [\App\Http\Controllers\Api\RawMaterialController::class, 'reject']);
     });
+
+    Route::prefix('meetings')->group(function () {
+        Route::post('create', [\App\Http\Controllers\Api\MeetingController::class, 'store']);
+        Route::post('list', [\App\Http\Controllers\Api\MeetingController::class, 'index']);
+        Route::get('details/{id}', [\App\Http\Controllers\Api\MeetingController::class, 'show']);
+        Route::post('update/{id}', [\App\Http\Controllers\Api\MeetingController::class, 'update']);
+        Route::post('delete/{id}', [\App\Http\Controllers\Api\MeetingController::class, 'destroy']);
+    });
 });
