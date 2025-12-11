@@ -1433,4 +1433,12 @@ return [
     'error_loading_meetings' => 'خطأ في تحميل الاجتماعات',
     'error_loading_details' => 'خطأ في تحميل التفاصيل',
     'error_creating_meeting' => 'خطأ في إنشاء الاجتماع',
+    'phone_is_required' => 'رقم الهاتف مطلوب',
+    'share' => 'مشاركة',
+    'credentials_copied' => 'تم نسخ بيانات الاعتماد',
+    'failed_to_copy' => 'فشل النسخ',
+    'share_via' => 'مشاركة عبر',
+    'whatsapp' => 'واتساب',
+    'sms' => 'رسالة نصية',
+    'copy' => 'نسخ',
 ];

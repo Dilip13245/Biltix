@@ -1482,27 +1482,13 @@ return [
     'error_loading_meetings' => 'Error loading meetings',
     'error_loading_details' => 'Error loading details',
     'error_creating_meeting' => 'Error creating meeting',
+    'phone_is_required' => 'Phone number is required',
+    'share' => 'Share',
+    'credentials_copied' => 'Credentials copied to clipboard',
+    'failed_to_copy' => 'Failed to copy to clipboard',
+    'share_via' => 'Share Via',
+    'whatsapp' => 'WhatsApp',
+    'sms' => 'SMS',
+    'copy' => 'Copy',
 ];
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

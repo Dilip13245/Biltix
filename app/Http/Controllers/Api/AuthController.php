@@ -879,6 +879,8 @@ class AuthController extends Controller
                 'id' => $newMember->id,
                 'name' => $newMember->name,
                 'email' => $newMember->email,
+                'phone' => $newMember->phone,
+                'password' => $request->password,
                 'role' => $newMember->role,
             ], trans('api.auth.team_member_added'), Config::get('constant.SUCCESS'));
 
@@ -912,7 +914,7 @@ class AuthController extends Controller
             // Get all team members from company_teams table
             $teamMembers = \App\Models\CompanyTeam::where('company_id', $companyId)
                 ->where('is_deleted', false)
-                ->with(['member:id,name,email,role,designation,is_active,created_at', 'addedBy:id,name'])
+                ->with(['member:id,name,email,phone,role,designation,is_active,created_at', 'addedBy:id,name'])
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -922,6 +924,7 @@ class AuthController extends Controller
                     'id' => $team->member->id,
                     'name' => $team->member->name,
                     'email' => $team->member->email,
+                    'phone' => $team->member->phone,
                     'role' => $team->member->role,
                     'designation' => $team->member->designation,
                     'is_active' => $team->member->is_active,

@@ -10,10 +10,11 @@
                         top: auto !important;
                         margin: 0 !important;
                     }
+
                     #teamMembersModal .modal-header {
                         position: relative !important;
                     }
-                    
+
                     /* Validation error messages styling */
                     #teamMemberForm .invalid-feedback {
                         display: block;
@@ -21,7 +22,7 @@
                         font-size: 0.875rem;
                         margin-top: 0.25rem;
                     }
-                    
+
                     #teamMemberForm .form-control.is-invalid {
                         border-color: #dc3545;
                         padding-right: calc(1.5em + 0.75rem);
@@ -30,34 +31,34 @@
                         background-position: right calc(0.375em + 0.1875rem) center;
                         background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
                     }
-                    
+
                     /* Password toggle icon */
                     #togglePassword {
                         z-index: 10;
                         transition: color 0.2s ease;
                     }
-                    
+
                     #togglePassword:hover {
                         color: #495057;
                     }
-                    
+
                     /* RTL support for validation */
                     [dir="rtl"] #teamMemberForm .form-control.is-invalid {
                         padding-right: 0.75rem;
                         padding-left: calc(1.5em + 0.75rem);
                         background-position: left calc(0.375em + 0.1875rem) center;
                     }
-                    
+
                     [dir="rtl"] #teamMemberForm .invalid-feedback {
                         text-align: right;
                     }
-                    
+
                     /* RTL support for password toggle */
                     [dir="rtl"] #member_password {
                         padding-right: 0.75rem !important;
                         padding-left: 2.5rem !important;
                     }
-                    
+
                     [dir="rtl"] #togglePassword {
                         right: auto !important;
                         left: 0.75rem !important;
@@ -68,13 +69,15 @@
                         <h5 class="modal-title" id="teamMembersModalLabel">
                             <i class="fas fa-users me-2"></i>{{ __('messages.my_team') }}
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
                     </div>
                 @else
                     <h5 class="modal-title" id="teamMembersModalLabel">
                         <i class="fas fa-users me-2"></i>{{ __('messages.my_team') }}
                     </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
                 @endif
             </div>
             <div class="modal-body">
@@ -82,9 +85,9 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="mb-0">{{ __('messages.team_members_list') }}</h6>
                     @can('team_management', 'create')
-                    <button class="btn btn-sm orange_btn" onclick="showAddMemberForm()">
-                        {{ __('messages.add_new_member') }}
-                    </button>
+                        <button class="btn btn-sm orange_btn" onclick="showAddMemberForm()">
+                            {{ __('messages.add_new_member') }}
+                        </button>
                     @endcan
                 </div>
 
@@ -105,20 +108,31 @@
                                     <div class="invalid-feedback" id="member_email_error"></div>
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    <label class="form-label">{{ __('messages.phone_number') }} *</label>
+                                    <input type="tel" class="form-control Input_control" id="member_phone">
+                                    <div class="invalid-feedback" id="member_phone_error"></div>
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ __('messages.member_password') }} *</label>
                                     <div class="position-relative">
-                                        <input type="password" class="form-control Input_control" id="member_password" style="padding-right: 2.5rem;">
-                                        <i class="fas fa-eye-slash position-absolute" id="togglePassword" style="right: 0.75rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6c757d;"></i>
+                                        <input type="password" class="form-control Input_control" id="member_password"
+                                            style="padding-right: 2.5rem;">
+                                        <i class="fas fa-eye-slash position-absolute" id="togglePassword"
+                                            style="right: 0.75rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6c757d;"></i>
                                     </div>
                                     <div class="invalid-feedback" id="member_password_error"></div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ __('messages.member_role') }} *</label>
                                     <div class="custom-combo-dropdown position-relative">
-                                        <input type="text" class="form-control Input_control" id="member_role" name="member_role" placeholder="{{ __('messages.select') }}" autocomplete="off" readonly style="cursor: pointer;">
+                                        <input type="text" class="form-control Input_control" id="member_role"
+                                            name="member_role" placeholder="{{ __('messages.select') }}"
+                                            autocomplete="off" readonly style="cursor: pointer;">
                                         <i class="fas fa-chevron-down dropdown-arrow"></i>
                                         <div class="dropdown-options" id="roleDropdown">
-                                            <div class="text-center py-2"><div class="spinner-border spinner-border-sm"></div></div>
+                                            <div class="text-center py-2">
+                                                <div class="spinner-border spinner-border-sm"></div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="invalid-feedback" id="member_role_error"></div>
@@ -162,17 +176,18 @@
     async function loadUserRoles() {
         try {
             const response = await api.makeRequest('general/user_roles', {}, 'GET');
-            
+
             const roleDropdown = document.getElementById('roleDropdown');
             if (response.code === 200 && response.data) {
-                roleDropdown.innerHTML = response.data.map(role => 
+                roleDropdown.innerHTML = response.data.map(role =>
                     `<div class="dropdown-option" data-value="${role.id}">${formatRoleName(role.id)}</div>`
                 ).join('');
-                
+
                 // Attach click handlers
                 roleDropdown.querySelectorAll('.dropdown-option').forEach(option => {
                     option.addEventListener('click', function() {
-                        document.getElementById('member_role').value = this.getAttribute('data-value');
+                        document.getElementById('member_role').value = this.getAttribute(
+                            'data-value');
                         document.getElementById('member_role').classList.remove('is-invalid');
                         document.getElementById('member_role_error').textContent = '';
                         roleDropdown.classList.remove('show');
@@ -181,7 +196,8 @@
             }
         } catch (error) {
             console.error('Failed to load roles:', error);
-            document.getElementById('roleDropdown').innerHTML = '<div class="text-center py-2 text-danger">Failed to load roles</div>';
+            document.getElementById('roleDropdown').innerHTML =
+                '<div class="text-center py-2 text-danger">Failed to load roles</div>';
         }
     }
 
@@ -204,7 +220,9 @@
     // Load roles when modal opens
     document.getElementById('teamMembersModal').addEventListener('shown.bs.modal', function() {
         loadUserRoles();
-    }, { once: true });
+    }, {
+        once: true
+    });
 
     // Show/Hide Add Member Form
     function showAddMemberForm() {
@@ -220,7 +238,7 @@
     }
 
     // Clear validation errors on input
-    ['member_name', 'member_email', 'member_password'].forEach(fieldId => {
+    ['member_name', 'member_email', 'member_phone', 'member_password'].forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (field) {
             field.addEventListener('input', function() {
@@ -239,13 +257,13 @@
     // Password visibility toggle
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('member_password');
-    
+
     if (togglePassword && passwordInput) {
         togglePassword.addEventListener('click', function() {
             // Toggle password visibility
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-            
+
             // Toggle eye icon
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
@@ -264,7 +282,7 @@
 
             if (response.code === 200 && response.data) {
                 const members = response.data.members || [];
-                
+
                 if (members.length === 0) {
                     container.innerHTML = `
                         <div class="text-center py-5">
@@ -282,15 +300,34 @@
                             <div class="col-12">
                                 <div class="card shadow-sm">
                                     <div class="card-body">
-                                        <div class="d-flex align-items-center gap-2 mb-3">
-                                            <i class="fas fa-user-circle fa-lg text-primary"></i>
-                                            <h6 class="mb-0 fw-bold">${member.name}</h6>
+                                        <div class="d-flex align-items-center justify-content-between mb-3">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <i class="fas fa-user-circle fa-lg text-primary"></i>
+                                                <h6 class="mb-0 fw-bold">${member.name}</h6>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-share-alt"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                    <li><a class="dropdown-item" href="https://wa.me/?text=${encodeURIComponent(`Team Member Contact\n\nName: ${member.name}\nEmail: ${member.email}${member.phone ? `\nPhone: ${member.phone}` : ''}`)}"><i class="fab fa-whatsapp text-success me-2"></i>WhatsApp</a></li>
+                                                    <li><a class="dropdown-item" href="mailto:?subject=Team Member Contact&body=${encodeURIComponent(`Name: ${member.name}\nEmail: ${member.email}${member.phone ? `\nPhone: ${member.phone}` : ''}`)}"><i class="fas fa-envelope text-primary me-2"></i>Email</a></li>
+                                                    ${member.phone ? `<li><a class="dropdown-item" href="sms:${member.phone}?body=${encodeURIComponent(`Team Member Contact\n\nName: ${member.name}\nEmail: ${member.email}\nPhone: ${member.phone}`)}"><i class="fas fa-sms text-info me-2"></i>SMS</a></li>` : ''}
+                                                    <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); copyToClipboard('Team Member Contact\\n\\nName: ${member.name}\\nEmail: ${member.email}${member.phone ? `\\nPhone: ${member.phone}` : ''}');"><i class="fas fa-copy text-secondary me-2"></i>{{ __('messages.copy') }}</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                         <div class="d-flex flex-wrap gap-3 text-muted small">
                                             <div class="d-flex align-items-center gap-1">
                                                 <i class="fas fa-envelope"></i>
                                                 <span>${member.email}</span>
                                             </div>
+                                            ${member.phone ? `
+                                            <div class="d-flex align-items-center gap-1">
+                                                <i class="fas fa-phone"></i>
+                                                <span>${member.phone}</span>
+                                            </div>
+                                            ` : ''}
                                             <div class="d-flex align-items-center gap-1">
                                                 <i class="fas fa-briefcase text-warning"></i>
                                                 <span>${formatRoleName(member.role)}</span>
@@ -342,12 +379,14 @@
         e.preventDefault();
 
         // Clear previous errors
-        document.querySelectorAll('#teamMemberForm .is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        document.querySelectorAll('#teamMemberForm .is-invalid').forEach(el => el.classList.remove(
+            'is-invalid'));
         document.querySelectorAll('#teamMemberForm .invalid-feedback').forEach(el => el.textContent = '');
 
         // Get form values
         const name = document.getElementById('member_name').value.trim();
         const email = document.getElementById('member_email').value.trim();
+        const phone = document.getElementById('member_phone').value.trim();
         const password = document.getElementById('member_password').value;
         const role = document.getElementById('member_role').value;
 
@@ -356,7 +395,8 @@
         // Validate name
         if (!name) {
             document.getElementById('member_name').classList.add('is-invalid');
-            document.getElementById('member_name_error').textContent = '{{ __('messages.name_is_required') }}';
+            document.getElementById('member_name_error').textContent =
+                '{{ __('messages.name_is_required') }}';
             isValid = false;
         }
 
@@ -364,11 +404,21 @@
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email) {
             document.getElementById('member_email').classList.add('is-invalid');
-            document.getElementById('member_email_error').textContent = '{{ __('messages.email_is_required') }}';
+            document.getElementById('member_email_error').textContent =
+                '{{ __('messages.email_is_required') }}';
             isValid = false;
         } else if (!emailRegex.test(email)) {
             document.getElementById('member_email').classList.add('is-invalid');
-            document.getElementById('member_email_error').textContent = '{{ __('messages.valid_email_required') }}';
+            document.getElementById('member_email_error').textContent =
+                '{{ __('messages.valid_email_required') }}';
+            isValid = false;
+        }
+
+        // Validate phone
+        if (!phone) {
+            document.getElementById('member_phone').classList.add('is-invalid');
+            document.getElementById('member_phone_error').textContent =
+                '{{ __('messages.phone_is_required') }}';
             isValid = false;
         }
 
@@ -376,18 +426,21 @@
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         if (!password) {
             document.getElementById('member_password').classList.add('is-invalid');
-            document.getElementById('member_password_error').textContent = '{{ __('messages.password_is_required') }}';
+            document.getElementById('member_password_error').textContent =
+                '{{ __('messages.password_is_required') }}';
             isValid = false;
         } else if (!passwordRegex.test(password)) {
             document.getElementById('member_password').classList.add('is-invalid');
-            document.getElementById('member_password_error').textContent = '{{ __('messages.password_requirements') }}';
+            document.getElementById('member_password_error').textContent =
+                '{{ __('messages.password_requirements') }}';
             isValid = false;
         }
 
         // Validate role
         if (!role) {
             document.getElementById('member_role').classList.add('is-invalid');
-            document.getElementById('member_role_error').textContent = '{{ __('messages.role_is_required') }}';
+            document.getElementById('member_role_error').textContent =
+                '{{ __('messages.role_is_required') }}';
             isValid = false;
         }
 
@@ -397,7 +450,7 @@
 
         const btn = this.querySelector('button[type="submit"]');
         if (btn.disabled) return;
-        
+
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>{{ __('messages.adding') }}...';
 
@@ -406,6 +459,7 @@
                 user_id: {{ auth()->id() ?? 1 }},
                 name: name,
                 email: email,
+                phone: phone,
                 password: password,
                 role: role
             });
@@ -416,7 +470,7 @@
                 loadTeamMembers();
             } else {
                 showToast(response.message || '{{ __('messages.failed_to_add_team_member') }}', 'error');
-                
+
                 // Show validation errors
                 if (response.message && response.message.includes('email')) {
                     document.getElementById('member_email').classList.add('is-invalid');
@@ -436,4 +490,59 @@
         loadTeamMembers();
         hideAddMemberForm();
     });
+
+    // Share credentials function
+    window.shareCredentialsWithPassword = async function(name, email, phone, password) {
+        const text = `Team Member Credentials\n\nName: ${name}\nEmail: ${email}${phone ? `\nPhone: ${phone}` : ''}\nPassword: ${password}`;
+        const encodedText = encodeURIComponent(text);
+        
+        const dropdown = `
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-sm btn-success dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-share-alt me-1"></i>{{ __('messages.share') }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <li><a class="dropdown-item" href="https://wa.me/?text=${encodedText}" target="_blank"><i class="fab fa-whatsapp text-success me-2"></i>WhatsApp</a></li>
+                    <li><a class="dropdown-item" href="mailto:?subject=Team Member Credentials&body=${encodedText}"><i class="fas fa-envelope text-primary me-2"></i>Email</a></li>
+                    ${phone ? `<li><a class="dropdown-item" href="sms:${phone}?body=${encodedText}"><i class="fas fa-sms text-info me-2"></i>SMS</a></li>` : ''}
+                    <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); copyToClipboard('${text.replace(/'/g, "\\'").replace(/\n/g, '\\n')}');"><i class="fas fa-copy text-secondary me-2"></i>{{ __('messages.copy') }}</a></li>
+                </ul>
+            </div>
+        `;
+        
+        Swal.fire({
+            title: '{{ __('messages.share_credentials') }}',
+            html: dropdown,
+            showConfirmButton: false,
+            showCloseButton: true
+        });
+    };
+
+    window.copyToClipboard = function(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('{{ __('messages.credentials_copied') }}', 'success');
+            }).catch(() => {
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showToast('{{ __('messages.credentials_copied') }}', 'success');
+        } catch (err) {
+            showToast('{{ __('messages.failed_to_copy') }}', 'error');
+        }
+        document.body.removeChild(textarea);
+    }
 </script>
