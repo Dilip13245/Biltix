@@ -90,7 +90,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Clear and populate options
                         memberSelect.innerHTML =
                             '<option value="">{{ __('messages.select_user') }}</option>';
-          response.data.forEach(user => {
+          const users = response.data.members || response.data || [];
+          users.forEach(user => {
             const option = document.createElement('option');
             option.value = user.id || '';
             if (user.role) {

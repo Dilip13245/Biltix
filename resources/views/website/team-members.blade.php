@@ -210,7 +210,7 @@
 
                 if (membersResponse.code === 200) {
                     currentMembers = membersResponse.data || [];
-                    const allUsers = usersResponse.code === 200 ? usersResponse.data : [];
+                    const allUsers = usersResponse.code === 200 ? (usersResponse.data.members || usersResponse.data || []) : [];
                     updateStats(currentMembers, allUsers);
                     renderTeamMembers(currentMembers);
                 } else {
@@ -265,7 +265,7 @@
                                 <div class="mb-3">
                                     <p class="text-muted small mb-2">${member.user?.company_name || 'Unknown Company'}</p>
                                     <div class="d-flex gap-2 flex-wrap">
-                                        <span class="badge bg2 orange_color">${member.role_in_project}</span>
+                                        <span class="badge bg2 orange_color">${member.role_in_project.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
                                     </div>
                                 </div>
                             </div>

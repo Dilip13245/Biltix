@@ -206,7 +206,7 @@ class ApiClient {
     }
 
     async getAllUsers() {
-        return this.makeRequest('users/by-role', {}, 'GET');
+        return this.makeRequest('team_management/list_members', {});
     }
 
     async getProjectDetails(data) {
