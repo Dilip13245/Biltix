@@ -109,7 +109,7 @@
                         <div id="planViewerContainer"
                             class="h-100 position-relative overflow-auto bg-light d-flex align-items-center justify-content-center">
                             <!-- Content will be dynamically loaded here -->
-                            <div id="planContent"></div>
+                            <div id="planContent" style="width: 100%; height: 100%;"></div>
                         </div>
                     </div>
                     <div class="col-md-3 @if (app()->getLocale() == 'ar') border-end order-1 @else border-start order-2 @endif" @if (app()->getLocale() == 'ar') style="text-align: right !important; direction: rtl !important;" @endif>
@@ -202,7 +202,7 @@
         if (isImageFile(fileType)) {
             // Image files
             container.innerHTML =
-                `<img id="planImage" src="${planData.file_path}" alt="${planData.title}" style="cursor: grab; transition: transform 0.3s; max-width: 100%; height: auto; display: block; margin: 0 auto;">`;
+                `<img id="planImage" src="${planData.file_path}" alt="${planData.title}" style="cursor: grab; transition: transform 0.3s; width: 100%; height: 100%; object-fit: contain; display: block;">`;
             setupImageInteractions();
         } else if (fileType?.includes('pdf')) {
             // PDF files - better viewer
