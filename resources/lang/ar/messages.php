@@ -97,6 +97,13 @@ return [
 
     // Plans
     'upload_plan' => 'رفع مخطط',
+    'download_reports' => 'قم بتنزيل تقريرك اليومي والأسبوعي والشهري',
+    'daily_report' => 'تقرير يومي',
+    'weekly_report' => 'تقرير أسبوعي',
+    'monthly_report' => 'تقرير شهري',
+    'report_history' => 'سجل التقارير',
+    'generated_by' => 'تم إنشاؤه بواسطة :',
+    'generation_date' => 'تاريخ الإنشاء :',
     'ground_floor_plan' => 'مخطط الطابق الأرضي',
     'second_floor_plan' => 'مخطط الطابق الثاني',
     'front_elevation' => 'الواجهة الأمامية',
@@ -1441,4 +1448,19 @@ return [
     'whatsapp' => 'واتساب',
     'sms' => 'رسالة نصية',
     'copy' => 'نسخ',
+    
+    // Reports
+    'reports' => 'التقارير',
+    'download_reports' => 'تحميل وإدارة تقارير المشروع',
+    'daily_report' => 'تقرير يومي',
+    'weekly_report' => 'تقرير أسبوعي',
+    'monthly_report' => 'تقرير شهري',
+    'generate_report' => 'إنشاء تقرير',
+    'report_history' => 'سجل التقارير',
+    'from_date' => 'من تاريخ',
+    'to_date' => 'إلى تاريخ',
+    'generated_by' => 'تم الإنشاء بواسطة',
+    'generation_date' => 'تاريخ الإنشاء',
+    'select_week' => 'اختر الأسبوع',
+    'select_month' => 'اختر الشهر',
 ];

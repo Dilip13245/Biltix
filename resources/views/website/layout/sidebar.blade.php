@@ -98,6 +98,13 @@
       </li>
       @endcan
       
+      <li class="nav-item">
+        <a href="{{ route('website.project.reports', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.reports') ? 'active' : '' }}">
+          <i class="fas fa-file-alt"></i>
+          <span>{{ __('messages.reports') }}</span>
+        </a>
+      </li>
+      
       @can('daily_logs', 'view')
       <li class="nav-item">
         <a href="{{ route('website.project.daily-log-role-descriptions', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.daily-log-role-descriptions') ? 'active' : '' }}">

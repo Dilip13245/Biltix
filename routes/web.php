@@ -97,6 +97,7 @@ Route::middleware('web.auth')->prefix('website')->group(function () {
         Route::get('/notifications', [HomeController::class, 'notifications'])->name('website.project.notifications');
         Route::get('/help-support', [HomeController::class, 'helpSupport'])->name('website.project.help-support');
         Route::get('/raw-materials', [App\Http\Controllers\Website\RawMaterialController::class, 'index'])->name('website.project.raw-materials');
+        Route::get('/reports', [App\Http\Controllers\Website\ReportsController::class, 'index'])->name('website.project.reports');
     });
 });
 
