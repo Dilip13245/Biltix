@@ -548,6 +548,127 @@
                         line-height: 1.6;
                         margin-bottom: 20px;
                     }
+
+                    .preview-signature-box {
+                        background-color: white;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        padding: 20px 30px;
+                    }
+
+                    .preview-sig-field {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                    }
+
+                    .preview-sig-label {
+                        color: #555;
+                        font-size: 14px;
+                    }
+
+                    .preview-sig-value {
+                        font-weight: 300;
+                        font-size: 14px;
+                        color: #000;
+                    }
+
+                    .preview-sig-line {
+                        width: 250px;
+                        border-bottom: 2px solid #6c85a3;
+                        padding-bottom: 5px;
+                        margin-top: 5px;
+                    }
+
+                    .preview-sig-text {
+                        font-style: italic;
+                        color: #8faad9;
+                        font-size: 15px;
+                    }
+
+                    /* --- RESPONSIVE STYLES --- */
+                    @media (max-width: 768px) {
+                        .preview-container {
+                            max-width: 100%;
+                            box-shadow: none;
+                        }
+
+                        .preview-header-strip {
+                            height: auto;
+                            min-height: 150px;
+                            padding: 30px 20px;
+                        }
+
+                        .preview-header-content {
+                            flex-direction: column;
+                            gap: 20px;
+                        }
+
+                        .preview-brand-logo {
+                            position: static;
+                            margin-bottom: 10px;
+                        }
+
+                        .preview-brand-logo img {
+                            height: 45px;
+                        }
+
+                        .preview-center-title-block {
+                            margin-top: 0;
+                        }
+
+                        .preview-header-title {
+                            font-size: 18px;
+                        }
+
+                        .preview-content {
+                            padding: 15px 20px;
+                        }
+
+                        .preview-info-table td {
+                            padding: 8px 10px;
+                            font-size: 12px;
+                        }
+
+                        .preview-lbl-blue, .preview-lbl-orange {
+                            width: 40%;
+                        }
+
+                        .preview-data-table {
+                            display: block;
+                            overflow-x: auto;
+                            white-space: nowrap;
+                        }
+
+                        .preview-perf-table tr {
+                            display: flex;
+                            flex-direction: column;
+                        }
+
+                        .preview-perf-label-cell, .preview-perf-value-cell {
+                            width: 100%;
+                            border-left: none !important;
+                            border-right: none !important;
+                        }
+
+                        .preview-perf-value-cell {
+                            border-top: 1px solid #b0c4de;
+                        }
+
+                        .preview-signature-box {
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 25px;
+                            padding: 20px;
+                            text-align: center;
+                        }
+
+                        .preview-sig-line {
+                            width: 200px;
+                            margin: 5px auto 0;
+                        }
+                    }
                 </style>
                 <div class="preview-container">
                     <!-- Header -->
@@ -596,23 +717,21 @@
                     <div class="preview-content pt-0">
                         <div class="preview-section-header preview-bg-blue" style="margin-bottom: 0;">
                             {{ __('messages.site_engineer_consultant') }}</div>
-                        <div class="preview-bordered-box"
-                            style="background-color: white; display: flex; justify-content: space-between; align-items: flex-start; padding: 20px 30px;">
-                            <div style="display: flex; flex-direction: column; gap: 15px;">
-                                <div style="color: #555; font-size: 14px;">{{ __('messages.name') }}:</div>
-                                <div style="font-weight: 300; font-size: 14px; color: #000;">
+                        <div class="preview-bordered-box preview-signature-box">
+                            <div class="preview-sig-field">
+                                <div class="preview-sig-label">{{ __('messages.name') }}:</div>
+                                <div class="preview-sig-value">
                                     {{ __('messages.eng_mohammed_al_rashid') }}</div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 15px;">
-                                <div style="color: #555; font-size: 14px;">{{ __('messages.signature') }}:</div>
-                                <div
-                                    style="width: 250px; border-bottom: 2px solid #6c85a3; padding-bottom: 5px; margin-top: 5px;">
-                                    <span style="font-style: italic; color: #8faad9; font-size: 15px;">[Signed]</span>
+                            <div class="preview-sig-field">
+                                <div class="preview-sig-label">{{ __('messages.signature') }}:</div>
+                                <div class="preview-sig-line">
+                                    <span class="preview-sig-text">[Signed]</span>
                                 </div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 15px;">
-                                <div style="color: #555; font-size: 14px;">{{ __('messages.date') }}:</div>
-                                <div style="font-weight: 300; font-size: 14px; color: #000;">{{ date('d/m/Y') }}</div>
+                            <div class="preview-sig-field">
+                                <div class="preview-sig-label">{{ __('messages.date') }}:</div>
+                                <div class="preview-sig-value">{{ date('d/m/Y') }}</div>
                             </div>
                         </div>
                     </div>
