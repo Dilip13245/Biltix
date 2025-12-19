@@ -45,6 +45,16 @@ class Project extends Model
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function contractor()
+    {
+        return $this->belongsTo(User::class, 'project_manager_id', 'id');
+    }
+
     public function phases()
     {
         return $this->hasMany(ProjectPhase::class, 'project_id', 'id');

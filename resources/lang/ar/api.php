@@ -291,4 +291,9 @@ return [
         'deleted_success' => 'تم حذف الاجتماع بنجاح',
         'not_found' => 'الاجتماع غير موجود',
     ],
+    'reports' => [
+        'generated_success' => 'تم إنشاء التقرير بنجاح',
+        'saved_success' => 'تم حفظ التقرير بنجاح',
+        'history_retrieved' => 'تم استرداد سجل التقارير بنجاح',
+    ],
 ];

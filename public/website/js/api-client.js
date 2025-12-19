@@ -599,6 +599,22 @@ class ApiClient {
         return this.makeRequest(`meetings/delete/${id}`, {});
     }
 
+    // Report methods
+    async generateReport(data) {
+        return this.makeRequest('reports/generate', data);
+    }
+
+    async saveReport(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('reports/save', data);
+        }
+        return this.makeRequest('reports/save', data);
+    }
+
+    async getReportHistory(data) {
+        return this.makeRequest('reports/history', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic

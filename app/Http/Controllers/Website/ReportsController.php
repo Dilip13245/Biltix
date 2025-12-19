@@ -29,6 +29,6 @@ class ReportsController extends Controller
             ],
         ];
 
-        return view('website.project_reports', compact('reportHistory', 'project'));
+        return view('website.project_reports', compact('reportHistory', 'project', 'project_id'));
     }
 }

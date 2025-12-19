@@ -292,4 +292,9 @@ return [
         'deleted_success' => 'Meeting deleted successfully',
         'not_found' => 'Meeting not found',
     ],
+    'reports' => [
+        'generated_success' => 'Report generated successfully',
+        'saved_success' => 'Report saved successfully',
+        'history_retrieved' => 'Report history retrieved successfully',
+    ],
 ];

@@ -238,4 +238,10 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('update/{id}', [\App\Http\Controllers\Api\MeetingController::class, 'update']);
         Route::post('delete/{id}', [\App\Http\Controllers\Api\MeetingController::class, 'destroy']);
     });
+
+    Route::prefix('reports')->group(function () {
+        Route::post('generate', [\App\Http\Controllers\Api\ReportController::class, 'generate']);
+        Route::post('save', [\App\Http\Controllers\Api\ReportController::class, 'save']);
+        Route::post('history', [\App\Http\Controllers\Api\ReportController::class, 'history']);
+    });
 });
