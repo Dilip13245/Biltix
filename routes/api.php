@@ -221,6 +221,14 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('add_safety_item', [\App\Http\Controllers\Api\ProjectProgressController::class, 'addSafetyItem']);
         Route::post('update_safety_item', [\App\Http\Controllers\Api\ProjectProgressController::class, 'updateSafetyItem']);
         Route::post('delete_safety_item', [\App\Http\Controllers\Api\ProjectProgressController::class, 'deleteSafetyItem']);
+        Route::post('list_quality_work', [\App\Http\Controllers\Api\ProjectProgressController::class, 'listQualityWork']);
+        Route::post('add_quality_work', [\App\Http\Controllers\Api\ProjectProgressController::class, 'addQualityWork']);
+        Route::post('update_quality_work', [\App\Http\Controllers\Api\ProjectProgressController::class, 'updateQualityWork']);
+        Route::post('delete_quality_work', [\App\Http\Controllers\Api\ProjectProgressController::class, 'deleteQualityWork']);
+        Route::post('list_material_adequacy', [\App\Http\Controllers\Api\ProjectProgressController::class, 'listMaterialAdequacy']);
+        Route::post('add_material_adequacy', [\App\Http\Controllers\Api\ProjectProgressController::class, 'addMaterialAdequacy']);
+        Route::post('update_material_adequacy', [\App\Http\Controllers\Api\ProjectProgressController::class, 'updateMaterialAdequacy']);
+        Route::post('delete_material_adequacy', [\App\Http\Controllers\Api\ProjectProgressController::class, 'deleteMaterialAdequacy']);
     });
     
     Route::prefix('raw-materials')->group(function () {

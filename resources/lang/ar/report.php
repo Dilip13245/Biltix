@@ -56,4 +56,7 @@ return [
     
     'due' => 'الاستحقاق',
     'units' => 'وحدات',
+    'generated_success' => 'تم إنشاء التقرير بنجاح',
+    'saved_success' => 'تم حفظ التقرير بنجاح',
+    'history_retrieved' => 'تم استرجاع سجل التقارير بنجاح',
 ];

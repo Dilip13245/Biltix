@@ -9,6 +9,8 @@ use App\Models\Task;
 use App\Models\Inspection;
 use App\Models\ProjectSafetyItem;
 use App\Models\Meeting;
+use App\Models\ProjectQualityWork;
+use App\Models\ProjectMaterialAdequacy;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -75,6 +77,12 @@ class ReportController extends Controller
                 ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
                 ->get(),
             'raw_materials' => \App\Models\RawMaterial::where('project_id', $request->project_id)
+                ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                ->get(),
+            'quality_work' => ProjectQualityWork::where('project_id', $request->project_id)
+                ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
+                ->get(),
+            'material_adequacy' => ProjectMaterialAdequacy::where('project_id', $request->project_id)
                 ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
                 ->get(),
         ];

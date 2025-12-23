@@ -980,7 +980,19 @@
                             <span style="display: inline-block; background-color: #ea6b1e; color: white; width: 22px; height: 22px; text-align: center; line-height: 22px; border-radius: 3px; margin-right: 8px; font-weight: bold; font-size: 12px;">1</span>
                             {{ __('messages.quality_speed_work') }}:
                         </td>
-                        <td style="padding: 15px; vertical-align: top; border-left: 1px solid #b0c4de;">{{ __('messages.no_data') }}</td>
+                        <td style="padding: 15px; vertical-align: top; border-left: 1px solid #b0c4de;">`;
+
+            if (data.quality_work && data.quality_work.length > 0) {
+                html += '<ul class="preview-orange-list">';
+                data.quality_work.forEach(item => {
+                    html += `<li>${item.description}</li>`;
+                });
+                html += '</ul>';
+            } else {
+                html += '{{ __('messages.no_data') }}';
+            }
+
+            html += `</td>
                     </tr>
                     <tr style="border-bottom: 1px solid #b0c4de;">
                         <td style="background-color: #fff5ec; padding: 15px; vertical-align: top; font-weight: 500;">
@@ -1025,12 +1037,24 @@
                             <span style="display: inline-block; background-color: #ea6b1e; color: white; width: 22px; height: 22px; text-align: center; line-height: 22px; border-radius: 3px; margin-right: 8px; font-weight: bold; font-size: 12px;">4</span>
                             {{ __('messages.adequacy_stored_materials') }}:
                         </td>
-                        <td style="padding: 15px; vertical-align: top; border-left: 1px solid #b0c4de;">{{ __('messages.no_data') }}</td>
+                        <td style="padding: 15px; vertical-align: top; border-left: 1px solid #b0c4de;">`;
+
+            if (data.material_adequacy && data.material_adequacy.length > 0) {
+                html += '<ul class="preview-orange-list">';
+                data.material_adequacy.forEach(item => {
+                    html += `<li>${item.description}</li>`;
+                });
+                html += '</ul>';
+            } else {
+                html += '{{ __('messages.no_data') }}';
+            }
+
+            html += `</td>
                     </tr>
                 </table>
             `;
 
-            // Overdue {{ __('messages.task') }}s Section
+            // Overdue Tasks Section
             html += `
                 <div class="preview-section-header preview-bg-gradients">
                     {{ __('messages.section_3') }}
@@ -1186,19 +1210,18 @@
                 const response = await api.saveReport(formData);
 
                 if (response.code === 200) {
-                    alert('PDF generated successfully!');
+                    toastr.success('{{ __('messages.pdf_generated_success') }}');
                     loadHistory();
                     document.getElementById('reportPreview').classList.add('d-none');
                     currentReportData = null;
-                    // Reset inputs
                     document.getElementById('general{{ __('messages.remarks') }}').value = '';
                     document.getElementById('general{{ __('messages.remarks') }}File').value = '';
                 } else {
-                    alert(response.message || 'Failed to save PDF');
+                    toastr.error(response.message || 'Failed to save PDF');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error saving PDF');
+                toastr.error('Error saving PDF');
             } finally {
                 makePdfBtn.disabled = false;
                 pdfBtnText.classList.remove('d-none');

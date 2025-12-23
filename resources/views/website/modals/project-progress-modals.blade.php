@@ -799,6 +799,220 @@ async function saveSafetyItem() {
 }
 </script>
 
+<!-- Quality Work Modal -->
+<div class="modal fade" id="qualityModal" tabindex="-1" aria-labelledby="qualityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <style>
+                    #qualityModal .modal-header .btn-close {
+                        position: static !important;
+                        right: auto !important;
+                        top: auto !important;
+                        margin: 0 !important;
+                    }
+
+                    #qualityModal .modal-header {
+                        position: relative !important;
+                    }
+
+                    @media (max-width: 576px) {
+                        #qualityModal .modal-dialog {
+                            margin: 0.5rem;
+                        }
+
+                        #qualityModal .d-flex.gap-2 {
+                            flex-direction: column;
+                        }
+
+                        #qualityModal .d-flex.gap-2 button {
+                            width: 100%;
+                            min-width: auto;
+                        }
+                    }
+                </style>
+                @if (app()->getLocale() == 'ar')
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <h6 class="modal-title" id="qualityModalLabel">
+                            <span id="qualityModalTitle">{{ __('messages.add_quality_speed_work') }}</span>
+                    </h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
+                </div>
+                @else
+                <h6 class="modal-title" id="qualityModalLabel">
+                        <span id="qualityModalTitle">{{ __('messages.add_quality_speed_work') }}</span>
+                </h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
+                @endif
+            </div>
+            <div class="modal-body">
+                <form id="qualityForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">{{ __('messages.description') }}</label>
+                    <div id="modalQualityContainer">
+                        <div class="quality-field mb-2">
+                                <input type="text" class="form-control Input_control" name="description[]" 
+                                    placeholder="{{ __('messages.enter_description') }}" maxlength="255"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" id="addMoreQualityBtn" class="btn btn-outline-primary btn-sm"
+                                onclick="addQualityField()" style="min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.add_more') }}
+                            </button>
+                            <button type="button" id="removeLastQualityBtn" class="btn btn-outline-danger btn-sm"
+                                onclick="removeLastQualityField()"
+                                style="display:none; min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.remove') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"
+                    style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
+                <button type="button" class="btn btn-sm btn-info api-action-btn" onclick="saveQualityWork()"
+                    style="padding: 0.7rem 1.5rem;">
+                    <span id="qualitySaveBtn">{{ __('messages.save') }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Material Adequacy Modal -->
+<div class="modal fade" id="materialModal" tabindex="-1" aria-labelledby="materialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <style>
+                    #materialModal .modal-header .btn-close {
+                        position: static !important;
+                        right: auto !important;
+                        top: auto !important;
+                        margin: 0 !important;
+                    }
+
+                    #materialModal .modal-header {
+                        position: relative !important;
+                    }
+
+                    @media (max-width: 576px) {
+                        #materialModal .modal-dialog {
+                            margin: 0.5rem;
+                        }
+
+                        #materialModal .d-flex.gap-2 {
+                            flex-direction: column;
+                        }
+
+                        #materialModal .d-flex.gap-2 button {
+                            width: 100%;
+                            min-width: auto;
+                        }
+                    }
+                </style>
+                @if (app()->getLocale() == 'ar')
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <h6 class="modal-title" id="materialModalLabel">
+                            <span id="materialModalTitle">{{ __('messages.add_material_adequacy') }}</span>
+                    </h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
+                </div>
+                @else
+                <h6 class="modal-title" id="materialModalLabel">
+                        <span id="materialModalTitle">{{ __('messages.add_material_adequacy') }}</span>
+                </h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="{{ __('messages.close') }}"></button>
+                @endif
+            </div>
+            <div class="modal-body">
+                <form id="materialForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">{{ __('messages.description') }}</label>
+                    <div id="modalMaterialContainer">
+                        <div class="material-field mb-2">
+                                <input type="text" class="form-control Input_control" name="description[]" 
+                                    placeholder="{{ __('messages.enter_description') }}" maxlength="255"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" id="addMoreMaterialBtn" class="btn btn-outline-primary btn-sm"
+                                onclick="addMaterialField()" style="min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.add_more') }}
+                            </button>
+                            <button type="button" id="removeLastMaterialBtn" class="btn btn-outline-danger btn-sm"
+                                onclick="removeLastMaterialField()"
+                                style="display:none; min-width: 120px; padding: 0.5rem 1rem;">
+                                {{ __('messages.remove') }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal"
+                    style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
+                <button type="button" class="btn btn-sm btn-warning api-action-btn" onclick="saveMaterialAdequacy()"
+                    style="padding: 0.7rem 1.5rem;">
+                    <span id="materialSaveBtn">{{ __('messages.save') }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Quality Work Field Functions
+function addQualityField() {
+    const container = document.getElementById('modalQualityContainer');
+    const fieldDiv = document.createElement('div');
+    fieldDiv.className = 'quality-field mb-2';
+    fieldDiv.innerHTML = `
+        <input type="text" class="form-control Input_control" name="description[]" 
+            placeholder="{{ __('messages.enter_description') }}" maxlength="255" required>
+    `;
+    container.appendChild(fieldDiv);
+    updateRemoveButton('removeLastQualityBtn', container);
+}
+
+function removeLastQualityField() {
+    const container = document.getElementById('modalQualityContainer');
+    if (container.children.length > 1) {
+        container.removeChild(container.lastChild);
+        updateRemoveButton('removeLastQualityBtn', container);
+    }
+}
+
+// Material Adequacy Field Functions
+function addMaterialField() {
+    const container = document.getElementById('modalMaterialContainer');
+    const fieldDiv = document.createElement('div');
+    fieldDiv.className = 'material-field mb-2';
+    fieldDiv.innerHTML = `
+        <input type="text" class="form-control Input_control" name="description[]" 
+            placeholder="{{ __('messages.enter_description') }}" maxlength="255" required>
+    `;
+    container.appendChild(fieldDiv);
+    updateRemoveButton('removeLastMaterialBtn', container);
+}
+
+function removeLastMaterialField() {
+    const container = document.getElementById('modalMaterialContainer');
+    if (container.children.length > 1) {
+        container.removeChild(container.lastChild);
+        updateRemoveButton('removeLastMaterialBtn', container);
+    }
+}
+</script>
+
 {{-- Meeting Modals --}}
 @include('website.modals.meetings.create-meeting-modal')
 

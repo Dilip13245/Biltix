@@ -457,17 +457,67 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-4 wow fadeInUp" data-wow-delay="1.4s" style="margin-bottom: 2rem;">
+                <div class="row mt-4 wow fadeInUp" data-wow-delay="1.4s">
+                    <div class="col-12 col-lg-6 mb-4 mb-lg-0">
+                        <div class="card B_shadow">
+                            <div class="card-body p-md-4">
+                                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                                    <h5 class="fw-semibold black_color mb-0">{{ __('messages.quality_speed_work') }}</h5>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button class="btn btn-sm btn-outline-info" id="addQualityBtn"
+                                            onclick="openQualityModal()">
+                                            {{ __('messages.add_new') }}
+                                        </button>
+                                        <button class="btn btn-sm btn-info" id="updateQualityBtn"
+                                            onclick="openQualityUpdateModal()">
+                                            {{ __('messages.update') }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="qualityContainer">
+                                    <div class="text-center py-3">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">{{ __('messages.loading') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="card B_shadow">
+                            <div class="card-body p-md-4">
+                                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                                    <h5 class="fw-semibold black_color mb-0">{{ __('messages.material_adequacy') }}</h5>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button class="btn btn-sm btn-outline-warning" id="addMaterialBtn"
+                                            onclick="openMaterialModal()">
+                                            {{ __('messages.add_new') }}
+                                        </button>
+                                        <button class="btn btn-sm btn-warning" id="updateMaterialBtn"
+                                            onclick="openMaterialUpdateModal()">
+                                            {{ __('messages.update') }}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="materialContainer">
+                                    <div class="text-center py-3">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">{{ __('messages.loading') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4 wow fadeInUp" data-wow-delay="1.5s" style="margin-bottom: 2rem;">
                     <div class="col-12">
                         <div class="card B_shadow">
                             <div class="card-body p-md-4">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
                                     <h5 class="fw-semibold black_color mb-0">{{ __('messages.safety_category') }}</h5>
                                     <div class="d-flex align-items-center gap-2">
-                                        {{-- <a href="{{ route('website.safety-checklist') }}"
-                                            class="btn btn-primary d-flex align-items-center gap-2 btnsm">
-                                            <i class="fas fa-eye"></i> {{ __('messages.view_checklist') }}
-                                        </a> --}}
                                         <button class="btn btn-sm btn-outline-danger" id="addSafetyBtn"
                                             onclick="openSafetyModal()">
                                             {{ __('messages.add_new') }}
@@ -550,6 +600,8 @@
                 const addActivityBtn = document.getElementById('addActivityBtn');
                 const addManpowerBtn = document.getElementById('addManpowerBtn');
                 const addSafetyBtn = document.getElementById('addSafetyBtn');
+                const addQualityBtn = document.getElementById('addQualityBtn');
+                const addMaterialBtn = document.getElementById('addMaterialBtn');
 
                 if (addActivityBtn) {
                     addActivityBtn.style.display = isToday ? 'inline-block' : 'none';
@@ -560,6 +612,12 @@
                 if (addSafetyBtn) {
                     addSafetyBtn.style.display = isToday ? 'inline-block' : 'none';
                 }
+                if (addQualityBtn) {
+                    addQualityBtn.style.display = isToday ? 'inline-block' : 'none';
+                }
+                if (addMaterialBtn) {
+                    addMaterialBtn.style.display = isToday ? 'inline-block' : 'none';
+                }
             }
 
             // Function to toggle update buttons visibility based on data availability
@@ -567,6 +625,8 @@
                 const updateActivityBtn = document.getElementById('updateActivityBtn');
                 const updateManpowerBtn = document.getElementById('updateManpowerBtn');
                 const updateSafetyBtn = document.getElementById('updateSafetyBtn');
+                const updateQualityBtn = document.getElementById('updateQualityBtn');
+                const updateMaterialBtn = document.getElementById('updateMaterialBtn');
 
                 if (updateActivityBtn) {
                     updateActivityBtn.style.display = hasActivitiesData ? 'inline-block' : 'none';
@@ -576,6 +636,12 @@
                 }
                 if (updateSafetyBtn) {
                     updateSafetyBtn.style.display = hasSafetyData ? 'inline-block' : 'none';
+                }
+                if (updateQualityBtn) {
+                    updateQualityBtn.style.display = hasQualityData ? 'inline-block' : 'none';
+                }
+                if (updateMaterialBtn) {
+                    updateMaterialBtn.style.display = hasMaterialData ? 'inline-block' : 'none';
                 }
             }
 
@@ -636,7 +702,9 @@
                         Promise.all([
                             loadActivities(),
                             loadManpowerEquipment(),
-                            loadSafetyItems()
+                            loadSafetyItems(),
+                            loadQualityWork(),
+                            loadMaterialAdequacy()
                         ]).then(function() {
                             // Restore scroll position after all async operations complete
                             if (isMobile && savedScrollY !== null) {
@@ -676,6 +744,8 @@
                             loadActivities();
                             loadManpowerEquipment();
                             loadSafetyItems();
+                            loadQualityWork();
+                            loadMaterialAdequacy();
 
                             // Restore scroll position after all operations complete
                             if (isMobile && savedScrollY !== null) {
@@ -825,6 +895,8 @@
                 loadActivities();
                 loadManpowerEquipment();
                 loadSafetyItems();
+                loadQualityWork();
+                loadMaterialAdequacy();
                 renderPhaseProgressFromServer();
             });
 
@@ -1486,6 +1558,329 @@
     </div>
   `;
             }
+
+            // Quality and Speed of Work Functions
+            async function loadQualityWork() {
+                try {
+                    const response = await api.makeRequest('project-progress/list_quality_work', {
+                        project_id: currentProjectId
+                    });
+                    if (response.code === 200) {
+                        renderQualityWork(response.data || []);
+                    } else {
+                        showError('qualityContainer', '{{ __('messages.failed_to_load_quality_work') }}');
+                    }
+                } catch (error) {
+                    showError('qualityContainer', '{{ __('messages.error_loading_quality_work') }}');
+                }
+            }
+
+            function renderQualityWork(items) {
+                const container = document.getElementById('qualityContainer');
+                const filteredItems = items.filter(item => {
+                    if (!item.created_at) return false;
+                    const itemDate = getLocalDateString(item.created_at);
+                    return itemDate === selectedDate;
+                });
+
+                hasQualityData = filteredItems.length > 0;
+                toggleUpdateButtonsVisibility();
+
+                if (filteredItems.length === 0) {
+                    container.innerHTML = `
+      <div class="text-center py-3 text-muted">
+        <i class="fas fa-check-circle fa-2x mb-2"></i>
+        <p>{{ __('messages.no_quality_work_found') }}</p>
+      </div>
+    `;
+                    window.currentQualityWork = [];
+                    return;
+                }
+
+                window.currentQualityWork = filteredItems;
+                container.innerHTML = `
+    <ul class="list-unstyled mb-0">
+      ${filteredItems.map(item => `
+                                                                                                                                                                                        <li class="d-flex align-items-center mb-2">
+                                                                                                                                                                                          <span class="{{ margin_end(2) }}" style="color:#17A2B8; font-size:1.2em;">&#9679;</span>
+                                                                                                                                                                                          <span class="flex-grow-1 text-wrap">${item.description}</span>
+                                                                                                                                                                                        </li>
+                                                                                                                                                                                      `).join('')}
+    </ul>
+  `;
+            }
+
+            // Material Adequacy Functions
+            async function loadMaterialAdequacy() {
+                try {
+                    const response = await api.makeRequest('project-progress/list_material_adequacy', {
+                        project_id: currentProjectId
+                    });
+                    if (response.code === 200) {
+                        renderMaterialAdequacy(response.data || []);
+                    } else {
+                        showError('materialContainer', '{{ __('messages.failed_to_load_material_adequacy') }}');
+                    }
+                } catch (error) {
+                    showError('materialContainer', '{{ __('messages.error_loading_material_adequacy') }}');
+                }
+            }
+
+            function renderMaterialAdequacy(items) {
+                const container = document.getElementById('materialContainer');
+                const filteredItems = items.filter(item => {
+                    if (!item.created_at) return false;
+                    const itemDate = getLocalDateString(item.created_at);
+                    return itemDate === selectedDate;
+                });
+
+                hasMaterialData = filteredItems.length > 0;
+                toggleUpdateButtonsVisibility();
+
+                if (filteredItems.length === 0) {
+                    container.innerHTML = `
+      <div class="text-center py-3 text-muted">
+        <i class="fas fa-boxes fa-2x mb-2"></i>
+        <p>{{ __('messages.no_material_adequacy_found') }}</p>
+      </div>
+    `;
+                    window.currentMaterialAdequacy = [];
+                    return;
+                }
+
+                window.currentMaterialAdequacy = filteredItems;
+                container.innerHTML = `
+    <ul class="list-unstyled mb-0">
+      ${filteredItems.map(item => `
+                                                                                                                                                                                        <li class="d-flex align-items-center mb-2">
+                                                                                                                                                                                          <span class="{{ margin_end(2) }}" style="color:#FFC107; font-size:1.2em;">&#9679;</span>
+                                                                                                                                                                                          <span class="flex-grow-1 text-wrap">${item.description}</span>
+                                                                                                                                                                                        </li>
+                                                                                                                                                                                      `).join('')}
+    </ul>
+  `;
+            }
+
+            // Modal Functions for Quality Work
+            function openQualityModal() {
+                const form = document.getElementById('qualityForm');
+                if (form) form.reset();
+                new bootstrap.Modal(document.getElementById('qualityModal')).show();
+            }
+
+            function openQualityUpdateModal() {
+                if (!window.currentQualityWork || window.currentQualityWork.length === 0) {
+                    toastr.warning('{{ __('messages.no_quality_work_to_update') }}');
+                    return;
+                }
+                const modal = new bootstrap.Modal(document.getElementById('qualityUpdateModal'));
+                const container = document.getElementById('qualityUpdateContainer');
+                container.innerHTML = window.currentQualityWork.map(item => `
+        <div class="mb-2 d-flex align-items-center gap-2">
+            <input type="hidden" name="quality_id[]" value="${item.id}">
+            <input type="text" class="form-control flex-grow-1" name="quality_description[]" 
+                value="${item.description}" placeholder="{{ __('messages.enter_description') }}" maxlength="255">
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteQualityItem(${item.id}, this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `).join('');
+                modal.show();
+            }
+
+            // Modal Functions for Material Adequacy
+            function openMaterialModal() {
+                const form = document.getElementById('materialForm');
+                if (form) form.reset();
+                new bootstrap.Modal(document.getElementById('materialModal')).show();
+            }
+
+            function openMaterialUpdateModal() {
+                if (!window.currentMaterialAdequacy || window.currentMaterialAdequacy.length === 0) {
+                    toastr.warning('{{ __('messages.no_material_adequacy_to_update') }}');
+                    return;
+                }
+                const modal = new bootstrap.Modal(document.getElementById('materialUpdateModal'));
+                const container = document.getElementById('materialUpdateContainer');
+                container.innerHTML = window.currentMaterialAdequacy.map(item => `
+        <div class="mb-2 d-flex align-items-center gap-2">
+            <input type="hidden" name="material_id[]" value="${item.id}">
+            <input type="text" class="form-control flex-grow-1" name="material_description[]" 
+                value="${item.description}" placeholder="{{ __('messages.enter_description') }}" maxlength="255">
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteMaterialItem(${item.id}, this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `).join('');
+                modal.show();
+            }
+
+            // Save Functions
+            async function saveQualityWork() {
+                const form = document.getElementById('qualityForm');
+                const descriptions = Array.from(form.querySelectorAll('input[name="description[]"]'))
+                    .map(input => input.value.trim())
+                    .filter(desc => desc);
+
+                if (descriptions.length === 0) {
+                    toastr.error('{{ __('messages.please_enter_description') }}');
+                    return;
+                }
+
+                const saveBtn = document.querySelector('#qualityModal button[onclick="saveQualityWork()"]');
+                if (window.protectButton) window.protectButton(saveBtn);
+
+                try {
+                    const response = await api.makeRequest('project-progress/add_quality_work', {
+                        project_id: currentProjectId,
+                        user_id: currentUserId,
+                        descriptions: descriptions
+                    }, 'POST', saveBtn);
+
+                    if (response.code === 200) {
+                        bootstrap.Modal.getInstance(document.getElementById('qualityModal')).hide();
+                        loadQualityWork();
+                        toastr.success('{{ __('messages.quality_work_saved_successfully') }}');
+                    } else {
+                        toastr.error(response.message || '{{ __('messages.failed_to_save_quality_work') }}');
+                    }
+                } catch (error) {
+                    toastr.error('{{ __('messages.error_saving_quality_work') }}');
+                } finally {
+                    if (window.releaseButton) window.releaseButton(saveBtn);
+                }
+            }
+
+            async function saveMaterialAdequacy() {
+                const form = document.getElementById('materialForm');
+                const descriptions = Array.from(form.querySelectorAll('input[name="description[]"]'))
+                    .map(input => input.value.trim())
+                    .filter(desc => desc);
+
+                if (descriptions.length === 0) {
+                    toastr.error('{{ __('messages.please_enter_description') }}');
+                    return;
+                }
+
+                const saveBtn = document.querySelector('#materialModal button[onclick="saveMaterialAdequacy()"]');
+                if (window.protectButton) window.protectButton(saveBtn);
+
+                try {
+                    const response = await api.makeRequest('project-progress/add_material_adequacy', {
+                        project_id: currentProjectId,
+                        user_id: currentUserId,
+                        descriptions: descriptions
+                    }, 'POST', saveBtn);
+
+                    if (response.code === 200) {
+                        bootstrap.Modal.getInstance(document.getElementById('materialModal')).hide();
+                        loadMaterialAdequacy();
+                        toastr.success('{{ __('messages.material_adequacy_saved_successfully') }}');
+                    } else {
+                        toastr.error(response.message || '{{ __('messages.failed_to_save_material_adequacy') }}');
+                    }
+                } catch (error) {
+                    toastr.error('{{ __('messages.error_saving_material_adequacy') }}');
+                } finally {
+                    if (window.releaseButton) window.releaseButton(saveBtn);
+                }
+            }
+
+            // Delete Functions
+            async function deleteQualityItem(id, btn) {
+                if (confirm('{{ __('messages.confirm_delete') }}')) {
+                    try {
+                        const response = await api.makeRequest('project-progress/delete_quality_work', {
+                            item_id: id
+                        });
+                        if (response.code === 200) {
+                            btn.closest('.mb-2').remove();
+                            toastr.success('{{ __('messages.deleted_successfully') }}');
+                        }
+                    } catch (error) {
+                        toastr.error('{{ __('messages.error_deleting_item') }}');
+                    }
+                }
+            }
+
+            async function deleteMaterialItem(id, btn) {
+                if (confirm('{{ __('messages.confirm_delete') }}')) {
+                    try {
+                        const response = await api.makeRequest('project-progress/delete_material_adequacy', {
+                            item_id: id
+                        });
+                        if (response.code === 200) {
+                            btn.closest('.mb-2').remove();
+                            toastr.success('{{ __('messages.deleted_successfully') }}');
+                        }
+                    } catch (error) {
+                        toastr.error('{{ __('messages.error_deleting_item') }}');
+                    }
+                }
+            }
+
+            // Update Functions
+            async function saveQualityWorkUpdate() {
+                const form = document.getElementById('qualityUpdateModal');
+                const ids = Array.from(form.querySelectorAll('input[name="quality_id[]"]')).map(i => i.value);
+                const descriptions = Array.from(form.querySelectorAll('input[name="quality_description[]"]')).map(i => i.value.trim());
+
+                const qualityWork = ids.map((id, idx) => ({
+                    id: id,
+                    description: descriptions[idx]
+                })).filter(item => item.description);
+
+                if (qualityWork.length === 0) {
+                    toastr.error('{{ __('messages.please_enter_description') }}');
+                    return;
+                }
+
+                try {
+                    const response = await api.makeRequest('project-progress/update_quality_work', {
+                        quality_work: qualityWork
+                    });
+                    if (response.code === 200) {
+                        bootstrap.Modal.getInstance(form).hide();
+                        loadQualityWork();
+                        toastr.success('{{ __('messages.updated_successfully') }}');
+                    }
+                } catch (error) {
+                    toastr.error('{{ __('messages.error_updating_item') }}');
+                }
+            }
+
+            async function saveMaterialAdequacyUpdate() {
+                const form = document.getElementById('materialUpdateModal');
+                const ids = Array.from(form.querySelectorAll('input[name="material_id[]"]')).map(i => i.value);
+                const descriptions = Array.from(form.querySelectorAll('input[name="material_description[]"]')).map(i => i.value.trim());
+
+                const materialAdequacy = ids.map((id, idx) => ({
+                    id: id,
+                    description: descriptions[idx]
+                })).filter(item => item.description);
+
+                if (materialAdequacy.length === 0) {
+                    toastr.error('{{ __('messages.please_enter_description') }}');
+                    return;
+                }
+
+                try {
+                    const response = await api.makeRequest('project-progress/update_material_adequacy', {
+                        material_adequacy: materialAdequacy
+                    });
+                    if (response.code === 200) {
+                        bootstrap.Modal.getInstance(form).hide();
+                        loadMaterialAdequacy();
+                        toastr.success('{{ __('messages.updated_successfully') }}');
+                    }
+                } catch (error) {
+                    toastr.error('{{ __('messages.error_updating_item') }}');
+                }
+            }
+
+            // Data availability flags
+            let hasQualityData = false;
+            let hasMaterialData = false;
 
             // Phase Progress Functions - Using server-side data
             function renderPhaseProgressFromServer() {
@@ -2808,7 +3203,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">{{ __('messages.cancel') }}</button>
                         <button type="button" class="btn orange_btn api-action-btn" onclick="saveMilestone()">
-                            <i class="fas fa-save me-2"></i>{{ __('messages.save') }}
+                            {{ __('messages.save') }}
                         </button>
                     </div>
                 </div>
@@ -2891,7 +3286,7 @@
                             style="padding: 0.7rem 1.5rem;">Cancel</button>
                         <button type="button" class="btn orange_btn api-action-btn"
                             onclick="saveActivitiesUpdate()">
-                            <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
+                            {{ __('messages.update') }}
                         </button>
                     </div>
                 </div>
@@ -2936,7 +3331,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">Cancel</button>
                         <button type="button" class="btn orange_btn api-action-btn" onclick="saveManpowerUpdate()">
-                            <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
+                            {{ __('messages.update') }}
                         </button>
                     </div>
                 </div>
@@ -2981,7 +3376,95 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                             style="padding: 0.7rem 1.5rem;">Cancel</button>
                         <button type="button" class="btn orange_btn api-action-btn" onclick="saveSafetyUpdate()">
-                            <i class="fas fa-save me-2"></i>{{ __('messages.update') }}
+                            {{ __('messages.update') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quality Work Update Modal -->
+        <div class="modal fade" id="qualityUpdateModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <style>
+                            #qualityUpdateModal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+
+                            #qualityUpdateModal .modal-header {
+                                position: relative !important;
+                            }
+                        </style>
+                        @if (app()->getLocale() == 'ar')
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <h5 class="modal-title">{{ __('messages.update') }}
+                                    {{ __('messages.quality_speed_work') }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="{{ __('messages.close') }}"></button>
+                            </div>
+                        @else
+                            <h5 class="modal-title">{{ __('messages.update') }}
+                                {{ __('messages.quality_speed_work') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ __('messages.close') }}"></button>
+                        @endif
+                    </div>
+                    <div class="modal-body">
+                        <div id="qualityUpdateContainer"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-info api-action-btn" onclick="saveQualityWorkUpdate()">
+                            {{ __('messages.update') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Material Adequacy Update Modal -->
+        <div class="modal fade" id="materialUpdateModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <style>
+                            #materialUpdateModal .modal-header .btn-close {
+                                position: static !important;
+                                right: auto !important;
+                                top: auto !important;
+                                margin: 0 !important;
+                            }
+
+                            #materialUpdateModal .modal-header {
+                                position: relative !important;
+                            }
+                        </style>
+                        @if (app()->getLocale() == 'ar')
+                            <div class="d-flex justify-content-between align-items-center w-100">
+                                <h5 class="modal-title">{{ __('messages.update') }}
+                                    {{ __('messages.material_adequacy') }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="{{ __('messages.close') }}"></button>
+                            </div>
+                        @else
+                            <h5 class="modal-title">{{ __('messages.update') }}
+                                {{ __('messages.material_adequacy') }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ __('messages.close') }}"></button>
+                        @endif
+                    </div>
+                    <div class="modal-body">
+                        <div id="materialUpdateContainer"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-warning api-action-btn" onclick="saveMaterialAdequacyUpdate()">
+                            {{ __('messages.update') }}
                         </button>
                     </div>
                 </div>

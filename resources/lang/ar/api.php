@@ -259,6 +259,10 @@ return [
         'safety_item_not_found' => 'عنصر السلامة غير موجود',
         'safety_item_updated' => 'تم تحديث عنصر السلامة بنجاح',
         'safety_item_deleted_successfully' => 'تم حذف عنصر السلامة بنجاح',
+        'quality_work_retrieved' => 'تم استرداد جودة العمل بنجاح',
+        'quality_work_added' => 'تم إضافة جودة العمل بنجاح',
+        'material_adequacy_retrieved' => 'تم استرداج كفاية المواد بنجاح',
+        'material_adequacy_added' => 'تم إضافة كفاية المواد بنجاح',
     ],
     'roles' => [
         'permissions_retrieved' => 'تم استرداد صلاحيات الأدوار بنجاح',

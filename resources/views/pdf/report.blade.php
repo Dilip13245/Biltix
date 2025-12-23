@@ -755,7 +755,17 @@
                     <td class="perf-label-cell" style="direction: ltr; text-align: left;">
                         <span class="num-badge">1</span> Quality and Speed of Work:
                     </td>
-                    <td class="perf-value-cell">{{ __('report.no_data') }}</td>
+                    <td class="perf-value-cell">
+                        @if (count($quality_work) > 0)
+                            <ul class="orange-list">
+                                @foreach ($quality_work as $item)
+                                    <li>{{ $item['description'] }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            {{ __('report.no_data') }}
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td class="perf-label-cell" style="direction: ltr; text-align: left;">
@@ -793,7 +803,17 @@
                     <td class="perf-label-cell" style="direction: ltr; text-align: left;">
                         <span class="num-badge">4</span> Adequacy of Stored Materials:
                     </td>
-                    <td class="perf-value-cell">{{ __('report.no_data') }}</td>
+                    <td class="perf-value-cell">
+                        @if (count($material_adequacy) > 0)
+                            <ul class="orange-list">
+                                @foreach ($material_adequacy as $item)
+                                    <li>{{ $item['description'] }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            {{ __('report.no_data') }}
+                        @endif
+                    </td>
                 </tr>
             </table>
 

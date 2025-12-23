@@ -260,6 +260,10 @@ return [
         'safety_item_not_found' => 'Safety item not found',
         'safety_item_updated' => 'Safety item updated successfully',
         'safety_item_deleted_successfully' => 'Safety item deleted successfully',
+        'quality_work_retrieved' => 'Quality work retrieved successfully',
+        'quality_work_added' => 'Quality work added successfully',
+        'material_adequacy_retrieved' => 'Material adequacy retrieved successfully',
+        'material_adequacy_added' => 'Material adequacy added successfully',
     ],
     'roles' => [
         'permissions_retrieved' => 'Role permissions retrieved successfully',

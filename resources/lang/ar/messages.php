@@ -1504,7 +1504,12 @@ return [
     
     // Missing report translations
     'type' => 'النوع',
+    'deleted_successfully' => 'تم الحذف بنجاح',
+    'updated_successfully' => 'تم التحديث بنجاح',
+    'confirm_delete' => 'هل أنت متأكد من حذف هذا العنصر؟',
     'quality_speed_work' => 'جودة وسرعة العمل',
+    'quality_speed_work' => 'جودة وسرعة العمل',
+    'material_adequacy' => 'كفاية المواد المخزنة',
     'adequacy_manpower' => 'كفاية القوى العاملة',
     'adequacy_equipment' => 'كفاية المعدات',
     'adequacy_stored_materials' => 'كفاية المواد المخزنة',
@@ -1519,4 +1524,5 @@ return [
     'sixth' => 'سادساً',
     'stored_during_week' => 'المخزنة خلال الأسبوع',
     'make_pdf' => 'إنشاء ملف PDF',
+    'pdf_generated_success' => 'تم إنشاء ملف PDF بنجاح!',
 ];

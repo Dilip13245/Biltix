@@ -56,4 +56,7 @@ return [
     
     'due' => 'Due',
     'units' => 'units',
+    'generated_success' => 'Report generated successfully',
+    'saved_success' => 'Report saved successfully',
+    'history_retrieved' => 'Report history retrieved successfully',
 ];

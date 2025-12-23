@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ProjectActivity;
 use App\Models\ProjectManpowerEquipment;
 use App\Models\ProjectSafetyItem;
+use App\Models\ProjectQualityWork;
+use App\Models\ProjectMaterialAdequacy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
@@ -403,6 +405,228 @@ class ProjectProgressController extends Controller
             $item->update(['is_deleted' => 1]);
 
             return $this->toJsonEnc([], trans('api.project_progress.safety_item_deleted_successfully'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    // Quality and Speed of Work APIs
+    public function listQualityWork(Request $request)
+    {
+        try {
+            $project_id = $request->input('project_id');
+            
+            if (!$project_id) {
+                return $this->toJsonEnc([], trans('api.project_progress.project_id_required'), Config::get('constant.ERROR'));
+            }
+
+            $items = ProjectQualityWork::where('project_id', $project_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return $this->toJsonEnc($items, trans('api.project_progress.quality_work_retrieved'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function addQualityWork(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'project_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'descriptions' => 'required|array|min:1',
+                'descriptions.*' => 'required|string|max:255',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $items = [];
+            foreach ($request->descriptions as $description) {
+                $items[] = ProjectQualityWork::create([
+                    'project_id' => $request->project_id,
+                    'description' => $description,
+                    'created_by' => $request->user_id,
+                ]);
+            }
+
+            return $this->toJsonEnc($items, trans('api.project_progress.quality_work_added'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function updateQualityWork(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'quality_work' => 'required|array|min:1',
+                'quality_work.*.id' => 'required|integer',
+                'quality_work.*.description' => 'required|string|max:255',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $updatedItems = [];
+            foreach ($request->quality_work as $data) {
+                $item = ProjectQualityWork::where('id', $data['id'])
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->first();
+                
+                if ($item) {
+                    $item->update(['description' => $data['description']]);
+                    $updatedItems[] = $item;
+                }
+            }
+
+            return $this->toJsonEnc($updatedItems, 'Quality work updated successfully', Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function deleteQualityWork(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'item_id' => 'required|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $item = ProjectQualityWork::where('id', $request->item_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$item) {
+                return $this->toJsonEnc([], 'Quality work item not found', Config::get('constant.NOT_FOUND'));
+            }
+
+            $item->update(['is_deleted' => 1]);
+
+            return $this->toJsonEnc([], 'Quality work item deleted successfully', Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    // Material Adequacy APIs
+    public function listMaterialAdequacy(Request $request)
+    {
+        try {
+            $project_id = $request->input('project_id');
+            
+            if (!$project_id) {
+                return $this->toJsonEnc([], trans('api.project_progress.project_id_required'), Config::get('constant.ERROR'));
+            }
+
+            $items = ProjectMaterialAdequacy::where('project_id', $project_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return $this->toJsonEnc($items, trans('api.project_progress.material_adequacy_retrieved'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function addMaterialAdequacy(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'project_id' => 'required|integer',
+                'user_id' => 'required|integer',
+                'descriptions' => 'required|array|min:1',
+                'descriptions.*' => 'required|string|max:255',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $items = [];
+            foreach ($request->descriptions as $description) {
+                $items[] = ProjectMaterialAdequacy::create([
+                    'project_id' => $request->project_id,
+                    'description' => $description,
+                    'created_by' => $request->user_id,
+                ]);
+            }
+
+            return $this->toJsonEnc($items, trans('api.project_progress.material_adequacy_added'), Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function updateMaterialAdequacy(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'material_adequacy' => 'required|array|min:1',
+                'material_adequacy.*.id' => 'required|integer',
+                'material_adequacy.*.description' => 'required|string|max:255',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $updatedItems = [];
+            foreach ($request->material_adequacy as $data) {
+                $item = ProjectMaterialAdequacy::where('id', $data['id'])
+                    ->where('is_active', 1)
+                    ->where('is_deleted', 0)
+                    ->first();
+                
+                if ($item) {
+                    $item->update(['description' => $data['description']]);
+                    $updatedItems[] = $item;
+                }
+            }
+
+            return $this->toJsonEnc($updatedItems, 'Material adequacy updated successfully', Config::get('constant.SUCCESS'));
+        } catch (\Exception $e) {
+            return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
+        }
+    }
+
+    public function deleteMaterialAdequacy(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'item_id' => 'required|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $item = ProjectMaterialAdequacy::where('id', $request->item_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->first();
+
+            if (!$item) {
+                return $this->toJsonEnc([], 'Material adequacy item not found', Config::get('constant.NOT_FOUND'));
+            }
+
+            $item->update(['is_deleted' => 1]);
+
+            return $this->toJsonEnc([], 'Material adequacy item deleted successfully', Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
             return $this->toJsonEnc([], $e->getMessage(), Config::get('constant.ERROR'));
         }
