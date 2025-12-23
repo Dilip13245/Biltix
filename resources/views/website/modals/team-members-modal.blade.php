@@ -109,7 +109,7 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ __('messages.phone_number') }} *</label>
-                                    <input type="tel" class="form-control Input_control" id="member_phone">
+                                    <input type="text" class="form-control Input_control" id="member_phone" placeholder="+966 50 1234567" inputmode="numeric">
                                     <div class="invalid-feedback" id="member_phone_error"></div>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -237,8 +237,27 @@
         document.querySelectorAll('#teamMemberForm .invalid-feedback').forEach(el => el.textContent = '');
     }
 
+    // Phone number formatting and validation
+    const phoneInput = document.getElementById('member_phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            // Remove non-numeric characters except +
+            let value = this.value.replace(/[^0-9+]/g, '');
+            
+            // Ensure + is only at the beginning
+            if (value.includes('+')) {
+                const parts = value.split('+');
+                value = '+' + parts.join('');
+            }
+            
+            this.value = value;
+            this.classList.remove('is-invalid');
+            document.getElementById('member_phone_error').textContent = '';
+        });
+    }
+
     // Clear validation errors on input
-    ['member_name', 'member_email', 'member_phone', 'member_password'].forEach(fieldId => {
+    ['member_name', 'member_email', 'member_password'].forEach(fieldId => {
         const field = document.getElementById(fieldId);
         if (field) {
             field.addEventListener('input', function() {
@@ -415,10 +434,16 @@
         }
 
         // Validate phone
+        const phoneRegex = /^\+?[0-9]{7,15}$/;
         if (!phone) {
             document.getElementById('member_phone').classList.add('is-invalid');
             document.getElementById('member_phone_error').textContent =
                 '{{ __('messages.phone_is_required') }}';
+            isValid = false;
+        } else if (!phoneRegex.test(phone)) {
+            document.getElementById('member_phone').classList.add('is-invalid');
+            document.getElementById('member_phone_error').textContent =
+                '{{ __('messages.valid_phone_required') }}';
             isValid = false;
         }
 
