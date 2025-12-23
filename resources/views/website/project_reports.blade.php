@@ -779,6 +779,17 @@
             const monthlySelection = document.getElementById('monthlySelection');
             const generateBtn = document.getElementById('generateBtn');
             const makePdfBtn = document.getElementById('makePdfBtn');
+            const weekInput = document.getElementById('weekInput');
+            const monthInput = document.getElementById('monthInput');
+
+            // Open calendar on input click
+            weekInput.addEventListener('click', function() {
+                this.showPicker();
+            });
+
+            monthInput.addEventListener('click', function() {
+                this.showPicker();
+            });
 
             reportRadios.forEach(radio => {
                 radio.addEventListener('change', function() {

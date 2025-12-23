@@ -1490,6 +1490,8 @@ return [
     'error_loading_details' => 'Error loading details',
     'error_creating_meeting' => 'Error creating meeting',
     'phone_is_required' => 'Phone number is required',
+    'valid_phone_required' => 'Please enter a valid phone number',
+    'inspection' => 'Inspection',
     'share' => 'Share',
     'credentials_copied' => 'Credentials copied to clipboard',
     'failed_to_copy' => 'Failed to copy to clipboard',

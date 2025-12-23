@@ -1441,6 +1441,8 @@ return [
     'error_loading_details' => 'خطأ في تحميل التفاصيل',
     'error_creating_meeting' => 'خطأ في إنشاء الاجتماع',
     'phone_is_required' => 'رقم الهاتف مطلوب',
+    'valid_phone_required' => 'يرجى إدخال رقم هاتف صحيح',
+    'inspection' => 'التفتيش',
     'share' => 'مشاركة',
     'credentials_copied' => 'تم نسخ بيانات الاعتماد',
     'failed_to_copy' => 'فشل النسخ',
