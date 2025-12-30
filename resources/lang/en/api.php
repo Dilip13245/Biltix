@@ -300,5 +300,6 @@ return [
         'generated_success' => 'Report generated successfully',
         'saved_success' => 'Report saved successfully',
         'history_retrieved' => 'Report history retrieved successfully',
+        'shared_success' => 'Report shared successfully',
     ],
 ];

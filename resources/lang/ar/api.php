@@ -299,5 +299,6 @@ return [
         'generated_success' => 'تم إنشاء التقرير بنجاح',
         'saved_success' => 'تم حفظ التقرير بنجاح',
         'history_retrieved' => 'تم استرداد سجل التقارير بنجاح',
+        'shared_success' => 'تم مشاركة التقرير بنجاح',
     ],
 ];
