@@ -186,6 +186,10 @@ class AuthController extends Controller
                 return $this->toJsonEnc([], trans('api.auth.invalid_password'), Config::get('constant.ERROR'));
             }
 
+            if ($user->is_sub_user && $user->force_password_change) {
+                return $this->toJsonEnc(['user_id' => $user->id], trans('api.auth.change_password_required'), Config::get('constant.ERROR'));
+            }
+
             $accessToken = bin2hex(random_bytes(32)); // Cryptographically secure
 
             $deviceData = [
@@ -423,6 +427,7 @@ class AuthController extends Controller
             }
 
             $user->password = Hash::make($request->new_password);
+            $user->force_password_change = false;
             $user->save();
 
             // Send password reset confirmation notification
@@ -808,7 +813,6 @@ class AuthController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'nullable|unique:users,phone',
-                'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
                 'role' => 'required|in:contractor,consultant,site_engineer,project_manager,stakeholder',
             ], [
                 'user_id.required' => trans('api.auth.user_id_required'),
@@ -816,7 +820,6 @@ class AuthController extends Controller
                 'email.required' => trans('api.auth.email_required'),
                 'email.unique' => trans('api.auth.email_unique'),
                 'phone.unique' => trans('api.auth.phone_number_unique'),
-                'password.required' => trans('api.auth.password_required'),
                 'role.required' => trans('api.auth.role_required'),
             ]);
 
@@ -830,23 +833,19 @@ class AuthController extends Controller
                 return $this->toJsonEnc([], trans('api.auth.invalid_user'), Config::get('constant.ERROR'));
             }
 
-            // Determine company_id (main user)
-            // If current user is sub user, use their parent_user_id as company_id
-            // If current user is main user, use their own id as company_id
             $companyId = $currentUser->is_sub_user ? $currentUser->parent_user_id : $currentUser->id;
             
-            // Get company owner for company_name
             $companyOwner = User::find($companyId);
             if (!$companyOwner) {
                 return $this->toJsonEnc([], 'Company owner not found', Config::get('constant.ERROR'));
             }
 
-            // Create new team member user
+            $defaultPassword = 'Default@123';
             $newMember = new User();
             $newMember->name = $request->name;
             $newMember->email = $request->email;
             $newMember->phone = $request->phone ?? null;
-            $newMember->password = Hash::make($request->password);
+            $newMember->password = Hash::make($defaultPassword);
             $newMember->role = $request->role;
             $newMember->company_name = $companyOwner->company_name;
             $newMember->designation = $request->designation ?? '';
@@ -854,9 +853,9 @@ class AuthController extends Controller
             $newMember->parent_user_id = $companyId;
             $newMember->is_active = true;
             $newMember->is_verified = true;
+            $newMember->force_password_change = true;
             $newMember->save();
 
-            // Add to company_teams table
             \App\Models\CompanyTeam::create([
                 'company_id' => $companyId,
                 'member_user_id' => $newMember->id,
@@ -880,7 +879,7 @@ class AuthController extends Controller
                 'name' => $newMember->name,
                 'email' => $newMember->email,
                 'phone' => $newMember->phone,
-                'password' => $request->password,
+                'password' => $defaultPassword,
                 'role' => $newMember->role,
             ], trans('api.auth.team_member_added'), Config::get('constant.SUCCESS'));
 

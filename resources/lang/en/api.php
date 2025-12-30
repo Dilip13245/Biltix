@@ -54,6 +54,9 @@ return [
         'team_members_retrieved' => 'Team members retrieved successfully',
         'employee_count_required' => 'Employee count is required',
         'signup_success' => 'Registration successful! Welcome to Biltix.',
+        'change_password_required' => 'Please change your password before logging in',
+        'password_changed' => 'Password changed successfully',
+        'otp_sent_email' => 'OTP sent to your email',
     ],
     'general' => [
         'language_changed' => 'Language changed successfully',

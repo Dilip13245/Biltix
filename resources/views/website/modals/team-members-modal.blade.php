@@ -115,7 +115,8 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">{{ __('messages.member_password') }} *</label>
                                     <div class="position-relative">
-                                        <input type="password" class="form-control Input_control" id="member_password"
+                                        <input type="text" class="form-control Input_control" id="member_password"
+                                            value="Default@123" disabled
                                             style="padding-right: 2.5rem;">
                                         <i class="fas fa-eye-slash position-absolute" id="togglePassword"
                                             style="right: 0.75rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6c757d;"></i>
@@ -330,10 +331,10 @@
                                                     <i class="fas fa-share-alt"></i>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                                                    <li><a class="dropdown-item" href="https://wa.me/?text=${encodeURIComponent(`Team Member Contact\n\nName: ${member.name}\nEmail: ${member.email}${member.phone ? `\nPhone: ${member.phone}` : ''}`)}"><i class="fab fa-whatsapp text-success me-2"></i>WhatsApp</a></li>
-                                                    <li><a class="dropdown-item" href="mailto:?subject=Team Member Contact&body=${encodeURIComponent(`Name: ${member.name}\nEmail: ${member.email}${member.phone ? `\nPhone: ${member.phone}` : ''}`)}"><i class="fas fa-envelope text-primary me-2"></i>Email</a></li>
-                                                    ${member.phone ? `<li><a class="dropdown-item" href="sms:${member.phone}?body=${encodeURIComponent(`Team Member Contact\n\nName: ${member.name}\nEmail: ${member.email}\nPhone: ${member.phone}`)}"><i class="fas fa-sms text-info me-2"></i>SMS</a></li>` : ''}
-                                                    <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); copyToClipboard('Team Member Contact\\n\\nName: ${member.name}\\nEmail: ${member.email}${member.phone ? `\\nPhone: ${member.phone}` : ''}');"><i class="fas fa-copy text-secondary me-2"></i>{{ __('messages.copy') }}</a></li>
+                                                    <li><a class="dropdown-item" href="https://wa.me/?text=${encodeURIComponent(`Team Member Credentials\n\nName: ${member.name}\nEmail: ${member.email}${member.phone ? `\nPhone: ${member.phone}` : ''}\nPassword: Default@123`)}"><i class="fab fa-whatsapp text-success me-2"></i>WhatsApp</a></li>
+                                                    <li><a class="dropdown-item" href="mailto:?subject=Team Member Credentials&body=${encodeURIComponent(`Name: ${member.name}\nEmail: ${member.email}${member.phone ? `\nPhone: ${member.phone}` : ''}\nPassword: Default@123`)}"><i class="fas fa-envelope text-primary me-2"></i>Email</a></li>
+                                                    ${member.phone ? `<li><a class="dropdown-item" href="sms:${member.phone}?body=${encodeURIComponent(`Team Member Credentials\n\nName: ${member.name}\nEmail: ${member.email}\nPassword: Default@123`)}"><i class="fas fa-sms text-info me-2"></i>SMS</a></li>` : ''}
+                                                    <li><a class="dropdown-item" href="#" onclick="event.preventDefault(); copyToClipboard('Team Member Credentials\\n\\nName: ${member.name}\\nEmail: ${member.email}${member.phone ? `\\nPhone: ${member.phone}` : ''}\\nPassword: Default@123');"><i class="fas fa-copy text-secondary me-2"></i>{{ __('messages.copy') }}</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -407,7 +408,7 @@
         const name = document.getElementById('member_name').value.trim();
         const email = document.getElementById('member_email').value.trim();
         const phone = document.getElementById('member_phone').value.trim();
-        const password = document.getElementById('member_password').value;
+        const password = 'Default@123';
         const role = document.getElementById('member_role').value;
 
         let isValid = true;
@@ -448,26 +449,16 @@
             isValid = false;
         }
 
-        // Validate password (min 8 chars, uppercase, lowercase, number, special char)
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if (!password) {
-            document.getElementById('member_password').classList.add('is-invalid');
-            document.getElementById('member_password_error').textContent =
-                '{{ __('messages.password_is_required') }}';
-            isValid = false;
-        } else if (!passwordRegex.test(password)) {
-            document.getElementById('member_password').classList.add('is-invalid');
-            document.getElementById('member_password_error').textContent =
-                '{{ __('messages.password_requirements') }}';
-            isValid = false;
-        }
-
         // Validate role
         if (!role) {
             document.getElementById('member_role').classList.add('is-invalid');
             document.getElementById('member_role_error').textContent =
                 '{{ __('messages.role_is_required') }}';
             isValid = false;
+        }
+
+        if (!isValid) {
+            return;
         }
 
         if (!isValid) {

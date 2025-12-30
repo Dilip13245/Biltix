@@ -17,7 +17,7 @@ class User extends Authenticatable
         'name', 'email', 'phone', 'password', 'role', 'company_name',
         'designation', 'employee_count', 'member_number', 'member_name',
         'profile_image', 'language', 'timezone', 'last_login_at', 'otp',
-        'is_active', 'is_deleted', 'is_sub_user', 'parent_user_id'
+        'is_active', 'is_deleted', 'is_sub_user', 'parent_user_id', 'force_password_change'
     ];
 
     protected $hidden = ['password', 'remember_token', 'otp'];
@@ -28,6 +28,7 @@ class User extends Authenticatable
         'is_active' => 'boolean',
         'is_deleted' => 'boolean',
         'is_sub_user' => 'boolean',
+        'force_password_change' => 'boolean',
         'last_login_at' => 'datetime',
     ];
 

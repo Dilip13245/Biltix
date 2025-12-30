@@ -53,6 +53,9 @@ return [
         'team_members_retrieved' => 'تم استرداد أعضاء الفريق بنجاح',
         'employee_count_required' => 'عدد الموظفين مطلوب',
         'signup_success' => 'تم التسجيل بنجاح! مرحباً بك في Biltix.',
+        'change_password_required' => 'يرجى تغيير كلمة المرور قبل تسجيل الدخول',
+        'password_changed' => 'تم تغيير كلمة المرور بنجاح',
+        'otp_sent_email' => 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
     ],
     'general' => [
         'language_changed' => 'تم تغيير اللغة بنجاح',
