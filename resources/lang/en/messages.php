@@ -1646,4 +1646,5 @@ return [
     'link_expiration_notice' => 'This link will expire in :days days.',
     'all_rights_reserved' => 'All rights reserved.',
     'email_footer_message' => 'This is an automated email from the Biltix project management system. Please do not reply to this message.',
+    'no_stakeholder_assigned' => 'No stakeholder assigned to this project',
 ];

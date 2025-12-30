@@ -352,6 +352,14 @@
             return;
         }
 
+        if (currentShareOption === 'all_stakeholders') {
+            const stakeholders = allProjectMembers.filter(m => m.role_in_project && m.role_in_project.toLowerCase().includes('stakeholder'));
+            if (stakeholders.length === 0) {
+                toastr.error('{{ __('messages.no_stakeholder_assigned') }}');
+                return;
+            }
+        }
+
         const sendBtn = document.getElementById('sendShareBtn');
         const sendBtnText = document.getElementById('sendShareBtnText');
         const sendBtnLoader = document.getElementById('sendShareBtnLoader');

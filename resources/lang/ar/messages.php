@@ -1563,4 +1563,5 @@ return [
     'all_rights_reserved' => 'جميع الحقوق محفوظة.',
     'email_footer_message' => 'هذه رسالة آلية من نظام إدارة مشاريع بيلتكس. يرجى عدم الرد على هذه الرسالة.',
     'overall_project_progress' => 'إجمالي تقدم المشروع',
+    'no_stakeholder_assigned' => 'لم يتم تعيين أي صاحب مصلحة لهذا المشروع',
 ];
