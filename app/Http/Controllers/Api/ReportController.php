@@ -14,6 +14,7 @@ use App\Models\ProjectMaterialAdequacy;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Browsershot\Browsershot;
 use App\Models\User;
 
@@ -40,11 +41,24 @@ class ReportController extends Controller
         
         $reportNumber = 'RPT-' . $project->id . '-' . date('Ymd-His');
         
+        $phases = \App\Models\ProjectPhase::where('project_id', $request->project_id)
+            ->with('milestones')
+            ->get()
+            ->map(function ($phase) {
+                $totalDays = $phase->milestones->sum('days') ?? 0;
+                $phase->time_progress = $totalDays > 0 ? min(100, (now()->diffInDays($phase->created_at) / $totalDays) * 100) : 0;
+                return $phase;
+            });
+        
+        $overallProgress = $phases->count() > 0 ? $phases->avg('time_progress') : 0;
+        
         $data = [
             'project' => $project,
             'report_type' => $request->report_type,
             'report_number' => $reportNumber,
             'date_range' => $dateRange,
+            'progress_percentage' => $overallProgress,
+            'phases' => $phases,
             'tasks' => Task::where('project_id', $request->project_id)
                 ->whereIn('status', ['completed', 'approve'])
                 ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
@@ -181,6 +195,58 @@ class ReportController extends Controller
             });
 
         return $this->successResponse(__('api.reports.history_retrieved'), $reports);
+    }
+
+    public function share(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'project_id' => 'required|exists:projects,id',
+            'file_path' => 'required|string',
+            'recipient_ids' => 'required|array',
+            'recipient_ids.*' => 'integer|exists:users,id',
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorResponse(__('api.general.validation_error'), $validator->errors(), 422);
+        }
+
+        $project = Project::find($request->project_id);
+        $sender = User::find($request->user_id);
+        $recipients = User::whereIn('id', $request->recipient_ids)->get();
+        $fileUrl = url('storage/' . $request->file_path);
+        $fileName = basename($request->file_path);
+        $senderName = $sender->name ?? 'Project Team';
+
+        $successCount = 0;
+        $failedCount = 0;
+
+        foreach ($recipients as $recipient) {
+            try {
+                Mail::send('emails.report-share', [
+                    'recipient_name' => $recipient->name,
+                    'project_title' => $project->project_title,
+                    'file_url' => $fileUrl,
+                    'file_name' => $fileName,
+                    'sender_name' => $senderName,
+                ], function ($message) use ($recipient, $project) {
+                    $message->to($recipient->email)
+                        ->subject("Report Shared: {$project->project_title}")
+                        ->from(config('mail.from.address'), config('mail.from.name'));
+                });
+
+                $successCount++;
+            } catch (\Exception $e) {
+                $failedCount++;
+            }
+        }
+
+        return $this->successResponse(__('api.reports.shared_success'), [
+            'recipients_count' => count($recipients),
+            'success_count' => $successCount,
+            'failed_count' => $failedCount,
+            'recipients' => $recipients->pluck('name', 'id'),
+        ]);
     }
 
     private function getDateRange($type, $week = null, $month = null)

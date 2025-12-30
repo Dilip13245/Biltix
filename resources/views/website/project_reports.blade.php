@@ -526,6 +526,77 @@
                         top: 5px;
                     }
 
+                    /* Circular Progress Graph */
+                    .circular-progress-container {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 15px;
+                    }
+
+                    .circular-progress-wrapper {
+                        position: relative;
+                        width: 120px;
+                        height: 120px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .circular-progress-svg {
+                        width: 100%;
+                        height: 100%;
+                        transform: rotate(-90deg);
+                    }
+
+                    .circular-progress-circle {
+                        fill: none;
+                        stroke-width: 8;
+                    }
+
+                    .circular-progress-bg {
+                        stroke: #e9ecef;
+                    }
+
+                    .circular-progress-fill {
+                        stroke: url(#progressGradient);
+                        stroke-linecap: round;
+                        transition: stroke-dashoffset 0.5s ease;
+                    }
+
+                    .circular-progress-text {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        text-align: center;
+                    }
+
+                    .circular-progress-percentage {
+                        font-size: 24px;
+                        font-weight: bold;
+                        color: #1b3d6d;
+                    }
+
+                    .circular-progress-label {
+                        font-size: 12px;
+                        color: #6c757d;
+                        margin-top: 15px;
+                        text-align: center;
+                        font-weight: 500;
+                    }
+
+                    .circular-graphs-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                        gap: 30px;
+                        width: 100%;
+                    }
+
+                    [dir="rtl"] .circular-progress-svg {
+                        transform: rotate(90deg) scaleX(-1);
+                    }
+
                     /* Footer */
                     .preview-footer-strip {
                         height: 60px;
@@ -631,7 +702,8 @@
                             font-size: 12px;
                         }
 
-                        .preview-lbl-blue, .preview-lbl-orange {
+                        .preview-lbl-blue,
+                        .preview-lbl-orange {
                             width: 40%;
                         }
 
@@ -646,7 +718,8 @@
                             flex-direction: column;
                         }
 
-                        .preview-perf-label-cell, .preview-perf-value-cell {
+                        .preview-perf-label-cell,
+                        .preview-perf-value-cell {
                             width: 100%;
                             border-left: none !important;
                             border-right: none !important;
@@ -685,6 +758,17 @@
                                 <div class="preview-header-title" id="previewReport{{ __('messages.type') }}">Progress
                                     Report</div>
                                 <div class="preview-title-underline"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completion Percentages Circular Graph -->
+                    <div class="preview-content" id="completionGraphSection" style="display: none;">
+                        <div class="preview-section-header preview-bg-blue">{{ __('messages.completion_percentages') }}
+                        </div>
+                        <div class="preview-bordered-box">
+                            <div class="row g-4" id="completionGraphsContainer">
+                                <!-- Circular graphs will be inserted here -->
                             </div>
                         </div>
                     </div>
@@ -762,6 +846,8 @@
             </div>
         </div>
     </section>
+
+    @include('website.modals.share-report-modal')
 
     <script>
         const projectId = {{ $project_id ?? 'null' }};
@@ -868,6 +954,49 @@
             }
         }
 
+        function displayCompletionGraphs(data) {
+            const graphSection = document.getElementById('completionGraphSection');
+            const graphsContainer = document.getElementById('completionGraphsContainer');
+
+            graphSection.style.display = 'block';
+            graphsContainer.innerHTML = '';
+
+            const overallProgress = data.progress_percentage || 0;
+            graphsContainer.innerHTML = createCircularGraph(
+                Math.round(overallProgress),
+                '{{ __('messages.completion_percentages') }}'
+            );
+        }
+
+        function createCircularGraph(percentage, label) {
+            const radius = 45;
+            const circumference = 2 * Math.PI * radius;
+            const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+            return `
+                <div class="circular-progress-container">
+                    <div class="circular-progress-wrapper">
+                        <svg class="circular-progress-svg" viewBox="0 0 120 120">
+                            <defs>
+                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4477C4;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#F58D2E;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="circular-progress-circle circular-progress-bg" cx="60" cy="60" r="${radius}"></circle>
+                            <circle class="circular-progress-circle circular-progress-fill" 
+                                cx="60" cy="60" r="${radius}" 
+                                style="stroke-dasharray: ${circumference}; stroke-dashoffset: ${strokeDashoffset};"></circle>
+                        </svg>
+                        <div class="circular-progress-text">
+                            <div class="circular-progress-percentage">${percentage}%</div>
+                        </div>
+                    </div>
+                    <div class="circular-progress-label">${label}</div>
+                </div>
+            `;
+        }
+
         function displayReportPreview(data) {
             const reportPreview = document.getElementById('reportPreview');
             const reportContent = document.getElementById('reportContent');
@@ -909,6 +1038,49 @@
                         <td class="preview-val-white">{{ __('messages.from') }}: ${formatDate(data.date_range.start)} - {{ __('messages.to') }}: ${formatDate(data.date_range.end)}</td>
                     </tr>
                 </table>
+            `;
+
+            // Completion Percentages Circular Graph
+            // Find current phase (first one not 100% or last one)
+            let currentPhase = null;
+            if (data.phases && data.phases.length > 0) {
+                currentPhase = data.phases.find(p => p.time_progress < 100) || data.phases[data.phases.length - 1];
+            }
+
+            const overallProgress = Math.round(data.progress_percentage || 0);
+            const radius = 60;
+            const circumference = 2 * Math.PI * radius;
+            const strokeDashoffset = circumference - (overallProgress / 100) * circumference;
+
+            html += `
+                <div class="preview-section-header preview-bg-blue">{{ __('messages.completion_percentages') }}</div>
+                <div class="preview-bordered-box" style="padding: 30px; background-color: #fff;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 50px; flex-wrap: wrap;">
+                        <!-- Circular Chart -->
+                        <div style="position: relative; width: 160px; height: 160px;">
+                            <svg width="160" height="160" viewBox="0 0 160 160" style="transform: rotate(-90deg);">
+                                <circle cx="80" cy="80" r="${radius}" fill="none" stroke="#e9ecef" stroke-width="15" />
+                                <circle cx="80" cy="80" r="${radius}" fill="none" stroke="#4477C4" stroke-width="15" 
+                                    stroke-dasharray="${circumference}" 
+                                    stroke-dashoffset="${strokeDashoffset}" 
+                                    stroke-linecap="round" />
+                            </svg>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #4477C4;">
+                                ${overallProgress}%
+                            </div>
+                        </div>
+
+                        <!-- Text Info -->
+                        <div style="flex: 1; min-width: 250px;">
+                            <div style="font-size: 28px; font-weight: bold; color: #4477C4; margin-bottom: 5px;">
+                                ${overallProgress}% {{ __('messages.complete') }}
+                            </div>
+                            <div style="color: #6c757d; font-size: 16px; margin-bottom: 20px;">
+                                {{ __('messages.overall_project_progress') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             `;
 
             // Statement of Executed Works
@@ -1123,44 +1295,6 @@
 
             html += `</div>`;
 
-            // Raw Materials Section
-            html += `
-                <div class="preview-section-header preview-bg-blue">{{ __('messages.section_5') }} / {{ __('messages.stored_during_week') }}</div>
-                <table class="preview-data-table">
-                    <thead>
-                        <tr>
-                            <th style="width:5%">{{ __('messages.table_no') }}</th>
-                            <th style="width:30%">{{ __('messages.type') }} of Material</th>
-                            <th style="width:20%">{{ __('messages.approved_storage') }}</th>
-                            <th style="width:20%">{{ __('messages.quantity_stored') }}</th>
-                            <th style="width:25%">{{ __('messages.remarks') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-
-            if (data.raw_materials && data.raw_materials.length > 0) {
-                html += data.raw_materials.map((material, index) => `
-                    <tr>
-                        <td style="text-align:center">${index + 1}</td>
-                        <td>${material.name}</td>
-                        <td>${material.status.charAt(0).toUpperCase() + material.status.slice(1)}</td>
-                        <td>${material.quantity}</td>
-                        <td>${material.description || '-'}</td>
-                    </tr>
-                `).join('');
-            } else {
-                html += `
-                    <tr>
-                        <td colspan="5" style="text-align:center; padding: 15px;">{{ __('messages.no_data') }}</td>
-                    </tr>
-                `;
-            }
-
-            html += `
-                    </tbody>
-                </table>
-            `;
-
             reportContent.innerHTML = html;
             reportPreview.classList.remove('d-none');
         }
@@ -1288,15 +1422,7 @@
         }
 
         function shareReport(filePath) {
-            const url = window.location.origin + '/storage/' + filePath;
-            if (navigator.share) {
-                navigator.share({
-                    url: url
-                });
-            } else {
-                navigator.clipboard.writeText(url);
-                alert('Link copied to clipboard');
-            }
+            openShareReportModal(filePath);
         }
     </script>
 @endsection

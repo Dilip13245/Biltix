@@ -251,5 +251,6 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('generate', [\App\Http\Controllers\Api\ReportController::class, 'generate']);
         Route::post('save', [\App\Http\Controllers\Api\ReportController::class, 'save']);
         Route::post('history', [\App\Http\Controllers\Api\ReportController::class, 'history']);
+        Route::post('share', [\App\Http\Controllers\Api\ReportController::class, 'share']);
     });
 });

@@ -615,6 +615,10 @@ class ApiClient {
         return this.makeRequest('reports/history', data);
     }
 
+    async shareReport(data) {
+        return this.makeRequest('reports/share', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic

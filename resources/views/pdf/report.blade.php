@@ -693,6 +693,47 @@
                 </tr>
             </table>
 
+            <!-- Completion Percentages Section -->
+            <div class="section-header bg-blue"
+                style="padding-right: {{ $is_rtl ?? false ? '40px' : '20px' }}; padding-left: 20px;">
+                {{ __('messages.completion_percentages') }}
+            </div>
+
+            <div class="bordered-box" style="padding: 30px; background-color: #fff;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 50px; flex-wrap: wrap;">
+                    @php
+                        $overallProgress = round($progress_percentage ?? 0);
+                        $radius = 60;
+                        $circumference = 2 * pi() * $radius;
+                        $strokeDashoffset = $circumference - ($overallProgress / 100) * $circumference;
+                    @endphp
+
+                    <!-- Circular Chart -->
+                    <div style="position: relative; width: 160px; height: 160px;">
+                        <svg width="160" height="160" viewBox="0 0 160 160" style="transform: rotate(-90deg);">
+                            <circle cx="80" cy="80" r="60" fill="none" stroke="#e9ecef" stroke-width="15" />
+                            <circle cx="80" cy="80" r="60" fill="none" stroke="#4477C4" stroke-width="15"
+                                stroke-dasharray="{{ $circumference }}" stroke-dashoffset="{{ $strokeDashoffset }}"
+                                stroke-linecap="round" />
+                        </svg>
+                        <div
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #4477C4;">
+                            {{ $overallProgress }}%
+                        </div>
+                    </div>
+
+                    <!-- Text Info -->
+                    <div style="flex: 1; min-width: 250px;">
+                        <div style="font-size: 28px; font-weight: bold; color: #4477C4; margin-bottom: 5px;">
+                            {{ $overallProgress }}% {{ __('messages.complete') }}
+                        </div>
+                        <div style="color: #6c757d; font-size: 16px; margin-bottom: 20px;">
+                            {{ __('messages.overall_project_progress') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div
                 style="background-color: #fff5ec; border-{{ $is_rtl ?? false ? 'right' : 'left' }}: 5px solid var(--brand-orange); padding: 12px 20px; margin: 20px 0; font-style: italic; color: #555; font-size: 14px; text-align: {{ $is_rtl ?? false ? 'right' : 'left' }};">
                 {{ __('report.for_use_by') }}
