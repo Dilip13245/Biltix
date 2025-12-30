@@ -130,6 +130,46 @@
                 return urlParams.get('phase_id') || pagePhaseId || sessionStorage.getItem('current_phase_id') || '1';
             }
 
+            window.loadUsers = async function() {
+                try {
+                    const response = await api.getProjectTeamMembers({project_id: getProjectIdFromUrl(), user_id: {{ auth()->id() ?? 1 }}});
+                    if (response.code === 200) {
+                        const users = response.data || [];
+                        const assignedToSelect = document.getElementById('assignedTo');
+                        if (assignedToSelect) {
+                            assignedToSelect.innerHTML = '<option value="">{{ __('messages.select_user') }}</option>';
+                            users.forEach(user => {
+                                const option = document.createElement('option');
+                                option.value = user.id;
+                                option.textContent = user.name + (user.role_in_project ? ` (${user.role_in_project})` : '');
+                                assignedToSelect.appendChild(option);
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                }
+            };
+            window.loadPhases = async function() {
+                try {
+                    const response = await api.listPhases({project_id: getProjectIdFromUrl()});
+                    if (response.code === 200) {
+                        const phases = response.data || [];
+                        const phaseSelect = document.getElementById('phaseSelect');
+                        if (phaseSelect) {
+                            phaseSelect.innerHTML = '<option value="">{{ __('messages.select_phase') }}</option>';
+                            phases.forEach(phase => {
+                                const option = document.createElement('option');
+                                option.value = phase.id;
+                                option.textContent = phase.title || phase.name;
+                                phaseSelect.appendChild(option);
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading phases:', error);
+                }
+            };
             document.addEventListener('DOMContentLoaded', function() {
                 loadSnags();
                 setupFilters();
