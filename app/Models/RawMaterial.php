@@ -12,6 +12,7 @@ class RawMaterial extends Model
     protected $fillable = [
         'project_id',
         'name',
+        'type',
         'quantity',
         'description',
         'image_path',

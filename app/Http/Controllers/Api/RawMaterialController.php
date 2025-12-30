@@ -19,7 +19,8 @@ class RawMaterialController extends Controller
             'project_id' => 'required|exists:projects,id',
             'user_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
-            'quantity' => 'required|integer|min:1',
+            'type' => 'required|in:drawing,material',
+            'quantity' => 'required_if:type,material|nullable|integer|min:1',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:10240',
         ]);
@@ -42,7 +43,8 @@ class RawMaterialController extends Controller
         $rawMaterial = RawMaterial::create([
             'project_id' => $request->project_id,
             'name' => $request->name,
-            'quantity' => $request->quantity,
+            'type' => $request->type,
+            'quantity' => $request->type === 'material' ? $request->quantity : 0,
             'description' => $request->description,
             'image_path' => $imagePath,
             'original_image_name' => $originalImageName,

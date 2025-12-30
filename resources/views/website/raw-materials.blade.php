@@ -1,6 +1,6 @@
 @extends('website.layout.app')
 
-@section('title', __('messages.raw_materials'))
+@section('title', __('messages.submittals'))
 
 @section('content')
     <style>
@@ -104,7 +104,8 @@
         }
 
         [dir="rtl"] input,
-        [dir="rtl"] textarea {
+        [dir="rtl"] textarea,
+        [dir="rtl"] select {
             text-align: right;
             direction: rtl;
         }
@@ -118,7 +119,7 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="mb-1">{{ __('messages.raw_materials') }}</h2>
+                <h2 class="mb-1">{{ __('messages.submittals') }}</h2>
                 <p class="text-muted mb-0">{{ __('messages.manage_view_raw_materials') }}</p>
             </div>
             @can('raw_materials', 'create')
@@ -139,7 +140,6 @@
             <div class="modal-content">
                 <div class="modal-header border-0 pb-0">
                     <style>
-                        /* Validation styling for raw materials modal */
                         #addMaterialModal .form-control.is-invalid {
                             border-color: #dc3545 !important;
                             border-width: 2px !important;
@@ -152,6 +152,16 @@
                             background-image: none;
                         }
 
+                        #addMaterialModal .form-select.is-invalid {
+                            border-color: #dc3545 !important;
+                            border-width: 2px !important;
+                        }
+
+                        #addMaterialModal .form-select.is-valid {
+                            border-color: #28a745 !important;
+                            border-width: 2px !important;
+                        }
+
                         #addMaterialModal .invalid-feedback {
                             display: block;
                             width: 100%;
@@ -160,17 +170,18 @@
                             color: #dc3545;
                         }
 
-                        #addMaterialModal .form-control.is-invalid:focus {
+                        #addMaterialModal .form-control.is-invalid:focus,
+                        #addMaterialModal .form-select.is-invalid:focus {
                             border-color: #dc3545 !important;
                             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
                         }
 
-                        #addMaterialModal .form-control.is-valid:focus {
+                        #addMaterialModal .form-control.is-valid:focus,
+                        #addMaterialModal .form-select.is-valid:focus {
                             border-color: #28a745 !important;
                             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
                         }
 
-                        /* Modal footer buttons - equal width */
                         #addMaterialModal .modal-footer {
                             gap: 10px;
                         }
@@ -182,10 +193,7 @@
                             font-weight: 500;
                         }
 
-                        /* Responsive Design for Raw Materials Page */
                         @media (max-width: 768px) {
-
-                            /* Modal adjustments */
                             #addMaterialModal .modal-dialog {
                                 margin: 0.5rem;
                                 max-width: calc(100% - 1rem);
@@ -204,18 +212,11 @@
                                 width: 100%;
                             }
 
-                            /* Material cards - full width on mobile */
-                            .raw-material-card {
-                                margin-bottom: 1rem;
-                            }
-
-                            /* Form inputs */
                             .form-control-lg {
                                 font-size: 14px !important;
                                 padding: 0.75rem !important;
                             }
 
-                            /* Upload zone */
                             .upload-zone {
                                 padding: 2rem 1rem !important;
                             }
@@ -234,8 +235,6 @@
                         }
 
                         @media (max-width: 576px) {
-
-                            /* Further mobile optimizations */
                             .modal-title {
                                 font-size: 1.1rem;
                             }
@@ -245,7 +244,6 @@
                                 font-size: 14px;
                             }
 
-                            /* Material card content */
                             .rm-content {
                                 padding: 0.75rem;
                             }
@@ -255,18 +253,6 @@
                                 flex-direction: column;
                                 align-items: flex-start !important;
                                 gap: 0.5rem;
-                            }
-                        }
-
-                        @media (min-width: 769px) and (max-width: 1024px) {
-
-                            /* Tablet adjustments */
-                            #addMaterialModal .modal-dialog {
-                                max-width: 600px;
-                            }
-
-                            .raw-material-card {
-                                font-size: 14px;
                             }
                         }
 
@@ -284,11 +270,13 @@
                     @if (app()->getLocale() == 'ar')
                         <div class="d-flex justify-content-between align-items-center w-100">
                             <h5 class="modal-title">{{ __('messages.raw_materials') }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="{{ __('messages.close') }}"></button>
                         </div>
                     @else
-                        <h5 class="modal-title">{{ __('messages.raw_materials') }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                        <h5 class="modal-title">{{ __('messages.submittals') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="{{ __('messages.close') }}"></button>
                     @endif
                 </div>
                 <div class="modal-body pt-4">
@@ -307,15 +295,32 @@
                         </div>
 
                         <div class="mb-3">
+                            <div class="custom-filter-dropdown" id="typeFilterWrapper">
+                                <div class="custom-filter-btn" id="typeFilterBtn">{{ __('messages.select_type') }}</div>
+                                <div class="custom-filter-options" id="typeFilterOptions">
+                                    <div class="custom-filter-option selected" data-value="">{{ __('messages.select_type') }}</div>
+                                    <div class="custom-filter-option" data-value="drawing">{{ __('messages.drawing') }}</div>
+                                    <div class="custom-filter-option" data-value="material">{{ __('messages.material') }}</div>
+                                </div>
+                                <select id="materialType" name="type" class="form-select" style="display: none;" required onchange="toggleQuantityField()">
+                                    <option value="">{{ __('messages.select_type') }}</option>
+                                    <option value="drawing">{{ __('messages.drawing') }}</option>
+                                    <option value="material">{{ __('messages.material') }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
                             <input type="text" id="materialName" name="name"
                                 class="form-control form-control-lg Input_control" dir="auto"
                                 placeholder="{{ __('messages.name') }}" required>
                         </div>
 
-                        <div class="mb-3">
+
+                        <div class="mb-3" id="quantityContainer" style="display: none;">
                             <input type="number" id="materialQuantity" name="quantity"
                                 class="form-control form-control-lg Input_control" dir="auto"
-                                placeholder="{{ __('messages.quantity') }}" min="1" required>
+                                placeholder="{{ __('messages.quantity') }}" min="1">
                         </div>
 
                         <div class="mb-3">
@@ -354,6 +359,10 @@
                                 <p id="detailName" class="fw-semibold mb-0"></p>
                             </div>
                             <div class="mb-3">
+                                <label class="text-muted small">{{ __('messages.type') }}</label>
+                                <p id="detailType" class="fw-semibold mb-0"></p>
+                            </div>
+                            <div class="mb-3" id="detailQuantitySection">
                                 <label class="text-muted small">{{ __('messages.quantity') }}</label>
                                 <p id="detailQuantity" class="fw-semibold mb-0"></p>
                             </div>
@@ -401,30 +410,39 @@
     </div>
 
     <script>
-        // Make these global so inline modal script can access them
         window.projectId = {{ $project->id ?? 1 }};
         window.userId = {{ auth()->id() ?? 1 }};
         let currentMaterialId = null;
         let rawMaterials = [];
 
+        function toggleQuantityField() {
+            const typeSelect = document.getElementById('materialType');
+            const quantityContainer = document.getElementById('quantityContainer');
+            const quantityInput = document.getElementById('materialQuantity');
+
+            if (typeSelect.value === 'material') {
+                quantityContainer.style.display = 'block';
+                quantityInput.required = true;
+            } else {
+                quantityContainer.style.display = 'none';
+                quantityInput.required = false;
+                quantityInput.value = '';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing...');
             loadRawMaterials();
         });
 
         async function loadRawMaterials() {
             try {
-                console.log('Loading materials for project:', window.projectId);
                 const response = await api.listRawMaterials({
                     project_id: window.projectId
                 });
-                console.log('Materials API response:', response);
                 if (response.code === 200) {
                     rawMaterials = response.data;
-                    console.log('Raw materials loaded:', rawMaterials);
                     renderMaterials(rawMaterials);
                 } else {
-                    console.error('Failed to load materials:', response);
                     toastr.error(response.message || '{{ __('messages.failed_to_load_materials') }}');
                 }
             } catch (error) {
@@ -481,20 +499,30 @@
                     const material = response.data;
                     const imageUrl = material.image_url || 'https://placehold.co/600x400?text=No+Image';
                     const date = new Date(material.created_at).toLocaleDateString();
+                    const typeLabel = material.type === 'drawing' ? '{{ __('messages.drawing') }}' :
+                        '{{ __('messages.material') }}';
 
                     document.getElementById('detailImage').src = imageUrl;
                     document.getElementById('detailName').textContent = material.name;
-                    document.getElementById('detailQuantity').textContent = material.quantity + ' Units';
+                    document.getElementById('detailType').textContent = typeLabel;
+
+                    const quantitySection = document.getElementById('detailQuantitySection');
+                    if (material.type === 'material') {
+                        quantitySection.style.display = 'block';
+                        document.getElementById('detailQuantity').textContent = material.quantity + ' Units';
+                    } else {
+                        quantitySection.style.display = 'none';
+                    }
+
                     document.getElementById('detailDescription').textContent = material.description || 'N/A';
                     document.getElementById('detailPostedBy').textContent = material.posted_by?.name || 'N/A';
                     document.getElementById('detailDate').textContent = date;
                     document.getElementById('detailStatus').textContent = material.status.charAt(0).toUpperCase() +
                         material.status.slice(1);
 
-                    // Hide buttons if already approved/rejected (with null checks for permissions)
                     const rejectBtn = document.getElementById('rejectBtn');
                     const acceptBtn = document.getElementById('acceptBtn');
-                    
+
                     if (material.status !== 'pending') {
                         if (rejectBtn) rejectBtn.style.display = 'none';
                         if (acceptBtn) acceptBtn.style.display = 'none';
@@ -568,8 +596,6 @@
                 toastr.error('{{ __('messages.error_approving_material') }}');
             }
         }
-        // === CREATE MATERIAL BUTTON HANDLER ===
-        console.log('[RAW MATERIALS] Initializing create material button');
 
         document.addEventListener('DOMContentLoaded', function() {
             const createBtn = document.getElementById('createMaterialBtn');
@@ -578,18 +604,13 @@
                     e.preventDefault();
                     e.stopPropagation();
 
-                    console.log('[UPLOAD] Button clicked!');
-
-                    // Clear previous validation
                     const form = document.getElementById('addMaterialForm');
-                    if (form) {
-                        form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove(
-                            'is-invalid'));
-                        form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
-                    }
+                    form.querySelectorAll('.is-invalid').forEach(el => el.classList.remove(
+                        'is-invalid'));
+                    form.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
 
-                    // Validate
                     const nameInput = document.getElementById('materialName');
+                    const typeSelect = document.getElementById('materialType');
                     const qtyInput = document.getElementById('materialQuantity');
                     let isValid = true;
 
@@ -603,7 +624,17 @@
                         isValid = false;
                     }
 
-                    if (!qtyInput.value || qtyInput.value <= 0) {
+                    if (!typeSelect.value) {
+                        typeSelect.classList.add('is-invalid');
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'invalid-feedback';
+                        errorDiv.textContent = '{{ __('messages.select_type') }}';
+                        typeSelect.parentNode.appendChild(errorDiv);
+                        if (isValid) toastr.error('{{ __('messages.select_type') }}');
+                        isValid = false;
+                    }
+
+                    if (typeSelect.value === 'material' && (!qtyInput.value || qtyInput.value <= 0)) {
                         qtyInput.classList.add('is-invalid');
                         const errorDiv = document.createElement('div');
                         errorDiv.className = 'invalid-feedback';
@@ -613,15 +644,12 @@
                         isValid = false;
                     }
 
-                    if (!isValid) {
-                        return;
-                    }
+                    if (!isValid) return;
 
-                    // Mark as valid
                     nameInput.classList.add('is-valid');
-                    qtyInput.classList.add('is-valid');
+                    typeSelect.classList.add('is-valid');
+                    if (typeSelect.value === 'material') qtyInput.classList.add('is-valid');
 
-                    // Show loading
                     const btn = e.currentTarget;
                     const origText = btn.innerHTML;
                     btn.innerHTML =
@@ -633,7 +661,11 @@
                         formData.append('user_id', window.userId);
                         formData.append('project_id', window.projectId);
                         formData.append('name', nameInput.value);
-                        formData.append('quantity', qtyInput.value);
+                        formData.append('type', typeSelect.value);
+
+                        if (typeSelect.value === 'material') {
+                            formData.append('quantity', qtyInput.value);
+                        }
 
                         const desc = document.getElementById('materialDescription').value;
                         if (desc) formData.append('description', desc);
@@ -655,6 +687,7 @@
                                 'is-valid'));
                             document.getElementById('fileNameDisplay').textContent =
                                 '{{ __('messages.drop_files_here') }}';
+                            toggleQuantityField();
 
                             if (typeof loadRawMaterials === 'function') loadRawMaterials();
                         } else {
@@ -669,12 +702,8 @@
                         btn.disabled = false;
                     }
                 });
-                console.log('[RAW MATERIALS] Button handler attached');
-            } else {
-                console.error('[RAW MATERIALS] Create button not found!');
             }
 
-            // File input handler
             const fileInput = document.getElementById('materialFile');
             if (fileInput) {
                 fileInput.addEventListener('change', function(e) {
@@ -687,3 +716,58 @@
         });
     </script>
 @endsection
+
+<script>
+    // Initialize custom type dropdown after page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeFilterBtn = document.getElementById('typeFilterBtn');
+        const typeFilterOptions = document.getElementById('typeFilterOptions');
+        const materialTypeSelect = document.getElementById('materialType');
+
+        if (typeFilterBtn && typeFilterOptions) {
+            typeFilterBtn.addEventListener('click', function() {
+                typeFilterOptions.style.display = typeFilterOptions.style.display === 'block' ? 'none' : 'block';
+            });
+
+            const options = typeFilterOptions.querySelectorAll('.custom-filter-option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    const text = this.textContent;
+
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    typeFilterBtn.textContent = text;
+                    if (materialTypeSelect) {
+                        materialTypeSelect.value = value;
+                        toggleQuantityField();
+                    }
+
+                    typeFilterOptions.style.display = 'none';
+                });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#typeFilterWrapper')) {
+                    typeFilterOptions.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+    #typeFilterWrapper {
+        width: 100%;
+    }
+
+    #typeFilterBtn {
+        width: 100%;
+        text-align: left;
+    }
+
+    [dir="rtl"] #typeFilterBtn {
+        text-align: right;
+    }
+</style>
