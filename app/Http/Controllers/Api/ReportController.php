@@ -108,7 +108,6 @@ class ReportController extends Controller
 
         $reportData = json_decode($request->report_data, true);
         
-        // Handle attachment upload
         $attachmentPath = null;
         if ($request->hasFile('general_remarks_attachment')) {
             $file = $request->file('general_remarks_attachment');
@@ -116,25 +115,23 @@ class ReportController extends Controller
             $attachmentPath = $file->storeAs('reports/attachments', $fileName, 'public');
         }
 
-        // Add general remarks to report data for PDF
         $reportData['general_remarks'] = $request->general_remarks;
         $reportData['general_remarks_attachment'] = $attachmentPath;
         
-        // Add signature data
         $creator = User::find($request->user_id);
         $reportData['site_engineer_name'] = $creator ? $creator->name : 'N/A';
         $reportData['signature_date'] = now()->format('d/m/Y');
         
-        // Add locale for bilingual support
         $reportData['locale'] = app()->getLocale();
         $reportData['is_rtl'] = app()->getLocale() === 'ar';
 
         $fileName = 'report_' . $request->project_id . '_' . time() . '.pdf';
-        $filePath = 'reports/' . $fileName;
+        $reportType = strtolower($request->report_type);
+        $filePath = 'project_files/reports/' . $reportType . '/' . $fileName;
         
-        // Ensure reports directory exists
-        if (!file_exists(storage_path('app/public/reports'))) {
-            mkdir(storage_path('app/public/reports'), 0755, true);
+        $reportDir = storage_path('app/public/project_files/reports/' . $reportType);
+        if (!file_exists($reportDir)) {
+            mkdir($reportDir, 0755, true);
         }
         
         try {
@@ -158,6 +155,8 @@ class ReportController extends Controller
             'general_remarks' => $request->general_remarks,
             'general_remarks_attachment' => $attachmentPath,
         ]);
+
+        $this->createReportFileRecord($request->project_id, $fileName, $filePath, $request->user_id, $request->report_type, $request->date_range);
 
         return $this->successResponse(__('api.reports.saved_success'), $report);
     }
@@ -204,5 +203,36 @@ class ReportController extends Controller
                 'end' => $date->copy()->endOfMonth(),
             ];
         }
+    }
+
+    private function createReportFileRecord($projectId, $fileName, $filePath, $userId, $reportType, $dateRange)
+    {
+        $folderNames = [
+            'daily' => 'Daily Report',
+            'weekly' => 'Weekly Report',
+            'monthly' => 'Monthly Report'
+        ];
+        
+        $folderName = $folderNames[strtolower($reportType)] ?? ucfirst($reportType) . ' Report';
+        
+        $folder = \App\Models\FileFolder::firstOrCreate(
+            ['project_id' => $projectId, 'name' => $folderName],
+            ['created_by' => $userId]
+        );
+
+        \App\Models\File::create([
+            'project_id' => $projectId,
+            'category_id' => 1,
+            'folder_id' => $folder->id,
+            'name' => $fileName,
+            'original_name' => $fileName,
+            'file_path' => $filePath,
+            'file_size' => filesize(storage_path('app/public/' . $filePath)),
+            'file_type' => 'application/pdf',
+            'description' => $folderName . ' - ' . ($dateRange ?? now()->format('Y-m-d')),
+            'uploaded_by' => $userId,
+            'is_active' => true,
+            'is_deleted' => false,
+        ]);
     }
 }
