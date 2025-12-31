@@ -341,13 +341,15 @@
 
         .perf-label-cell {
             background-color: #fff5ec;
-            width: 35%;
+            width: 45%;
             padding: 15px;
             padding-right: {{ $is_rtl ?? false ? '25px' : '15px' }};
             padding-left: {{ $is_rtl ?? false ? '15px' : '25px' }};
             vertical-align: top;
             color: #333;
             font-weight: 500;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .perf-value-cell {
@@ -359,6 +361,9 @@
             line-height: 1.5;
             color: #333;
             text-align: inherit;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-all;
         }
 
         html[dir="ltr"] .perf-value-cell {
@@ -702,22 +707,23 @@
             <div class="bordered-box" style="padding: 30px; background-color: #fff;">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 50px; flex-wrap: wrap;">
                     @php
-                        $overallProgress = round($progress_percentage ?? 0);
+                        $overallProgress = number_format($progress_percentage ?? 0, 2);
                         $radius = 60;
                         $circumference = 2 * pi() * $radius;
-                        $strokeDashoffset = $circumference - ($overallProgress / 100) * $circumference;
+                        $strokeDashoffset = $circumference - (($progress_percentage ?? 0) / 100) * $circumference;
                     @endphp
 
                     <!-- Circular Chart -->
                     <div style="position: relative; width: 160px; height: 160px;">
                         <svg width="160" height="160" viewBox="0 0 160 160" style="transform: rotate(-90deg);">
-                            <circle cx="80" cy="80" r="60" fill="none" stroke="#e9ecef" stroke-width="15" />
-                            <circle cx="80" cy="80" r="60" fill="none" stroke="#4477C4" stroke-width="15"
-                                stroke-dasharray="{{ $circumference }}" stroke-dashoffset="{{ $strokeDashoffset }}"
-                                stroke-linecap="round" />
+                            <circle cx="80" cy="80" r="60" fill="none" stroke="#e9ecef"
+                                stroke-width="15" />
+                            <circle cx="80" cy="80" r="60" fill="none" stroke="#4477C4"
+                                stroke-width="15" stroke-dasharray="{{ $circumference }}"
+                                stroke-dashoffset="{{ $strokeDashoffset }}" stroke-linecap="round" />
                         </svg>
                         <div
-                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #4477C4;">
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; font-weight: bold; color: #4477C4;">
                             {{ $overallProgress }}%
                         </div>
                     </div>
@@ -746,6 +752,7 @@
                 <thead>
                     <tr>
                         <th class="col-no">{{ __('report.table_no') }}</th>
+                        <th>{{ __('messages.type') }}</th>
                         <th class="col-desc">{{ __('report.description_of_works') }}</th>
                         <th class="col-loc">{{ __('report.location') }}</th>
                         <th class="col-rem">{{ __('report.remarks') }}</th>
@@ -757,6 +764,7 @@
                         @foreach ($tasks as $task)
                             <tr>
                                 <td class="text-center">{{ $counter++ }}</td>
+                                <td>{{ __('messages.task') }}</td>
                                 <td>{{ $task['title'] }}</td>
                                 <td>{{ $project->project_location ?? 'N/A' }}</td>
                                 <td>{{ ucfirst($task['status']) }}</td>
@@ -765,6 +773,7 @@
                         @foreach ($inspections as $inspection)
                             <tr>
                                 <td class="text-center">{{ $counter++ }}</td>
+                                <td>{{ __('messages.inspection') }}</td>
                                 <td>{{ $inspection['description'] }}</td>
                                 <td>{{ $project->project_location ?? 'N/A' }}</td>
                                 <td>{{ $inspection['comment'] ?: '-' }}</td>
@@ -773,6 +782,7 @@
                         @foreach ($snags as $snag)
                             <tr>
                                 <td class="text-center">{{ $counter++ }}</td>
+                                <td>{{ __('messages.snag') }}</td>
                                 <td>{{ $snag['title'] }}</td>
                                 <td>{{ $snag['location'] ?? 'N/A' }}</td>
                                 <td>{{ $snag['comments'][0]['comment'] ?? ($snag['comment'] ?? '-') }}</td>
@@ -780,7 +790,7 @@
                         @endforeach
                     @else
                         <tr>
-                            <td colspan="4" class="no-data-cell"
+                            <td colspan="5" class="no-data-cell"
                                 style="text-align:center !important; padding: 15px;">{{ __('report.no_data') }}</td>
                         </tr>
                     @endif

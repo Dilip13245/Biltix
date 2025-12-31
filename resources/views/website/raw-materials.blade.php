@@ -53,6 +53,11 @@
             font-weight: 600;
         }
 
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
         .status-approved {
             background-color: #d1e7dd;
             color: #0f5132;
@@ -460,8 +465,9 @@
             }
 
             container.innerHTML = materials.map(material => {
-                const statusClass = material.status === 'approved' ? 'status-approved' : material.status ===
-                    'rejected' ? 'status-rejected' : '';
+                const statusClass = material.status === 'approved' ? 'status-approved' : 
+                    material.status === 'rejected' ? 'status-rejected' : 
+                    material.status === 'pending' ? 'status-pending' : '';
                 const statusIcon = material.status === 'approved' ? 'fa-check' : material.status === 'rejected' ?
                     'fa-times' : 'fa-clock';
                 const statusText = material.status.charAt(0).toUpperCase() + material.status.slice(1);

@@ -1048,6 +1048,7 @@
             }
 
             const overallProgress = Math.round(data.progress_percentage || 0);
+            const overallProgressDecimal = (data.progress_percentage || 0).toFixed(2);
             const radius = 60;
             const circumference = 2 * Math.PI * radius;
             const strokeDashoffset = circumference - (overallProgress / 100) * circumference;
@@ -1065,15 +1066,15 @@
                                     stroke-dashoffset="${strokeDashoffset}" 
                                     stroke-linecap="round" />
                             </svg>
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: bold; color: #4477C4;">
-                                ${overallProgress}%
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; font-weight: bold; color: #4477C4;">
+                                ${overallProgressDecimal}%
                             </div>
                         </div>
 
                         <!-- Text Info -->
                         <div style="flex: 1; min-width: 250px;">
                             <div style="font-size: 28px; font-weight: bold; color: #4477C4; margin-bottom: 5px;">
-                                ${overallProgress}% {{ __('messages.complete') }}
+                                ${overallProgressDecimal}% {{ __('messages.complete') }}
                             </div>
                             <div style="color: #6c757d; font-size: 16px; margin-bottom: 20px;">
                                 {{ __('messages.overall_project_progress') }}
@@ -1090,8 +1091,8 @@
                     <thead>
                         <tr>
                             <th style="width:5%">{{ __('messages.table_no') }}</th>
-                            <th style="width:10%">{{ __('messages.type') }}</th>
-                            <th style="width:40%">{{ __('messages.description_of_works') }}</th>
+                            <th style="width:15%">{{ __('messages.type') }}</th>
+                            <th style="width:35%">{{ __('messages.description_of_works') }}</th>
                             <th style="width:20%">{{ __('messages.location') }}</th>
                             <th style="width:25%">{{ __('messages.remarks') }}</th>
                         </tr>
@@ -1294,6 +1295,50 @@
             }
 
             html += `</div>`;
+
+            // Fifth: Statement of Materials Approved / Stored During the Week
+            html += `
+                <div class="preview-section-header preview-bg-blue">{{ __('messages.section_5') }}</div>
+                <table class="preview-data-table">
+                    <thead>
+                        <tr>
+                            <th style="width:5%">{{ __('messages.table_no') }}</th>
+                            <th style="width:20%">{{ __('messages.type_of_material') }}</th>
+                            <th style="width:15%">{{ __('messages.approved_storage') }}</th>
+                            <th style="width:20%">{{ __('messages.place_of_use') }}</th>
+                            <th style="width:15%">{{ __('messages.quantity_stored') }}</th>
+                            <th style="width:25%">{{ __('messages.remarks') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            if (data.raw_materials && data.raw_materials.length > 0) {
+                data.raw_materials.forEach((material, index) => {
+                    const status = material.status ? material.status.charAt(0).toUpperCase() + material.status
+                        .slice(1) : '-';
+                    html += `
+                        <tr>
+                            <td style="text-align:center">${index + 1}</td>
+                            <td>${material.name || '-'}</td>
+                            <td>${status}</td>
+                            <td>-</td>
+                            <td>${material.quantity || '-'}</td>
+                            <td>${material.description || '-'}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                html += `
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding: 15px;">{{ __('messages.no_data') }}</td>
+                    </tr>
+                `;
+            }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
 
             reportContent.innerHTML = html;
             reportPreview.classList.remove('d-none');

@@ -60,16 +60,16 @@ class ReportController extends Controller
             'progress_percentage' => $overallProgress,
             'phases' => $phases,
             'tasks' => Task::where('project_id', $request->project_id)
-                ->whereIn('status', ['completed', 'approve'])
+                ->whereIn('status', ['completed', 'approve', 'complete'])
                 ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
                 ->with('assignedUser:id,name')
                 ->get(),
             'inspections' => Inspection::where('project_id', $request->project_id)
-                ->whereIn('status', ['completed', 'approved'])
+                ->whereIn('status', ['completed', 'approved', 'complete'])
                 ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
                 ->get(),
             'snags' => \App\Models\Snag::where('project_id', $request->project_id)
-                ->whereIn('status', ['completed', 'approve'])
+                ->whereIn('status', ['completed', 'approve', 'complete'])
                 ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
                 ->with('comments')
                 ->get(),
@@ -263,7 +263,7 @@ class ReportController extends Controller
                 'end' => $date->copy()->endOfWeek(),
             ];
         } elseif ($type === 'monthly' && $month) {
-            $date = \Carbon\Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+            $date = \Carbon\Carbon::parse($month . '-01');
             return [
                 'start' => $date->copy()->startOfMonth(),
                 'end' => $date->copy()->endOfMonth(),
