@@ -340,16 +340,18 @@
 
                     .preview-lbl-blue {
                         background-color: #1b3d6d;
-                        color: white;
+                        color: white !important;
                         width: 30%;
                         font-weight: 500;
+                        text-align: center;
                     }
 
                     .preview-lbl-orange {
                         background-color: #ea6b1e;
-                        color: white;
+                        color: white !important;
                         width: 30%;
                         font-weight: 500;
+                        text-align: center;
                     }
 
                     .preview-val-white {

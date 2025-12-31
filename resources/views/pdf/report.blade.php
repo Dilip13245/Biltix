@@ -179,7 +179,7 @@
         /* The Colored Labels */
         .lbl-blue {
             background-color: var(--brand-blue);
-            color: white;
+            color: white !important;
             width: 30%;
             font-weight: 500;
             text-align: center;
@@ -188,7 +188,7 @@
 
         .lbl-orange {
             background-color: var(--brand-orange);
-            color: white;
+            color: white !important;
             width: 30%;
             font-weight: 500;
             text-align: center;
