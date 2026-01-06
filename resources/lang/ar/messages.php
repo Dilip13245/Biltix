@@ -1571,4 +1571,8 @@ return [
     'inspection' => 'تفتيش',
     'snag' => 'مشكلة',
     'no_stakeholder_assigned' => 'لم يتم تعيين أي صاحب مصلحة لهذا المشروع',
+        // Static Content Pages
+    'privacy_policy' => 'سياسة الخصوصية',
+    'terms_and_conditions' => 'الشروط والأحكام',
+    'copyright_text' => 'بيلتكس. جميع الحقوق محفوظة.',
 ];

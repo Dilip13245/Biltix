@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Validator;
 use App\Models\HelpSupport;
+use App\Models\StaticContent;
 
 class GeneralController extends Controller
 {
@@ -47,16 +48,28 @@ class GeneralController extends Controller
     {
         try {
             $type = $request->input('type', 'terms');
+            $language = $request->header('Accept-Language', 'en');
+            $language = in_array($language, ['en', 'ar']) ? $language : 'en';
             
-            $content = [
-                'terms' => 'Terms and Conditions content...',
-                'privacy' => 'Privacy Policy content...',
-                'about' => 'About Us content...',
-            ];
+            $validator = Validator::make(['type' => $type], [
+                'type' => 'required|in:privacy,terms',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->validateResponse($validator->errors());
+            }
+
+            $staticContent = StaticContent::byType($type)->byLanguage($language)->active()->first();
+
+            if (!$staticContent) {
+                return $this->toJsonEnc([], trans('api.general.content_not_found'), Config::get('constant.NOT_FOUND'));
+            }
 
             $data = [
-                'type' => $type,
-                'content' => $content[$type] ?? trans('api.general.content_not_found')
+                'type' => $staticContent->type,
+                'language' => $staticContent->language,
+                'title' => $staticContent->title,
+                'content' => $staticContent->content
             ];
 
             return $this->toJsonEnc($data, trans('api.general.static_content_retrieved'), Config::get('constant.SUCCESS'));
@@ -103,7 +116,6 @@ class GeneralController extends Controller
         try {
             $language = $request->input('language', 'en');
             
-            // This would typically update user's language preference in database
             $data = [
                 'language' => $language,
                 'message' => trans('api.general.language_changed')

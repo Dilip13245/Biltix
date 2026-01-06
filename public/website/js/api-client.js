@@ -12,7 +12,7 @@ class ApiClient {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'api-key': this.apiKey,
-                'language': document.documentElement.lang || 'en'
+                'Accept-Language': document.documentElement.lang || 'en'
             },
             data: data
         };
@@ -81,7 +81,7 @@ class ApiClient {
             headers: {
                 'Accept': 'application/json',
                 'api-key': this.apiKey,
-                'language': document.documentElement.lang || 'en'
+                'Accept-Language': document.documentElement.lang || 'en'
                 // Don't set Content-Type for FormData - browser will set it with boundary
             }
         };
@@ -546,6 +546,11 @@ class ApiClient {
     // Help Support methods
     async submitHelpSupport(data) {
         return this.makeRequest('general/help_support', data);
+    }
+
+    // Static Content methods
+    async getStaticContent(type) {
+        return this.makeRequest('general/static_content', { type: type }, 'GET');
     }
 
     // Raw Materials methods

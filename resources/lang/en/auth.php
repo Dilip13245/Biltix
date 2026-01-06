@@ -46,7 +46,7 @@ return [
     'create_password' => 'Create password',
     'confirm_password_placeholder' => 'Confirm your password',
     'next' => 'Next',
-    'footer_text' => '© 2024 BuildPro. All rights reserved.',
+    'footer_text' => '© 2026 Biltix. All rights reserved.',
     'company_name' => 'Company Name',
     'enter_company_name' => 'Enter your company name',
     'total_employees' => 'Total Count Of Employees',

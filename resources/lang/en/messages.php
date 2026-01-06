@@ -1704,5 +1704,11 @@ return [
     'limits_retrieved_successfully' => 'Limits retrieved successfully',
     'task' => 'Task',
     'inspection' => 'Inspection',
-    'snag' => 'Snag'
+    'snag' => 'Snag',
+    
+    // Static Content Pages
+    'terms_and_conditions' => 'Terms and Conditions',
+    'privacy_policy' => 'Privacy Policy',
+    'failed_to_load_content' => 'Failed to load content',
+    'copyright_text' => 'Biltix. All rights reserved.',
 ];

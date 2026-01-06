@@ -25,6 +25,8 @@ return [
         'admin_management' => 'إدارة المسؤولين',
         'snags' => 'العيوب',
         'task_library' => 'مكتبة المهام',
+        'settings' => 'الإعدادات',
+        'static_content' => 'المحتوى الثابت',
     ],
     
     'actions' => [
@@ -261,6 +263,10 @@ return [
         'snag_title' => 'عنوان العيب',
         'reported_by' => 'تم الإبلاغ بواسطة',
         'assign_to' => 'تعيين إلى',
+        'content_information' => 'معلومات المحتوى',
+        'language' => 'اللغة',
+        'content' => 'المحتوى',
+        'content_information' => 'معلومات المحتوى',
     ],
     
     'roles' => [
@@ -419,6 +425,8 @@ return [
         'read_only' => 'المقروءة فقط',
         'unread_only' => 'غير المقروءة فقط',
         'cancelled' => 'ملغي',
+        'privacy_policy' => 'سياسة الخصوصية',
+        'terms_conditions' => 'الشروط والأحكام',
         'quality' => 'جودة',
         'safety' => 'سلامة',
         'final' => 'نهائي',
@@ -495,6 +503,8 @@ return [
         'no_projects' => 'لا توجد مشاريع',
         'create_project_first' => 'قم بإنشاء مشروع أولاً لإدارة الملفات',
         'no_photos' => 'لا توجد صور',
+        'no_content' => 'لم يتم العثور على محتوى ثابت',
+        'no_content_description' => 'قم بإنشاء محتوى سياسة الخصوصية والشروط والأحكام.',
         'marked_as_read' => 'تم التحديد كمقروء',
         'marked_as_unread' => 'تم التحديد كغير مقروء',
         'notifications_marked_read' => 'تم تحديد الإشعارات كمقروءة',
@@ -558,6 +568,7 @@ return [
         'photo' => 'صورة',
         'photos' => 'صور',
         'help_support' => 'المساعدة والدعم',
+        'static_content' => 'المحتوى الثابت',
     ],
     
     'sections' => [

@@ -270,7 +270,23 @@
                         </div>
                     </div>
                 </div>
+                <!-- Privacy & Terms Bar -->
+                <div class="m-4">
+                    <div class="w-100 p-3 text-center cursor-pointer rounded shadow-sm"
+                        onclick="showStaticContent('privacy')"
+                        style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                        <i class="fas fa-shield-alt text-primary {{ margin_end(2) }}"></i>
+                        <span class="fw-medium">{{ __('messages.privacy_policy') }}</span>
+                    </div>
+                    <div class="w-100 p-3 text-center cursor-pointer rounded shadow-sm mt-2"
+                        onclick="showStaticContent('terms')"
+                        style="cursor: pointer; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                        <i class="fas fa-file-contract text-primary {{ margin_end(2) }}"></i>
+                        <span class="fw-medium">{{ __('messages.terms_and_conditions') }}</span>
+                    </div>
+                </div>
 
+                @include('components.static-content-modal')
                 <!-- Edit Profile Modal -->
                 <div class="modal fade" id="editProfileModal" tabindex="-1">
                     <div class="modal-dialog modal-lg">
@@ -291,11 +307,13 @@
                                 @if (app()->getLocale() == 'ar')
                                     <div class="d-flex justify-content-between align-items-center w-100">
                                         <h5 class="modal-title">{{ __('auth.edit_profile') }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="{{ __('messages.close') }}"></button>
                                     </div>
                                 @else
                                     <h5 class="modal-title">{{ __('auth.edit_profile') }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('messages.close') }}"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="{{ __('messages.close') }}"></button>
                                 @endif
                             </div>
                             <div class="modal-body">
