@@ -279,7 +279,7 @@
                     
                     <!-- Footer with Terms Link -->
                     <div class="footer-text">
-                        © {{ date('Y') }} {{ __('messages.copyright_text') }} | <a href="#" onclick="event.preventDefault(); showStaticContent('terms')" style="color: #4A90E2; text-decoration: none;">{{ __('messages.terms_and_conditions') }}</a>
+                        © {{ date('Y') }} {{ __('messages.copyright_text') }} | <a href="#" onclick="event.preventDefault(); showStaticContent('terms')" style="color: #4A90E2; text-decoration: none;">{{ __('messages.terms_and_conditions') }}</a> | <a href="#" onclick="event.preventDefault(); showStaticContent('privacy')" style="color: #4A90E2; text-decoration: none;">{{ __('messages.privacy_policy') }}</a>
                     </div>
                     
                     @include('components.static-content-modal')

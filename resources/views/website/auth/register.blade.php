@@ -364,6 +364,13 @@
         .member-row {
             margin-bottom: 15px;
         }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 48px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
     </style>
 </head>
 
@@ -575,8 +582,8 @@
                     </form>
                     
                     <!-- Footer with Terms Link -->
-                    <div class="footer-text" style="margin-top: 24px;">
-                        <a href="#" onclick="event.preventDefault(); showStaticContent('terms')" style="color: #4A90E2; text-decoration: none;">{{ __('messages.terms_and_conditions') }}</a>
+                    <div class="footer-text">
+                        © {{ date('Y') }} {{ __('messages.copyright_text') }} | <a href="#" onclick="event.preventDefault(); showStaticContent('terms')" style="color: #4A90E2; text-decoration: none;">{{ __('messages.terms_and_conditions') }}</a> | <a href="#" onclick="event.preventDefault(); showStaticContent('privacy')" style="color: #4A90E2; text-decoration: none;">{{ __('messages.privacy_policy') }}</a>
                     </div>
                     
                     @include('components.static-content-modal')
