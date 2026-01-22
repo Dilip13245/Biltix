@@ -1,5 +1,5 @@
 {{-- Permission Error Handler Component --}}
-@if(session('permission_denied'))
+@if(session('permission_denied') || session('subscription_limit') || session('error'))
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
