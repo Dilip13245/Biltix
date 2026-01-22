@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\PhotoController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SubscriptionController;
+use App\Http\Controllers\Api\PaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,24 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language'])->group(
     Route::prefix('subscriptions')->group(function () {
         Route::get('plans', [SubscriptionController::class, 'getPlans']);
         Route::post('plans', [SubscriptionController::class, 'getPlans']);
+    });
+    
+    // Payment (Public - for subscription purchase)
+    Route::prefix('payment')->group(function () {
+        Route::get('config', [PaymentController::class, 'getConfig']);
+        Route::post('init', [PaymentController::class, 'initPayment']);
+        Route::get('callback', [PaymentController::class, 'callback'])->name('api.payment.callback');
+        Route::post('verify', [PaymentController::class, 'verifyPayment']);
+        
+        // Registration with payment (Payment First flow)
+        Route::post('init_registration', [PaymentController::class, 'initRegistrationPayment']);
+        Route::post('complete_registration', [PaymentController::class, 'completeRegistration']);
+        
+        // Webhook for async payment notifications (from Moyasar)
+        Route::post('webhook', [PaymentController::class, 'webhook'])->name('api.payment.webhook');
+        
+        // Status check (for frontend polling)
+        Route::get('status/{token}', [PaymentController::class, 'checkStatus']);
     });
 });
 

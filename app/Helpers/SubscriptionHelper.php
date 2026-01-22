@@ -230,17 +230,42 @@ class SubscriptionHelper
 
     /**
      * Create subscription for a user
+     * 
+     * @param int $userId User ID
+     * @param int $planId Plan ID
+     * @param string|null $transactionId Moyasar payment ID
+     * @param float|null $amountPaid Amount paid in SAR
+     * @param int $durationDays Subscription duration in days
      */
-    public static function createSubscription($userId, $planId, int $durationDays = 365): UserSubscription
-    {
+    public static function createSubscription(
+        $userId,
+        $planId,
+        ?string $transactionId = null,
+        ?float $amountPaid = null,
+        int $durationDays = 365
+    ): UserSubscription {
+        $plan = SubscriptionPlan::find($planId);
+        
+        // Use plan's billing cycle to determine duration
+        if ($plan) {
+            $durationDays = match($plan->billing_cycle ?? 'yearly') {
+                'monthly' => 30,
+                'quarterly' => 90,
+                'yearly' => 365,
+                default => $durationDays
+            };
+        }
+        
         return UserSubscription::create([
             'user_id' => $userId,
             'plan_id' => $planId,
             'starts_at' => now(),
             'expires_at' => now()->addDays($durationDays),
             'status' => 'active',
+            'amount_paid' => $amountPaid ?? $plan?->price,
+            'payment_method' => $transactionId ? 'moyasar' : 'manual',
+            'transaction_id' => $transactionId,
             'auto_renew' => false,
-            'is_trial' => false
         ]);
     }
 

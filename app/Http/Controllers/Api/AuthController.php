@@ -513,6 +513,9 @@ class AuthController extends Controller
                 ->where('is_deleted', 0)
                 ->count();
 
+            // Get subscription info
+            $subscriptionInfo = \App\Helpers\SubscriptionHelper::getUserSubscriptionInfo($user);
+
             // Prepare profile response data
             $profileData = [
                 'id' => $user->id,
@@ -532,7 +535,8 @@ class AuthController extends Controller
                 'total_employees' => $user->employee_count ?? 0,
                 'total_projects' => $totalProjects,
                 'total_tasks' => $totalTasks,
-                'total_pending_tasks' => $totalPendingTasks
+                'total_pending_tasks' => $totalPendingTasks,
+                'subscription' => $subscriptionInfo
             ];
 
             return $this->toJsonEnc($profileData, trans('api.auth.user_profile_retrieved'), Config::get('constant.SUCCESS'));

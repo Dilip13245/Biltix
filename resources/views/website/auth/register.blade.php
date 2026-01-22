@@ -371,7 +371,113 @@
             color: #9ca3af;
             font-size: 12px;
         }
+
+        /* Plan Cards Styles */
+        .plan-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .plan-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            border-color: #4A90E2;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(74, 144, 226, 0.15);
+        }
+
+        .plan-card.selected {
+            border-color: #4A90E2;
+            background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+            box-shadow: 0 8px 24px rgba(74, 144, 226, 0.2);
+        }
+
+        .plan-card.popular::before {
+            content: '⭐ Popular';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #FF8C42, #FF6B35);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .plan-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            font-size: 32px;
+            font-weight: 800;
+            color: #4A90E2;
+            margin-bottom: 4px;
+        }
+
+        .plan-price span {
+            font-size: 14px;
+            font-weight: 400;
+            color: #6b7280;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+            text-align: {{ is_rtl() ? 'right' : 'left' }};
+        }
+
+        .plan-features li {
+            padding: 6px 0;
+            font-size: 14px;
+            color: #4b5563;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plan-features li i.fa-check { color: #22c55e; }
+        .plan-features li i.fa-times { color: #ef4444; }
+
+        .payment-form-container {
+            margin-top: 24px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .payment-form-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+
+        .plans-loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
     </style>
+    <!-- Moyasar Payment Form CSS -->
+    <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.14.0/moyasar.css">
 </head>
 
 <body>
@@ -411,12 +517,10 @@
                             <div class="step-label" id="step2-label">{{ __('auth.company') }}</div>
                         </div>
                         <div class="step-line inactive" id="line2"></div>
-                        <!-- Step 3 - Team Members (Commented Out)
                         <div class="step-item">
                             <div class="step inactive" id="step3">3</div>
-                            <div class="step-label" id="step3-label">{{ __('auth.team') }}</div>
+                            <div class="step-label" id="step3-label">{{ __('auth.select_plan') }}</div>
                         </div>
-                        -->
                     </div>
 
                     <!-- Registration Form -->
@@ -533,38 +637,31 @@
                             </div>
                         </div>
 
-                        <!-- Step 3: Team Members (Commented Out - Feature Disabled)
+                        <!-- Step 3: Plan Selection & Payment -->
                         <div class="form-step d-none" id="form-step-3">
-                            <div id="membersContainer">
-                                <div class="member-row">
-                                    <div class="row g-3">
-                                        <div class="col-12 col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">{{ __('auth.member_name') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
-                                                <input type="text" class="form-control" name="members[0][name]"
-                                                    placeholder="{{ __('auth.enter_member_name') }}">
-                                            </div>
-                                            <div class="error-message" id="memberNameError0"></div>
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <div class="mb-3">
-                                                <label class="form-label">{{ __('auth.phone_number') }} <span class="text-muted">({{ __('auth.optional') }})</span></label>
-                                                <input type="tel" class="form-control" name="members[0][phone]"
-                                                    placeholder="{{ __('auth.enter_member_phone') }}">
-                                            </div>
-                                            <div class="error-message" id="memberPhoneError0"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <h4 class="mb-4 text-center">{{ __('auth.choose_your_plan') }}</h4>
+                            
+                            <!-- Loading -->
+                            <div class="plans-loading" id="plansLoading">
+                                <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                                <p>{{ __('auth.loading_plans') }}</p>
                             </div>
-                            <div class="d-grid">
-                                <button type="button" class="add-more-btn" onclick="addMemberRow()">
-                                    {{ __('auth.add_more_members') }}
-                                    <i class="fas fa-plus"></i>
-                                </button>
+                            
+                            <!-- Plan Cards -->
+                            <div class="plan-cards-container" id="planCardsContainer" style="display: none;">
+                                <!-- Plans will be loaded dynamically -->
+                            </div>
+                            
+                            <!-- Payment Form -->
+                            <div class="payment-form-container" id="paymentFormContainer" style="display: none;">
+                                <div class="payment-form-title">
+                                    <i class="fas fa-credit-card me-2"></i>
+                                    {{ __('auth.payment_details') }}
+                                </div>
+                                <div class="selected-plan-info mb-3" id="selectedPlanInfo"></div>
+                                <div class="mysr-form" id="moyasarForm"></div>
                             </div>
                         </div>
-                        -->
 
                         <!-- Button Container -->
                         <div class="button-container">
@@ -595,6 +692,8 @@
     <script src="{{ asset('website/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('website/bootstrap-5.3.1-dist/js/bootstrap.bundle.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Moyasar Payment SDK -->
+    <script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
     <script src="{{ asset('website/js/toastr-config.js') }}"></script>
     <script src="{{ asset('website/js/api-config.js') }}"></script>
     <script src="{{ asset('website/js/api-encryption.js') }}"></script>
@@ -1007,7 +1106,7 @@
                 return;
             }
 
-            if (currentStep < 2) {
+            if (currentStep < 3) {
                 // Hide current step
                 document.getElementById(`form-step-${currentStep}`).classList.remove('active');
                 document.getElementById(`form-step-${currentStep}`).classList.add('d-none');
@@ -1024,10 +1123,13 @@
                 document.getElementById(`form-step-${currentStep}`).classList.add('active');
                 document.getElementById(`form-step-${currentStep}`).classList.remove('d-none');
 
-                // Update button text
+                // Update button text based on step
                 if (currentStep === 2) {
-                    document.getElementById('nextBtn').textContent = '{{ __('auth.register') }}';
-                    document.getElementById('nextBtn').onclick = submitForm;
+                    document.getElementById('nextBtn').textContent = '{{ __('auth.next') }}';
+                } else if (currentStep === 3) {
+                    // Load plans and hide next button (payment form will handle submission)
+                    document.getElementById('nextBtn').style.display = 'none';
+                    loadSubscriptionPlans();
                 }
             }
         }
@@ -1222,6 +1324,155 @@
                 registerBtn.disabled = false;
                 registerBtn.textContent = originalText;
                 isSubmitting = false;
+            }
+        }
+
+        // ==========================================
+        // STEP 3: Plan Selection & Payment
+        // ==========================================
+        
+        let subscriptionPlans = [];
+        let selectedPlan = null;
+        let registrationToken = null;
+
+        async function loadSubscriptionPlans() {
+            try {
+                const response = await api.getSubscriptionPlans();
+                
+                if (response.code === 200 && response.data) {
+                    subscriptionPlans = response.data;
+                    renderPlanCards(subscriptionPlans);
+                } else {
+                    toastr.error(response.message || '{{ __("auth.plans_load_error") }}');
+                }
+            } catch (error) {
+                console.error('Error loading plans:', error);
+                toastr.error('{{ __("auth.connection_error") }}');
+            }
+        }
+
+        function renderPlanCards(plans) {
+            const container = document.getElementById('planCardsContainer');
+            const loading = document.getElementById('plansLoading');
+            
+            let html = '';
+            
+            plans.forEach((plan, index) => {
+                const isPopular = index === 1; // Second plan is popular
+                const features = plan.features || [];
+                
+                html += `
+                    <div class="plan-card ${isPopular ? 'popular' : ''}" onclick="selectPlan(${plan.id})" data-plan-id="${plan.id}">
+                        <div class="plan-name">${plan.display_name || plan.name}</div>
+                        <div class="plan-price">
+                            ${plan.price} <span>SAR/${plan.billing_cycle || 'month'}</span>
+                        </div>
+                        <ul class="plan-features">
+                            ${renderFeatures(plan.enabled_modules || [], features)}
+                        </ul>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            loading.style.display = 'none';
+            container.style.display = 'grid';
+        }
+
+        function renderFeatures(modules, features) {
+            // Default module list to show
+            const allModules = ['projects', 'tasks', 'team_management', 'inspections', 'snags', 'daily_logs', 'plans', 'reports'];
+            
+            return allModules.map(module => {
+                const hasModule = modules.includes(module);
+                const icon = hasModule ? 'fa-check' : 'fa-times';
+                const moduleName = module.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                return `<li><i class="fas ${icon}"></i> ${moduleName}</li>`;
+            }).join('');
+        }
+
+        function selectPlan(planId) {
+            // Remove selection from all cards
+            document.querySelectorAll('.plan-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Select the clicked card
+            const selectedCard = document.querySelector(`[data-plan-id="${planId}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+            
+            // Find the plan
+            selectedPlan = subscriptionPlans.find(p => p.id === planId);
+            
+            if (selectedPlan) {
+                // Show payment form
+                initializePayment();
+            }
+        }
+
+        async function initializePayment() {
+            if (!selectedPlan) return;
+
+            const form = document.getElementById('registrationForm');
+            const formData = new FormData(form);
+
+            // Prepare user data
+            const userData = {
+                name: formData.get('full_name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                password: formData.get('password'),
+                role: formData.get('designation') || 'contractor',
+                company_name: formData.get('company_name'),
+                designation: formData.get('designation'),
+                employee_count: parseInt(formData.get('employee_count')) || 1
+            };
+
+            // Show selected plan info
+            document.getElementById('selectedPlanInfo').innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #e0f2fe; border-radius: 8px;">
+                    <span><strong>${selectedPlan.display_name || selectedPlan.name}</strong> Plan</span>
+                    <span style="font-weight: 700; color: #4A90E2;">${selectedPlan.price} SAR</span>
+                </div>
+            `;
+
+            try {
+                // Call init_registration API using api client
+                const response = await api.initRegistrationPayment({
+                    plan_id: selectedPlan.id,
+                    user_data: userData,
+                    device_type: 'W'
+                });
+
+                if (response.code === 200 && response.data) {
+                    registrationToken = response.data.registration_token;
+                    const formConfig = response.data.form_config;
+
+                    // Show payment form container
+                    document.getElementById('paymentFormContainer').style.display = 'block';
+
+                    // Initialize Moyasar payment form
+                    Moyasar.init({
+                        element: '.mysr-form',
+                        amount: formConfig.amount,
+                        currency: formConfig.currency,
+                        description: formConfig.description,
+                        publishable_api_key: formConfig.publishable_key,
+                        callback_url: formConfig.callback_url,
+                        methods: formConfig.methods,
+                        metadata: formConfig.metadata,
+                        on_completed: function(payment) {
+                            console.log('Payment completed:', payment);
+                        }
+                    });
+                } else {
+                    toastr.error(response.message || '{{ __("auth.payment_init_error") }}');
+                }
+            } catch (error) {
+                console.error('Payment init error:', error);
+                toastr.error('{{ __("auth.connection_error") }}');
             }
         }
     </script>

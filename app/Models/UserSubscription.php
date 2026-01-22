@@ -164,7 +164,10 @@ class UserSubscription extends Model
             'days_remaining' => $this->daysRemaining(),
             'is_expiring_soon' => $this->isExpiringSoon(),
             'is_trial' => $this->is_trial,
-            'auto_renew' => $this->auto_renew
+            'auto_renew' => $this->auto_renew,
+            'amount_paid' => $this->amount_paid,
+            'currency' => $this->plan->currency ?? 'SAR',
+            'transaction_id' => $this->transaction_id
         ];
     }
 }

@@ -624,6 +624,32 @@ class ApiClient {
         return this.makeRequest('reports/share', data);
     }
 
+    // Subscription methods
+    async getSubscriptionPlans() {
+        return this.makeRequest('subscriptions/plans', {}, 'GET');
+    }
+
+    // Payment methods
+    async getPaymentConfig() {
+        return this.makeRequest('payment/config', {}, 'GET');
+    }
+
+    async initPayment(data) {
+        return this.makeRequest('payment/init', data);
+    }
+
+    async initRegistrationPayment(data) {
+        return this.makeRequest('payment/init_registration', data);
+    }
+
+    async completeRegistration(data) {
+        return this.makeRequest('payment/complete_registration', data);
+    }
+
+    async verifyPayment(data) {
+        return this.makeRequest('payment/verify', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic

@@ -797,6 +797,10 @@ return [
     'minutes_ago' => 'm ago',
     'hours_ago' => 'h ago',
     
+    // Subscription related
+    'subscription_plan_limit' => 'Your subscription plan does not include access to :module. Please upgrade your plan.',
+    'permission_denied_for_module' => 'You do not have permission to access :module.',
+    
     // Filter and Sort translations
     'filter_files' => 'Filter Files',
     'sort_files' => 'Sort Files',

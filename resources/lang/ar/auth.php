@@ -168,5 +168,35 @@ return [
     'account_delete_failed' => 'فشل في حذف الحساب',
     
     'admin' => 'مدير',
-    'supervisor' => 'مشرف'
+    'supervisor' => 'مشرف',
+    
+    // Step 3 - Plan Selection
+    'select_plan' => 'اختر الخطة',
+    'choose_your_plan' => 'اختر خطتك',
+    'loading_plans' => 'جاري تحميل الخطط...',
+    'payment_details' => 'تفاصيل الدفع',
+    
+    // Payment related
+    'payment_failed' => 'فشل الدفع',
+    'payment_declined' => 'تم رفض دفعتك. يرجى المحاولة مرة أخرى أو استخدام بطاقة أخرى.',
+    'try_again' => 'حاول مرة أخرى',
+    'completing_registration' => 'جاري إتمام التسجيل',
+    'please_wait' => 'يرجى الانتظار بينما نكمل تسجيلك...',
+    'registration_successful' => 'تم التسجيل بنجاح',
+    'welcome_to_biltix' => 'مرحباً بك في بيلتكس! تم إنشاء حسابك بنجاح.',
+    'go_to_dashboard' => 'الذهاب للوحة التحكم',
+    'your_subscription' => 'اشتراكك',
+    'subscription_details' => 'تفاصيل الاشتراك',
+    'plan_name' => 'اسم الخطة',
+    'subscription_status' => 'الحالة',
+    'amount_paid' => 'المبلغ المدفوع',
+    'active_until' => 'نشط حتى',
+    'transaction_id' => 'رقم المعاملة',
+    'upgrade_plan' => 'ترقية الخطة',
+    'valid_until' => 'صالح حتى',
+    'invalid_payment_callback' => 'رابط دفع غير صالح. يرجى المحاولة مرة أخرى.',
+    'registration_error' => 'حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.',
+    'plans_load_error' => 'فشل في تحميل خطط الاشتراك',
+    'payment_init_error' => 'فشل في بدء الدفع',
+    'processing_payment' => 'جاري معالجة الدفع...',
 ];

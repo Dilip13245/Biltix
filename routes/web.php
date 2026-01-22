@@ -36,6 +36,9 @@ Route::middleware('web.guest')->group(function () {
     Route::get('/register', [App\Http\Controllers\Website\AuthController::class, 'showRegister'])->name('register');
     Route::get('/forgot-password', [App\Http\Controllers\Website\AuthController::class, 'showForgotPassword'])->name('forgot-password');
     
+    // Payment callback page (after Moyasar redirect)
+    Route::get('/payment/complete', [App\Http\Controllers\Website\AuthController::class, 'paymentComplete'])->name('payment.complete');
+    
     // Auth API endpoints - With Rate Limiting
     Route::middleware('throttle:3,1')->post('/auth/register', [App\Http\Controllers\Website\AuthController::class, 'register'])->name('auth.register');
     Route::middleware('throttle:5,1')->post('/auth/send-otp', [App\Http\Controllers\Website\AuthController::class, 'sendOtp'])->name('auth.send-otp');

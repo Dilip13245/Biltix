@@ -147,4 +147,12 @@ class AuthController extends Controller
         // Handle session verification
         return response()->json(['authenticated' => true]);
     }
+
+    /**
+     * Handle payment completion callback from Moyasar
+     */
+    public function paymentComplete(Request $request)
+    {
+        return view('website.auth.payment-complete');
+    }
 }

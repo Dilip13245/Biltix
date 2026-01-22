@@ -804,6 +804,10 @@ return [
     'minutes_ago' => 'د مضت',
     'hours_ago' => 'س مضت',
     
+    // Subscription related
+    'subscription_plan_limit' => 'خطة اشتراكك لا تتضمن الوصول إلى :module. يرجى ترقية خطتك.',
+    'permission_denied_for_module' => 'ليس لديك صلاحية للوصول إلى :module.',
+
     // Filter and Sort translations
     'filter_files' => 'تصفية الملفات',
     'sort_files' => 'ترتيب الملفات',

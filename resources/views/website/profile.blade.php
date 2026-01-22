@@ -267,6 +267,49 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Subscription Details -->
+                            <div class="col-12 col-lg-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-header bg-transparent border-0 pb-0">
+                                        <h5 class="fw-bold mb-0"><i
+                                                class="fas fa-crown text-warning {{ margin_end(2) }}"></i>{{ __('auth.subscription_details') }}
+                                        </h5>
+                                    </div>
+                                    <div class="card-body pt-3">
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3">
+                                                    <div>
+                                                        <small
+                                                            class="text-muted d-block">{{ __('auth.plan_name') }}</small>
+                                                        <h6 class="mb-0 text-dark fw-bold" id="subPlanName">
+                                                            {{ __('messages.loading') }}...</h6>
+                                                    </div>
+                                                    <span class="badge bg-secondary" id="subStatus">...</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="p-3 bg-light rounded-3">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <small class="text-muted">{{ __('auth.amount_paid') }}</small>
+                                                        <span class="fw-bold text-dark" id="subAmount">...</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <small class="text-muted">{{ __('auth.transaction_id') }}</small>
+                                                        <small class="text-dark font-monospace" id="subTransactionId">...</small>
+                                                    </div>
+                                                    <div class="border-top my-2"></div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <small class="text-muted">{{ __('auth.active_until') }}</small>
+                                                        <span class="fw-bold text-primary" id="subExpiry">...</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -420,6 +463,40 @@
                     document.getElementById('userEmail').textContent = userData.email || 'N/A';
                     document.getElementById('employeeCount').textContent = userData.total_employees || '0';
                     document.getElementById('memberCount').textContent = userData.total_members || '0';
+
+                    // Update subscription details
+                    if (userData.subscription && userData.subscription.has_subscription) {
+                        const sub = userData.subscription;
+                        const planNameEl = document.getElementById('subPlanName');
+                        if (planNameEl) planNameEl.textContent = sub.plan_name || 'N/A';
+                        
+                        const statusEl = document.getElementById('subStatus');
+                        if (statusEl) {
+                            statusEl.textContent = sub.status ? sub.status.toUpperCase() : 'N/A';
+                            statusEl.className = 'badge ' + (sub.status === 'active' ? 'bg-success' : 'bg-danger');
+                        }
+                        
+                        const amountEl = document.getElementById('subAmount');
+                        if (amountEl) amountEl.textContent = sub.amount_paid ? (sub.amount_paid + ' ' + (sub.currency || 'SAR')) : 'N/A';
+                        
+                        const transEl = document.getElementById('subTransactionId');
+                        if (transEl) transEl.textContent = sub.transaction_id || 'N/A';
+                        
+                        const expiryEl = document.getElementById('subExpiry');
+                        if (expiryEl) {
+                            expiryEl.textContent = sub.expires_at ? new Date(sub.expires_at).toLocaleDateString() : 'N/A';
+                            if (sub.is_expiring_soon) expiryEl.classList.add('text-danger');
+                        }
+                    } else {
+                         const planNameEl = document.getElementById('subPlanName');
+                         if (planNameEl) planNameEl.textContent = 'None';
+                         
+                         const statusEl = document.getElementById('subStatus');
+                         if (statusEl) {
+                             statusEl.textContent = 'Inactive';
+                             statusEl.className = 'badge bg-secondary';
+                         }
+                    }
 
                     // Update profile image if available
                     if (userData.profile_image) {
