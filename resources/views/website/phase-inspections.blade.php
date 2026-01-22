@@ -68,12 +68,14 @@
                         <div class="card-body p-md-4">
                             <h5 class="mb-3 mb-md-4 fw-semibold black_color">{{ __('messages.create_new_inspection') }}
                             </h5>
+                            @can('inspections', 'create')
                             <button class="btn  orange_btn w-100 mb-3 mb-md-4 justify-content-center py-3"
                                 data-bs-toggle="modal" data-bs-target="#createInspectionModal"
                                 onclick="if(!this.disabled){this.disabled=true;setTimeout(()=>{this.disabled=false;},3000);}">
                                 <i class="fas fa-plus"></i>
                                 {{ __('messages.create_inspection') }}
                             </button>
+                            @endcan
                             <div
                                 class="file_upload_card d-flex flex-column align-items-center justify-content-center  text-muted">
                                 <svg width="28" height="37" viewBox="0 0 28 37" fill="none"

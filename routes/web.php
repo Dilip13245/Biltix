@@ -26,6 +26,9 @@ Route::get('/lang/{locale}', function ($locale, Request $request) {
     return redirect()->back();
 })->name('lang.switch');
 
+// Payment callback page (accessible by all)
+Route::get('/payment/complete', [App\Http\Controllers\Website\AuthController::class, 'paymentComplete'])->name('payment.complete');
+
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes (Public)
@@ -37,7 +40,8 @@ Route::middleware('web.guest')->group(function () {
     Route::get('/forgot-password', [App\Http\Controllers\Website\AuthController::class, 'showForgotPassword'])->name('forgot-password');
     
     // Payment callback page (after Moyasar redirect)
-    Route::get('/payment/complete', [App\Http\Controllers\Website\AuthController::class, 'paymentComplete'])->name('payment.complete');
+    // Removed from here to allow authenticated access
+    // Route::get('/payment/complete', [App\Http\Controllers\Website\AuthController::class, 'paymentComplete'])->name('payment.complete');
     
     // Auth API endpoints - With Rate Limiting
     Route::middleware('throttle:3,1')->post('/auth/register', [App\Http\Controllers\Website\AuthController::class, 'register'])->name('auth.register');
@@ -61,6 +65,8 @@ Route::middleware('web.auth')->group(function () {
         return view('website.profile');
     })->name('website.profile');
     
+    // Subscription renewal route
+    Route::get('/subscription/renew', [App\Http\Controllers\Website\AuthController::class, 'showSubscriptionRenew'])->name('subscription.renew');
 
     // Logout route
     Route::post('/auth/logout', [App\Http\Controllers\Website\AuthController::class, 'logout'])->name('logout');

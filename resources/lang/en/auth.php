@@ -212,4 +212,10 @@ return [
     'payment_init_error' => 'Failed to initialize payment',
     'choose_your_plan' => 'Choose Your Plan',
     'loading_plans' => 'Loading plans...',
+    'failed_to_load_plans' => 'Failed to load subscription plans. Please try again later.',
+    'need_help' => 'Need help?',
+    'contact_support' => 'Contact Support',
+    'secure_payment' => 'Secure Payment',
+    'payment_failed' => 'Payment failed. Please try again.',
+    'failed_to_initialize_payment' => 'Failed to initialize payment system. Please refresh the page.',
 ];

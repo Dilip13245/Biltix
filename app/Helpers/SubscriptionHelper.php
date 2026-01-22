@@ -192,6 +192,7 @@ class SubscriptionHelper
             return [
                 'is_valid' => true,
                 'warning' => true,
+                'days_remaining' => $subscription->daysRemaining(),
                 'message' => "Subscription expires in {$subscription->daysRemaining()} days"
             ];
         }

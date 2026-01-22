@@ -910,6 +910,9 @@
         <!-- ======================main content start=============================== -->
         <section class="Dashboard_sec">
             <div class="container-fluid">
+                <!-- Subscription Expiry Warning Banner (Loaded via API) -->
+                <div id="subscriptionWarningBanner"></div>
+                
                 <!-- Top Stats Cards -->
                 <div class="row g-3 mb-4 ">
                     <div class="col-12 col-sm-6 col-md-4 wow fadeInUp" data-wow-delay="0s">
@@ -1709,8 +1712,55 @@
             });
         }
 
+        async function loadSubscriptionWarning() {
+            try {
+                // Use current user ID if available, otherwise API will infer from token
+                const userId = {{ $currentUser->id ?? 'null' }};                
+                let response;
+                if (typeof api.checkSubscriptionExpiry === 'function') {
+                     response = await api.checkSubscriptionExpiry({
+                        user_id: userId
+                    });
+                } else {
+                    response = await api.makeRequest('subscriptions/check_expiry', {
+                        user_id: userId
+                    });
+                }
+                if (response.code === 200 && response.data && response.data.warning) {
+                    console.log('Showing warning banner...');
+                    const days = response.data.days_remaining;
+                    const container = document.getElementById('subscriptionWarningBanner');
+                    
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="alert alert-warning d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4" role="alert" style="border-radius: 12px; border-left: 4px solid #ffc107;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas fa-exclamation-triangle fa-lg"></i>
+                                    <div>
+                                        <strong>{{ __('messages.subscription_expiring_soon', ['days' => 'PLACEHOLDER_DAYS']) }}</strong>
+                                    </div>
+                                </div>
+                                <a href="{{ route('subscription.renew') }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-sync-alt me-1"></i>{{ __('messages.renew_now') }}
+                                </a>
+                            </div>
+                        `.replace('PLACEHOLDER_DAYS', days);
+                    } else {
+                        console.error('Warning banner container not found!');
+                    }
+                } else {
+                    console.log('No warning needed or API error', response.data);
+                }
+            } catch (error) {
+                console.error('Failed to load subscription status:', error);
+            }
+        }
+
         // Filter functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Load subscription warning from API
+            loadSubscriptionWarning();
+            
             // Custom Header Dropdowns Handler (Language only)
             function initCustomHeaderDropdowns() {
                 // Initialize Language Dropdown
@@ -3067,7 +3117,7 @@
     <script src="{{ asset('website/js/api-encryption.js') }}"></script>
     <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
     <script src="{{ asset('website/js/api-helpers.js') }}"></script>
-    <script src="{{ asset('website/js/api-client.js') }}"></script>
+    <script src="{{ asset('website/js/api-client.js') }}?v={{ time() }}"></script>
     <script src="{{ asset('website/js/drawing.js') }}"></script>
     <script src="{{ asset('website/js/confirmation-modal.js') }}"></script>
 

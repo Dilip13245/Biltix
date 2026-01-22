@@ -69,9 +69,15 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'parent_user_id', 'id');
     }
 
-    // Permission methods
+    // Permission methods - checks BOTH subscription module access AND role permission
     public function hasPermission($module, $action)
     {
+        // First check: Does user's subscription plan include this module?
+        if (!\App\Helpers\SubscriptionHelper::hasModuleAccess($this, $module)) {
+            return false;
+        }
+        
+        // Second check: Does user's role have this specific permission?
         return \App\Helpers\RoleHelper::hasPermission($this, $module, $action);
     }
 

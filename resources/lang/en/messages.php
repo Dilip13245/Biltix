@@ -800,6 +800,16 @@ return [
     // Subscription related
     'subscription_plan_limit' => 'Your subscription plan does not include access to :module. Please upgrade your plan.',
     'permission_denied_for_module' => 'You do not have permission to access :module.',
+    'subscription_expired_renew' => 'Your subscription has expired. Please renew to continue using the platform.',
+    'subscription_expiring_soon' => 'Your subscription expires in :days days. Renew now to avoid interruption.',
+    'renew_subscription' => 'Renew Subscription',
+    'renew_now' => 'Renew Now',
+    'subscription_expired' => 'Subscription Expired',
+    'days_remaining' => ':days days remaining',
+    'select_plan_to_renew' => 'Select a plan to renew your subscription',
+    'current_plan' => 'Current Plan',
+    'upgrade_plan' => 'Upgrade Plan',
+    'renew_current_plan' => 'Renew Current Plan',
     
     // Filter and Sort translations
     'filter_files' => 'Filter Files',
@@ -1715,4 +1725,13 @@ return [
     'privacy_policy' => 'Privacy Policy',
     'failed_to_load_content' => 'Failed to load content',
     'copyright_text' => 'Biltix. All rights reserved.',
+    'back_to_dashboard' => 'Back to Dashboard',
+    'proceed_to_payment' => 'Proceed to Payment',
+    'to_avoid_interruption' => 'to avoid service interruption',
+    'month' => 'Month',
+    'year' => 'Year',
+    'projects' => 'Projects',
+    'tasks' => 'Tasks',
+    'inspections' => 'Inspections',
+    'reports' => 'Reports',
 ];

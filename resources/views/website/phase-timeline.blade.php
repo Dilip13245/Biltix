@@ -2220,6 +2220,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="row g-3">
+                            @can('inspections', 'view')
                             <div class="col-md-6">
                                 <div class="card h-100 border-primary" style="cursor: pointer;"
                                     onclick="redirectToInspections()">
@@ -2231,6 +2232,8 @@
                                     </div>
                                 </div>
                             </div>
+                            @endcan
+                            @can('tasks', 'view')
                             <div class="col-md-6">
                                 <div class="card h-100 border-success" style="cursor: pointer;"
                                     onclick="redirectToTasks()">
@@ -2241,6 +2244,8 @@
                                     </div>
                                 </div>
                             </div>
+                            @endcan
+                            @can('snags', 'view')
                             <div class="col-md-6">
                                 <div class="card h-100 border-warning" style="cursor: pointer;"
                                     onclick="redirectToSnags()">
@@ -2251,6 +2256,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @endcan
                             <div class="col-md-6">
                                 <div class="card h-100 border-info" style="cursor: pointer;"
                                     onclick="redirectToTimeline()">

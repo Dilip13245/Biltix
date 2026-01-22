@@ -807,6 +807,16 @@ return [
     // Subscription related
     'subscription_plan_limit' => 'خطة اشتراكك لا تتضمن الوصول إلى :module. يرجى ترقية خطتك.',
     'permission_denied_for_module' => 'ليس لديك صلاحية للوصول إلى :module.',
+    'subscription_expired_renew' => 'انتهى اشتراكك. يرجى التجديد لمواصلة استخدام المنصة.',
+    'subscription_expiring_soon' => 'ينتهي اشتراكك خلال :days أيام. جدد الآن لتجنب الانقطاع.',
+    'renew_subscription' => 'تجديد الاشتراك',
+    'renew_now' => 'جدد الآن',
+    'subscription_expired' => 'انتهى الاشتراك',
+    'days_remaining' => ':days أيام متبقية',
+    'select_plan_to_renew' => 'اختر خطة لتجديد اشتراكك',
+    'current_plan' => 'الخطة الحالية',
+    'upgrade_plan' => 'ترقية الخطة',
+    'renew_current_plan' => 'تجديد الخطة الحالية',
 
     // Filter and Sort translations
     'filter_files' => 'تصفية الملفات',

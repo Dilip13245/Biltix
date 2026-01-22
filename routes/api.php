@@ -101,6 +101,7 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('features', [SubscriptionController::class, 'getSubscriptionFeatures']);
         Route::post('check_feature', [SubscriptionController::class, 'checkFeatureAccess']);
         Route::post('check_expiry', [SubscriptionController::class, 'checkExpiry']);
+        Route::post('subscribe', [SubscriptionController::class, 'subscribe']);
     });
     
     // Team Management Routes (with permission check)

@@ -153,6 +153,30 @@ class AuthController extends Controller
      */
     public function paymentComplete(Request $request)
     {
-        return view('website.auth.payment-complete');
+        // Retrieve token from session or cookie to ensure API calls work
+        $token = session('token') ?: $request->cookie('user_token');
+        return view('website.auth.payment-complete', compact('token'));
+    }
+
+    /**
+     * Show subscription renewal page
+     */
+    public function showSubscriptionRenew(Request $request)
+    {
+        $user = $request->attributes->get('user');
+        
+        // Get current subscription info
+        $subscriptionInfo = \App\Helpers\SubscriptionHelper::getUserSubscriptionInfo($user);
+        
+        // Get available plans
+        $plans = \App\Models\SubscriptionPlan::where('is_active', true)
+            ->orderBy('price', 'asc')
+            ->get();
+        
+        return view('website.subscription-renew', [
+            'subscriptionInfo' => $subscriptionInfo,
+            'plans' => $plans,
+            'currentUser' => $user
+        ]);
     }
 }

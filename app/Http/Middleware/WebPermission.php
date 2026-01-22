@@ -23,12 +23,26 @@ class WebPermission
         // Check Subscription Access first
         // This ensures expired subscriptions or plans without the module are blocked
         if (!\App\Helpers\SubscriptionHelper::hasModuleAccess($user, $module)) {
-             if ($request->expectsJson()) {
+            // Check if subscription is completely expired (no active subscription)
+            $subscriptionStatus = \App\Helpers\SubscriptionHelper::checkSubscriptionExpiry($user);
+            $isExpired = !$subscriptionStatus['is_valid'] && 
+                         ($subscriptionStatus['message'] === 'No active subscription' || 
+                          $subscriptionStatus['message'] === 'Subscription has expired');
+            
+            if ($request->expectsJson()) {
                 return response()->json([
                     'code' => 403,
-                    'message' => 'Access denied. Subscription plan limit or expired.',
+                    'message' => $isExpired ? 'Subscription expired. Please renew.' : 'Access denied. Feature not included in your plan.',
+                    'subscription_expired' => $isExpired,
                     'data' => new \stdClass()
                 ], 403);
+            }
+            
+            // If subscription is expired, redirect to renewal page
+            if ($isExpired) {
+                return redirect()->route('subscription.renew')
+                    ->with('error', __('messages.subscription_expired_renew'))
+                    ->with('subscription_expired', true);
             }
             
             $moduleName = __('messages.' . $module, [], null, app()->getLocale());
@@ -36,7 +50,7 @@ class WebPermission
                 $moduleName = ucfirst(str_replace('_', ' ', $module));
             }
             
-            // Allow dashboard but block specific modules
+            // Module not in plan - redirect back with error
             $errorMessage = __('messages.subscription_plan_limit', ['module' => $moduleName]);
             
             return redirect()->back()

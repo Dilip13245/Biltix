@@ -98,12 +98,14 @@
       </li>
       @endcan
       
+      @can('reports', 'view')
       <li class="nav-item">
         <a href="{{ route('website.project.reports', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.reports') ? 'active' : '' }}">
           <i class="fas fa-file-alt"></i>
           <span>{{ __('messages.reports') }}</span>
         </a>
       </li>
+      @endcan
       
       @can('daily_logs', 'view')
       <li class="nav-item">
@@ -114,12 +116,14 @@
       </li>
       @endcan
       
+      @can('raw_materials', 'view')
       <li class="nav-item">
         <a href="{{ route('website.project.raw-materials', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.raw-materials') ? 'active' : '' }}">
           <i class="fas fa-cubes"></i>
           <span>{{ __('messages.submittals') }}</span>
         </a>
       </li>
+      @endcan
 
       <li class="nav-item">
         <a href="{{ route('website.project.notifications', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.notifications') ? 'active' : '' }}">

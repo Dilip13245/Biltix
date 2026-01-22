@@ -171,10 +171,16 @@ class SubscriptionController extends Controller
             if ($existingSubscription) {
                 // Update existing subscription
                 $existingSubscription->plan_id = $plan->id;
-                $existingSubscription->payment_reference = $request->payment_reference;
+                $existingSubscription->transaction_id = $request->payment_reference ?: $request->transaction_id;
                 $existingSubscription->payment_method = $request->payment_method;
                 $existingSubscription->amount_paid = $plan->price;
-                $existingSubscription->expires_at = now()->addYear(); // Reset expiry
+                // Extend expiry if in future, otherwise set from now
+                $currentExpiry = \Illuminate\Support\Carbon::parse($existingSubscription->expires_at);
+                if ($currentExpiry->isFuture()) {
+                    $existingSubscription->expires_at = $currentExpiry->addYear();
+                } else {
+                    $existingSubscription->expires_at = now()->addYear();
+                }
                 $existingSubscription->status = 'active';
                 $existingSubscription->save();
 
@@ -194,7 +200,7 @@ class SubscriptionController extends Controller
                 'starts_at' => now(),
                 'expires_at' => now()->addYear(),
                 'status' => 'active',
-                'payment_reference' => $request->payment_reference,
+                'transaction_id' => $request->payment_reference ?: $request->transaction_id,
                 'payment_method' => $request->payment_method ?? 'manual',
                 'amount_paid' => $plan->price,
                 'auto_renew' => false,

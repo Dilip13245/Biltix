@@ -629,6 +629,10 @@ class ApiClient {
         return this.makeRequest('subscriptions/plans', {}, 'GET');
     }
 
+    async checkSubscriptionExpiry(data) {
+        return this.makeRequest('subscriptions/check_expiry', data);
+    }
+
     // Payment methods
     async getPaymentConfig() {
         return this.makeRequest('payment/config', {}, 'GET');

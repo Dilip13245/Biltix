@@ -215,65 +215,134 @@
             }
 
             // If missing required params
-            if (!paymentId || !token) {
+            if (!paymentId) {
                 showError('{{ __("auth.invalid_payment_callback") }}');
                 return;
             }
+            
+            const type = urlParams.get('type');
 
             try {
-                // Complete registration via API
-                const response = await fetch('/api/v1/payment/complete_registration', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'api-key': '{{ config("constant.API_KEY") }}',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        payment_id: paymentId,
-                        token: token
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.code === 200) {
-                    // Store session data
-                    const userData = data.data;
-                    
-                    sessionStorage.setItem('user', JSON.stringify(userData));
-                    sessionStorage.setItem('user_id', userData.id);
-                    sessionStorage.setItem('token', userData.token);
-                    sessionStorage.setItem('browser_session_active', 'true');
-
-                    // Set Laravel session
-                    await fetch('/auth/set-session', {
+                if (type === 'renewal') {
+                    // Handle Renewal Flow
+                    // 1. Verify payment
+                    const verifyResponse = await fetch('/api/v1/payment/verify', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'api-key': '{{ config("constant.API_KEY") }}',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                        },
+                        body: JSON.stringify({ payment_id: paymentId })
+                    });
+                    
+                    const verifyData = await verifyResponse.json();
+                    
+                    if (verifyData.code !== 200 || !verifyData.data.is_paid) {
+                        throw new Error(verifyData.message || 'Payment verification failed');
+                    }
+                    
+                    // 2. Subscribe/Renew
+                    const planId = urlParams.get('plan_id');
+                    // We need user token for this request, assume user is logged in (session/cookies)
+                    // But api-client.js usually handles tokens. Here we use fetch directly.
+                    // We need to pass the 'token' header if we have one in storage?
+                    // Or rely on Laravel session if we are in web context (we are).
+                    
+                    // Actually, the API middleware 'tokencheck' might require a token header.
+                    // Let's try to get token from storage or session.
+                    // Let's try to get token from storage or session.
+                    const token = '{{ $token ?? "" }}' || sessionStorage.getItem('token') || localStorage.getItem('token');
+                    
+                    const subscribeResponse = await fetch('/api/v1/subscriptions/subscribe', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'api-key': '{{ config("constant.API_KEY") }}',
+                            'token': token || '', // Pass token if available
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
                         },
                         body: JSON.stringify({
-                            user_id: userData.id,
-                            token: userData.token,
-                            user: userData
+                            plan_id: planId,
+                            payment_reference: paymentId,
+                            payment_method: 'credit_card' // Moyasar usually
                         })
                     });
-
-                    // Show success
-                    showSuccess(userData);
+                    
+                    const subscribeData = await subscribeResponse.json();
+                    
+                    if (subscribeData.code === 200) {
+                        showSuccess({ subscription: subscribeData.data.subscription }, '{{ __("messages.subscription_successful") }}');
+                    } else {
+                        throw new Error(subscribeData.message || 'Subscription update failed');
+                    }
+                    
                 } else {
-                    showError(data.message || '{{ __("auth.registration_error") }}');
+                    // Handle Registration Flow
+                    if (!token) {
+                         showError('{{ __("auth.invalid_payment_callback") }}');
+                         return;
+                    }
+
+                    // Complete registration via API
+                    const response = await fetch('/api/v1/payment/complete_registration', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'api-key': '{{ config("constant.API_KEY") }}',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            payment_id: paymentId,
+                            token: token
+                        })
+                    });
+    
+                    const data = await response.json();
+    
+                    if (data.code === 200) {
+                        // Store session data
+                        const userData = data.data;
+                        
+                        sessionStorage.setItem('user', JSON.stringify(userData));
+                        sessionStorage.setItem('user_id', userData.id);
+                        sessionStorage.setItem('token', userData.token);
+                        sessionStorage.setItem('browser_session_active', 'true');
+    
+                        // Set Laravel session
+                        await fetch('/auth/set-session', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                            },
+                            body: JSON.stringify(userData)
+                        });
+                        
+                        showSuccess(userData, '{{ __("auth.registration_successful") }}!');
+                    } else {
+                        throw new Error(data.message || '{{ __("auth.payment_failed") }}');
+                    }
                 }
             } catch (error) {
-                console.error('Registration completion error:', error);
-                showError('{{ __("auth.connection_error") }}');
+                console.error('Payment processing error:', error);
+                showError(error.message || '{{ __("auth.connection_error") }}');
+                
+                // If renewal, redirect to renew page on retry
+                if (typeof type !== 'undefined' && type === 'renewal') {
+                    const retryBtn = document.querySelector('.btn-retry');
+                    if(retryBtn) retryBtn.href = '/subscription/renew';
+                }
             }
         });
 
-        function showSuccess(userData) {
+    function showSuccess(userData, message) {
             document.getElementById('loadingState').style.display = 'none';
             document.getElementById('successState').style.display = 'block';
+            
+            if (message) {
+                document.querySelector('#successState .status-title').textContent = message;
+            }
 
             // Show subscription info if available
             if (userData.subscription) {
