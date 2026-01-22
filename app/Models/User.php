@@ -102,4 +102,99 @@ class User extends Authenticatable
     {
         return \App\Helpers\RoleHelper::getRoleDisplayName($this->role);
     }
+
+    // ================================
+    // Subscription Methods
+    // ================================
+
+    /**
+     * Get the subscription for this user (own or parent's)
+     */
+    public function subscription()
+    {
+        // If this is a sub-user, get parent's subscription
+        if ($this->is_sub_user && $this->parent_user_id) {
+            return $this->hasOneThrough(
+                \App\Models\UserSubscription::class,
+                User::class,
+                'id', // Local key on users (parent_user_id points to this)
+                'user_id', // Foreign key on user_subscriptions
+                'parent_user_id', // Local key on this user
+                'id' // Local key on parent user
+            );
+        }
+
+        // Main user has their own subscription
+        return $this->hasOne(\App\Models\UserSubscription::class, 'user_id');
+    }
+
+    /**
+     * Get the company owner (for subscription checking)
+     */
+    public function getCompanyOwner(): ?User
+    {
+        if ($this->is_sub_user && $this->parent_user_id) {
+            return User::find($this->parent_user_id);
+        }
+        return $this;
+    }
+
+    /**
+     * Get active subscription (own or parent's)
+     */
+    public function getActiveSubscription(): ?\App\Models\UserSubscription
+    {
+        $owner = $this->getCompanyOwner();
+        
+        if (!$owner) {
+            return null;
+        }
+
+        return \App\Models\UserSubscription::where('user_id', $owner->id)
+            ->where('status', 'active')
+            ->where('expires_at', '>', now())
+            ->first();
+    }
+
+    /**
+     * Check if user has subscription feature access
+     */
+    public function hasSubscriptionFeature(string $featureKey): bool
+    {
+        return \App\Helpers\SubscriptionHelper::hasFeature($this, $featureKey);
+    }
+
+    /**
+     * Check if user can access module.action (role + subscription)
+     */
+    public function canAccess(string $module, string $action): bool
+    {
+        // First check role permission
+        if (!$this->hasPermission($module, $action)) {
+            return false;
+        }
+
+        // Then check subscription feature
+        return $this->hasSubscriptionFeature("{$module}.{$action}");
+    }
+
+    /**
+     * Get subscription info for API response
+     */
+    public function getSubscriptionInfo(): array
+    {
+        $subscription = $this->getActiveSubscription();
+        
+        if (!$subscription) {
+            return [
+                'has_subscription' => false,
+                'plan_name' => null,
+                'status' => 'no_subscription',
+                'expires_at' => null,
+                'days_remaining' => 0
+            ];
+        }
+
+        return $subscription->toInfoArray();
+    }
 }

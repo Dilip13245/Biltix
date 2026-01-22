@@ -27,6 +27,10 @@ return [
         'task_library' => 'Task Library',
         'settings' => 'Settings',
         'static_content' => 'Static Content',
+        // Subscription Management
+        'subscriptions' => 'Subscriptions',
+        'subscription_plans' => 'Subscription Plans',
+        'user_subscriptions' => 'User Subscriptions',
     ],
     
     'actions' => [

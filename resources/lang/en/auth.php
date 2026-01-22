@@ -168,5 +168,23 @@ return [
     'account_delete_failed' => 'Failed to delete account',
     
     'admin' => 'Admin',
-    'supervisor' => 'Supervisor'
+    'supervisor' => 'Supervisor',
+    
+    // Step 3 - Plan Selection
+    'select_plan' => 'Select Plan',
+    'choose_subscription_plan' => 'Choose Your Subscription Plan',
+    'plan_per_year' => '/year',
+    'plan_per_month' => '/month',
+    'select_this_plan' => 'Select Plan',
+    'selected_plan' => 'Selected',
+    'payment_details' => 'Payment Details',
+    'complete_payment' => 'Complete Payment',
+    'popular' => 'Popular',
+    'unlimited' => 'Unlimited',
+    'projects' => 'Projects',
+    'team_members_limit' => 'Team Members',
+    'basic_features' => 'Basic Features',
+    'all_features' => 'All Features',
+    'processing_payment' => 'Processing payment...',
+    'plan_required' => 'Please select a subscription plan',
 ];

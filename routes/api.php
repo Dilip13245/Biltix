@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\FileController;
 use App\Http\Controllers\Api\PhotoController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,12 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language'])->group(
         Route::post('permissions', [RoleController::class, 'getRolePermissions']);
         Route::post('user_permissions', [RoleController::class, 'getUserPermissions']);
     });
+    
+    // Subscription Plans (Public - to show during registration)
+    Route::prefix('subscriptions')->group(function () {
+        Route::get('plans', [SubscriptionController::class, 'getPlans']);
+        Route::post('plans', [SubscriptionController::class, 'getPlans']);
+    });
 });
 
 // Protected routes (token required)
@@ -67,6 +74,14 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('register_device', [AuthController::class, 'registerDevice']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('delete_account', [AuthController::class, 'deleteAccount']);
+    });
+    
+    // Subscription Management (Protected)
+    Route::prefix('subscriptions')->group(function () {
+        Route::post('current', [SubscriptionController::class, 'getCurrentSubscription']);
+        Route::post('features', [SubscriptionController::class, 'getSubscriptionFeatures']);
+        Route::post('check_feature', [SubscriptionController::class, 'checkFeatureAccess']);
+        Route::post('check_expiry', [SubscriptionController::class, 'checkExpiry']);
     });
     
     // Team Management Routes (with permission check)
