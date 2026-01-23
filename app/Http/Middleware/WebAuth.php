@@ -90,6 +90,9 @@ class WebAuth
         // Share user with all views
         view()->share('currentUser', $user);
         $request->attributes->set('user', $user);
+        
+        // Log user in for this request so Auth::user() works (needed for Broadcasting)
+        \Illuminate\Support\Facades\Auth::login($user);
 
         $response = $next($request);
         

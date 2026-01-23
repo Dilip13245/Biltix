@@ -39,6 +39,8 @@
   <link rel="stylesheet" href="{{ asset('website/css/toastr-custom.css') }}">
   
 
+  @stack('styles')
+  @vite(['resources/js/app.js'])
 </head>
 
 <body>

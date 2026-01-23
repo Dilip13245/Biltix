@@ -93,6 +93,8 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('register_device', [AuthController::class, 'registerDevice']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('delete_account', [AuthController::class, 'deleteAccount']);
+        // Custom Broadcast Auth for API
+        Route::post('broadcasting/auth', [AuthController::class, 'broadcastAuth']);
     });
     
     // Subscription Management (Protected)
@@ -125,6 +127,10 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('timeline', [ProjectController::class, 'timeline']);
         Route::post('update_phase_progress', [ProjectController::class, 'updatePhaseProgress']);
         Route::post('extend_milestone', [ProjectController::class, 'updateMilestoneDueDate']);
+        
+        // Project Chat
+        Route::get('{id}/chat', [App\Http\Controllers\Api\ProjectChatController::class, 'index']);
+        Route::post('{id}/chat', [App\Http\Controllers\Api\ProjectChatController::class, 'store']);
     });
 
     Route::prefix('tasks')->group(function () {
