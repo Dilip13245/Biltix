@@ -1715,7 +1715,9 @@
         async function loadSubscriptionWarning() {
             try {
                 // Use current user ID if available, otherwise API will infer from token
-                const userId = {{ $currentUser->id ?? 'null' }};                
+                const userId = {{ $currentUser->id ?? 'null' }};
+                console.log('Loading subscription warning for user:', userId);
+                
                 let response;
                 if (typeof api.checkSubscriptionExpiry === 'function') {
                      response = await api.checkSubscriptionExpiry({
@@ -1726,12 +1728,40 @@
                         user_id: userId
                     });
                 }
-                if (response.code === 200 && response.data && response.data.warning) {
-                    console.log('Showing warning banner...');
-                    const days = response.data.days_remaining;
+                
+                console.log('API Response:', response);
+                
+                if (response.code === 200 && response.data) {
+                    const data = response.data;
                     const container = document.getElementById('subscriptionWarningBanner');
                     
-                    if (container) {
+                    if (!container) {
+                        console.error('Warning banner container not found!');
+                        return;
+                    }
+
+                    // Case 1: Fully expired (is_valid: false)
+                    if (data.is_valid === false) {
+                        console.log('Subscription expired - showing expired banner');
+                        container.innerHTML = `
+                            <div class="alert alert-danger d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4" role="alert" style="border-radius: 12px; border-left: 4px solid #dc3545;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fas fa-exclamation-circle fa-lg"></i>
+                                    <div>
+                                        <strong>{{ __('messages.subscription_expired') ?? 'Your subscription has expired!' }}</strong>
+                                        <p class="mb-0 small">{{ __('messages.subscription_expired_message') ?? 'Please renew to continue using all features.' }}</p>
+                                    </div>
+                                </div>
+                                <a href="{{ route('subscription.renew') }}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-sync-alt me-1"></i>{{ __('messages.renew_now') ?? 'Renew Now' }}
+                                </a>
+                            </div>
+                        `;
+                    }
+                    // Case 2: Expiring soon (warning: true)
+                    else if (data.warning) {
+                        console.log('Showing expiring soon warning banner...');
+                        const days = data.days_remaining;
                         container.innerHTML = `
                             <div class="alert alert-warning d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4" role="alert" style="border-radius: 12px; border-left: 4px solid #ffc107;">
                                 <div class="d-flex align-items-center gap-2">
@@ -1746,10 +1776,10 @@
                             </div>
                         `.replace('PLACEHOLDER_DAYS', days);
                     } else {
-                        console.error('Warning banner container not found!');
+                        console.log('Subscription is active, no warning needed');
                     }
                 } else {
-                    console.log('No warning needed or API error', response.data);
+                    console.log('No data or API error', response);
                 }
             } catch (error) {
                 console.error('Failed to load subscription status:', error);

@@ -1734,4 +1734,9 @@ return [
     'tasks' => 'Tasks',
     'inspections' => 'Inspections',
     'reports' => 'Reports',
+    'sub_user_renewal_notice' => 'Your organization\'s subscription has expired.',
+    'contact_admin_renew' => 'Please contact your account owner to renew the plan.',
+    'owner_email' => 'Owner Email',
+    'subscription_expired' => 'Your subscription has expired!',
+    'subscription_expired_message' => 'Please renew to continue using all features.',
 ];

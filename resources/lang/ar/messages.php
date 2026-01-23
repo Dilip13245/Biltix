@@ -1589,4 +1589,11 @@ return [
     'privacy_policy' => 'سياسة الخصوصية',
     'terms_and_conditions' => 'الشروط والأحكام',
     'copyright_text' => 'بيلتكس. جميع الحقوق محفوظة.',
+    
+    // Subscription Renewal
+    'sub_user_renewal_notice' => 'انتهى اشتراك مؤسستك.',
+    'contact_admin_renew' => 'يرجى التواصل مع مالك الحساب لتجديد الخطة.',
+    'owner_email' => 'البريد الإلكتروني للمالك',
+    'subscription_expired' => 'انتهى اشتراكك!',
+    'subscription_expired_message' => 'يرجى التجديد للاستمرار في استخدام جميع الميزات.',
 ];

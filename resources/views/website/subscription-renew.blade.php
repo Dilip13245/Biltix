@@ -46,25 +46,20 @@
         .logo-container {
             text-align: center;
             margin-bottom: 24px;
-        }
-
-        .logo {
-            width: 56px;
-            height: 56px;
-            background: #FF8C42;
-            border-radius: 50%;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
+            gap: 12px;
+        }
+
+        .logo-container img {
+            width: 48px;
+            height: auto;
         }
 
         .logo-text {
-            color: #4A90E2;
-            font-size: 20px;
+            color: #333;
+            font-size: 24px;
             font-weight: 700;
             letter-spacing: 1px;
         }
@@ -304,59 +299,97 @@
     </div>
 
     <div class="auth-card">
-        <!-- Back Link -->
-        <a href="{{ route('dashboard') }}" class="back-link">
-            <i class="fas fa-arrow-{{ is_rtl() ? 'right' : 'left' }}"></i>
-            {{ __('messages.back_to_dashboard') ?? 'Back to Dashboard' }}
-        </a>
+        @php
+            $isSubUser = isset($currentUser) && $currentUser->is_sub_user;
+            $owner = null;
+            $isExpired = isset($subscriptionInfo) && !$subscriptionInfo['has_subscription'];
+            if ($isSubUser) {
+                $owner = \App\Helpers\SubscriptionHelper::getCompanyOwner($currentUser);
+            }
+        @endphp
 
-        <!-- Logo -->
-        <div class="logo-container">
-            <div class="logo">
-                <img src="{{ asset('website/images/icons/logo.svg') }}" alt="Logo" style="width: 32px; height: 32px;">
+        @if($isSubUser && $isExpired)
+            {{-- Sub-user with expired plan: Show contact owner message --}}
+            <div class="logo-container">
+                <img src="{{ asset('website/images/icons/logo.svg') }}" alt="Logo">
             </div>
-            <div class="logo-text">BILTIX</div>
-        </div>
 
-        <!-- Status Banner (Loaded via API) -->
-        <div id="statusBanner"></div>
-
-        <!-- Subtitle -->
-        <p class="subtitle">{{ __('messages.select_plan_to_renew') }}</p>
-
-        <!-- Plans Grid (Loaded via API) -->
-        <div class="plans-grid" id="plansGrid">
-            <div class="text-center py-4">
-                <div class="spinner-border text-primary"></div>
-                <p class="text-muted mt-2">{{ __('messages.loading') ?? 'Loading' }}...</p>
+            <div class="status-banner expired mb-4">
+                <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+                <div>
+                    <strong>{{ __('messages.sub_user_renewal_notice') }}</strong>
+                    <p class="mb-0">{{ __('messages.contact_admin_renew') }}</p>
+                </div>
             </div>
-        </div>
 
-        <!-- Proceed Button -->
-        <button class="btn-orange" id="proceedBtn" disabled onclick="showPayment()">
-            <i class="fas fa-credit-card me-2"></i>{{ __('messages.proceed_to_payment') ?? 'Proceed to Payment' }}
-        </button>
-
-        <!-- Payment Section -->
-        <div class="payment-section" id="paymentSection">
-            <div class="payment-title">
-                <i class="fas fa-lock text-success"></i>
-                {{ __('auth.secure_payment') ?? 'Secure Payment' }}
+            <div class="card border-0 bg-light p-4 mb-4 text-center">
+                <p class="text-muted text-uppercase fw-bold mb-2" style="font-size: 12px; letter-spacing: 1px;">
+                    {{ __('messages.owner_email') }}
+                </p>
+                <h4 class="text-primary mb-0">{{ $owner ? $owner->email : 'N/A' }}</h4>
             </div>
-            <p class="text-muted mb-3" id="selectedPlanSummary"></p>
-            <div id="moyasar-form"></div>
-            <button class="btn btn-secondary w-100 mt-3" onclick="hidePayment()">
-                {{ __('messages.cancel') ?? 'Cancel' }}
+
+            <div class="text-center">
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-outline-danger px-4">
+                    <i class="fas fa-sign-out-alt me-2"></i>{{ __('auth.logout') }}
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            </div>
+        @else
+            {{-- Owner or active plan: Show normal renewal form --}}
+            <a href="{{ route('dashboard') }}" class="back-link">
+                <i class="fas fa-arrow-{{ is_rtl() ? 'right' : 'left' }}"></i>
+                {{ __('messages.back_to_dashboard') ?? 'Back to Dashboard' }}
+            </a>
+
+            <div class="logo-container">
+                <img src="{{ asset('website/images/icons/logo.svg') }}" alt="Logo">
+                <span class="logo-text">BILTIX</span>
+            </div>
+
+            @if($isExpired)
+                <div class="alert alert-danger mb-4">
+                    <i class="fas fa-exclamation-circle me-2"></i>{{ __('messages.sub_user_renewal_notice') }}
+                </div>
+            @endif
+
+            <div id="statusBanner"></div>
+
+            <p class="subtitle">{{ __('messages.select_plan_to_renew') }}</p>
+
+            <div class="plans-grid" id="plansGrid">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="text-muted mt-2">{{ __('messages.loading') ?? 'Loading' }}...</p>
+                </div>
+            </div>
+
+            <button class="btn-orange" id="proceedBtn" disabled onclick="showPayment()">
+                <i class="fas fa-credit-card me-2"></i>{{ __('messages.proceed_to_payment') ?? 'Proceed to Payment' }}
             </button>
-        </div>
+
+            <div class="payment-section" id="paymentSection">
+                <div class="payment-title">
+                    <i class="fas fa-lock text-success"></i>
+                    {{ __('auth.secure_payment') ?? 'Secure Payment' }}
+                </div>
+                <p class="text-muted mb-3" id="selectedPlanSummary"></p>
+                <div id="moyasar-form"></div>
+                <button class="btn btn-secondary w-100 mt-3" onclick="hidePayment()">
+                    {{ __('messages.cancel') ?? 'Cancel' }}
+                </button>
+            </div>
+        @endif
 
         <!-- Footer -->
-        <div class="text-center mt-4">
+        <!-- <div class="text-center mt-4">
             <small class="text-muted">
                 {{ __('auth.need_help') ?? 'Need help?' }} 
                 <a href="mailto:support@biltix.com" class="text-primary">{{ __('auth.contact_support') ?? 'Contact Support' }}</a>
             </small>
-        </div>
+        </div> -->
     </div>
 
     <!-- Scripts -->
@@ -388,6 +421,14 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', async function() {
+            // Skip plan loading for sub-users (they see Contact Owner view, no plansGrid exists)
+            const plansGrid = document.getElementById('plansGrid');
+            if (!plansGrid) {
+                console.log('Sub-user view detected, skipping plan loading');
+                document.getElementById('loadingOverlay')?.classList.add('hidden');
+                return;
+            }
+            
             await loadSubscriptionStatus();
             await loadPlans();
             document.getElementById('loadingOverlay').classList.add('hidden');
