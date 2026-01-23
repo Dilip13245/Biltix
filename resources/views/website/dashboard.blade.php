@@ -2541,8 +2541,10 @@
                 loadTechnicalEngineers();
             }
 
-            createProjectModal.addEventListener('show.bs.modal', resetProjectModal);
-            createProjectModal.addEventListener('hidden.bs.modal', resetProjectModal);
+            if (createProjectModal) {
+                createProjectModal.addEventListener('show.bs.modal', resetProjectModal);
+                createProjectModal.addEventListener('hidden.bs.modal', resetProjectModal);
+            }
 
             // Create Project Form Handler
             const createProjectForm = document.getElementById('createProjectForm');

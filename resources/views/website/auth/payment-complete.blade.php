@@ -198,7 +198,11 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-    <script src="{{ asset('website/js/api.js') }}"></script>
+    <script src="{{ asset('website/js/api-config.js') }}"></script>
+    <script src="{{ asset('website/js/api-encryption.js') }}"></script>
+    <script src="{{ asset('website/js/api-interceptors.js') }}"></script>
+    <script src="{{ asset('website/js/api-helpers.js') }}"></script>
+    <script src="{{ asset('website/js/api-client.js') }}"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
@@ -316,7 +320,12 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
                             },
-                            body: JSON.stringify(userData)
+                            body: JSON.stringify({
+                                user_id: userData.id,
+                                token: userData.token,
+                                user: userData,
+                                remember_me: true
+                            })
                         });
                         
                         showSuccess(userData, '{{ __("auth.registration_successful") }}!');

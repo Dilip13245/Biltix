@@ -18,21 +18,24 @@ return new class extends Migration
         
         Schema::create('user_subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_user_id')->constrained('users')->onDelete('cascade'); // Main registered user
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // The main registered user
             $table->foreignId('plan_id')->constrained('subscription_plans')->onDelete('cascade');
             $table->timestamp('starts_at');
             $table->timestamp('expires_at');
             $table->enum('status', ['active', 'expired', 'cancelled', 'pending'])->default('active');
-            $table->string('payment_reference')->nullable(); // For payment gateway reference
-            $table->string('payment_method')->nullable(); // stripe, paypal, manual, etc.
+            $table->string('transaction_id')->nullable(); // Renamed from payment_reference
+            $table->string('payment_method')->nullable(); 
+            $table->json('payment_details')->nullable(); // Added to match model
             $table->decimal('amount_paid', 10, 2)->nullable();
             $table->boolean('auto_renew')->default(false);
+            $table->timestamp('cancelled_at')->nullable(); // Added to match model
+            $table->boolean('is_deleted')->default(false); // Added to match model
             $table->text('notes')->nullable();
             $table->boolean('is_trial')->default(false);
             $table->timestamps();
 
             // Index for quick lookups
-            $table->index(['company_user_id', 'status']);
+            $table->index(['user_id', 'status']);
             $table->index(['expires_at']);
         });
     }

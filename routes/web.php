@@ -62,7 +62,9 @@ Route::get('/auth/check-session', [App\Http\Controllers\Website\AuthController::
 Route::middleware('web.auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
     Route::get('/profile', function () {
-        return view('website.profile');
+        return view('website.profile', [
+            'token' => session('token')
+        ]);
     })->name('website.profile');
     
     // Subscription renewal route

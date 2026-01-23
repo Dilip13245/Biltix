@@ -1355,6 +1355,20 @@
             const container = document.getElementById('planCardsContainer');
             const loading = document.getElementById('plansLoading');
             
+            // Handle missing or invalid plans
+            if (!plans || !Array.isArray(plans)) {
+                console.warn('Plans data is invalid:', plans);
+                container.innerHTML = '<div class="error-message">Unable to load plans. Please refresh.</div>';
+                if(loading) loading.style.display = 'none';
+                return;
+            }
+
+            if (plans.length === 0) {
+                 container.innerHTML = '<div class="empty-message">No active subscription plans available.</div>';
+                 if(loading) loading.style.display = 'none';
+                 return;
+            }
+            
             let html = '';
             
             plans.forEach((plan, index) => {
@@ -1375,7 +1389,7 @@
             });
             
             container.innerHTML = html;
-            loading.style.display = 'none';
+            if(loading) loading.style.display = 'none';
             container.style.display = 'grid';
         }
 

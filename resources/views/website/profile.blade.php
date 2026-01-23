@@ -436,8 +436,26 @@
         // Load user profile data
         document.addEventListener('DOMContentLoaded', async function() {
             // Check if we have valid session data (both storages)
-            const userId = UniversalAuth.getUserId();
-            const token = UniversalAuth.getToken();
+            let userId = UniversalAuth.getUserId();
+            let token = UniversalAuth.getToken();
+
+            // Try to recover from PHP session if JS session is missing
+            @if(isset($currentUser) && isset($token))
+                if (!userId || !token) {
+                    console.log('Restoring session from server data');
+                    const userData = {
+                        id: {{ $currentUser->id }},
+                        token: '{{ $token }}',
+                        name: '{{ $currentUser->name }}',
+                        email: '{{ $currentUser->email }}',
+                        role: '{{ $currentUser->role }}'
+                    };
+                    
+                    UniversalAuth.login(userData, false, true);
+                    userId = userData.id;
+                    token = userData.token;
+                }
+            @endif
 
             if (!userId || !token) {
                 console.log('No session data, redirecting to login');
