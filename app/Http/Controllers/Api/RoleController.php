@@ -84,27 +84,27 @@ class RoleController extends Controller
                 return $this->toJsonEnc([], trans('api.roles.role_not_found'), Config::get('constant.NOT_FOUND'));
             }
 
+            // Get user for subscription check
+            $user = $user_id ? \App\Models\User::find($user_id) : null;
+
             $permissions = [];
             $modulePermissions = $role->permissions->groupBy('module');
             
             foreach ($modulePermissions as $module => $modulePerms) {
                 $actions = $modulePerms->pluck('action')->toArray();
                 
-                if (empty($actions)) {
+                // Check subscription module access
+                $hasSubscriptionAccess = true;
+                if ($user) {
+                    $hasSubscriptionAccess = \App\Helpers\SubscriptionHelper::hasModuleAccess($user, $module);
+                }
+                
+                if (empty($actions) || !$hasSubscriptionAccess) {
                     $permissions[$module] = false;
                 } elseif (count($actions) === 1) {
                     $permissions[$module] = $actions[0];
                 } else {
-                    // $hasAll = in_array('create', $actions) && in_array('edit', $actions) && 
-                    //          in_array('delete', $actions) && in_array('view', $actions);
-                    
-                    // if ($hasAll) {
-                    //     $permissions[$module] = 'full';
-                    // } elseif (in_array('view', $actions) && count($actions) === 1) {
-                    //     $permissions[$module] = 'view-only';
-                    // } else {
-                        $permissions[$module] = $actions;
-                    // }
+                    $permissions[$module] = $actions;
                 }
             }
 
