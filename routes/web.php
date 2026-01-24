@@ -109,8 +109,6 @@ Route::middleware('web.auth')->prefix('website')->group(function () {
         Route::get('/help-support', [HomeController::class, 'helpSupport'])->name('website.project.help-support');
         Route::get('/raw-materials', [App\Http\Controllers\Website\RawMaterialController::class, 'index'])->name('website.project.raw-materials');
         Route::get('/reports', [App\Http\Controllers\Website\ReportsController::class, 'index'])->name('website.project.reports');
-        Route::get('/chat', [App\Http\Controllers\Website\ProjectChatController::class, 'index'])->name('website.project.chat');
-        Route::post('/chat', [App\Http\Controllers\Website\ProjectChatController::class, 'store'])->name('website.project.chat.store');
     });
 });
 
@@ -157,18 +155,3 @@ Route::get('/test-lang', function () {
 Route::get('/role-tester', function () {
     return view('website.role-tester');
 })->name('role.tester');
-
-Route::get('/debug-chat', function() {
-    try {
-        $message = App\Models\ProjectMessage::create([
-            'project_id' => 1,
-            'user_id' => 1,
-            'message' => 'Debug message',
-            'type' => 'text'
-        ]);
-        broadcast(new App\Events\NewProjectMessage($message));
-        return 'Success';
-    } catch (\Exception $e) {
-        return $e->getMessage() . ' ' . $e->getTraceAsString();
-    }
-});
