@@ -330,4 +330,13 @@ return [
         'plan_not_available' => 'Selected plan is not available',
         'team_member_cannot_subscribe' => 'Team members cannot subscribe directly',
     ],
+    'chat' => [
+        'message_sent' => 'Message sent successfully',
+        'messages_retrieved' => 'Messages retrieved successfully',
+        'marked_as_read' => 'Message marked as read',
+        'message_deleted' => 'Message deleted successfully',
+        'message_not_found' => 'Message not found',
+        'not_authorized' => 'You are not authorized to access this chat',
+        'unread_count_retrieved' => 'Unread count retrieved successfully',
+    ],
 ];

@@ -1739,4 +1739,10 @@ return [
     'owner_email' => 'Owner Email',
     'subscription_expired' => 'Your subscription has expired!',
     'subscription_expired_message' => 'Please renew to continue using all features.',
+    
+    // Chat
+    'chat' => 'Chat',
+    'project_chat' => 'Project Chat',
+    'team_group_chat' => 'Team Group Chat',
+    'type_message' => 'Type a message...',
 ];

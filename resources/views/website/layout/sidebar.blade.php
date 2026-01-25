@@ -98,6 +98,13 @@
       </li>
       @endcan
       
+      <li class="nav-item">
+        <a href="{{ route('website.project.chat', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.chat') ? 'active' : '' }}">
+          <i class="fas fa-comments"></i>
+          <span>{{ __('messages.chat') }}</span>
+        </a>
+      </li>
+      
       @can('reports', 'view')
       <li class="nav-item">
         <a href="{{ route('website.project.reports', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.reports') ? 'active' : '' }}">

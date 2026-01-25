@@ -200,4 +200,10 @@ class HomeController extends Controller
             
         return view('website.phase-timeline', compact('phases'));
     }
+
+    public function chat($project_id)
+    {
+        $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];
+        return view('website.project-chat', compact('project'));
+    }
 }

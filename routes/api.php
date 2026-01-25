@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\ChatController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -288,5 +289,13 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('save', [\App\Http\Controllers\Api\ReportController::class, 'save']);
         Route::post('history', [\App\Http\Controllers\Api\ReportController::class, 'history']);
         Route::post('share', [\App\Http\Controllers\Api\ReportController::class, 'share']);
+    });
+
+    Route::prefix('chat')->group(function () {
+        Route::post('send_message', [ChatController::class, 'sendMessage']);
+        Route::post('get_messages', [ChatController::class, 'getMessages']);
+        Route::post('mark_as_read', [ChatController::class, 'markAsRead']);
+        Route::post('delete_message', [ChatController::class, 'deleteMessage']);
+        Route::post('unread_count', [ChatController::class, 'getUnreadCount']);
     });
 });

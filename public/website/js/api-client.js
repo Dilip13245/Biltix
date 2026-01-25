@@ -654,6 +654,30 @@ class ApiClient {
         return this.makeRequest('payment/verify', data);
     }
 
+    // Chat methods
+    async sendChatMessage(data) {
+        if (data instanceof FormData) {
+            return this.makeFormDataRequest('chat/send_message', data);
+        }
+        return this.makeRequest('chat/send_message', data);
+    }
+
+    async getChatMessages(data) {
+        return this.makeRequest('chat/get_messages', data);
+    }
+
+    async markChatAsRead(data) {
+        return this.makeRequest('chat/mark_as_read', data);
+    }
+
+    async deleteChatMessage(data) {
+        return this.makeRequest('chat/delete_message', data);
+    }
+
+    async getChatUnreadCount(data) {
+        return this.makeRequest('chat/unread_count', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic

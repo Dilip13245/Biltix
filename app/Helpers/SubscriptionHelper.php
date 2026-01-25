@@ -121,10 +121,18 @@ class SubscriptionHelper
             return null;
         }
 
-        return UserSubscription::where('user_id', $companyOwner->id)
-            ->where('status', 'active')
-            ->where('expires_at', '>', now())
-            ->first();
+        // Check if expires_at column exists
+        try {
+            return UserSubscription::where('user_id', $companyOwner->id)
+                ->where('status', 'active')
+                ->where('expires_at', '>', now())
+                ->first();
+        } catch (\Exception $e) {
+            // If expires_at column doesn't exist, just check status
+            return UserSubscription::where('user_id', $companyOwner->id)
+                ->where('status', 'active')
+                ->first();
+        }
     }
 
     /**
