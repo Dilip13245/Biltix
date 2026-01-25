@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
+
+// Project Chat Channel
+Broadcast::channel('project-chat.{projectId}', function ($user, $projectId) {
+    return true; // Allow all authenticated users for now
+});

@@ -20,22 +20,28 @@ class ChatController extends Controller
             $validator = Validator::make($request->all(), [
                 'user_id' => 'required|integer',
                 'project_id' => 'required|integer',
-                'message' => 'required|string',
-                'attachment' => 'nullable|file|max:10240',
+                'message' => 'nullable|string',
+                'attachment' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,mp4,webm,ogg,mov,mp3,wav,m4a,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,zip,rar|max:51200',
             ]);
 
             if ($validator->fails()) {
                 return $this->validateResponse($validator->errors());
             }
 
-            // Check if user is team member
+            // Check if user is team member or project creator
             $isMember = TeamMember::where('project_id', $request->project_id)
                 ->where('user_id', $request->user_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->exists();
+            
+            $isCreator = \App\Models\Project::where('id', $request->project_id)
+                ->where('created_by', $request->user_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->exists();
 
-            if (!$isMember) {
+            if (!$isMember && !$isCreator) {
                 return $this->toJsonEnc([], trans('api.chat.not_authorized'), Config::get('constant.ERROR'));
             }
 
@@ -49,14 +55,19 @@ class ChatController extends Controller
             $chat = ProjectChat::create([
                 'project_id' => $request->project_id,
                 'user_id' => $request->user_id,
-                'message' => $request->message,
+                'message' => $request->message ?? '',
                 'attachment' => $attachmentPath,
             ]);
 
             $chat->load('user:id,name,profile_image');
 
+            // Add attachment URL
+            if ($chat->attachment) {
+                $chat->attachment = asset('storage/' . $chat->attachment);
+            }
+
             // Broadcast event
-            broadcast(new NewChatMessage($chat))->toOthers();
+            broadcast(new NewChatMessage($chat));
 
             return $this->toJsonEnc($chat, trans('api.chat.message_sent'), Config::get('constant.SUCCESS'));
         } catch (\Exception $e) {
@@ -78,14 +89,20 @@ class ChatController extends Controller
                 return $this->validateResponse($validator->errors());
             }
 
-            // Check if user is team member
+            // Check if user is team member or project creator
             $isMember = TeamMember::where('project_id', $request->project_id)
                 ->where('user_id', $request->user_id)
                 ->where('is_active', 1)
                 ->where('is_deleted', 0)
                 ->exists();
+            
+            $isCreator = \App\Models\Project::where('id', $request->project_id)
+                ->where('created_by', $request->user_id)
+                ->where('is_active', 1)
+                ->where('is_deleted', 0)
+                ->exists();
 
-            if (!$isMember) {
+            if (!$isMember && !$isCreator) {
                 return $this->toJsonEnc([], trans('api.chat.not_authorized'), Config::get('constant.ERROR'));
             }
 
@@ -100,10 +117,17 @@ class ChatController extends Controller
 
             $messages->getCollection()->transform(function ($message) {
                 if ($message->user && $message->user->profile_image) {
-                    $message->user->profile_image = asset('storage/profile/' . $message->user->profile_image);
+                    // Check if profile_image already contains full URL
+                    if (strpos($message->user->profile_image, 'http') === 0) {
+                        // Already a full URL, use as is
+                        $message->user->profile_image = $message->user->profile_image;
+                    } else {
+                        // Relative path, add storage prefix
+                        $message->user->profile_image = asset('storage/profile/' . $message->user->profile_image);
+                    }
                 }
                 if ($message->attachment) {
-                    $message->attachment_url = asset('storage/' . $message->attachment);
+                    $message->attachment = asset('storage/' . $message->attachment);
                 }
                 return $message;
             });

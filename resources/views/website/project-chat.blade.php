@@ -18,12 +18,17 @@
                             <div id="chatMessages" class="chat-messages"></div>
                             <div class="chat-input-wrapper">
                                 <form id="chatForm" class="d-flex gap-2 align-items-center" onsubmit="return false;">
+                                    <input type="file" id="fileInput" class="d-none" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fileInput').click()">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
                                     <input type="text" id="messageInput" class="form-control" 
-                                           placeholder="{{ __('messages.type_message') }}" maxlength="1000" required>
+                                           placeholder="{{ __('messages.type_message') }}" maxlength="1000">
                                     <button type="button" class="btn orange_btn" id="sendBtn" onclick="handleSendMessage(event)">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 </form>
+                                <div id="filePreview" class="file-preview mt-2" style="display:none;"></div>
                             </div>
                         </div>
                     </div>
@@ -164,6 +169,92 @@
     margin-bottom: 15px;
     opacity: 0.5;
 }
+
+.file-preview {
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px dashed #dee2e6;
+}
+
+.file-preview img {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.message-attachment {
+    margin-top: 8px;
+}
+
+.message-attachment img {
+    max-width: 250px;
+    max-height: 250px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block;
+}
+
+.message-attachment video {
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 8px;
+    display: block;
+    background: #000;
+}
+
+.message-attachment audio {
+    width: 100%;
+    max-width: 280px;
+    height: 54px;
+    border-radius: 25px;
+}
+
+.audio-wrapper {
+    background: #f0f0f0;
+    padding: 8px 12px;
+    border-radius: 25px;
+    display: inline-block;
+    min-width: 280px;
+}
+
+.chat-message.own .audio-wrapper {
+    background: rgba(255,255,255,0.2);
+}
+
+.message-attachment a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+    font-size: 14px;
+}
+
+.message-attachment a i {
+    font-size: 20px;
+}
+
+.message-attachment a:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+.chat-message.own .message-attachment a {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.chat-message.own .message-attachment a:hover {
+    background: rgba(255,255,255,0.3);
+}
 </style>
 
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
@@ -172,6 +263,7 @@ let currentProjectId = null;
 let currentUserId = null;
 let pusher = null;
 let channel = null;
+let selectedFile = null;
 
 function getProjectIdFromUrl() {
     const pathParts = window.location.pathname.split('/');
@@ -185,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('API methods:', api ? Object.keys(api).filter(k => k.includes('Chat')) : 'API not loaded');
     
     currentProjectId = getProjectIdFromUrl();
-    currentUserId = {{ auth()->check() ? auth()->user()->id : 'null' }};
+    currentUserId = {{ $user ? $user->id : 'null' }};
 
     console.log('Project ID:', currentProjectId);
     console.log('User ID:', currentUserId);
@@ -202,10 +294,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeChat() {
-    // Remove form submit listener since we're using onclick now
     const messageInput = document.getElementById('messageInput');
+    const fileInput = document.getElementById('fileInput');
     
-    // Allow Enter key to send message
     if (messageInput) {
         messageInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -214,6 +305,62 @@ function initializeChat() {
             }
         });
     }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', handleFileSelect);
+    }
+}
+
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxSize) {
+        toastr.error('File size must be less than 50MB');
+        e.target.value = '';
+        return;
+    }
+
+    selectedFile = file;
+    showFilePreview(file);
+}
+
+function showFilePreview(file) {
+    const preview = document.getElementById('filePreview');
+    const isImage = file.type.startsWith('image/');
+
+    if (isImage) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `
+                <div style="position: relative; display: inline-block;">
+                    <img src="${e.target.result}" alt="Preview" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="clearFileSelection()" style="position: absolute; top: -8px; right: -8px; border-radius: 50%; width: 24px; height: 24px; padding: 0;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <span style="margin-left: 10px;">${file.name}</span>
+            `;
+            preview.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.innerHTML = `
+            <i class="fas fa-file fa-2x text-primary"></i>
+            <span style="flex: 1;">${file.name}</span>
+            <button type="button" class="btn btn-sm btn-danger" onclick="clearFileSelection()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        preview.style.display = 'flex';
+    }
+}
+
+function clearFileSelection() {
+    selectedFile = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('filePreview').style.display = 'none';
 }
 
 async function loadMessages() {
@@ -265,6 +412,66 @@ function createMessageHTML(message) {
         minute: '2-digit' 
     });
 
+    let attachmentHTML = '';
+    if (message.attachment) {
+        const fileName = message.attachment.split('/').pop();
+        const fileExt = fileName.split('.').pop().toLowerCase();
+        
+        // Image
+        if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExt)) {
+            attachmentHTML = `
+                <div class="message-attachment">
+                    <img src="${message.attachment}" alt="Image" onclick="window.open('${message.attachment}', '_blank')" loading="lazy">
+                </div>
+            `;
+        }
+        // Video
+        else if (['mp4', 'webm', 'ogg', 'mov'].includes(fileExt)) {
+            attachmentHTML = `
+                <div class="message-attachment">
+                    <video controls preload="metadata" style="max-width: 300px; max-height: 300px; border-radius: 8px;">
+                        <source src="${message.attachment}" type="video/${fileExt === 'mov' ? 'mp4' : fileExt}">
+                        Your browser does not support video playback.
+                    </video>
+                </div>
+            `;
+        }
+        // Audio
+        else if (['mp3', 'wav', 'ogg', 'm4a', 'aac'].includes(fileExt)) {
+            const audioType = fileExt === 'm4a' || fileExt === 'aac' ? 'audio/mp4' : `audio/${fileExt}`;
+            attachmentHTML = `
+                <div class="message-attachment">
+                    <div class="audio-wrapper">
+                        <audio controls preload="metadata">
+                            <source src="${message.attachment}" type="${audioType}">
+                            Your browser does not support audio playback.
+                        </audio>
+                    </div>
+                </div>
+            `;
+        }
+        // Documents
+        else {
+            const iconMap = {
+                'pdf': 'pdf',
+                'doc': 'word', 'docx': 'word',
+                'xls': 'excel', 'xlsx': 'excel',
+                'ppt': 'powerpoint', 'pptx': 'powerpoint',
+                'zip': 'archive', 'rar': 'archive',
+                'txt': 'alt'
+            };
+            const icon = iconMap[fileExt] || 'alt';
+            attachmentHTML = `
+                <div class="message-attachment">
+                    <a href="${message.attachment}" target="_blank" download>
+                        <i class="fas fa-file-${icon}"></i>
+                        <span>${decodeURIComponent(fileName)}</span>
+                    </a>
+                </div>
+            `;
+        }
+    }
+
     return `
         <div class="chat-message ${isOwn ? 'own' : ''}">
             <div class="message-avatar">
@@ -275,11 +482,25 @@ function createMessageHTML(message) {
             </div>
             <div class="message-content">
                 ${!isOwn ? `<div class="message-header">${userName}</div>` : ''}
-                <div class="message-bubble">${escapeHtml(message.message)}</div>
+                <div class="message-bubble">
+                    ${message.message ? `<div>${escapeHtml(message.message)}</div>` : ''}
+                    ${attachmentHTML}
+                </div>
                 <div class="message-time">${messageTime}</div>
             </div>
         </div>
     `;
+}
+
+function getFileIcon(ext) {
+    const icons = {
+        'PDF': 'pdf',
+        'DOC': 'word',
+        'DOCX': 'word',
+        'XLS': 'excel',
+        'XLSX': 'excel'
+    };
+    return icons[ext] || 'alt';
 }
 
 async function handleSendMessage(e) {
@@ -290,9 +511,11 @@ async function handleSendMessage(e) {
     const sendBtn = document.getElementById('sendBtn');
     const message = messageInput.value.trim();
 
-    if (!message) return;
+    if (!message && !selectedFile) {
+        toastr.error('Please enter a message or select a file');
+        return;
+    }
 
-    // Check if API is available
     if (typeof api === 'undefined' || !api.sendChatMessage) {
         console.error('API not available');
         toastr.error('Chat API not loaded. Please refresh the page.');
@@ -306,7 +529,8 @@ async function handleSendMessage(e) {
         const formData = new FormData();
         formData.append('user_id', currentUserId);
         formData.append('project_id', currentProjectId);
-        formData.append('message', message);
+        if (message) formData.append('message', message);
+        if (selectedFile) formData.append('attachment', selectedFile);
 
         const response = await api.sendChatMessage(formData);
         
@@ -314,8 +538,7 @@ async function handleSendMessage(e) {
 
         if (response.code === 200) {
             messageInput.value = '';
-            appendMessage(response.data);
-            scrollToBottom();
+            clearFileSelection();
             toastr.success('Message sent');
         } else {
             toastr.error(response.message || 'Failed to send message');
@@ -341,31 +564,53 @@ function appendMessage(message) {
 }
 
 function setupWebSocket() {
-    // Using Pusher for WebSocket connection
-    pusher = new Pusher('{{ env("PUSHER_APP_KEY", "biltix-key") }}', {
-        cluster: '{{ env("PUSHER_APP_CLUSTER", "mt1") }}',
-        wsHost: window.location.hostname,
-        wsPort: 6001,
-        forceTLS: false,
+    // Using Pusher for WebSocket connection with Reverb
+    const reverbConfig = {
+        key: '{{ config("reverb.apps.apps.0.key") }}',
+        host: '{{ config("reverb.apps.apps.0.options.host") }}',
+        port: {{ config('reverb.apps.apps.0.options.port') }},
+        scheme: '{{ config("reverb.apps.apps.0.options.scheme") }}'
+    };
+    
+    console.log('Reverb Config:', reverbConfig);
+    
+    pusher = new Pusher(reverbConfig.key, {
+        wsHost: reverbConfig.host,
+        wsPort: 443,
+        wssPort: 443,
+        forceTLS: true,
+        enabledTransports: ['ws', 'wss'],
         disableStats: true,
-        enabledTransports: ['ws', 'wss']
+        cluster: 'mt1' // Required by Pusher
     });
 
+    console.log('Subscribing to channel: project-chat.' + currentProjectId);
     channel = pusher.subscribe('project-chat.' + currentProjectId);
     
     channel.bind('new-message', function(data) {
-        if (data.user_id != currentUserId) {
-            appendMessage(data);
-            scrollToBottom();
-        }
+        console.log('New message received:', data);
+        appendMessage(data);
+        scrollToBottom();
     });
 
     pusher.connection.bind('connected', function() {
-        console.log('WebSocket connected');
+        console.log('WebSocket connected successfully');
+    });
+
+    pusher.connection.bind('disconnected', function() {
+        console.log('WebSocket disconnected');
     });
 
     pusher.connection.bind('error', function(err) {
         console.error('WebSocket error:', err);
+    });
+
+    channel.bind('pusher:subscription_succeeded', function() {
+        console.log('Successfully subscribed to project-chat.' + currentProjectId);
+    });
+
+    channel.bind('pusher:subscription_error', function(err) {
+        console.error('Subscription error:', err);
     });
 }
 

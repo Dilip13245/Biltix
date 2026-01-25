@@ -204,6 +204,7 @@ class HomeController extends Controller
     public function chat($project_id)
     {
         $project = (object) ['id' => $project_id, 'name' => 'Sample Project'];
-        return view('website.project-chat', compact('project'));
+        $user = request()->attributes->get('user');
+        return view('website.project-chat', compact('project', 'user'));
     }
 }
