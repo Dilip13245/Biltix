@@ -17,18 +17,18 @@
                         <div id="chatContainer" class="chat-container">
                             <div id="chatMessages" class="chat-messages"></div>
                             <div class="chat-input-wrapper">
-                                <form id="chatForm" class="d-flex gap-2 align-items-center" onsubmit="return false;">
-                                    <input type="file" id="fileInput" class="d-none" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('fileInput').click()">
+                                <input type="file" id="fileInput" class="d-none" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar">
+                                <div id="filePreview" class="file-preview" style="display:none;"></div>
+                                <form id="chatForm" class="chat-input-form" onsubmit="return false;">
+                                    <input type="text" id="messageInput" class="form-control chat-text-input" 
+                                           placeholder="{{ __('messages.type_message') }}" maxlength="1000">
+                                    <button type="button" class="btn btn-icon" onclick="document.getElementById('fileInput').click()" title="Attach file">
                                         <i class="fas fa-paperclip"></i>
                                     </button>
-                                    <input type="text" id="messageInput" class="form-control" 
-                                           placeholder="{{ __('messages.type_message') }}" maxlength="1000">
-                                    <button type="button" class="btn orange_btn" id="sendBtn" onclick="handleSendMessage(event)">
+                                    <button type="button" class="btn orange_btn btn-send" id="sendBtn" onclick="handleSendMessage(event)" title="Send message">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 </form>
-                                <div id="filePreview" class="file-preview mt-2" style="display:none;"></div>
                             </div>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
 <style>
 .chat-container {
     height: calc(100vh - 300px);
-    min-height: 500px;
+    min-height: 400px;
     display: flex;
     flex-direction: column;
 }
@@ -49,7 +49,7 @@
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: 15px;
     background: #f8f9fa;
 }
 
@@ -57,6 +57,7 @@
     display: flex;
     margin-bottom: 15px;
     animation: fadeIn 0.3s;
+    max-width: 100%;
 }
 
 @keyframes fadeIn {
@@ -69,10 +70,10 @@
 }
 
 .message-avatar {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    margin: 0 10px;
+    margin: 0 8px;
     flex-shrink: 0;
 }
 
@@ -93,22 +94,26 @@
     align-items: center;
     justify-content: center;
     font-weight: 600;
+    font-size: 14px;
 }
 
 .message-content {
-    max-width: 60%;
+    max-width: calc(100% - 60px);
+    min-width: 120px;
 }
 
 .message-header {
-    font-size: 12px;
+    font-size: 11px;
     color: #6c757d;
     margin-bottom: 4px;
+    font-weight: 500;
 }
 
 .message-bubble {
-    padding: 10px 15px;
-    border-radius: 15px;
+    padding: 10px 14px;
+    border-radius: 12px;
     word-wrap: break-word;
+    word-break: break-word;
 }
 
 .chat-message:not(.own) .message-bubble {
@@ -122,7 +127,7 @@
 }
 
 .message-time {
-    font-size: 11px;
+    font-size: 10px;
     color: #999;
     margin-top: 4px;
 }
@@ -132,35 +137,70 @@
 }
 
 .chat-input-wrapper {
-    padding: 15px;
+    padding: 12px 15px;
     background: white;
     border-top: 1px solid #e0e0e0;
 }
 
-#messageInput {
-    border-radius: 25px;
-    padding: 10px 20px;
+.chat-input-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-#sendBtn {
+.chat-text-input {
+    flex: 1;
+    border-radius: 24px;
+    padding: 10px 16px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    min-width: 0;
+}
+
+.chat-text-input:focus {
+    border-color: #4477C4;
+    box-shadow: 0 0 0 0.2rem rgba(68, 119, 196, 0.15);
+}
+
+.btn-icon {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    width: 45px;
-    height: 45px;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid #ddd;
+    background: white;
+    color: #666;
+    flex-shrink: 0;
+}
+
+.btn-icon:hover {
+    background: #f8f9fa;
+    color: #4477C4;
+}
+
+.btn-send {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .loading-messages {
     text-align: center;
-    padding: 40px;
+    padding: 40px 15px;
     color: #6c757d;
 }
 
 .no-messages {
     text-align: center;
-    padding: 60px 20px;
+    padding: 60px 15px;
     color: #6c757d;
 }
 
@@ -178,11 +218,12 @@
     align-items: center;
     gap: 10px;
     border: 2px dashed #dee2e6;
+    margin-bottom: 10px;
 }
 
 .file-preview img {
-    max-width: 150px;
-    max-height: 150px;
+    max-width: 100px;
+    max-height: 100px;
     border-radius: 8px;
     object-fit: cover;
 }
@@ -192,7 +233,7 @@
 }
 
 .message-attachment img {
-    max-width: 250px;
+    max-width: 100%;
     max-height: 250px;
     border-radius: 8px;
     cursor: pointer;
@@ -200,8 +241,8 @@
 }
 
 .message-attachment video {
-    max-width: 300px;
-    max-height: 300px;
+    max-width: 100%;
+    max-height: 250px;
     border-radius: 8px;
     display: block;
     background: #000;
@@ -210,16 +251,16 @@
 .message-attachment audio {
     width: 100%;
     max-width: 280px;
-    height: 54px;
-    border-radius: 25px;
+    height: 40px;
+    border-radius: 20px;
 }
 
 .audio-wrapper {
     background: #f0f0f0;
     padding: 8px 12px;
-    border-radius: 25px;
+    border-radius: 20px;
     display: inline-block;
-    min-width: 280px;
+    max-width: 100%;
 }
 
 .chat-message.own .audio-wrapper {
@@ -230,17 +271,26 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 15px;
+    padding: 8px 12px;
     background: rgba(0,0,0,0.05);
     border-radius: 8px;
     text-decoration: none;
     color: inherit;
     transition: background 0.2s;
-    font-size: 14px;
+    font-size: 13px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.message-attachment a span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .message-attachment a i {
-    font-size: 20px;
+    font-size: 18px;
+    flex-shrink: 0;
 }
 
 .message-attachment a:hover {
@@ -254,6 +304,91 @@
 
 .chat-message.own .message-attachment a:hover {
     background: rgba(255,255,255,0.3);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .chat-container {
+        height: calc(100vh - 200px);
+        min-height: 300px;
+    }
+    
+    .chat-messages {
+        padding: 10px;
+    }
+    
+    .message-content {
+        max-width: calc(100% - 50px);
+    }
+    
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        margin: 0 6px;
+    }
+    
+    .message-bubble {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+    
+    .chat-input-wrapper {
+        padding: 10px;
+    }
+    
+    .chat-text-input {
+        font-size: 14px;
+        padding: 8px 14px;
+    }
+    
+    .btn-icon, .btn-send {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .message-attachment img,
+    .message-attachment video {
+        max-height: 200px;
+    }
+    
+    .no-messages {
+        padding: 40px 10px;
+    }
+    
+    .no-messages i {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chat-container {
+        height: calc(100vh - 180px);
+    }
+    
+    .message-content {
+        max-width: calc(100% - 45px);
+    }
+    
+    .message-header {
+        font-size: 10px;
+    }
+    
+    .message-time {
+        font-size: 9px;
+    }
+    
+    .chat-input-form {
+        gap: 6px;
+    }
+    
+    .btn-icon, .btn-send {
+        width: 34px;
+        height: 34px;
+    }
+    
+    .btn-icon i, .btn-send i {
+        font-size: 14px;
+    }
 }
 </style>
 
@@ -296,6 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeChat() {
     const messageInput = document.getElementById('messageInput');
     const fileInput = document.getElementById('fileInput');
+    const messagesContainer = document.getElementById('chatMessages');
     
     if (messageInput) {
         messageInput.addEventListener('keypress', function(e) {
@@ -308,6 +444,15 @@ function initializeChat() {
 
     if (fileInput) {
         fileInput.addEventListener('change', handleFileSelect);
+    }
+    
+    // Add scroll event listener for infinite scroll
+    if (messagesContainer) {
+        messagesContainer.addEventListener('scroll', function() {
+            if (messagesContainer.scrollTop === 0 && hasMoreMessages && !isLoadingMore) {
+                loadMoreMessages();
+            }
+        });
     }
 }
 
@@ -363,6 +508,10 @@ function clearFileSelection() {
     document.getElementById('filePreview').style.display = 'none';
 }
 
+let currentPage = 1;
+let isLoadingMore = false;
+let hasMoreMessages = true;
+
 async function loadMessages() {
     const messagesContainer = document.getElementById('chatMessages');
     messagesContainer.innerHTML = '<div class="loading-messages"><i class="fas fa-spinner fa-spin"></i><p>Loading messages...</p></div>';
@@ -371,23 +520,66 @@ async function loadMessages() {
         const response = await api.getChatMessages({
             user_id: currentUserId,
             project_id: currentProjectId,
-            limit: 50,
+            limit: 100,
             page: 1
         });
 
         console.log('Chat messages response:', response);
 
         if (response.code === 200 && response.data) {
-            // Handle both paginated and non-paginated responses
-            const messages = response.data.data ? response.data.data.reverse() : (Array.isArray(response.data) ? response.data.reverse() : []);
+            const messages = response.data.data ? response.data.data.reverse() : [];
             renderMessages(messages);
             scrollToBottom();
+            
+            // Check if more messages available
+            hasMoreMessages = response.data.current_page < response.data.last_page;
+            currentPage = 1;
         } else {
             messagesContainer.innerHTML = '<div class="no-messages"><i class="fas fa-comments"></i><p>No messages yet. Start the conversation!</p></div>';
         }
     } catch (error) {
         console.error('Error loading messages:', error);
         messagesContainer.innerHTML = '<div class="no-messages"><i class="fas fa-exclamation-circle"></i><p>Failed to load messages</p></div>';
+    }
+}
+
+async function loadMoreMessages() {
+    if (isLoadingMore || !hasMoreMessages) return;
+    
+    isLoadingMore = true;
+    const messagesContainer = document.getElementById('chatMessages');
+    const scrollHeight = messagesContainer.scrollHeight;
+    const scrollTop = messagesContainer.scrollTop;
+    
+    try {
+        const response = await api.getChatMessages({
+            user_id: currentUserId,
+            project_id: currentProjectId,
+            limit: 100,
+            page: currentPage + 1
+        });
+
+        if (response.code === 200 && response.data && response.data.data.length > 0) {
+            const newMessages = response.data.data.reverse();
+            const existingMessages = Array.from(messagesContainer.querySelectorAll('.chat-message'));
+            
+            // Prepend new messages
+            newMessages.forEach(msg => {
+                messagesContainer.insertAdjacentHTML('afterbegin', createMessageHTML(msg));
+            });
+            
+            // Restore scroll position
+            messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeight + scrollTop;
+            
+            hasMoreMessages = response.data.current_page < response.data.last_page;
+            currentPage++;
+        } else {
+            hasMoreMessages = false;
+        }
+    } catch (error) {
+        console.error('Error loading more messages:', error);
+    } finally {
+        isLoadingMore = false;
     }
 }
 
@@ -560,7 +752,13 @@ function appendMessage(message) {
         messagesContainer.innerHTML = '';
     }
 
+    // ✅ FIX: Ensure attachment has full URL
+    if (message.attachment && !message.attachment.startsWith('http')) {
+        message.attachment = '{{ asset("storage") }}/' + message.attachment;
+    }
+
     messagesContainer.insertAdjacentHTML('beforeend', createMessageHTML(message));
+    scrollToBottom();
 }
 
 function setupWebSocket() {

@@ -37,7 +37,7 @@ class NewChatMessage implements ShouldBroadcast
             'project_id' => $this->chat->project_id,
             'user_id' => $this->chat->user_id,
             'message' => $this->chat->message,
-            'attachment' => $this->chat->attachment,
+            'attachment' => $this->chat->attachment ? asset('storage/' . $this->chat->attachment) : null,
             'created_at' => $this->chat->created_at->toISOString(),
             'user' => [
                 'id' => $this->chat->user->id,

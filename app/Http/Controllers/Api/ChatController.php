@@ -106,7 +106,7 @@ class ChatController extends Controller
                 return $this->toJsonEnc([], trans('api.chat.not_authorized'), Config::get('constant.ERROR'));
             }
 
-            $limit = $request->input('limit', 50);
+            $limit = $request->input('limit', 100);
             $page = $request->input('page', 1);
 
             $messages = ProjectChat::where('project_id', $request->project_id)
