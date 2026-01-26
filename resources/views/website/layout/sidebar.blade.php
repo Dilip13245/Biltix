@@ -115,6 +115,13 @@
         </a>
       </li>
       @endcan
+
+      <li class="nav-item">
+        <a href="{{ route('website.project.gantt.index', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.gantt.*') ? 'active' : '' }}">
+          <i class="fas fa-stream"></i>
+          <span>Gantt Chart</span>
+        </a>
+      </li>
       
       @can('daily_logs', 'view')
       <li class="nav-item">

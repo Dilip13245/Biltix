@@ -678,6 +678,23 @@ class ApiClient {
         return this.makeRequest('chat/unread_count', data);
     }
 
+    // Gantt Chart methods
+    async listGanttActivities(data) {
+        return this.makeRequest('gantt/list', data);
+    }
+
+    async createGanttActivity(data) {
+        return this.makeRequest('gantt/create', data);
+    }
+
+    async updateGanttActivity(data) {
+        return this.makeRequest('gantt/update', data);
+    }
+
+    async deleteGanttActivity(data) {
+        return this.makeRequest('gantt/delete', data);
+    }
+
     // Utility methods
     showSuccess(message) {
         // Add your notification logic

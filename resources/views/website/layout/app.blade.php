@@ -152,7 +152,7 @@
                       const statusElement = document.getElementById('headerStatus');
                       const statusBadge = document.getElementById('headerStatusBadge');
                       
-                      if (project.status) {
+                      if (project.status && statusElement && statusBadge) {
                           statusElement.textContent = getStatusText(project.status);
                           statusBadge.className = getStatusClass(project.status);
                       }

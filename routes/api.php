@@ -298,4 +298,11 @@ Route::prefix('v1')->middleware(['decrypt', 'verifyApiKey', 'language', 'tokench
         Route::post('delete_message', [ChatController::class, 'deleteMessage']);
         Route::post('unread_count', [ChatController::class, 'getUnreadCount']);
     });
+
+    Route::prefix('gantt')->group(function () {
+        Route::post('list', [\App\Http\Controllers\Api\GanttController::class, 'list']);
+        Route::post('create', [\App\Http\Controllers\Api\GanttController::class, 'create']);
+        Route::post('update', [\App\Http\Controllers\Api\GanttController::class, 'update']);
+        Route::post('delete', [\App\Http\Controllers\Api\GanttController::class, 'delete']);
+    });
 });

@@ -109,6 +109,13 @@ Route::middleware('web.auth')->prefix('website')->group(function () {
         Route::get('/help-support', [HomeController::class, 'helpSupport'])->name('website.project.help-support');
         Route::get('/raw-materials', [App\Http\Controllers\Website\RawMaterialController::class, 'index'])->name('website.project.raw-materials');
         Route::get('/reports', [App\Http\Controllers\Website\ReportsController::class, 'index'])->name('website.project.reports');
+        
+        // Gantt Chart Routes
+        Route::get('/gantt-chart', [App\Http\Controllers\Website\GanttChartController::class, 'index'])->name('website.project.gantt.index');
+        Route::post('/gantt-chart', [App\Http\Controllers\Website\GanttChartController::class, 'store'])->name('website.project.gantt.store');
+        Route::put('/gantt-chart/{id}', [App\Http\Controllers\Website\GanttChartController::class, 'update'])->name('website.project.gantt.update');
+        Route::delete('/gantt-chart/{id}', [App\Http\Controllers\Website\GanttChartController::class, 'destroy'])->name('website.project.gantt.destroy');
+
         Route::get('/chat', [HomeController::class, 'chat'])->name('website.project.chat');
     });
 });
