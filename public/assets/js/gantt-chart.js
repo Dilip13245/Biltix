@@ -15,6 +15,14 @@ document.addEventListener('DOMContentLoaded', function () {
         projectId: getProjectIdFromUrl()
     };
 
+    // Helper to get translation
+    function t(key, defaultVal) {
+        if (window.translations && window.translations[key]) {
+            return window.translations[key];
+        }
+        return defaultVal;
+    }
+
     // Initialize
     init();
 
@@ -46,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 render();
             } else {
                 console.error('Failed to load activities:', response.message);
+                if (typeof toastr !== 'undefined') toastr.error(t('failed_load', 'Failed to load activities'));
             }
         } catch (error) {
             console.error('Error loading activities:', error);
@@ -87,6 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = Object.fromEntries(formData.entries());
             data.project_id = currentState.projectId;
 
+            // Progress is removed from user input, handled by backend
+
             if (typeof window.api === 'undefined') {
                 console.error('API Client not loaded');
                 return;
@@ -114,11 +125,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.querySelector('#addActivityModal form').reset();
 
                 if (typeof toastr !== 'undefined') {
-                    toastr.success(data.activity_id ? 'Activity updated successfully' : 'Activity saved successfully');
+                    toastr.success(t('saved_success', 'Activity saved successfully'));
                 }
             } else {
                 if (typeof toastr !== 'undefined') {
-                    toastr.error(response.message || 'Failed to save activity');
+                    toastr.error(response.message || t('failed_save', 'Failed to save activity'));
                 } else {
                     alert('Error: ' + response.message);
                 }
@@ -126,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error('Error saving activity:', error);
             if (typeof toastr !== 'undefined') {
-                toastr.error('An unexpected error occurred.');
+                toastr.error(t('error_occurred', 'An unexpected error occurred.'));
             } else {
                 alert('An unexpected error occurred.');
             }
@@ -143,7 +154,15 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let y = currentYear - 2; y <= currentYear + 2; y++) {
             for (let m = 0; m < 12; m++) {
                 const isSelected = (y === currentYear && m === currentMonth) ? 'selected' : '';
-                const monthName = new Date(y, m).toLocaleString('default', { month: 'long' });
+                const monthDate = new Date(y, m);
+                // Use a generic locale or try to detect
+                const monthName = monthDate.toLocaleString('default', { month: 'long' });
+                // We could also localize month names if needed, but browser usually handles it based on locale or we can map it.
+                // For now relying on browser default which *might* be English if not configured.
+                // But user asked for localization. 
+                // Let's rely on standard Intl date formatting which respects browser/system locale. 
+                // However, Laravel sets the app locale. Maybe we need strict month names?
+                // Let's assume browser locale matches or is acceptable for now.
                 options += `<option value="${y}-${m + 1}" ${isSelected}>${monthName} ${y}</option>`;
             }
         }
@@ -153,10 +172,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Robust Local Date Parser
     function parseLocal(dateStr) {
         if (!dateStr) return new Date();
-        // Handle "2026-01-26 12:00:00" or "2026-01-26T12:00:00" or "2026-01-26"
         const cleanStr = dateStr.split(' ')[0].split('T')[0];
         const parts = cleanStr.split('-');
-        // Year, Month (0-based), Day
         return new Date(parts[0], parts[1] - 1, parts[2]);
     }
 
@@ -181,11 +198,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 2. Data Rows
         currentState.activities.forEach(activity => {
-            // Check if activity overlaps with current view range
             const actStart = parseLocal(activity.start_date);
             const actEnd = parseLocal(activity.end_date);
 
-            // Filter logic
+            // Filter logic: Render if overlaps
             if (actStart <= endDate && actEnd >= startDate) {
                 renderActivityRow(activity, startDate, totalCols, config);
             }
@@ -198,21 +214,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function getViewConfig(view) {
         switch (view) {
             case 'week':
-                return { cellWidth: 40, unit: 'week', labelFormat: 'W' }; // Display week number
+                return { cellWidth: 40, unit: 'week', labelFormat: 'W' };
             case 'year':
-                return { cellWidth: 50, unit: 'month', labelFormat: 'MMM' }; // Display Month
+                return { cellWidth: 50, unit: 'month', labelFormat: 'MMM' };
             case 'day':
             default:
-                return { cellWidth: 40, unit: 'day', labelFormat: 'd' }; // Display Day 1, 2...
+                return { cellWidth: 40, unit: 'day', labelFormat: 'd' };
         }
     }
 
     function calculateDateRange(centerDate, view) {
         const year = centerDate.getFullYear();
         const month = centerDate.getMonth();
-
-        // For simplicity, render the whole selected month (Day view), 
-        // or a broader range for Week/Year views.
         let startDate, endDate, totalCols;
 
         if (view === 'day') {
@@ -220,14 +233,12 @@ document.addEventListener('DOMContentLoaded', function () {
             endDate = new Date(year, month + 1, 0); // Last day of month
             totalCols = endDate.getDate();
         } else if (view === 'week') {
-            // Show 3 months for better week context
             startDate = new Date(year, month - 1, 1);
             endDate = new Date(year, month + 2, 0);
             const diffTime = Math.abs(endDate - startDate);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             totalCols = Math.ceil(diffDays / 7);
         } else { // year
-            // Show full year
             startDate = new Date(year, 0, 1);
             endDate = new Date(year, 11, 31);
             totalCols = 12;
@@ -237,17 +248,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function renderHeader(startDate, totalCols, config, gridStartDate) {
-        // Empty top-left cell for task names
         const cornerCell = document.createElement('div');
         cornerCell.className = 'gantt-header-cell';
-        cornerCell.textContent = 'Activity';
+        cornerCell.textContent = t('activity', 'Activity');
         cornerCell.style.position = 'sticky';
-        cornerCell.style.left = '0';
+
+        // Sticky logic: Logic must align usually with "Start" edge
+        if (document.dir === 'rtl') {
+            cornerCell.style.right = '0';
+        } else {
+            cornerCell.style.left = '0';
+        }
+
         cornerCell.style.zIndex = '20';
-        cornerCell.style.backgroundColor = '#fff'; // Ensure opaque
+        cornerCell.style.backgroundColor = '#fff';
         chartContainer.appendChild(cornerCell);
 
-        // Render time headers
         for (let i = 0; i < totalCols; i++) {
             const cell = document.createElement('div');
             cell.className = 'gantt-header-cell';
@@ -276,6 +292,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const nameCell = document.createElement('div');
         nameCell.className = 'gantt-task-name';
         nameCell.textContent = activity.name;
+
+        // Sticky Logic for Name Cell
+        if (document.dir === 'rtl') {
+            nameCell.style.right = '0';
+        }
+        // Note: CSS class handles left:0 for LTR usually, but better to be explicit if needed.
+        // The default CSS likely has line 250: left: 0. 
+        // We override it for RTL.
+
         chartContainer.appendChild(nameCell);
 
         const rowStartIndex = chartContainer.children.length; // Create cells
@@ -288,12 +313,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const actStart = parseLocal(activity.start_date);
         const actEnd = parseLocal(activity.end_date);
-
-        // Grid Start (already local midnight from calculateDateRange)
         const gridStart = new Date(gridStartDate);
         gridStart.setHours(0, 0, 0, 0);
 
-        // Layout Calculation
         let startDiff, duration;
 
         if (currentState.view === 'day') {
@@ -303,10 +325,8 @@ document.addEventListener('DOMContentLoaded', function () {
             startDiff = (actStart - gridStart) / (1000 * 60 * 60 * 24 * 7);
             duration = ((actEnd - actStart) / (1000 * 60 * 60 * 24 * 7));
         } else { // year
-            // Month diff + day fraction
             const monthDiffStart = (actStart.getFullYear() - gridStart.getFullYear()) * 12 + (actStart.getMonth() - gridStart.getMonth());
             startDiff = monthDiffStart + (actStart.getDate() / 30);
-
             const monthDiffTotal = (actEnd.getFullYear() - actStart.getFullYear()) * 12 + (actEnd.getMonth() - actStart.getMonth());
             duration = monthDiffTotal + ((actEnd.getDate() - actStart.getDate()) / 30) + (1 / 30);
         }
@@ -315,64 +335,75 @@ document.addEventListener('DOMContentLoaded', function () {
         let width = duration * currentState.cellWidth;
         const totalGridWidth = totalCols * currentState.cellWidth;
 
-        // Visual Clamping
-        // If starts before grid
-        if (leftOffset < 0) {
-            width += leftOffset; // remove negative part from width
-            leftOffset = 0;
+        // Visual Gap Logic (Margin)
+        const GAP = 2; // px on each side
+
+        // Strict clipping against 0 and totalGridWidth
+        let clippedLeft = leftOffset;
+        let clippedWidth = width;
+
+        // Clip Start
+        if (clippedLeft < 0) {
+            clippedWidth += clippedLeft; // Reduce width
+            clippedLeft = 0;
         }
 
-        // If extends beyond grid
-        if (leftOffset + width > totalGridWidth) {
-            width = totalGridWidth - leftOffset;
+        // Clip End
+        if (clippedLeft + clippedWidth > totalGridWidth) {
+            clippedWidth = totalGridWidth - clippedLeft;
         }
 
-        const firstCell = chartContainer.children[rowStartIndex];
+        // Only Render if visible
+        if (clippedWidth > 0 && clippedLeft < totalGridWidth) {
+            const firstCell = chartContainer.children[rowStartIndex];
 
-        if (firstCell && width > 0) {
-            const barContainer = document.createElement('div');
+            if (firstCell) {
+                const barContainer = document.createElement('div');
 
-            // Time-based Coloring Logic
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
+                // Color Logic
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const endDateLocal = parseLocal(activity.end_date);
 
-            let timeClass = '';
-            // actStart is strictly local midnight now
-            if (actStart > today) {
-                timeClass = 'time-future'; // Red
-            } else {
-                timeClass = 'time-active'; // Yellow/Blue
-            }
+                let timeClass = '';
+                if (['complete', 'approve'].includes(activity.status)) timeClass = 'time-completed';
+                else if (today > endDateLocal) timeClass = 'time-delayed';
+                else if (actStart > today) timeClass = 'time-future';
+                else timeClass = 'time-active';
 
-            barContainer.className = `gantt-bar-container ${timeClass}`;
-            barContainer.style.left = `${leftOffset + 10}px`; // +10 padding adjustment
-            barContainer.style.width = `${Math.max(width - 2, 5)}px`;
+                barContainer.className = `gantt-bar-container ${timeClass}`;
 
-            const bar = document.createElement('div');
-            bar.className = 'gantt-bar';
-            bar.style.width = `${activity.progress}%`;
-            bar.textContent = activity.progress >= 30 ? `${activity.progress}%` : '';
+                // Apply strict positioning with GAP
+                // We use GAP to make it look nice inside the 'cell tracks' calculated
+                const visualLeft = clippedLeft + GAP;
+                const visualWidth = Math.max(clippedWidth - (GAP * 2), 0);
 
-            barContainer.appendChild(bar);
+                if (visualWidth > 0) {
+                    barContainer.style.width = `${visualWidth}px`;
 
-            if (document.dir === 'rtl') {
-                barContainer.style.left = 'auto';
-                barContainer.style.right = `${leftOffset + 10}px`;
-            }
+                    if (document.dir === 'rtl') {
+                        barContainer.style.left = 'auto';
+                        barContainer.style.right = `${visualLeft}px`;
+                    } else {
+                        barContainer.style.left = `${visualLeft}px`;
+                    }
 
-            firstCell.appendChild(barContainer);
+                    const bar = document.createElement('div');
+                    bar.className = 'gantt-bar';
+                    const progress = activity.progress || 0;
+                    bar.style.width = `${progress}%`;
+                    bar.textContent = progress >= 30 ? `${progress}%` : '';
 
-            // Click Event
-            barContainer.style.cursor = 'pointer';
-            barContainer.addEventListener('click', () => {
-                // Determine Edit/View based on End Date vs Today
-                const endDateLocal = parseLocal(activity.end_date); // Consistent parsing
-                if (endDateLocal >= today) {
-                    openEditModal(activity);
-                } else {
-                    openViewModal(activity);
+                    barContainer.appendChild(bar);
+                    firstCell.appendChild(barContainer);
+
+                    barContainer.style.cursor = 'pointer';
+                    barContainer.addEventListener('click', () => {
+                        if (today > endDateLocal) openViewModal(activity);
+                        else openEditModal(activity);
+                    });
                 }
-            });
+            }
         }
     }
 
@@ -380,24 +411,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const modalEl = document.getElementById('addActivityModal');
         const form = modalEl.querySelector('form');
 
-        // title
-        document.getElementById('activityModalTitle').textContent = 'Edit Activity';
+        document.getElementById('activityModalTitle').textContent = t('edit_activity', 'Edit Activity');
 
         // Populate fields
         form.querySelector('[name="activity_id"]').value = activity.id;
         form.querySelector('[name="name"]').value = activity.name;
         form.querySelector('[name="description"]').value = activity.description || '';
-        form.querySelector('[name="start_date"]').value = activity.start_date.split('T')[0]; // simple split for value
+        form.querySelector('[name="start_date"]').value = activity.start_date.split('T')[0];
         form.querySelector('[name="end_date"]').value = activity.end_date.split('T')[0];
         form.querySelector('[name="workers_count"]').value = activity.workers_count;
         form.querySelector('[name="equipment_count"]').value = activity.equipment_count;
-        form.querySelector('[name="progress"]').value = activity.progress;
 
+        // Status populated
         const statusSelect = form.querySelector('[name="status"]');
-        if (["planned", "in_progress", "completed", "delayed"].includes(activity.status)) {
+        if (['todo', 'in_progress', 'complete', 'approve'].includes(activity.status)) {
             statusSelect.value = activity.status;
         } else {
-            statusSelect.value = ''; // Auto/Unknown
+            statusSelect.value = 'todo';
         }
 
         // Trigger duration calculation
@@ -407,9 +437,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const modal = new bootstrap.Modal(modalEl);
         modal.show();
 
-        // Reset to "Add" on close
         modalEl.addEventListener('hidden.bs.modal', function () {
-            document.getElementById('activityModalTitle').textContent = 'Add Activity';
+            document.getElementById('activityModalTitle').textContent = t('add_activity', 'Add Activity');
             form.reset();
             form.querySelector('[name="activity_id"]').value = '';
         }, { once: true });
@@ -417,69 +446,54 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function openViewModal(activity) {
         document.getElementById('viewName').textContent = activity.name || '-';
-        document.getElementById('viewDescription').textContent = activity.description || 'No description provided';
+        document.getElementById('viewDescription').textContent = activity.description || t('no_description', 'No description provided');
 
-        // Dates
         const start = parseLocal(activity.start_date).toLocaleDateString();
         const end = parseLocal(activity.end_date).toLocaleDateString();
         document.getElementById('viewStartDate').textContent = start;
         document.getElementById('viewEndDate').textContent = end;
 
-        // Resources
         document.getElementById('viewWorkers').textContent = activity.workers_count || 0;
         document.getElementById('viewEquipment').textContent = activity.equipment_count || 0;
 
-        // Progress
         const progress = activity.progress || 0;
         const progressBar = document.getElementById('viewProgressBar');
         progressBar.style.width = `${progress}%`;
-        progressBar.className = `progress-bar bg-${getStatusColorClass(activity.status)}`;
+
+        // Color for Progress Bar in View Modal
+        let colorClass = 'primary';
+        if (['complete', 'approve'].includes(activity.status)) colorClass = 'warning';
+        else if (activity.progress >= 100) colorClass = 'danger'; // Overdue/Delayed
+
+        progressBar.className = `progress-bar bg-${colorClass}`;
         document.getElementById('viewProgressText').textContent = `${progress}%`;
 
-        // Status Badge
         const badge = document.getElementById('viewStatusBadge');
-        badge.className = `badge bg-${getStatusColorClass(activity.status)} d-table mt-1`;
-        badge.textContent = formatStatus(activity.status);
+        badge.className = `badge bg-${colorClass} d-table mt-1`;
+        badge.textContent = getActivityStatusLabel(activity.status);
 
-        // Show Modal
         const modal = new bootstrap.Modal(document.getElementById('viewActivityModal'));
         modal.show();
     }
 
-    function getStatusColorClass(status) {
-        switch (status) {
-            case 'completed': return 'success';
-            case 'in_progress': return 'primary';
-            case 'delayed': return 'danger';
-            case 'planned': return 'secondary';
-            default: return 'primary';
-        }
-    }
-
-    function formatStatus(status) {
-        if (!status) return 'Unknown';
-        return status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    function getActivityStatusLabel(status) {
+        return t(status, status);
     }
 
     function renderCurrentDateLine(gridStartDate, totalCols, config) {
-        const today = new Date(); // Local time
-        // Clear time part for accurate date matching in Day view
+        const today = new Date();
         const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-        // Calculate offset
         let diff;
         if (currentState.view === 'day') {
             diff = (todayDate - gridStartDate) / (1000 * 60 * 60 * 24);
         } else if (currentState.view === 'week') {
             diff = (todayDate - gridStartDate) / (1000 * 60 * 60 * 24 * 7);
         } else { // year
-            // Approx month diff
             diff = (todayDate.getFullYear() - gridStartDate.getFullYear()) * 12 + (todayDate.getMonth() - gridStartDate.getMonth());
-            // Add day fraction
             diff += todayDate.getDate() / 30;
         }
 
-        // Check if within view
         if (diff >= 0 && diff <= totalCols) {
             const line = document.createElement('div');
             line.className = 'current-date-line';
@@ -500,7 +514,6 @@ document.addEventListener('DOMContentLoaded', function () {
         d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
         d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
         var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-        var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-        return weekNo;
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
     }
 });

@@ -116,13 +116,15 @@
       </li>
       @endcan
 
+      @can('gantt', 'view')
       <li class="nav-item">
         <a href="{{ route('website.project.gantt.index', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.gantt.*') ? 'active' : '' }}">
           <i class="fas fa-stream"></i>
-          <span>Gantt Chart</span>
+          <span>{{ __('messages.gantt_chart') }}</span>
         </a>
       </li>
-      
+      @endcan
+            
       @can('daily_logs', 'view')
       <li class="nav-item">
         <a href="{{ route('website.project.daily-log-role-descriptions', $project->id) }}" class="nav-link {{ request()->routeIs('website.project.daily-log-role-descriptions') ? 'active' : '' }}">

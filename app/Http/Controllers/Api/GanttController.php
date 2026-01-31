@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GanttActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class GanttController extends Controller
 {
@@ -30,6 +31,12 @@ class GanttController extends Controller
             $activities = GanttActivity::where('project_id', $request->project_id)
                 ->orderBy('start_date', 'asc')
                 ->get();
+
+            // Recalculate progress dynamically
+            $activities->transform(function ($activity) {
+                $activity->progress = $this->calculateProgress($activity->start_date, $activity->end_date, $activity->status);
+                return $activity;
+            });
 
             return response()->json([
                 'status' => true,
@@ -59,8 +66,8 @@ class GanttController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
             'workers_count' => 'nullable|integer|min:0',
             'equipment_count' => 'nullable|integer|min:0',
-            'progress' => 'required|integer|min:0|max:100',
-            'status' => 'nullable|string|in:planned,in_progress,completed,delayed',
+            // Progress is now calculated, not input
+            'status' => 'required|string|in:todo,in_progress,complete,approve',
         ]);
 
         if ($validator->fails()) {
@@ -72,10 +79,7 @@ class GanttController extends Controller
         }
 
         try {
-            $status = $request->status;
-            if (!$status) {
-                $status = $this->determineStatus($request->start_date, $request->end_date, $request->progress);
-            }
+            $progress = $this->calculateProgress($request->start_date, $request->end_date, $request->status);
 
             $activity = GanttActivity::create([
                 'project_id' => $request->project_id,
@@ -85,8 +89,8 @@ class GanttController extends Controller
                 'end_date' => $request->end_date,
                 'workers_count' => $request->workers_count ?? 0,
                 'equipment_count' => $request->equipment_count ?? 0,
-                'progress' => $request->progress,
-                'status' => $status,
+                'progress' => $progress,
+                'status' => $request->status,
             ]);
 
             return response()->json([
@@ -117,8 +121,7 @@ class GanttController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
             'workers_count' => 'nullable|integer|min:0',
             'equipment_count' => 'nullable|integer|min:0',
-            'progress' => 'required|integer|min:0|max:100',
-            'status' => 'nullable|string|in:planned,in_progress,completed,delayed',
+            'status' => 'required|string|in:todo,in_progress,complete,approve',
         ]);
 
         if ($validator->fails()) {
@@ -132,13 +135,7 @@ class GanttController extends Controller
         try {
             $activity = GanttActivity::find($request->activity_id);
 
-            // Check if user has access to this project/activity (assuming middleware handles auth, but good to check project ownership/access if needed)
-            // For now, relying on API middleware.
-
-            $status = $request->status;
-            if (!$status) {
-                $status = $this->determineStatus($request->start_date, $request->end_date, $request->progress);
-            }
+            $progress = $this->calculateProgress($request->start_date, $request->end_date, $request->status);
 
             $activity->update([
                 'name' => $request->name,
@@ -147,8 +144,8 @@ class GanttController extends Controller
                 'end_date' => $request->end_date,
                 'workers_count' => $request->workers_count ?? 0,
                 'equipment_count' => $request->equipment_count ?? 0,
-                'progress' => $request->progress,
-                'status' => $status,
+                'progress' => $progress,
+                'status' => $request->status,
             ]);
 
             return response()->json([
@@ -203,24 +200,35 @@ class GanttController extends Controller
         }
     }
 
-    private function determineStatus($startDate, $endDate, $progress)
+    private function calculateProgress($startDate, $endDate, $status)
     {
-        $now = now()->format('Y-m-d');
-        $start = \Carbon\Carbon::parse($startDate)->format('Y-m-d');
-        $end = \Carbon\Carbon::parse($endDate)->format('Y-m-d');
-
-        if ($progress == 100) {
-            return 'completed';
+        // If completed or approved, force 100%
+        if (in_array($status, ['complete', 'approve'])) {
+            return 100;
         }
 
-        if ($end < $now) {
-            return 'delayed';
+        $now = Carbon::now()->startOfDay();
+        $start = Carbon::parse($startDate)->startOfDay();
+        $end = Carbon::parse($endDate)->startOfDay();
+
+        // If future
+        if ($now->lt($start)) {
+            return 0;
         }
 
-        if ($start > $now) {
-            return 'planned';
+        // If past end date (and not completed), capping at 100 (Delay handled by status)
+        if ($now->gt($end)) {
+            return 100;
         }
 
-        return 'in_progress';
+        // Calculate percentage
+        $totalDuration = $end->diffInDays($start) + 1; // +1 to include start day
+        $elapsed = $now->diffInDays($start) + 1;
+
+        if ($totalDuration <= 0) return 100;
+
+        $percentage = ($elapsed / $totalDuration) * 100;
+
+        return round(min(100, max(0, $percentage)));
     }
 }
