@@ -527,6 +527,7 @@ class AuthController extends Controller
                 'designation' => $user->designation,
                 'employee_count' => $user->employee_count,
                 'profile_image' => $user->profile_image ? asset('storage/profile/' . $user->profile_image) : null,
+                'company_logo' => $user->company_logo ? asset('storage/company_logos/' . $user->company_logo) : null,
                 'is_verified' => $user->is_verified,
                 'last_login_at' => $user->last_login_at,
                 'created_at' => $user->created_at,
@@ -590,6 +591,14 @@ class AuthController extends Controller
                 $user->profile_image = $filename;
             }
 
+            if ($request->hasFile('company_logo')) {
+                if ($user->company_logo) {
+                    FileHelper::deleteFile('company_logos/' . $user->company_logo);
+                }
+                $filename = FileHelper::uploadImage($request->file('company_logo'), 'company_logos');
+                $user->company_logo = $filename;
+            }
+
             if (!empty($request->password)) {
                 $user->password = Hash::make($request->password);
             }
@@ -600,6 +609,9 @@ class AuthController extends Controller
             $responseData = $user->toArray();
             $responseData['profile_image'] = $user->profile_image
                 ? asset('storage/profile/' . $user->profile_image)
+                : null;
+            $responseData['company_logo'] = $user->company_logo
+                ? asset('storage/company_logos/' . $user->company_logo)
                 : null;
 
             return $this->toJsonEnc($responseData, trans('api.auth.profile_updated_success'), Config::get('constant.SUCCESS'));

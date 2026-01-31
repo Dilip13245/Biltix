@@ -173,7 +173,8 @@
                                         </p>
                                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                             <div class="d-flex align-items-center text-muted">
-                                                <i class="fas fa-building {{ margin_end(2) }}"></i>
+                                                <img id="companyLogoDisplay" src="" alt="Company Logo" class="rounded-circle {{ margin_end(2) }}" style="width: 30px; height: 30px; object-fit: cover; display: none;">
+                                                <i class="fas fa-building {{ margin_end(2) }}" id="companyIcon"></i>
                                                 <span id="companyName">{{ __('messages.loading') }}...</span>
                                             </div>
                                             <div class="d-flex gap-2 flex-wrap">
@@ -368,12 +369,17 @@
                                             style="{{ is_rtl() ? 'text-align: right;' : '' }}" maxlength="100">
                                         <div class="error-message" id="editNameError"></div>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-12 col-md-6">
                                         <label class="form-label fw-medium">{{ __('auth.company_name') }}</label>
                                         <input type="text" class="form-control" id="editCompanyName"
                                             placeholder="{{ __('auth.enter_company_name') }}"
                                             style="{{ is_rtl() ? 'text-align: right;' : '' }}" maxlength="200">
                                         <div class="error-message" id="editCompanyError"></div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label fw-medium">{{ __('auth.company_logo') }}</label>
+                                        <input type="file" class="form-control" id="editCompanyLogo" accept="image/*">
+                                        <div class="error-message" id="editCompanyLogoError"></div>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label class="form-label fw-medium">{{ __('auth.mobile_number') }}</label>
@@ -481,6 +487,18 @@
                     document.getElementById('userEmail').textContent = userData.email || 'N/A';
                     document.getElementById('employeeCount').textContent = userData.total_employees || '0';
                     document.getElementById('memberCount').textContent = userData.total_members || '0';
+
+                    // Update Company Logo
+                    const companyLogo = document.getElementById('companyLogoDisplay');
+                    const companyIcon = document.getElementById('companyIcon');
+                    if (userData.company_logo) {
+                        companyLogo.src = userData.company_logo;
+                        companyLogo.style.display = 'block';
+                        if (companyIcon) companyIcon.style.display = 'none';
+                    } else {
+                        companyLogo.style.display = 'none';
+                        if (companyIcon) companyIcon.style.display = 'inline-block';
+                    }
 
                     // Update subscription details
                     if (userData.subscription && userData.subscription.has_subscription) {
@@ -694,26 +712,42 @@
             }
 
             try {
-                const data = {
-                    user_id: UniversalAuth.getUserId(),
-                    name: document.getElementById('editUserName').value.trim(),
-                    company_name: document.getElementById('editCompanyName').value.trim(),
-                    phone: document.getElementById('editUserPhone').value.trim(),
-                    email: document.getElementById('editUserEmail').value.trim()
-                };
+                const formData = new FormData();
+                formData.append('user_id', UniversalAuth.getUserId());
+                formData.append('name', document.getElementById('editUserName').value.trim());
+                formData.append('company_name', document.getElementById('editCompanyName').value.trim());
+                formData.append('phone', document.getElementById('editUserPhone').value.trim());
+                // formData.append('email', document.getElementById('editUserEmail').value.trim()); // Email is disabled
 
-                const response = await api.updateProfile(data);
+                const logoInput = document.getElementById('editCompanyLogo');
+                if (logoInput && logoInput.files.length > 0) {
+                    formData.append('company_logo', logoInput.files[0]);
+                }
+
+                const response = await api.updateProfile(formData);
 
                 if (response.code === 200) {
                     // Update display values
+                    const userData = response.data;
                     const userNameElement = document.getElementById('userName');
                     if (userNameElement) {
-                        userNameElement.textContent = data.name;
-                        userNameElement.title = data.name;
+                        userNameElement.textContent = userData.name;
+                        userNameElement.title = userData.name;
                     }
-                    document.getElementById('companyName').textContent = data.company_name;
-                    document.getElementById('userPhone').textContent = data.phone;
-                    document.getElementById('userEmail').textContent = data.email;
+                    document.getElementById('companyName').textContent = userData.company_name;
+                    document.getElementById('userPhone').textContent = userData.phone;
+                    document.getElementById('userEmail').textContent = userData.email;
+
+                    // Update Company Logo
+                    if (userData.company_logo) {
+                        const companyLogo = document.getElementById('companyLogoDisplay');
+                        const companyIcon = document.getElementById('companyIcon');
+                        if (companyLogo) {
+                            companyLogo.src = userData.company_logo;
+                            companyLogo.style.display = 'block';
+                            if (companyIcon) companyIcon.style.display = 'none';
+                        }
+                    }
 
                     toastr.success(response.message);
 

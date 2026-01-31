@@ -22,10 +22,10 @@
                                 <form id="chatForm" class="chat-input-form" onsubmit="return false;">
                                     <input type="text" id="messageInput" class="form-control chat-text-input" 
                                            placeholder="{{ __('messages.type_message') }}" maxlength="1000">
-                                    <button type="button" class="btn btn-icon" onclick="document.getElementById('fileInput').click()" title="Attach file">
+                                    <button type="button" class="btn btn-icon" onclick="document.getElementById('fileInput').click()" title="{{ __('messages.attach_file') }}">
                                         <i class="fas fa-paperclip"></i>
                                     </button>
-                                    <button type="button" class="btn orange_btn btn-send" id="sendBtn" onclick="handleSendMessage(event)" title="Send message">
+                                    <button type="button" class="btn orange_btn btn-send" id="sendBtn" onclick="handleSendMessage(event)" title="{{ __('messages.send_message') }}">
                                         <i class="fas fa-paper-plane"></i>
                                     </button>
                                 </form>
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!currentProjectId || !currentUserId) {
         console.error('Project ID or User ID not found');
-        document.getElementById('chatMessages').innerHTML = '<div class="no-messages"><i class="fas fa-exclamation-circle"></i><p>Please login to use chat</p></div>';
+        document.getElementById('chatMessages').innerHTML = '<div class="no-messages"><i class="fas fa-exclamation-circle"></i><p>{{ __('messages.please_login_to_chat') }}</p></div>';
         return;
     }
 
@@ -462,7 +462,7 @@ function handleFileSelect(e) {
 
     const maxSize = 50 * 1024 * 1024; // 50MB
     if (file.size > maxSize) {
-        toastr.error('File size must be less than 50MB');
+        toastr.error('{{ __('messages.file_size_limit') }}');
         e.target.value = '';
         return;
     }
@@ -514,7 +514,7 @@ let hasMoreMessages = true;
 
 async function loadMessages() {
     const messagesContainer = document.getElementById('chatMessages');
-    messagesContainer.innerHTML = '<div class="loading-messages"><i class="fas fa-spinner fa-spin"></i><p>Loading messages...</p></div>';
+    messagesContainer.innerHTML = '<div class="loading-messages"><i class="fas fa-spinner fa-spin"></i><p>{{ __('messages.loading_messages') }}</p></div>';
 
     try {
         const response = await api.getChatMessages({
@@ -535,11 +535,11 @@ async function loadMessages() {
             hasMoreMessages = response.data.current_page < response.data.last_page;
             currentPage = 1;
         } else {
-            messagesContainer.innerHTML = '<div class="no-messages"><i class="fas fa-comments"></i><p>No messages yet. Start the conversation!</p></div>';
+            messagesContainer.innerHTML = '<div class="no-messages"><i class="fas fa-comments"></i><p>{{ __('messages.no_messages_yet') }}</p></div>';
         }
     } catch (error) {
         console.error('Error loading messages:', error);
-        messagesContainer.innerHTML = '<div class="no-messages"><i class="fas fa-exclamation-circle"></i><p>Failed to load messages</p></div>';
+        messagesContainer.innerHTML = '<div class="no-messages"><i class="fas fa-exclamation-circle"></i><p>{{ __('messages.failed_to_load_messages') }}</p></div>';
     }
 }
 
@@ -587,7 +587,7 @@ function renderMessages(messages) {
     const messagesContainer = document.getElementById('chatMessages');
     
     if (!messages || messages.length === 0) {
-        messagesContainer.innerHTML = '<div class="no-messages"><i class="fas fa-comments"></i><p>No messages yet. Start the conversation!</p></div>';
+        messagesContainer.innerHTML = '<div class="no-messages"><i class="fas fa-comments"></i><p>{{ __('messages.no_messages_yet') }}</p></div>';
         return;
     }
 
@@ -596,7 +596,8 @@ function renderMessages(messages) {
 
 function createMessageHTML(message) {
     const isOwn = message.user_id == currentUserId;
-    const userName = message.user?.name || 'Unknown';
+    const userName = message.user?.name || '{{ __('messages.unknown') }}';
+    const userRole = message.user?.role_display || '';
     const userInitial = userName.charAt(0).toUpperCase();
     const profileImage = message.user?.profile_image;
     const messageTime = new Date(message.created_at).toLocaleTimeString('en-US', { 
@@ -623,7 +624,7 @@ function createMessageHTML(message) {
                 <div class="message-attachment">
                     <video controls preload="metadata" style="max-width: 300px; max-height: 300px; border-radius: 8px;">
                         <source src="${message.attachment}" type="video/${fileExt === 'mov' ? 'mp4' : fileExt}">
-                        Your browser does not support video playback.
+                        {{ __('messages.video_not_supported') }}
                     </video>
                 </div>
             `;
@@ -636,7 +637,7 @@ function createMessageHTML(message) {
                     <div class="audio-wrapper">
                         <audio controls preload="metadata">
                             <source src="${message.attachment}" type="${audioType}">
-                            Your browser does not support audio playback.
+                            {{ __('messages.audio_not_supported') }}
                         </audio>
                     </div>
                 </div>
@@ -664,6 +665,8 @@ function createMessageHTML(message) {
         }
     }
 
+    const headerContent = userRole ? `${userName} <span style="opacity: 0.8; font-weight: normal;">(${userRole})</span>` : userName;
+
     return `
         <div class="chat-message ${isOwn ? 'own' : ''}">
             <div class="message-avatar">
@@ -673,7 +676,7 @@ function createMessageHTML(message) {
                 }
             </div>
             <div class="message-content">
-                ${!isOwn ? `<div class="message-header">${userName}</div>` : ''}
+                ${!isOwn ? `<div class="message-header">${headerContent}</div>` : ''}
                 <div class="message-bubble">
                     ${message.message ? `<div>${escapeHtml(message.message)}</div>` : ''}
                     ${attachmentHTML}
@@ -704,13 +707,13 @@ async function handleSendMessage(e) {
     const message = messageInput.value.trim();
 
     if (!message && !selectedFile) {
-        toastr.error('Please enter a message or select a file');
+        toastr.error('{{ __('messages.enter_message_or_file') }}');
         return;
     }
 
     if (typeof api === 'undefined' || !api.sendChatMessage) {
         console.error('API not available');
-        toastr.error('Chat API not loaded. Please refresh the page.');
+        toastr.error('{{ __('messages.chat_api_not_loaded') }}');
         return;
     }
 
@@ -731,13 +734,13 @@ async function handleSendMessage(e) {
         if (response.code === 200) {
             messageInput.value = '';
             clearFileSelection();
-            toastr.success('Message sent');
+            toastr.success('{{ __('messages.message_sent') }}');
         } else {
-            toastr.error(response.message || 'Failed to send message');
+            toastr.error(response.message || '{{ __('messages.failed_to_send_message') }}');
         }
     } catch (error) {
         console.error('Error sending message:', error);
-        toastr.error('Failed to send message');
+        toastr.error('{{ __('messages.failed_to_send_message') }}');
     } finally {
         sendBtn.disabled = false;
         sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';

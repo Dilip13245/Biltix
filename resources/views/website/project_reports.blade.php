@@ -256,14 +256,37 @@
 
                     .preview-brand-logo {
                         position: absolute;
-                        left: 45px;
-                        bottom: 20px;
+                        left: 38px;
+                        bottom: 2px;
                         z-index: 10;
                     }
 
                     .preview-brand-logo img {
+                        height: 70px;
+                        width: 70px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                        border: 2px solid rgba(255, 255, 255, 0.8);
+                        background-color: white;
+                    }
+
+                    /* Company Logo */
+                    .preview-company-logo {
+                        position: absolute;
+                        right: 45px;
+                        bottom: 20px;
+                        z-index: 10;
+                    }
+                    [dir="rtl"] .preview-company-logo {
+                        right: auto;
+                        left: 38px;
+                    }
+                    .preview-company-logo img {
                         height: 59px;
                         width: auto;
+                        border-radius: 4px;
+                        background: rgba(255, 255, 255, 0.9);
+                        padding: 2px;
                     }
 
                     .preview-center-title-block {
@@ -316,7 +339,7 @@
 
                     [dir="rtl"] .preview-brand-logo {
                         left: auto;
-                        right: 45px;
+                        right: 38px;
                     }
 
                     /* Content */
@@ -751,7 +774,7 @@
                         <div class="preview-header-pattern"></div>
                         <div class="preview-header-content">
                             <div class="preview-brand-logo">
-                                <img src="{{ asset('website/images/icons/logo.svg') }}" alt="BILTIX Logo">
+                                <img src="" alt="Logo" id="previewMainLogo" style="display: none;">
                             </div>
                             <div class="preview-center-title-block">
                                 <div class="preview-title-icon-circle">
@@ -1007,6 +1030,15 @@
 
             previewReport{{ __('messages.type') }}.textContent = data.report_type.charAt(0).toUpperCase() + data
                 .report_type.slice(1) + ' Progress Report';
+
+            // Update Logo (Replace Biltix logo with Company Logo if available)
+            const previewMainLogo = document.getElementById('previewMainLogo');
+            if (data.company_logo) {
+                previewMainLogo.src = data.company_logo;
+                previewMainLogo.style.display = 'block';
+            } else {
+                previewMainLogo.style.display = 'none';
+            }
 
             const formatDate = (dateStr) => {
                 const date = new Date(dateStr);

@@ -16,7 +16,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'email', 'phone', 'password', 'role', 'company_name',
         'designation', 'employee_count', 'member_number', 'member_name',
-        'profile_image', 'language', 'timezone', 'last_login_at', 'otp',
+        'profile_image', 'company_logo', 'language', 'timezone', 'last_login_at', 'otp',
         'is_active', 'is_deleted', 'is_sub_user', 'parent_user_id', 'force_password_change'
     ];
 

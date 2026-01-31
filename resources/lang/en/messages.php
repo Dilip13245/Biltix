@@ -1780,4 +1780,23 @@ return [
     'completed' => 'Completed', // Ensure this exists or override if needed
     'todo' => 'Todo',
     'approve' => 'Approve',
+    // Chat
+    'chat' => 'Chat',
+    'project_chat' => 'Project Chat',
+    'team_group_chat' => 'Team Group Chat',
+    'please_login_to_chat' => 'Please login to use chat',
+    'file_size_limit' => 'File size must be less than 50MB',
+    'loading_messages' => 'Loading messages...',
+    'no_messages_yet' => 'No messages yet. Start the conversation!',
+    'failed_to_load_messages' => 'Failed to load messages',
+    'unknown' => 'Unknown',
+    'video_not_supported' => 'Your browser does not support video playback.',
+    'audio_not_supported' => 'Your browser does not support audio playback.',
+    'enter_message_or_file' => 'Please enter a message or select a file',
+    'chat_api_not_loaded' => 'Chat API not loaded. Please refresh the page.',
+    'message_sent' => 'Message sent',
+    'failed_to_send_message' => 'Failed to send message',
+    'type_message' => 'Type a message',
+    'attach_file' => 'Attach file',
+    'send_message' => 'Send message',
 ];

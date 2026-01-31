@@ -17,9 +17,10 @@ class Localization
     public function handle(Request $request, Closure $next): Response
     {
         // Check if language is provided in header
-        if ($request->hasHeader('language')) {
-            $language = $request->header('language');
-            
+        $language = $request->header('language') ?: $request->header('Accept-Language');
+        
+        if ($language) {
+        
             // Set supported languages
             $supportedLanguages = ['en', 'ar'];
             

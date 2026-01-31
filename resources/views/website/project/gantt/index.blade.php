@@ -17,10 +17,12 @@
             </div>
 
             <!-- Add Activity Button -->
+             @can('gantt', 'create')
             <button class="btn orange_btn py-2" data-bs-toggle="modal" data-bs-target="#addActivityModal">
                  <i class="fas fa-plus"></i>
                  {{ __('messages.add_activity') }}
             </button>
+            @endcan
         </div>
     </div>
 

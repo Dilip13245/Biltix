@@ -48,6 +48,7 @@ return [
     'next' => 'التالي',
     'footer_text' => '© 2024 بيلد برو. جميع الحقوق محفوظة.',
     'company_name' => 'اسم الشركة',
+    'company_logo' => 'شعار الشركة',
     'enter_company_name' => 'أدخل اسم شركتك',
     'total_employees' => 'العدد الإجمالي للموظفين',
     'enter_employee_count' => 'أدخل عدد الموظفين',

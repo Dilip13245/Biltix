@@ -59,11 +59,21 @@ class ChatController extends Controller
                 'attachment' => $attachmentPath,
             ]);
 
-            $chat->load('user:id,name,profile_image');
+            $chat->load('user:id,name,profile_image,role');
 
             // Add attachment URL
             if ($chat->attachment) {
                 $chat->attachment = asset('storage/' . $chat->attachment);
+            }
+
+            if ($chat->user) {
+                 $chat->user->role_display = $chat->user->getRoleDisplayName();
+                 // Handle profile image for consistency
+                 if ($chat->user->profile_image) {
+                     if (strpos($chat->user->profile_image, 'http') !== 0) {
+                         $chat->user->profile_image = asset('storage/profile/' . $chat->user->profile_image);
+                     }
+                 }
             }
 
             // Broadcast event
@@ -111,19 +121,24 @@ class ChatController extends Controller
 
             $messages = ProjectChat::where('project_id', $request->project_id)
                 ->where('is_deleted', 0)
-                ->with('user:id,name,profile_image')
+                ->with('user:id,name,profile_image,role')
                 ->orderBy('created_at', 'desc')
                 ->paginate($limit, ['*'], 'page', $page);
 
             $messages->getCollection()->transform(function ($message) {
-                if ($message->user && $message->user->profile_image) {
-                    // Check if profile_image already contains full URL
-                    if (strpos($message->user->profile_image, 'http') === 0) {
-                        // Already a full URL, use as is
-                        $message->user->profile_image = $message->user->profile_image;
-                    } else {
-                        // Relative path, add storage prefix
-                        $message->user->profile_image = asset('storage/profile/' . $message->user->profile_image);
+                if ($message->user) {
+                    // Add role display name
+                    $message->user->role_display = $message->user->getRoleDisplayName();
+
+                    if ($message->user->profile_image) {
+                        // Check if profile_image already contains full URL
+                        if (strpos($message->user->profile_image, 'http') === 0) {
+                            // Already a full URL, use as is
+                            $message->user->profile_image = $message->user->profile_image;
+                        } else {
+                            // Relative path, add storage prefix
+                            $message->user->profile_image = asset('storage/profile/' . $message->user->profile_image);
+                        }
                     }
                 }
                 if ($message->attachment) {

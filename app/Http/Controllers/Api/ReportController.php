@@ -99,6 +99,7 @@ class ReportController extends Controller
             'material_adequacy' => ProjectMaterialAdequacy::where('project_id', $request->project_id)
                 ->whereBetween('created_at', [$dateRange['start'], $dateRange['end']])
                 ->get(),
+            'company_logo' => ($user = User::find($request->user_id)) && $user->company_logo ? asset('storage/company_logos/' . $user->company_logo) : null,
         ];
 
         return $this->successResponse(__('api.reports.generated_success'), $data);
@@ -135,6 +136,11 @@ class ReportController extends Controller
         $creator = User::find($request->user_id);
         $reportData['site_engineer_name'] = $creator ? $creator->name : 'N/A';
         $reportData['signature_date'] = now()->format('d/m/Y');
+        
+        // Add company logo path for PDF generation
+        if ($creator && $creator->company_logo) {
+            $reportData['company_logo'] = storage_path('app/public/company_logos/' . $creator->company_logo);
+        }
         
         $reportData['locale'] = app()->getLocale();
         $reportData['is_rtl'] = app()->getLocale() === 'ar';

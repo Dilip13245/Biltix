@@ -657,7 +657,9 @@
             <div class="header-pattern"></div>
             <div class="header-content">
                 <div class="brand-logo">
-                    <img src="{{ public_path('website/images/icons/logo.svg') }}" alt="BILTIX Logo">
+                    @if(isset($company_logo) && $company_logo)
+                        <img src="{{ $company_logo }}" alt="Company Logo">
+                    @endif
                 </div>
                 <div class="center-title-block">
                     <div class="title-icon-circle">

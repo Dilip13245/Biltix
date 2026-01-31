@@ -48,6 +48,7 @@ return [
     'next' => 'Next',
     'footer_text' => '© 2026 Biltix. All rights reserved.',
     'company_name' => 'Company Name',
+    'company_logo' => 'Company Logo',
     'enter_company_name' => 'Enter your company name',
     'total_employees' => 'Total Count Of Employees',
     'enter_employee_count' => 'Enter count of employees',
